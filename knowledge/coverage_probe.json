@@ -1,0 +1,1243 @@
+{
+ "questions": [
+  {
+   "question_en": "What is the addressable market for this rider? How many Korean drivers aged 65+ carry auto policies, what premium pool does that represent, and what share do you expect to capture?",
+   "question_ko": "이 특약의 목표 시장 규모는 얼마인가? 국내 65세 이상 자동차보험 가입자 수와 보험료 풀은 얼마이고, 현실적으로 얼마를 점유할 수 있나?",
+   "angle": "사업성 · 시장 규모(TAM/SAM)",
+   "answerable": "none",
+   "answer_sketch_ko": "시장 규모를 말할 수 있는 수치가 지식층에 하나도 없다. 근접해서 쓸 수 있는 것은 두 가지이고 둘 다 '규모'가 아니라 '방향'만 지지한다 — ① TAAS 2010~2024 직접 산출: 고령운전자 사고 비중 5.6%(2010)→21.6%(2024), 14년 새 약 4배 ② Candrive/Ozcandrive(Langford 2013): 연 5,000km 미만 저주행 고령 집단의 km당 사고 위험이 오히려 높아, 거리만 보는 마일리지 체계가 이 구간을 구조적으로 잘못 할인한다(= 미충족 구간). 카드에 실제로 존재하는 '규모' 숫자는 시뮬레이션 규모(60명 × 3환경 = 180 시나리오, 로그 80,032건)뿐이며 이는 시장이 아니다. 발표 원칙상 ✕는 '없습니다 + 로드맵'으로 답해야 한다.",
+   "gap": "고령 운전자 모수·자동차보험 가입자 수·보험료 규모·TAM/SAM/SOM·목표 점유율이 knowledge/ 및 sources/ 전체에 0건('시장' 단어는 '시장을 좁힌 선택이 아니다'라는 방어 문구에서만 등장). 파일럿 N조차 '모수 확인 전이라 숫자를 말하지 않는다'로 금지 상태라, 규모를 즉석에서 추정해 답하면 금지 규칙 위반이 된다.",
+   "risk": "high",
+   "used_positions": [
+    "1. 타겟 한정 — 왜 고령자인가",
+    "고령자 한정(타깃 선정) 논리",
+    "저주행 고령 운전자의 km당 사고 위험 (마일리지 한계 근거)",
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "발표 원칙 세 줄 (전 항목 공통)"
+   ]
+  },
+  {
+   "question_en": "Your own simulation shows 150 of 180 policies pay the same or less, 113 pay strictly less, and there is no surcharge path at all. You are handing premium back. Where does the carrier's money actually come from?",
+   "question_ko": "시뮬레이션에서 180건 중 150건이 기존 대비 동등 이하, 113건은 보험료를 더 적게 냈고 할증 경로는 아예 없다. 보험료를 돌려주기만 하는 구조인데 보험사의 수익은 어디서 나오나?",
+   "angle": "사업성 · 수익 모델",
+   "answerable": "partial",
+   "answer_sketch_ko": "뼈대는 세 층으로 서 있다. ① 상품 지위 — 요율표가 아니라 기존 마일리지 할인 위에 얹는 할인 자격 점수(오버레이)이고 masil_rate = clip(korea_mileage + bonus − reduction, 0, 45)로 할증은 값이 0인 게 아니라 항 자체가 없으며 180건 전건 candidate_surcharge_rate_pct = 0, 하한 0% = 기준 요율, 할인 캡 45%. ② 실측 할인 이동 — 안정 저주행형 33.8%→38.9%, 이사형 21.2%→26.7%, 복수 생활권형 19.5%→24.3%, 광역 이동·안전형 20.9%→24.8%, 생활권 내 위험행동형 33.4% 동일, 동시변화형 19.6%→7.9%. 우대 보너스는 우대·비케어 113명 중앙 5.6%p. ③ 회수 논리 — 케어 세그먼트(30건·16.7%)의 클레임을 12.4% 줄이면 균형(심도 가산 없는 1.0× 기준), 고령 심도 1.2× 감도에서는 10.3%. 즉 공식 답은 '할인으로 나간 돈은 케어 세그먼트의 클레임 절감으로 회수한다'이며, 감액 13%p는 최종 요율이 아니라 요율 샌드박스의 손익 예시값(illustrative_economics_sandbox_not_final_tariff)임을 먼저 밝혀야 한다.",
+   "gap": "12.4%/10.3% 손익분기의 전제가 positions에 없다 — 보험료 기준선, 케어 세그먼트 기대 클레임 풀의 산정 방식, 사업비 부가 포함 여부가 전부 미기재이고 evidence_ref는 scripts/loss_ratio_counterfactual.py라는 파일명뿐이다. 신규 획득·유지율 상승·교차판매 같은 '수입 증가' 경로는 0건이라, 수익 논지가 오직 클레임 절감 하나에 걸려 있다.",
+   "risk": "high",
+   "used_positions": [
+    "상품 지위 — 할증 경로가 구조상 없다",
+    "실측 — 안전할수록 이득이 커진다 (유형별 할인율)",
+    "12번 — 손익분기 감도",
+    "감액 13%p의 지위 — 샌드박스 예시값",
+    "요율 구조"
+   ]
+  },
+  {
+   "question_en": "What is your quantitative evidence that this improves loss ratio? Not a break-even threshold — evidence that the intervention actually moves claims.",
+   "question_ko": "손해율이 실제로 개선된다는 정량적 근거가 무엇인가? 손익분기 임계치 말고, 개입이 사고를 줄인다는 증거 말이다.",
+   "angle": "사업성 · 손해율 개선의 정량 근거",
+   "answerable": "partial",
+   "answer_sketch_ko": "정직하게 '아직 없습니다 + 로드맵'이 공식 스탠스다. 지식층이 실제로 지지하는 것은 세 가지이고, 어느 것도 개입 효과 증명이 아니다. ① 손익분기 임계치 12.4%(1.0×)/10.3%(1.2×) — 요구 절감률이지 달성 증거가 아님(simulation_result). ② 행동 기반 세분화에 실클레임 신호가 있다는 외부 문헌 — CMT UBI 백서 2023(전 연령 n≈10만, 실클레임 ~1,500건, 행동 5분위 최상·최하위 클레임 빈도 약 3배, Fig.4). 단 전 연령 데이터이므로 고령 한정 근거와 역할을 구분해 인용해야 한다. ③ 판정 로직 일관성 실측 — 케어 발동 30/30, 오탐 대조군 0/30(이동 임계 초과 191 케이스-월에도 0건), 3지형 케어 60/60·우대 54/60, pytest 254 + JS 22. 그리고 '이 시뮬레이션이 예측력·실제 사고·손해율 효과를 검증했다'는 forbidden_claims에 명시적으로 금지돼 있으므로, 반드시 'Simulated — 실제 사고·손해율 효과 미검증'을 먼저 말해야 한다. 로드맵은 파일럿 경험 손해율로 가중치를 위험군 식별력·손해율 개선 목표에 재적합하는 것이다.",
+   "gap": "케어 개입 → 클레임 감소의 효과 크기(effect size)를 지지하는 문헌이나 실측이 0건. CMT는 횡단면 세분화 근거이지 개입 효과 근거가 아니고, 개입군/대조군 파일럿은 설계만 존재하고 실행 전(근거지도 등급 ✕). 12.4%가 '달성 가능한 수준인가'를 판단할 비교 기준(타 UBI의 클레임 감소 실적 등)도 없다.",
+   "risk": "high",
+   "used_positions": [
+    "12번 — 손익분기 감도",
+    "검증의 정직 한계 (전 문서 공통)",
+    "로드맵 — 캘리브레이션과 eps 재도출",
+    "부록 B — 실측 검증 총괄",
+    "13번 — 데이터 확보 3경로와 파일럿"
+   ]
+  },
+  {
+   "question_en": "Any carrier with a telematics app could build a zone-clustering score in six months. What is defensible here — why would they buy this from you instead of building it?",
+   "question_ko": "텔레매틱스 앱을 가진 보험사라면 생활권 클러스터링 점수 정도는 6개월이면 만든다. 방어 가능한 자산이 무엇이고, 왜 만들지 않고 우리에게서 사야 하나?",
+   "angle": "경쟁 · 방어가능성",
+   "answerable": "none",
+   "answer_sketch_ko": "경쟁 우위·해자를 주장하는 승인 스탠스가 지식층에 존재하지 않는다. 조합해서 만들 수 있는 것은 '규제·공정성 심사를 통과하도록 설계된 판정 계약'이라는 설계 논거뿐이다 — 판정 입력 화이트리스트 8개(4축 점수·변화지수 2·zone_available·data_coverage_pct)가 코드에 고정돼 심도·손해액·사고 라벨이 들어갈 통로가 없고, location_penalty = 0.0으로 위치에 벌점이 없으며, 할증 항 자체가 부재하고, 성능 대등 시 설명 가능한 쪽을 택해 DBSCAN을 채택(HDBSCAN은 challenger로 실데이터 재비교)했으며, 판정은 결정론 엔진이고 AI는 초기 규칙 후보 생성까지다. 이는 '왜 이 설계인가'에는 답하지만 '왜 우리인가'에는 답하지 않는다.",
+   "gap": "경쟁사·시장 대안 비교가 0건('경쟁'이라는 단어 자체가 sources/knowledge 전체에 0회). 특허·데이터 해자·전환비용·독점 파트너십·팀 우위 등 방어가능성 논거가 승인 포지션으로 존재하지 않아, 무대에서 즉흥 답변을 하면 근거 없는 주장이 된다.",
+   "risk": "high",
+   "used_positions": [
+    "9번 — 판정 결정론 엔진과 에이전트 잔여 역할",
+    "10번 — HDBSCAN 대비 현행 유지",
+    "생활권 클러스터링 알고리즘",
+    "부록 C — 위치가 등장하는 지점 전수",
+    "AI 역할 서술"
+   ]
+  },
+  {
+   "question_en": "How do you acquire these customers? Seniors are the hardest segment to reach digitally, and this rider needs app consent. What is your distribution channel and what does one acquisition cost?",
+   "question_ko": "이 고객을 어떻게 확보하나? 고령층은 디지털 도달이 가장 어렵고, 이 특약은 앱 동의가 필요하다. 판매 채널은 무엇이고 1인 획득 비용은 얼마인가?",
+   "angle": "채널 전략 · 획득비용(CAC)",
+   "answerable": "none",
+   "answer_sketch_ko": "지식층에서 '채널'은 두 가지 뜻으로만 쓰이고 둘 다 판매 채널이 아니다 — ① 계리 신뢰도의 관측 채널(관측 많고 교란 적은 채널에 큰 가중, 안 30 > 밖 20의 근거이며 파일럿에서 채널별 분산으로 신뢰도를 정식 추정) ② 데이터 확보 경로. 데이터 확보 경로도 원문 간 정의가 두 버전으로 갈려 있다 — 마스터답변안은 '기존 UBI 채널 / 특약 동의 신규 수집 / 공공·제휴', 근거지도는 '자체 앱 → OEM → 제휴'이며 어느 쪽이 팀 확정인지 OPEN_ITEMS B-1에 미결로 남아 있다. 게다가 '기존 UBI 채널'의 유일한 선례인 보험연구원 KIRI리포트(2024.7)는 리포트 번호·연도 원문 미확인으로 status: banned — 무대 인용 금지다.",
+   "gap": "판매 채널(설계사·다이렉트·방카·제휴), 모집 방식, CAC, 전환율, 고령층 온보딩·동의 획득 UX, 앱 설치율 가정이 전부 0건. 나아가 데이터 경로 정의 자체가 팀 확정 전이고, 그 경로를 지지하는 유일한 문헌이 인용 금지 상태라 '기존 UBI 채널에 얹는다'는 논거를 무대에서 근거와 함께 말할 수 없다.",
+   "risk": "high",
+   "used_positions": [
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "실현 가능성 — 데이터 3경로·사고잦은곳·도로 위계",
+    "11번 — 안 30 > 밖 20 = 신뢰도 원리(수위 명시)",
+    "로드맵 — 캘리브레이션과 eps 재도출",
+    "인용 등급 운용 원칙"
+   ]
+  },
+  {
+   "question_en": "Care status routes to a human review and a prevention outreach. At 100,000 policies that is a cost center. What does it cost to serve one policy per year, and is that cost inside your 12.4% break-even?",
+   "question_ko": "케어 상태는 사람 검토와 예방 지원으로 이어진다. 계약 10만 건이면 그건 비용 조직이다. 계약 1건당 연간 운영원가가 얼마이고, 12.4% 손익분기에 그 비용이 들어가 있나?",
+   "angle": "단위경제 · 규모의 경제",
+   "answerable": "none",
+   "answer_sketch_ko": "운영 구조는 확립돼 있지만 원가는 없다. 확립된 것: 케어는 자동 요율 반영이 아니라 사람 검토(care_review)로 이어지고, 운영상 개입은 벌점·할증이 아니라 점검 권유와 예방 지원이며, 해제는 신청 없이 지표가 정상으로 돌아온 그 달에 닫힌다(care_open = fires or (care_open and sustained)). 규모 추정에 쓸 실측 비율도 있다 — 180 시나리오 중 케어 30건(16.7%), 전원 1개월 발동, 0개월 150건/1개월 30건/2개월 이상 0건. 여기까지가 '검토 대상이 얼마나 자주 발생하는가'이고, '1건 검토에 얼마가 드는가'는 지식층에 없다.",
+   "gap": "인건비·검토 소요시간·앱/단말 비용·데이터 처리 비용·사업비 부가가 전부 0건('비용'이라는 단어가 sources 전체 1회, 운영원가 맥락 아님). 12.4% 손익분기가 클레임 축만 본 것인지 운영비를 포함한 것인지 positions에 정의가 없어, '그 비용은 반영돼 있나'라는 후속 질문에 답할 근거가 없다.",
+   "risk": "medium",
+   "used_positions": [
+    "감액 13%p의 지위 — 샌드박스 예시값",
+    "케어 게이트",
+    "케어 월수",
+    "12번 — 손익분기 감도",
+    "부록 B — 실측 검증 총괄"
+   ]
+  },
+  {
+   "question_en": "This was built against Korean location-data law. You are pitching in Singapore to judges from Asia and the West. How does the design transfer to a PDPA or GDPR jurisdiction, and what has to change?",
+   "question_ko": "이 설계는 한국 위치정보법 기준으로 만들어졌다. 싱가포르에서 아시아·서구권 심사위원 앞에 서는데, PDPA나 GDPR 관할로는 어떻게 이식되며 무엇을 바꿔야 하나?",
+   "angle": "규제 이식성 · 관할 확장",
+   "answerable": "partial",
+   "answer_sketch_ko": "관할 이식에 대한 스탠스는 없지만, 이식을 쉽게 만드는 설계 원칙은 승인돼 있어 그 축으로만 답할 수 있다 — ① 최소수집: 필요한 것은 궤적이 아니라 도착지 좌표 + 방문 날짜(+트립 거리·위험 이벤트 수)뿐이라 통상 UBI보다 동의 범위가 좁다 ② 파생값 판정: 원 안팎 대조에 필요한 것은 중심·반경뿐이라 단말에서 처리하면 보험사로 좌표가 넘어가지 않는다 ③ 위치 무벌점: location_penalty = 0.0, 위치가 등장하는 지점은 5곳뿐이고 밖에 안 나가도·나가서 안전해도 손해가 없다 ④ 자동화 판정의 설명가능성: 입력 화이트리스트 8개, 결정론 엔진 ⑤ 보존 원칙: '6개월 삭제 의무 조항'은 없고 원칙은 목적 달성 시 즉시 파기(위치정보법 제23조). 데이터 최소화·목적 제한·자동화 의사결정 설명이라는 세 축은 어느 관할에서도 요구되는 방향과 같다는 수준까지가 한계다. 단 위치정보법 제23조 해석은 자체 해석이고 법무 검토 미실시임이 명시돼 있어 법률 주장 수위를 올릴 수 없다.",
+   "gap": "GDPR·PDPA·해외 관할 언급이 knowledge/·sources/ 전체에 0건('해외'는 방문 빈도 문헌 앵커 맥락으로만 등장). 국가별 상품 신고·요율 인가 절차, 국외 데이터 이전, 현지 파트너 보험사, 감독당국 커뮤니케이션이 전부 없다. 국내 조문 해석조차 법무 미검토로 OPEN_ITEMS A에 남아 있다.",
+   "risk": "high",
+   "used_positions": [
+    "6. 위치데이터 보존의 법적 제약 — 법령 사실 교정",
+    "6b. 최소수집·파생값 설계",
+    "위치데이터 보유 — 4개월 창 + 파생값 판정",
+    "부록 C — 위치가 등장하는 지점 전수",
+    "9번 — 판정 결정론 엔진과 에이전트 잔여 역할"
+   ]
+  },
+  {
+   "question_en": "Have you spoken to a reinsurer? Who carries the risk in the pilot, and would a reinsurer accept a discount structure calibrated entirely on synthetic data?",
+   "question_ko": "재보험사와 이야기해 봤나? 파일럿에서 위험은 누가 지며, 전부 합성 데이터로 캘리브레이션한 할인 구조를 재보험사가 받아주겠나?",
+   "angle": "재보험 · 리스크 인수 구조",
+   "answerable": "none",
+   "answer_sketch_ko": "재보험은 knowledge/·sources/ 전체에 0건이라 직접 답이 없다. 방어에 쓸 수 있는 것은 다운사이드가 구조적으로 갇혀 있다는 설계 사실뿐이다 — 할증 항 부재로 최악이 할증이 아니라 할인 축소이고 하한이 기준 요율, 총 할인 캡 45%, 우대 보너스 상한 7%p, 커버리지 80% 미만은 판정 보류(INSUFFICIENT_EVIDENCE)라 근거 없이 할인을 주지 않으며, 모든 값이 DEFAULT_PRODUCT_RULES의 선언 상수이고 tariff_status = illustrative_economics_sandbox_not_final_tariff라 재보정 시 손익까지 즉시 재계산된다. 즉 '최대 손실이 요율 캡 안에 갇혀 있다'까지는 말할 수 있으나, 리스크 이전 구조에 대한 답은 아니다.",
+   "gap": "재보험·자본·지급여력·리스크 이전 0건. 파일럿의 리스크 보유 주체, 요율 인가·상품 신고 절차, 감독당국 협의 계획도 0건. '누가 이 실험의 손실을 감당하나'라는 질문에 승인된 답이 없다.",
+   "risk": "medium",
+   "used_positions": [
+    "상품 지위 — 할증 경로가 구조상 없다",
+    "요율 구조",
+    "부록 C — 산식·파라미터 전체",
+    "감액 13%p의 지위 — 샌드박스 예시값",
+    "우대 조건"
+   ]
+  },
+  {
+   "question_en": "Your entire evidence base is 60 drivers, 180 scenarios, fully synthetic. What breaks first when you move to a real book of 100,000 policies?",
+   "question_ko": "근거 전체가 60명·180 시나리오이고 전부 합성이다. 실제 계약 10만 건으로 가면 가장 먼저 무엇이 깨지나?",
+   "angle": "스케일업 · 기술 한계",
+   "answerable": "partial",
+   "answer_sketch_ko": "깨질 후보를 팀이 이미 지목해 둔 것이 답의 강점이다. ① eps 260m은 문헌 200~300m의 중간값을 취한 설계값이며(▽ 먼저 인정), 운영값은 실데이터 k-거리 그래프로 재도출한다 — 같은 날 중복은 하루로 접은 뒤 무릎점 선택, '도시냐 농촌이냐' 분류 판단이 '산포 측정'으로 바뀌고 지역 티어는 콜드스타트 초기값만 남는다. ② 가중치 30/30/20/20은 사전 설계값(prior)이고 주장하는 것은 값이 아니라 순서다 — 969개 조합 전수 민감도에서 ±5 이웃 판정 변화 중앙 3·최대 9건, 최종 값은 파일럿 경험 손해율 적합으로 정한다. ③ 케어 any 규칙은 실측에서 30건 전원 1개월 발동이라 k≥2 보수화만으로 감액이 전건 소멸(동시변화형 평균 할인 7.93%→19.57%) — 월수 비례 개선이 권고안이고 팀 결정 미결이다. ④ 안전장치: 커버리지 80% 미만 보류, 명멸 실측 85/2,160 드라이버-월(3.9%)·폴백 0. 그리고 반드시 먼저 말할 것 — 검증된 것은 예측력이 아니라 판정 로직의 일관성이다(Simulated).",
+   "gap": "스케일 그 자체를 다룬 스탠스가 없다 — 계약 수 증가에 따른 계산·운영 부하, 파이프라인 처리량, 전국 지역 확대 시 클러스터 품질 저하 곡선, 실데이터의 결측·이탈 처리 방침이 0건. 파일럿 N도 모수 확인 전이라 숫자를 말할 수 없어 '얼마나 큰 표본에서 검증할 것인가'에 답할 수 없다.",
+   "risk": "medium",
+   "used_positions": [
+    "검증의 정직 한계 (전 문서 공통)",
+    "로드맵 — 캘리브레이션과 eps 재도출",
+    "운영 eps 결정 절차 — k-거리 산포 측정 (파일럿)",
+    "11번 — 가중치 30/30/20/20의 지위",
+    "연간 케어 any 규칙 — 실측 결과 (정직 고지)",
+    "13번 — 데이터 확보 3경로와 파일럿"
+   ]
+  },
+  {
+   "question_en": "A rider with no surcharge path is a free option for the policyholder. Good risks opt in, bad risks stay out or lapse the moment care fires. How do you price against that anti-selection?",
+   "question_ko": "할증 경로가 없는 특약은 고객에게 공짜 옵션이다. 좋은 위험만 가입하고 나쁜 위험은 가입하지 않거나 케어가 뜨는 순간 이탈한다. 이 역선택을 요율에 어떻게 반영하나?",
+   "angle": "언더라이팅 · 역선택",
+   "answerable": "partial",
+   "answer_sketch_ko": "역선택에 대한 승인 스탠스는 없고, 인접 사실로만 부분 방어가 가능하다. ① 오버레이 구조라 다운사이드가 기존 마일리지 요율 아래로 내려가지 않는다(하한 = 기준 요율, 할인 캡 45%). ② 실측 판정 분포 — 우대 118 / 기본 56 / 보류 6 · 케어 30(16.7%)이라 대다수가 우대로 수렴하는 구조임은 드러난다. ③ 데이터 회피는 이득이 되지 않는다 — 커버리지 80% 미만은 판정 보류(INSUFFICIENT_EVIDENCE)라 우대를 받지 못하고, sparse 6건은 전건 변동 0이라 불이익도 이익도 없다. ④ 케어의 요율 반영은 자동이 아니라 사람 검토를 거치며, 감액은 발생 월수 비례(13.0 × 발생월수 ÷ 12, 1개월 시 1.08%p)로 개선을 권고 중이라 이탈 유인 자체를 줄이는 방향이다(팀 결정 미결). 여기까지가 근거 있는 범위이고, '누가 가입하는가'의 선택 편향을 요율에 반영하는 논리는 없다.",
+   "gap": "역선택·이탈(lapse)·재가입·인수심사 연동 스탠스 0건. 가입률·유지율 가정, 케어 판정 후 고객 해지 시나리오, 좋은 위험만 남을 때 손익분기 12.4%가 어떻게 움직이는지에 대한 감도 분석이 없다. 손익분기 계산이 180 시나리오의 고정 구성(6유형 균등 배분, 인구 비율 아님)을 전제하는데 실제 가입 구성은 그와 다를 수밖에 없다는 점도 다뤄지지 않았다.",
+   "risk": "medium",
+   "used_positions": [
+    "상품 지위 — 할증 경로가 구조상 없다",
+    "요율 구조",
+    "우대 조건",
+    "권고 — 감액을 발생 월수에 비례 (팀 결정 필요, 미결)",
+    "페르소나는 결과 생성기가 아니라 테스트 집합",
+    "12번 — 손익분기 감도"
+   ]
+  },
+  {
+   "question_en": "If a carrier signs today, when do they see a return? Give me the pilot cost, the time to a credible loss-ratio read, and the payback period.",
+   "question_ko": "보험사가 오늘 계약하면 언제 수익이 보이나? 파일럿 비용, 손해율을 신뢰할 만하게 읽을 수 있는 시점, 회수 기간을 말해달라.",
+   "angle": "ROI · 파일럿 경제성",
+   "answerable": "partial",
+   "answer_sketch_ko": "타임라인의 절반만 답할 수 있다. 파일럿 설계는 승인돼 있다 — 기준선 2개월 + 관찰 6개월, 개입군/대조군 병행, 지역 유형 2개 이상, N은 UBI 가입 고령 고객 모수 확인 후 확정(현재 미확정이라 숫자를 말하지 않는다). 즉 '최소 8개월이면 1차 판독'까지는 설계로 말할 수 있고, 그 시점에 무엇을 하는지도 정의돼 있다 — 경험 손해율로 가중치를 위험군 식별력·손해율 개선 목표에 재적합, 채널별 분산으로 신뢰도 정식 추정, 지역별 eps를 k-거리 그래프로 재도출, 심도는 요율 변수가 아니라 케어 효과 측정(개입 전후 건당 손해액 변화) 지표로 사용. 회수의 기준선은 케어 세그먼트 클레임 12.4% 절감이다. 비용·회수 기간은 근거가 없다.",
+   "gap": "파일럿 비용·투자액·회수 기간·NPV/IRR 0건. 파일럿 N을 말하는 것 자체가 금지(must_not_say)라 규모를 특정할 수 없고, 관찰 6개월로 손해율 차이가 통계적으로 읽히는지에 대한 검정력(power) 계산도 없다 — '8개월이면 답이 나온다'를 근거 있게 주장할 수 없다는 뜻이다.",
+   "risk": "high",
+   "used_positions": [
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "로드맵 — 캘리브레이션과 eps 재도출",
+    "12번 — 손익분기 감도",
+    "12번 — 사고 심도 비예측",
+    "발표 전 우선순위 (투자 대비 효과순, 잔여 액션)"
+   ]
+  },
+  {
+   "question_en": "The senior segment caps your growth. You say the engine extends by re-tuning the learning window — has that been tested, and what is the revenue path beyond seniors?",
+   "question_ko": "고령 세그먼트는 성장의 상한이다. 학습 창만 재조정하면 엔진이 확장된다고 했는데 검증해 본 적 있나? 고령 이후의 매출 경로는 무엇인가?",
+   "angle": "확장성 · 성장 경로",
+   "answerable": "partial",
+   "answer_sketch_ko": "확장 '논리'는 승인돼 있고 '경로'는 없다. 승인된 것: 고령자 한정은 시장을 좁힌 선택이 아니라 개인 기준선이 성립하는 조건을 고른 방법론적 선택이며, 30~50대의 패턴 다양성은 평소가 주 단위로 바뀐다는 뜻이라 우리 방식에서는 신호가 아니라 노이즈다. 확장 로드맵(1차 CSC 제안 수용): 다음 대상은 연령이 아니라 '기준선이 서는가'로 고르고 요일 리듬이 일정한 정기 통근자가 후보이며, 필요한 것은 학습 창의 요일 분리 재조정뿐 — 판정식·가중치·게이트 불변이고 학습 창은 코드에서 파라미터로 분리돼 있다. 정직 고지도 함께 승인돼 있다: '젊은 층에선 안 된다'는 실험으로 뒷받침되지 않은 방법론적 예측이며(근거지도 §1 약한 고리), '젊은 층에서 실험으로 확인했다'는 취지는 금지 표현이다. 다중 기준선은 '어느 기준선 대비 급변인가'의 귀속 규칙과 오탐 검증을 새로 해야 한다는 것까지가 스탠스다.",
+   "gap": "확장 세그먼트의 시장 규모·매출 기여·출시 순서·요율 구조가 0건이라 '성장 경로'에 답할 수 없다. 확장 검증 계획도 '새로 해야 한다'는 서술뿐 일정·방법·비용이 없다. 결국 이 질문의 절반(방법론)은 강하고 절반(사업 경로)은 공백이라, 사업 쪽으로 후속 질문이 들어오면 Q1과 같은 벽에 부딪힌다.",
+   "risk": "medium",
+   "used_positions": [
+    "1. 타겟 한정 — 왜 고령자인가",
+    "고령자 한정(타깃 선정) 논리",
+    "젊은 층 패턴 다양성 = 노이즈 주장",
+    "1b. 고령층은 기준선이 가장 잘 서는 집단 (외부 문헌)",
+    "발표 원칙 세 줄 (전 항목 공통)"
+   ]
+  },
+  {
+   "question_en": "You are pitching this in Singapore. If a Singapore insurer wanted to run this tomorrow, what changes — PDPA consent requirements, MAS product notification, the local telematics market? Walk me through the delta from Korea.",
+   "question_ko": "싱가포르에서 발표하고 계십니다. 현지 보험사가 내일 이걸 돌린다면 무엇이 달라집니까 — PDPA 동의 요건, MAS 상품 신고, 현지 텔레매틱스 시장. 한국 대비 차이를 설명해 주십시오.",
+   "angle": "규제 이식성 (싱가포르 PDPA/MAS)",
+   "answerable": "none",
+   "answer_sketch_ko": "지식층에 싱가포르 관련 서술이 단 한 줄도 없습니다(knowledge/ 및 sources/ 전수 grep 결과 Singapore·PDPA·MAS 0건). 지금 말할 수 있는 것은 관할과 무관한 구조 사실뿐입니다 — '6b. 최소수집·파생값 설계': 궤적·경로 미수집, 트립당 도착지 좌표+날짜 17열, POI 조회 없음, 위치 원본이 필요한 창은 어느 시점에도 직전 2개월분, 이후는 거점 중심·반경 파생값과 월별 안/밖 카운트만, 존 대조는 단말 수행 가능(파일럿 옵션)이고 보험사로는 월 집계만 전송, 동의는 특약 가입 시 목적 특정 동의·철회 시 파기. 즉 '어느 관할의 보존·최소수집 원칙에도 구조가 부합한다'는 수위까지만 답할 수 있고, PDPA 조문·MAS 절차·현지 시장 어느 것도 답할 근거가 없습니다. '발표 원칙 세 줄'의 ✕ 대응 규칙에 따르면 '없습니다 + 로드맵'이 정답 형식입니다.",
+   "gap": "싱가포르 PDPA 동의·목적제한 조항 매핑 없음. MAS 상품 신고/승인 절차 스탠스 없음. 싱가포르 텔레매틱스·UBI 시장 현황 데이터 없음. 국가별 규제 비교표 자체가 지식층에 부재. 한국 위치정보법 제23조 하나만 있고 그것도 자체 해석·법무 미검토(forbidden_claims 250: '법적 문제 없다' 발언 금지).",
+   "risk": "high",
+   "used_positions": [
+    "6b. 최소수집·파생값 설계",
+    "6. 위치데이터 보존의 법적 제약 — 법령 사실 교정",
+    "위치데이터 보유 — 4개월 창 + 파생값 판정",
+    "발표 원칙 세 줄 (전 항목 공통)"
+   ]
+  },
+  {
+   "question_en": "Under GDPR Article 22, a decision that produces legal or similarly significant effects and is based solely on automated processing gives the data subject a right to human intervention and to contest it. Is your 'care' determination such a decision? What is your lawful basis, and did you run a DPIA?",
+   "question_ko": "GDPR 22조상 법적 또는 유사하게 중대한 효과를 낳는 전적으로 자동화된 결정에는 사람 개입 요구권과 이의제기권이 붙습니다. 귀사의 '케어' 판정이 여기 해당합니까? 적법근거는 무엇이고 DPIA는 수행했습니까?",
+   "angle": "규제 이식성 (GDPR 22조·DPIA)",
+   "answerable": "partial",
+   "answer_sketch_ko": "구조적으로는 유리한 재료가 실재합니다. '9번 — 판정 결정론 엔진': 판정은 시드 sha256(전역시드|driver_id|month)의 결정론 엔진이고 같은 입력=비트 동일 출력, 판정 계약 테스트 27건으로 고정, LLM은 판정에 관여하지 않음. 'AI 역할 서술': 보험료·인수·케어 최종 결정은 사람. '감액 13%p의 지위': 자동 요율 반영이 아니라 사람 검토(care_review)이며 개입은 벌점이 아니라 점검 권유·예방 지원, 해제는 신청 없이 지표 정상 복귀 그 달에 자동. '상품 지위 — 할증 경로가 구조상 없다': 할증 항이 코드에 없고 하한 0%=기준 요율이라 최악이 '덜 깎임'이므로 '중대한 불리 효과'의 수위가 낮다는 논증이 가능. 여기까지가 근거 있는 답입니다.",
+   "gap": "GDPR 22조 해당 여부에 대한 팀 스탠스 자체가 없음. 적법근거(동의 vs 계약이행) 선택 기록 없음 — '동의는 특약 가입 시 목적 특정 동의'라는 한국 설계만 있음. DPIA 수행·계획 기록 없음. 정보주체 권리 처리 흐름(열람·정정·이의제기·인간 재심 요청 창구) 정의 없음. '사람 검토(care_review)'가 GDPR이 요구하는 '의미 있는 인간 개입' 수준인지 판단한 근거 없음. 법무 검토는 한국 위치정보법 건조차 미완('발표 전 우선순위' ④).",
+   "risk": "high",
+   "used_positions": [
+    "9번 — 판정 결정론 엔진과 에이전트 잔여 역할",
+    "AI 역할 서술",
+    "감액 13%p의 지위 — 샌드박스 예시값",
+    "상품 지위 — 할증 경로가 구조상 없다",
+    "6b. 최소수집·파생값 설계"
+   ]
+  },
+  {
+   "question_en": "The EU AI Act lists risk assessment and pricing in insurance as high-risk. Where does your system sit? Have you classified it, and what conformity assessment, technical documentation and logging would you need?",
+   "question_ko": "EU AI Act는 보험의 위험평가·요율산정을 고위험으로 분류합니다. 귀사 시스템은 어디에 위치합니까? 분류를 해 보셨습니까? 적합성 평가·기술문서·로깅 의무는 어떻게 충족할 계획입니까?",
+   "angle": "규제 이식성 (EU AI Act 고위험 분류)",
+   "answerable": "none",
+   "answer_sketch_ko": "AI Act·고위험·적합성평가 관련 서술이 지식층에 0건입니다. 다만 분류 논증에 쓸 사실은 있습니다 — 'AI 역할 서술': AI 역할은 ①합성 생활맥락 생성(오프라인 1회·캐시 고정) ②후보 가중치 탐색·랭킹(오프라인 산출물, 감사 가능) ③XAI 추출값의 직원용 설명문 변환(LLM) 셋뿐이고, 채택 가중치 30/30/20/20은 사람이 설계한 초기값(prior), 민감도 969는 결정론 재판정. '9번 — 루프 용어 철회': 에이전트 역할 축소는 후퇴가 아니라 재현성·감사가능성 요건에 맞춘 설계 결정이라고 이미 명문화. 즉 '판정 경로에 학습형 AI가 없다(결정론 규칙 엔진)'는 것이 분류 논쟁의 핵심 카드가 되지만, 그것이 AI Act상 어떤 결론으로 이어지는지에 대한 팀 판단은 없습니다.",
+   "gap": "AI Act 부속서 III 해당 여부 판단 없음(모터 UBI가 생명·건강보험 항목에 걸리는지 미검토). 규칙 기반 결정론 엔진이 AI Act의 'AI 시스템' 정의에 들어가는지 스탠스 없음. 리포트 생성 LLM의 규제 지위 미판단. 적합성평가·기술문서·자동 로깅·시장출시후 모니터링 계획 전무. EU 대리인/제공자-배포자 역할 구분 없음.",
+   "risk": "high",
+   "used_positions": [
+    "AI 역할 서술",
+    "9번 — 판정 결정론 엔진과 에이전트 잔여 역할",
+    "9번 — '루프' 용어 철회"
+   ]
+  },
+  {
+   "question_en": "You built a product only for the elderly. In many Western markets age is a restricted or scrutinised rating factor, and an age-gated insurance product invites an unfair-discrimination challenge. How do you defend age as an eligibility criterion outside Korea?",
+   "question_ko": "고령자 전용 상품을 만드셨습니다. 서구권 상당수 시장에서 연령은 제한되거나 엄격히 심사되는 요율 요소이고, 연령으로 가입을 가르는 보험상품은 부당차별 시비를 부릅니다. 한국 밖에서 연령을 가입 요건으로 쓰는 것을 어떻게 방어합니까?",
+   "angle": "규제 이식성 (연령 차별금지)",
+   "answerable": "partial",
+   "answer_sketch_ko": "논거는 두 겹이 실재합니다. ①목적 논거 — '1. 타겟 한정 — 왜 고령자인가': 고령자 한정은 시장을 좁힌 선택이 아니라 '개인 기준선이 성립하는 조건'을 고른 방법론적 선택이며, 재는 것은 위험의 절대 수준이 아니라 평소 대비 변화다. '고령자 한정(타깃 선정) 논리': 확장에 필요한 건 알고리즘 교체가 아니라 학습 창 재조정이고, 확장 로드맵의 다음 대상은 연령이 아니라 '기준선이 서는가'(정기 통근자 후보, 판정식·가중치·게이트 불변). ②효과 논거 — '상품 지위': 요율표가 아니라 기존 마일리지 할인 위에 얹히는 할인 자격 점수(오버레이)라 할증 경로가 코드에 없고(180건 전건 candidate_surcharge_rate_pct=0), 하한 0%=기준 요율, 180건 중 150건이 기존 대비 동등 이하·113건은 더 낮음 — 즉 연령으로 불이익을 주는 구조가 아니라 연령군에 할인 기회를 여는 구조. '12번 — 사고 심도 비예측'은 신체 취약성 기반 심도 예측이 인수차별 논란에 직결된다는 이유로 심도를 판정 입력에서 명시적으로 배제했다고 이미 기록.",
+   "gap": "'할인 전용 오버레이면 차별금지 심사를 피할 수 있는가'에 대한 법적 검토 없음. EU 성별 지침 선례·미국 주별 보험감독국(DOI)의 연령 요율 규제·싱가포르 규제 어느 것도 지식층에 없음. 연령이 '요율 요소'가 아니라 '가입 자격'이라는 구분이 각 관할에서 통하는지 근거 없음. 젊은 층 미확장은 '직접 실험 없음'이 스탠스('젊은 층 패턴 다양성 = 노이즈 주장', hypothesis 등급)라 '왜 고령자만'에 실측으로 못 답함.",
+   "risk": "high",
+   "used_positions": [
+    "1. 타겟 한정 — 왜 고령자인가",
+    "고령자 한정(타깃 선정) 논리",
+    "상품 지위 — 할증 경로가 구조상 없다",
+    "12번 — 사고 심도 비예측",
+    "젊은 층 패턴 다양성 = 노이즈 주장"
+   ]
+  },
+  {
+   "question_en": "Location is the textbook proxy for race and income — this is why redlining rules exist. Your whole product is built on where people drive. Show me the fairness testing: disparate impact across protected groups, not just across terrain types.",
+   "question_ko": "위치는 인종·소득의 교과서적 대리변수이고 그래서 레드라이닝 규제가 존재합니다. 귀사 상품은 통째로 '어디를 운전하는가' 위에 서 있습니다. 공정성 검증을 보여주십시오 — 지형 유형이 아니라 보호속성별 차별적 영향 말입니다.",
+   "angle": "윤리·공정성 (대리차별 / disparate impact)",
+   "answerable": "partial",
+   "answer_sketch_ko": "이 축은 지식층에서 가장 두꺼운 편입니다. '11번 — 지역 중립성의 수위': 통제 불가 속성(거주지·위치·연령)에 벌점 경로가 없음(location_penalty 0.0, outer_zone_policy context_only_no_location_penalty). 밖 비중을 배점에 섞는 부결안(25/40/35)은 환경별 안 비중 격차(도심 89.7·교외 87.1·광역 81.1%) 때문에 실력이 같아도 거주 환경으로 배점이 갈려 부결. '4b. 지역 무관 실측 2건': 실험 A(지역별 eps 3개→전국 단일 260m 재판정) 고정 기준 0/180·rolling 3/180(경계), 실험 B(같은 60명을 도심·교외·광역 배치) 케어 60/60·우대 54/60 동일, 갈린 6명은 케어 발동 5+문턱 근접 1. '13번 — 사고잦은곳': 사고다발지를 판정 (−)요소로 넣으면 인근 거주자가 행동과 무관하게 감점되어 위치 중립이 무너지므로 판정에서 빼고 케어 리포트 안내 정보로만 채택. 다만 '완전 지역 중립'은 must_not_say이고 '지역 중립성은 이 배분의 목적이 아니라 부수 효과'라고 수위가 명시돼 있습니다.",
+   "gap": "검증이 전부 합성 데이터·3지형(도심/교외/광역)에서만 수행됨. 인종·소득·이민자 지위 등 보호속성 라벨이 데이터에 없어 disparate impact를 측정한 적 없음. 공정성 지표(4/5 rule, demographic parity, equalized odds 등) 정의·산출 전무. 서구권 레드라이닝 규제·NAIC 모델법·EU 비차별 지침 어느 것도 지식층에 없음. 실데이터 파일럿에서 보호속성 검증을 어떻게 할지 계획도 없음.",
+   "risk": "high",
+   "used_positions": [
+    "11번 — 지역 중립성의 수위",
+    "4b. 지역 무관 실측 2건",
+    "13번 — 사고잦은곳: 자리를 바꿔 채택",
+    "2. '대부분의 사고는 생활권 안에서 난다'",
+    "지역 차이는 개인 실측(P90)이 흡수한다"
+   ]
+  },
+  {
+   "question_en": "Your model needs per-trip destination coordinates and visit dates for every customer. In Singapore or Europe, who actually gives you that? Is the data even available, and at what cost?",
+   "question_ko": "모델은 고객별 트립당 도착지 좌표와 방문 날짜를 필요로 합니다. 싱가포르나 유럽에서는 그걸 실제로 누가 줍니까? 데이터 가용성 자체가 있습니까, 비용은 얼마입니까?",
+   "angle": "기술 한계 / 국가별 데이터 가용성",
+   "answerable": "partial",
+   "answer_sketch_ko": "확보 경로는 정의돼 있으나 전부 한국 채널입니다 — '13번 — 데이터 확보 3경로와 파일럿': ①기존 채널(국내 UBI는 외부 앱 산정 점수만 동의하에 전송하는 구조라 원좌표 반출 없이 같은 채널에 파생 지수를 얹어 시작, KIRI리포트 2024.7) ②특약 동의 신규 수집(궤적이 아니라 도착지 좌표+방문 날짜+트립 거리·위험 이벤트 수뿐이라 동의 범위가 통상 UBI보다 좁음) ③공공·제휴(TAAS, 복지부·건보공단, 지자체 — 가용성 확인 필요라고 자체 표기). 파일럿은 기준선 2개월+관찰 6개월·개입군/대조군 병행·지역 유형 2개 이상이고 N은 미확정이라 숫자를 말하지 않기로 돼 있습니다. 관할 무관 논거는 '요구 데이터가 얇다'는 것 하나 — 궤적·POI·경로 폴리라인이 필요 없다는 점(6b)이 어느 나라에서든 협상 난이도를 낮춥니다. 해외 보정 앵커가 존재한다는 사실은 확인됨('데이터생성 — 연간 주행거리': FHWA 12,305km · Candrive 11,017.6km · Ozcandrive 8,993→6,787km · LongROAD).",
+   "gap": "싱가포르·EU·미국의 데이터 확보 주체(OEM·텔레매틱스 사업자·현지 UBI 앱) 스탠스 없음. TAAS에 대응하는 해외 공공 사고통계(ERSO는 status unverified, IIHS·CARE 등 미등재) 없음. 국가별 텔레매틱스 보급률·데이터 비용 수치 없음. '국내 고령자 연간 주행거리 통계 부재' 확인은 한국 한정이라 해외 가용성 주장의 근거가 되지 못함. 파일럿 N 자체가 미확정.",
+   "risk": "medium",
+   "used_positions": [
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "6b. 최소수집·파생값 설계",
+    "데이터생성 — 연간 주행거리 환경별 평균 2,000/3,101/6,148km",
+    "국내 고령자 연간 주행거리 통계 부재 (◎ — 없다는 것을 확인함)",
+    "실현 가능성 — 데이터 3경로·사고잦은곳·도로 위계"
+   ]
+  },
+  {
+   "question_en": "Concretely: to sell this you have to file a rate with a supervisor. Which regulator, what filing route, how long does approval take, and what actuarial justification will they demand for a 1–7 point behavioural bonus with no loss experience behind it?",
+   "question_ko": "구체적으로 — 이걸 팔려면 감독당국에 요율을 신고해야 합니다. 어느 당국에, 어떤 경로로, 승인에 얼마나 걸립니까? 손해 실적이 없는 1~7%p 행동 기반 보너스에 대해 당국은 어떤 계리적 정당화를 요구합니까?",
+   "angle": "규제 승인 절차 / 요율 신고",
+   "answerable": "none",
+   "answer_sketch_ko": "신고·인가·감독당국 절차에 대한 서술이 지식층에 0건입니다 — 한국(금융위·금감원·보험개발원 신고 절차)조차 없습니다. 말할 수 있는 것은 요율의 지위와 재보정 계획뿐 — '요율 구조': 우대 보너스 1~7%p 점수 비례(75점=1, 100점=7), 케어 시 보너스 정지+할인 13%p 축소, 상한 45%, 할증 경로 없음, 하한=기준 요율. '감액 13%p의 지위': source_status = illustrative_economics_sandbox_not_final_tariff(손익 예시값이지 최종 요율 아님) — 이건 '아직 요율이 아니다'라는 정직 고지이지 신고 계획이 아닙니다. '11번 — 가중치 30/30/20/20의 지위': 값은 파일럿 손해율로 재보정될 사전 설계값(prior)이고 네 축은 순보험료 분해에 1:1 대응(노출 30, 빈도율 50=안30+밖20, 장래위험 20). '12번 — 손익분기 감도': 케어 세그먼트(30건·16.7%) 클레임 12.4% 감소 시 균형(심도 1.2× 시 10.3%). 여기까지가 계리적 서사의 전부이고, 그것을 어느 당국에 어떤 서류로 내는지는 백지입니다.",
+   "gap": "어느 관할에서도 요율 신고 절차·소요 기간·필요 서류 스탠스 없음. 파트너 보험사(신고 주체) 미지정. 규제 샌드박스 활용 계획 없음(한국 혁신금융서비스 포함). 손해 실적 없는 상태에서의 계리적 정당화 논리(파일럿 손해율 확보 전 신고 가능 여부) 미검토. '오버레이는 신규 요율 신고가 아니라 기존 특약 변경으로 갈 수 있다' 같은 전략적 스탠스 없음.",
+   "risk": "high",
+   "used_positions": [
+    "요율 구조",
+    "감액 13%p의 지위 — 샌드박스 예시값",
+    "11번 — 가중치 30/30/20/20의 지위",
+    "12번 — 손익분기 감도",
+    "13번 — 데이터 확보 3경로와 파일럿"
+   ]
+  },
+  {
+   "question_en": "A customer in Germany gets flagged 'care' and loses 13 points of discount. She calls and asks why. What exactly does she see — the algorithm, the thresholds, her own numbers? And how does she contest it?",
+   "question_ko": "독일 고객이 '케어'로 분류돼 할인 13%p를 잃었습니다. 전화해서 이유를 묻습니다. 정확히 무엇을 보게 됩니까 — 알고리즘입니까, 임계값입니까, 본인 수치입니까? 그리고 어떻게 이의를 제기합니까?",
+   "angle": "알고리즘 설명의무 / 고객 대면 설명",
+   "answerable": "partial",
+   "answer_sketch_ko": "설명가능성을 위해 성능을 포기한 기록이 실재합니다 — '10번 — HDBSCAN 대비 현행 유지': HDBSCAN이 존 모양 적합도에서 우위(0.879~0.935 대 0.715~0.880)임을 먼저 인정하면서도 현행을 유지한 이유가 성능이 아니라 '반경 근거의 출처와 설명가능성'이며, 260m는 문헌·실측으로 약관·고객 설명이 되지만 '무리 3'은 소표본 밀도 추정이라 같은 설명이 불가하다고 명문화. '생활권 — k-거리 재산정 계획': 파일럿에서 한 번 재서 eps 고정값으로 쓰는 이유가 '약관·민원에 쓸 수 있는 숫자'. 설명 재료도 결정론적으로 재현 가능('9번 — 판정 결정론 엔진': 같은 입력=비트 동일 출력). 케어 게이트도 고객에게 말할 수 있는 형태 — '케어 게이트': 직전 2개월 평균 대비 이동 +25%p AND 위험행동 +20%p 동시. 해제 조건도 설명 가능 — 신청 없이 지표 정상 복귀 그 달에 자동. 여기까지가 답할 수 있는 범위입니다.",
+   "gap": "XAI 산출물이 '직원용 설명문'으로만 정의돼 있음('AI 역할 서술' ③) — 고객 대면 설명 산출물이 정의된 적 없음. 이의제기(appeal)·재심 절차 없음. 미국 FCRA식 adverse action notice 대응물 없음. 어느 수준까지 공개하는가(임계값 공개 여부, 본인 수치 제공 범위) 스탠스 없음. 독일·EU의 설명의무 조문 매핑 없음. 케어 판정 시 고객 통지 시점·문구 정의 없음.",
+   "risk": "medium",
+   "used_positions": [
+    "10번 — HDBSCAN 대비 현행 유지",
+    "생활권 — k-거리 재산정 계획 (ε 캘리브레이션)",
+    "9번 — 판정 결정론 엔진과 에이전트 잔여 역할",
+    "케어 게이트",
+    "AI 역할 서술",
+    "감액 13%p의 지위 — 샌드박스 예시값"
+   ]
+  },
+  {
+   "question_en": "Where does the data physically sit? If a Korean team operates this for a Singapore or EU book, you have cross-border transfer, controller/processor allocation, and residency requirements. What is your architecture answer?",
+   "question_ko": "데이터는 물리적으로 어디에 있습니까? 한국 팀이 싱가포르나 EU 계약을 위해 이걸 운영하면 국경 간 이전, 컨트롤러/프로세서 역할 배분, 데이터 현지화 요건이 걸립니다. 아키텍처 답변은 무엇입니까?",
+   "angle": "규제 이식성 (국경 간 데이터 이전 / 데이터 현지화)",
+   "answerable": "none",
+   "answer_sketch_ko": "국경 간 이전·데이터 현지화·컨트롤러/프로세서 관련 서술이 지식층에 0건입니다. 유리한 구조 사실만 있습니다 — '6b. 최소수집·파생값 설계': 존 대조는 단말에서 수행 가능(파일럿 설계 옵션)이고 보험사로는 월 집계만 넘어감, 좌표는 허용목록 DTO(sanitizeGaipBundleForUi)로 표시 계층 유출 차단, 지도는 자택 기준 상대변위 10m 반올림(목적지당 최대 24점). 즉 '원좌표가 국경을 넘을 필요가 구조상 없다 — 넘는 것은 월 집계와 파생값'이라는 답이 가능하고, 이건 이전 규제의 표면적을 줄이는 설계입니다. 하지만 실제 배치(어느 클라우드·어느 리전·누가 컨트롤러) 스탠스는 없습니다.",
+   "gap": "데이터 레지던시·클라우드 리전 스탠스 없음. GDPR 국외이전 근거(적정성 결정·SCC·BCR) 미검토. 컨트롤러/프로세서 역할 배분 정의 없음(보험사가 컨트롤러, 우리가 프로세서인지). 온디바이스 존 대조는 '파일럿 설계 옵션'일 뿐 구현·검증 안 됨. 싱가포르 PDPA 이전 요건 미검토.",
+   "risk": "medium",
+   "used_positions": [
+    "6b. 최소수집·파생값 설계",
+    "위치데이터 보유 — 4개월 창 + 파생값 판정",
+    "13번 — 데이터 확보 3경로와 파일럿"
+   ]
+  },
+  {
+   "question_en": "Your 260 metre radius and two-month baseline were derived from Korean urban structure and Korean travel surveys. Singapore is a high-rise city-state; rural France is not. Do these parameters transfer, or does the whole model need re-derivation per country?",
+   "question_ko": "260m 반경과 2개월 기준선은 한국 도시구조와 한국 통행조사에서 나왔습니다. 싱가포르는 고층 도시국가이고 프랑스 농촌은 다릅니다. 이 파라미터가 이식됩니까, 아니면 나라마다 모델을 다시 유도해야 합니까?",
+   "angle": "기술 이식성 (파라미터 국가 의존성)",
+   "answerable": "partial",
+   "answer_sketch_ko": "이 축은 실제로 답이 됩니다. ①260m는 한국산이 아님 — '4c. eps 260m의 근거': 절대값을 주는 문헌은 없어 설계값임을 먼저 인정하되, 기준값은 장소 인식 문헌 통용 대역의 한가운데(Zheng 2009=200m, Montoliu 2013=250m·권장 200~300m)로 국적 없는 문헌 대역입니다. ②판정 경계는 파라미터가 아니라 개인 실측 — 'eps와 생활권 원의 층 분리': 판정 경계는 max(코어 500m, min(개인 P90, 2km))이고 eps는 그 아래로 내려오지 않음. '지역 차이는 개인 실측(P90)이 흡수한다': 같은 규칙인데 광역 813m·도심 500m로 갈리며 우리가 나눈 게 아니라 데이터가 나눈 것. ③파라미터 흔들어도 판정이 안 바뀜 — '4b. 지역 무관 실측 2건': 전국 단일 260m 재판정 고정 기준 0/180·rolling 3/180(경계). ④재보정 절차가 이미 정의됨 — '생활권 — k-거리 재산정 계획': k=2, 다른 날 방문 중 2번째 이웃 거리 풀링, 파일럿 4~6개월차 1회 → 이후 연 1회. '파라미터 철학: 정할 수 없는 동안은 문헌과 원리로 시작하고, 잴 수 있게 되면 잰다.' ⑤2개월도 한국산이 아님 — '베이스라인 2개월 — 역산 논리 4단계' + Isaacman 2011의 관찰 창 60일과 일치. 즉 답은 '재유도가 아니라 재측정이며 절차가 이미 코드·계획에 있다'입니다.",
+   "gap": "비한국 지리에서 실제로 돌려본 적 없음(합성 3환경 전부 한국 가정). MDPI 국가별 ε(브라질 120m~칠레 1,000m)는 국가별 임계 타당성의 유일한 근거인데 status가 '발표 인용 전 원문 재확인'이고 대상이 인구 격자라 방법 이식 주장 금지. DEGURBA는 UN 표준이라 이식성 카드가 될 수 있으나 'DEGURBA(지역 분류 기준) 채택'은 status unverified·'채택 결정만 있고 미구현'. 싱가포르식 고층 밀집(수직 방향 거점 분리)에서 평면 하버사인 260m가 성립하는지 검토 없음. 기준선 1/2/3개월 민감도조차 아직 안 돌린 백로그('7b').",
+   "risk": "medium",
+   "used_positions": [
+    "4c. eps 260m의 근거",
+    "4b. 지역 무관 실측 2건",
+    "eps와 생활권 원의 층 분리 — eps는 판정 기준이 아니다",
+    "지역 차이는 개인 실측(P90)이 흡수한다",
+    "생활권 — k-거리 재산정 계획 (ε 캘리브레이션)",
+    "베이스라인 2개월 — 역산 논리 4단계 (0729 재서술)",
+    "DEGURBA(지역 분류 기준) 채택",
+    "7b. 기준선 민감도 실측 — 백로그 (정직 고지)"
+   ]
+  },
+  {
+   "question_en": "Singapore requires drivers aged 65 and above to pass periodic medical examinations to keep their licence; several European countries have their own renewal regimes. Your product overlaps with what the state already does. Are you duplicating it, and would a regulator ever ask you to hand over your 'care' flags?",
+   "question_ko": "싱가포르는 65세 이상 운전자에게 면허 유지를 위한 주기적 건강검진을 요구하고, 유럽 여러 나라도 자체 갱신 제도가 있습니다. 귀사 상품은 국가가 이미 하는 일과 겹칩니다. 중복입니까? 그리고 감독당국이 귀사의 '케어' 플래그를 넘기라고 요구하면 어떻게 합니까?",
+   "angle": "규제 이식성 (면허 제도 상호작용 / 당국 제출 요구)",
+   "answerable": "none",
+   "answer_sketch_ko": "각국 면허 갱신·의료검진 제도에 대한 서술이 지식층에 0건이고, 당국 제출 요구 대응 스탠스도 0건입니다. 인접 재료만 있습니다 — '질병 판별 연구 3편(DRIVES·Bayat·LongROAD ML)의 사용 범위': 이 3편은 결과 변수가 사고가 아니라 인지 상태인 질병 판별 연구이므로 문제정의 본문에 넣지 말고 Q&A 백업으로만 쓰며 '저희 상품은 질병을 진단하지 않습니다'를 반드시 병기, 표현도 '사고 이전'이 아니라 '진단·자각 이전'. '감액 13%p의 지위': 운영상 개입은 벌점이 아니라 점검 권유와 예방 지원. 즉 '우리는 면허 적격성을 판정하지 않고 질병을 진단하지 않으며, 케어는 처분이 아니라 점검 권유'라는 선까지만 말할 수 있습니다. 당국 제출 요구에 대한 답은 없습니다.",
+   "gap": "싱가포르·EU 각국 고령운전자 면허 갱신·의료검진 제도 정보 없음. 국가 제도와 상품의 역할 분담 스탠스 없음(보완인가 중복인가). 감독당국·경찰·면허당국의 케어 플래그 제출 요구에 대한 대응 원칙 없음 — 이건 프라이버시 서사 전체를 무너뜨릴 수 있는 질문인데 방어선이 없음. 가족 통지 여부 스탠스도 없음.",
+   "risk": "medium",
+   "used_positions": [
+    "질병 판별 연구 3편(DRIVES·Bayat·LongROAD ML)의 사용 범위",
+    "감액 13%p의 지위 — 샌드박스 예시값",
+    "1b. 고령층은 기준선이 가장 잘 서는 집단 (외부 문헌)"
+   ]
+  },
+  {
+   "question_en": "You cite research where driving patterns predict cognitive decline with AUC 0.82. If your care signal is in effect a health inference, that is special-category data under GDPR Article 9 — which needs explicit consent and a much heavier basis. How do you avoid becoming a de facto medical device?",
+   "question_ko": "주행 패턴이 인지 저하를 AUC 0.82로 예측한다는 연구를 인용하십니다. 케어 신호가 사실상 건강 추론이라면 그건 GDPR 9조의 특수범주 개인정보이고, 명시적 동의와 훨씬 무거운 근거가 필요합니다. 사실상의 의료기기가 되는 것을 어떻게 피합니까?",
+   "angle": "윤리·규제 (특수범주 데이터 / 건강 추론)",
+   "answerable": "partial",
+   "answer_sketch_ko": "방어선의 뼈대는 있습니다 — '질병 판별 연구 3편의 사용 범위': DRIVES·Bayat·LongROAD ML은 결과 변수가 인지 상태인 질병 판별 연구이므로 문제정의 본문 사용 금지·Q&A 백업 한정이고, '저희 상품은 질병을 진단하지 않습니다'를 반드시 병기하며, 'GPS만으로 0.96' 같은 표현은 금지. '12번 — 사고 심도 비예측': 판정 입력은 화이트리스트 8개(zone_available, data_coverage_pct, 4축 점수, mobility_change_index, risky_behavior_change_index)로 고정되고 심도·손해액·사고 라벨은 없으며, 신체 취약성 기반 심도 예측은 인수차별 논란 직결이라는 이유로 배제. '감액 13%p의 지위': 개입은 점검 권유·예방 지원. '케어 게이트': 발동 조건은 이동 +25%p AND 위험행동 +20%p라는 행동 지표이지 건강 지표가 아님. 즉 '입력에 건강 변수가 없고 출력이 진단이 아니다'가 답의 골격입니다.",
+   "gap": "GDPR 9조 특수범주 해당 여부 판단 없음 — 행동 데이터에서 건강 상태가 '추론'되면 특수범주가 될 수 있다는 쟁점에 스탠스가 없음. 의료기기 규제(EU MDR·소프트웨어 as medical device) 검토 전무. 케어 신호와 인지 저하의 상관을 우리가 측정한 적 없어 '건강 추론이 아니다'를 실측으로 못 말함(합성 데이터라 애초에 불가). 명시적 동의 문안·별도 동의 분리 설계 없음. 오탐 시 고객이 받는 심리적 영향(낙인)에 대한 스탠스 없음.",
+   "risk": "medium",
+   "used_positions": [
+    "질병 판별 연구 3편(DRIVES·Bayat·LongROAD ML)의 사용 범위",
+    "12번 — 사고 심도 비예측",
+    "케어 게이트",
+    "감액 13%p의 지위 — 샌드박스 예시값",
+    "6b. 최소수집·파생값 설계"
+   ]
+  },
+  {
+   "question_en": "Progressive Snapshot, Root, and Cambridge Mobile Telematics have been running telematics UBI at scale for over a decade. What is actually new here that they don't already do?",
+   "question_ko": "Progressive Snapshot, Root, Cambridge Mobile Telematics는 이미 10년 넘게 대규모 텔레매틱스 UBI를 운영하고 있습니다. 그들이 하지 않는 것 중 정확히 무엇이 새롭습니까?",
+   "angle": "경쟁·차별성 (정면 질문)",
+   "answerable": "partial",
+   "answer_sketch_ko": "조합 가능한 것: ① 거리 기반 마일리지 체계의 한계 — Langford et al. 2013(Candrive/Ozcandrive)은 연 5,000km 미만 저주행 고령 집단의 km당 사고 위험이 오히려 높다고 보고, 거리만 보는 체계에서는 실제로 안전한 분이 그렇지 않은 분과 같은 할인을 받는다(단 △ 초록 기준 명시 필수). ② 상품 구조 차이 — 요율표가 아니라 기존 마일리지 할인 위에 얹는 할인 자격 점수 오버레이(masil_rate = clip(korea_mileage + bonus − reduction, 0, 45)), 할증 항은 값이 0인 게 아니라 코드에 항 자체가 없고 180 시나리오 전건 candidate_surcharge_rate_pct = 0. ③ 측정 대상 차이 — 위험의 절대 수준이 아니라 개인의 평소 대비 변화(MASIL Zone 기준선), 위치 자체에는 점수 없음(location_penalty 0.0). ④ 수집 범위 차이 — 궤적·경로 미수집, 트립당 도착지 1점 17열, 존 귀속에 필요한 것은 좌표가 아니라 '원 안인가' 한 비트. ⑤ 가중치 4축의 순보험료 분해 1:1 대응(노출 30 / 빈도율 50 / 장래위험 20). 그러나 이 다섯 개 전부 '우리 설계 설명'이지 '저들 대비 우위'를 주장한 문장이 아니다.",
+   "gap": "세 사업자를 경쟁자로 다룬 positions topic이 0건. CMT는 오직 문헌 출처(2023 UBI 백서, 전 연령 n≈10만)로만 등장하고 우리가 인용하는 쪽이다. Progressive Snapshot은 forbidden_claims.yaml과 registry(status: banned)에만 존재 — 즉 무대에서 Progressive를 언급하는 순간 '2차 자료만 존재, 인용 금지' 규칙과 충돌한다. Root는 지식층·원문층 전체에서 언급 0건. 각 사업자의 상품 구조·요율 방식·데이터 수집 범위를 우리와 대조한 표나 스탠스 문장이 어디에도 없다.",
+   "risk": "high",
+   "used_positions": [
+    "저주행 고령 운전자의 km당 사고 위험 (마일리지 한계 근거)",
+    "상품 지위 — 할증 경로가 구조상 없다",
+    "1. 타겟 한정 — 왜 고령자인가",
+    "6b. 최소수집·파생값 설계",
+    "11번 — 가중치 30/30/20/20의 지위",
+    "실측 — 안전할수록 이득이 커진다 (유형별 할인율)"
+   ]
+  },
+  {
+   "question_en": "What stops a large incumbent insurer or CMT from replicating this in six months? Do you have any patents or defensible IP?",
+   "question_ko": "대형 기존 보험사나 CMT가 6개월 안에 이걸 복제하는 것을 무엇이 막습니까? 특허나 방어 가능한 지식재산이 있습니까?",
+   "angle": "모방 가능성·지식재산",
+   "answerable": "none",
+   "answer_sketch_ko": "근거 없음. 답을 구성할 재료가 지식층에 존재하지 않는다. 오히려 역방향 재료만 있다 — '임계는 전부 선언값이라 샌드박스에서 바꾸면 즉시 재계산(숨은 튜닝 없음)', '모든 값은 DEFAULT_PRODUCT_RULES 선언 상수', 'eps 260m는 Zheng 2009·Montoliu 2013 문헌 대역의 중간값이며 설계값임을 인정', 'DBSCAN 채택 이유는 성능이 아니라 설명가능성'. 즉 시스템 전체가 의도적으로 투명·재현 가능하게 설계돼 있어 '복제가 어렵다'는 주장의 근거가 되기 어렵다. 현재 답할 수 있는 최대치는 '특허 관련 승인된 입장이 없습니다'뿐.",
+   "gap": "특허·상표·영업비밀·모방 난이도·선점 효과를 다룬 topic 0건. glossary에 MASIL Zone이 공식 영어 명칭으로 확정(2026-08-04)돼 있으나 상표 출원 여부에 대한 언급은 없음. 데이터 플라이휠·운영 노하우·규제 승인 선점 같은 표준 방어 논리도 전무. 반대로 '설명가능성 우선 · 선언 상수 · 문헌 파라미터'라는 지식층 전반의 기조가 심사위원에게 '복제 쉬움'으로 읽힐 소지가 있는데 이에 대한 대응 스탠스가 없다.",
+   "risk": "high",
+   "used_positions": []
+  },
+  {
+   "question_en": "Why now? Aging drivers and telematics have both existed for years — what changed that makes this the right moment?",
+   "question_ko": "왜 지금입니까? 고령 운전자도 텔레매틱스도 수년째 존재해 왔는데, 지금이 적기라고 보는 변화가 무엇입니까?",
+   "angle": "타이밍 (왜 지금인가)",
+   "answerable": "partial",
+   "answer_sketch_ko": "조합 가능한 것: ① 문제의 가속 — 고령운전자 사고 비중 5.6%(2010) → 21.6%(2024), TAAS 직접 산출 치명률 가중 고령운전자 사고 1.40배·노인 사고 2.52배(2024년 행). ② 사후 보상 대비 사전 개입의 경제성 — 케어 세그먼트(30건·16.7%) 클레임을 12.4% 줄이면 손익 균형(심도 가산 없는 1.0× 기준), 심도 1.2× 감도 시나리오에서 10.3%. ③ 조기 신호 문헌의 성숙 — DRIVES(Neurology 2025, n=298, 주행 단독 AUC 0.82), Bayat 2021(n=139), LongROAD ML은 진단·자각 이전에 주행 궤적 변화가 잡힌다는 것을 고령 코호트에서 보인 최근 연구군(단 '질병을 진단하지 않는다' 병기 필수, 문제정의 본문 금지·Q&A 백업 한정). ④ 국내 채널 여건 — 국내 UBI는 외부 앱 산정 점수만 동의하에 전송하는 구조라 원좌표 반출 없이 파생 지수를 얹어 시작 가능(단 이 근거인 KIRI리포트 2024.7은 현재 status: banned).",
+   "gap": "'왜 지금'을 하나의 승인 스탠스로 묶은 topic이 없다. 위 재료는 전부 '문제가 심각하다'와 '방법론이 성립한다'이지 '지금이 창(window)이다'라는 논거가 아니다. 없는 것: 스마트폰·커넥티드카 텔레매틱스 보급률 추이, 고령운전자 관련 규제·정책 변화 시점(면허 반납 정책 등 언급 0건), 경쟁 진입 임박성, 보험사 수요 시그널. 5.6%→21.6% 추세선은 타이밍이 아니라 심각성 근거로만 승인돼 있다.",
+   "risk": "medium",
+   "used_positions": [
+    "1b. 고령층은 기준선이 가장 잘 서는 집단 (외부 문헌)",
+    "12번 — 손익분기 감도",
+    "질병 판별 연구 3편(DRIVES·Bayat·LongROAD ML)의 사용 범위",
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "12번 — 사고 심도 비예측"
+   ]
+  },
+  {
+   "question_en": "Where does the driving data actually come from? Are OEMs and telematics vendors like CMT your partners or your competitors — and have you signed anything?",
+   "question_ko": "주행 데이터는 실제로 어디서 옵니까? OEM과 CMT 같은 텔레매틱스 벤더는 파트너입니까 경쟁자입니까 — 그리고 체결된 것이 있습니까?",
+   "angle": "텔레매틱스 제조사·벤더 관계",
+   "answerable": "partial",
+   "answer_sketch_ko": "승인된 답변 골격: ① 기존 채널 — 국내 UBI는 외부 앱 산정 점수만 동의하에 전송하는 구조라 원좌표 반출 없이 같은 채널에 파생 지수를 얹어 시작. ② 특약 동의 신규 수집 — 필요한 것은 궤적이 아니라 도착지 좌표 + 방문 날짜(+트립 거리·위험 이벤트 수)뿐이라 동의 범위가 통상 UBI보다 좁다. ③ 공공·제휴 — TAAS, 복지부·건보공단, 지자체(가용성 확인 필요). 정직 고지가 강제됨: 80,032트립·180 시나리오는 전부 합성이며 실데이터 확보가 파일럿 1차 과제. 파일럿 N은 '모수 확인 전이라 숫자를 말하지 않는다'로 발화 금지.",
+   "gap": "세 가지 구멍이 겹친다. (1) 3경로 자체가 evidence registry에서 status: unverified, status_reason '근거지도 13번 등급 ✕(공백) — 계획, 실행 전', flags에 \"질문 시 '없습니다 + 로드맵'으로 답하도록 지정됨\". (2) 3경로의 정의가 원문층에서 두 버전으로 상충 — 근거지도 §13은 '자체 앱 → OEM → 제휴', 마스터 §13은 '기존 UBI 채널 · 특약 신규 수집 · 공공/제휴'이며 OPEN_ITEMS B-1에 미결로 남아 있다. 무대에서 팀원마다 다른 3경로를 말할 위험. (3) OEM·텔레매틱스 벤더와의 실제 접촉·의향서·계약·기술 협의 사실이 지식층에 0건이고, 'OEM'은 계획 문장 안 단어로만 등장한다. 벤더를 파트너로 볼지 경쟁자로 볼지에 대한 스탠스도 없다.",
+   "risk": "high",
+   "used_positions": [
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "실현 가능성 — 데이터 3경로·사고잦은곳·도로 위계",
+    "6b. 최소수집·파생값 설계",
+    "검증의 정직 한계 (전 문서 공통)"
+   ]
+  },
+  {
+   "question_en": "If an insurer likes this idea, why would they partner with you rather than build it in-house? What is your barrier to entry?",
+   "question_ko": "보험사가 이 아이디어를 좋게 본다면, 왜 자체 구축하지 않고 여러분과 협업해야 합니까? 진입장벽이 무엇입니까?",
+   "angle": "진입장벽·해자",
+   "answerable": "none",
+   "answer_sketch_ko": "근거 없음. 진입장벽·해자·왜 우리여야 하는가를 다룬 topic이 0건이다. 인접한 유일한 재료는 로드맵 성격의 문장들 — '가중치는 파일럿 경험 손해율로 위험군 식별력·손해율 개선 목표에 재적합', 'eps는 파일럿 k-거리 실측(k=2, 4~6개월차 1회 → 연 1회)으로 재도출', '채널별 분산으로 신뢰도를 정식 추정' — 인데 이것들은 '우리가 앞서 있다'가 아니라 '아직 안 했고 파일럿에서 한다'는 고백에 가깝다. 데이터 플라이휠 서사로 재구성할 여지는 있으나 승인된 문장이 아니므로 창작이 된다.",
+   "gap": "moat·switching cost·선점 데이터 자산·팀 고유 역량·독점 파트너십 관련 스탠스 전무. 지식층의 논리 구조 자체가 '우리 방법론이 방어 가능한가'에 최적화돼 있고 '우리 사업이 방어 가능한가'는 다룬 적이 없다. 결선에서 이 질문이 나오면 현재 지식만으로는 새 문장을 지어내거나 침묵하는 두 선택지뿐이다.",
+   "risk": "high",
+   "used_positions": []
+  },
+  {
+   "question_en": "CMT's own whitepaper — which you cite — shows a 3x claim-frequency gap from behavior scoring alone. If behavior scoring already works, what does your zone baseline add on top of it?",
+   "question_ko": "여러분이 인용하는 CMT 백서 자체가 행동 점수만으로 클레임 빈도 3배 격차를 보입니다. 행동 점수가 이미 작동한다면, 생활권 기준선이 그 위에 무엇을 더합니까?",
+   "angle": "경쟁 방법론 대비 증분 가치 (역이용 위험)",
+   "answerable": "partial",
+   "answer_sketch_ko": "정직 고지가 사실상 답이 된다: '이 시뮬레이션·검증이 확인하는 것은 예측력이 아니라 판정 로직의 일관성이다. 절대 수치가 현실 재현이라 주장하지 않으며, 실제 사고·손해율 효과는 미검증.' 그 위에 조합 가능한 것 — ① CMT 3배는 전 연령 데이터이며 고령자 한정 근거와 역할을 섞지 않는다는 것이 우리 인용 규칙 자체다('편차의 크기는 전 연령 대규모로, 고령자에서도 성립함은 고령자 한정 연구로'). ② 우리 4축은 행동을 버리지 않고 포함한다 — 안 30 / 밖 20의 두 축이 빈도율이고, 관측 많고 교란 적은 채널에 큰 가중(생활권 안 주행 비중 전건 86.0%·개인 중앙값 89.1%). ③ 우리가 추가로 보는 것은 개인 내 변화(mobility_change_index, risky_behavior_change_index)와 AND 게이트이며, 오탐 대조군 30건에서 이동변화지수가 임계를 넘은 달이 191/360 케이스-월인데도 케어 발동 0건.",
+   "gap": "우리 방식 대비 행동점수 단독의 head-to-head 비교 실측이 0건. '4축이 행동점수보다 낫다'를 뒷받침하는 어떤 수치도 없고, 애초에 우리 검증은 예측력이 아니라 로직 일관성이라고 스스로 선을 그어 뒀다. 심사위원이 우리가 인용한 CMT 3배를 그대로 되돌려 쓰는 역이용 시나리오에 대한 대비 문장이 없다.",
+   "risk": "high",
+   "used_positions": [
+    "검증의 정직 한계 (전 문서 공통)",
+    "전 연령 근거와 고령자 한정 근거의 역할 분리",
+    "11번 — 안 30 > 밖 20 = 신뢰도 원리(수위 명시)",
+    "5b. AND 게이트 오탐 방어 실측",
+    "3. 시뮬레이션 방법론과 'data' 용어"
+   ]
+  },
+  {
+   "question_en": "Korea already has per-mile and app-score UBI players. How is this different from what Carrot General Insurance or the domestic mileage riders already sell?",
+   "question_ko": "한국에는 이미 퍼마일·앱점수 UBI 사업자가 있습니다. 캐롯손해보험이나 기존 국내 마일리지 특약이 파는 것과 무엇이 다릅니까?",
+   "angle": "국내 경쟁 (국내 심사위원 겹칠 때 고위험)",
+   "answerable": "partial",
+   "answer_sketch_ko": "체계 일반에 대한 비판은 가능하다: 거리만 보는 마일리지 체계에서는 실제로 안전한 분이 그렇지 않은 분과 같은 할인을 받는다(Langford et al. 2013 — 연 5,000km 미만 저주행 고령 집단의 km당 사고 위험 상승, '초록 기준' 명시 필수, 저주행 고령자가 위험하다는 단정적 일반화는 금지). 우리는 그 위에 얹는 오버레이 — 180 시나리오 중 150건이 기존 마일리지와 같거나 낮은 보험료, 그중 113건은 더 낮음, 할증 전건 0. 유형별 평균 할인율도 전 유형 상승 또는 동일(안정 저주행형 33.8→38.9%, 이사형 21.2→26.7%, 복수 생활권형 19.5→24.3%, 광역 이동·안전형 20.9→24.8%, 생활권 내 위험행동형 33.4→33.4%), 다만 동시변화형은 19.6→7.9%로 하락한다는 정직 고지 포함.",
+   "gap": "두 가지. (1) 캐롯·퍼마일·티맵·국내 손보사 이름이 knowledge/와 sources/ 전체에서 검색 결과 0건 — 특정 국내 사업자와의 비교 스탠스가 존재하지 않는다. (2) 국내 UBI 구조를 설명하는 유일한 근거인 보험연구원 KIRI리포트 2024.7이 registry status: banned('리포트 번호·연도 원문 미확인 — 인용 금지 상태', 동명 리포트 2건 혼재, OPEN_ITEMS A 최우선 확인 대상)인데, positions '13번 — 데이터 확보 3경로와 파일럿'은 이 리포트를 evidence_ref로 그대로 쓰고 있다. 즉 국내 경쟁 구도를 말하는 순간 인용 금지 문헌을 밟는다.",
+   "risk": "high",
+   "used_positions": [
+    "저주행 고령 운전자의 km당 사고 위험 (마일리지 한계 근거)",
+    "실측 — 안전할수록 이득이 커진다 (유형별 할인율)",
+    "상품 지위 — 할증 경로가 구조상 없다",
+    "13번 — 데이터 확보 3경로와 파일럿"
+   ]
+  },
+  {
+   "question_en": "Seniors are a narrow segment. What is the addressable market, and what share do you target in five years?",
+   "question_ko": "고령자는 좁은 세그먼트입니다. 유효 시장 규모는 얼마이고, 5년 뒤 목표 점유율은 무엇입니까?",
+   "angle": "사업성 (경쟁 축의 전제 — 시장 크기)",
+   "answerable": "none",
+   "answer_sketch_ko": "근거 없음. key_numbers.yaml 252개 수치는 전부 시뮬레이션 산출·문헌 인용·설계 파라미터이고 시장 규모·가입자 수·보험료 볼륨·목표 점유율 계열 수치가 하나도 없다. 유일하게 가까운 것은 손익분기 요구 절감률 12.4%(1.0×)/10.3%(1.2×)인데 이는 케어 세그먼트 30건·16.7%라는 180 시나리오 내부 비율에 대한 계산이지 시장 수치가 아니다. 파일럿 N조차 'UBI 가입 고령 고객 모수 확인 후 확정, 현재 미확정이라 숫자를 말하지 않는다'로 발화가 명시 금지돼 있다.",
+   "gap": "TAM/SAM/SOM, 국내외 고령 운전자 수, UBI 침투율, 예상 보험료 규모, 목표 M/S — 전부 0건. '고령자 한정은 시장을 좁힌 선택이 아니라 개인 기준선이 성립하는 조건을 고른 방법론적 선택'이라는 스탠스는 있으나, 이는 시장 크기 질문에 대한 답이 아니라 질문의 전제를 바꾸는 우회이며 숫자로 반박당하면 버티지 못한다.",
+   "risk": "medium",
+   "used_positions": [
+    "1. 타겟 한정 — 왜 고령자인가",
+    "12번 — 손익분기 감도"
+   ]
+  },
+  {
+   "question_en": "If you expand beyond seniors, you land squarely in the existing UBI players' market. Have you tested that the method even works on younger drivers?",
+   "question_ko": "고령자를 넘어 확장하면 기존 UBI 사업자 시장 한복판입니다. 젊은 운전자에게 이 방법이 작동한다는 것을 시험해 보기는 했습니까?",
+   "angle": "확장 시 경쟁 충돌·검증 부재",
+   "answerable": "partial",
+   "answer_sketch_ko": "정직하게 인정하는 것이 승인된 답이다: '젊은 층의 패턴 다양성은 우리 방식에선 신호가 아니라 노이즈다 — 단, 직접 실험 없음. 논증이지 실측 아님.' 후속질문('해보긴 했나')에는 '안 해봤고, 방법론적 예측'이라고 답하도록 명시돼 있고, '젊은 층에서 실험해 확인했다는 취지의 발언'은 must_not_say. 확장 논리는 '확장에 필요한 것은 알고리즘 교체가 아니라 기준선 학습 창의 재조정이며, 학습 창이 파라미터로 분리돼 있다'이고 다음 대상은 연령이 아니라 '기준선이 서는가'(정기 통근자 후보, 판정식·가중치·게이트 불변). 30~50대 코호트 문헌 부재는 반드시 '저희가 확인한 범위에서'로 한정해야 한다.",
+   "gap": "확장 로드맵이 '학습 창 재조정' 한 줄과 '정기 통근자 후보'뿐이고, 확장 시점의 경쟁 구도·차별점·가격 포지션에 대한 스탠스가 없다. claim_type이 hypothesis라 무대에서 방어 강도가 가장 낮은 항목 중 하나인데도 확장 질문의 관문이 된다.",
+   "risk": "medium",
+   "used_positions": [
+    "1. 타겟 한정 — 왜 고령자인가",
+    "고령자 한정(타깃 선정) 논리",
+    "젊은 층 패턴 다양성 = 노이즈 주장"
+   ]
+  },
+  {
+   "question_en": "You present explainability as your edge. But regulators require it anyway — so isn't that table stakes rather than an advantage? What happens when a competitor simply adopts the same fixed-radius approach?",
+   "question_ko": "설명가능성을 강점으로 제시하시는데, 규제가 어차피 요구하는 것이라면 경쟁우위가 아니라 기본 요건 아닙니까? 경쟁사가 같은 고정 반경 방식을 채택하면 어떻게 됩니까?",
+   "angle": "차별점의 지속성 (설명가능성이 해자인가)",
+   "answerable": "partial",
+   "answer_sketch_ko": "방법론 쪽 답변은 견고하다: HDBSCAN 대비 유리한 쪽으로 말하지 않는다 — 적정 설정(min_cluster_size 5/min_samples 3)에서 커버리지·존 안정성은 동급이고 정답 존 모양 적합도는 HDBSCAN이 더 높다(0.879~0.935 대 0.715~0.880), 거점 파편화만 현행이 낮다(3.1% 대 11.8%). 현행 유지 이유는 성능이 아니라 반경 근거의 출처와 설명가능성 — '반경 260m'는 약관·민원에 쓸 수 있는 숫자지만 HDBSCAN의 '무리 3'은 소표본 밀도 추정이라 같은 설명이 불가. 값의 출처는 데이터(측정)이면서 적용은 고정 잣대. 산식 전체가 DEFAULT_PRODUCT_RULES 선언 상수이고 AI 역할은 3가지로 한정(합성 맥락 생성·오프라인 가중치 랭킹·직원용 설명문 변환), 보험료·인수·케어 최종 결정은 사람.",
+   "gap": "설명가능성을 '경쟁우위'로 프레이밍한 문장이 지식층에 없다 — 전부 '심사 지적에 대한 방어'와 '약관·감사 요건 충족'으로 서술돼 있다. 경쟁사가 동일한 고정 반경·선언 상수 방식을 채택했을 때 우리에게 무엇이 남는지에 대한 스탠스 0건. 오히려 '파일럿 측정에서 산포가 크면 그때 HDBSCAN으로 간다'는 전환 조건까지 공개해 둬서, 설명가능성 자체가 잠정적 선택임을 우리가 먼저 밝힌 상태다.",
+   "risk": "medium",
+   "used_positions": [
+    "10번 — HDBSCAN 대비 현행 유지",
+    "HDBSCAN과의 관계 — 계산은 빌리되 고정값으로 적용",
+    "AI 역할 서술",
+    "부록 C — 산식·파라미터 전체",
+    "생활권 — ε = 260m의 출처와 성격"
+   ]
+  },
+  {
+   "question_en": "Your privacy-minimal design collects only a destination point per trip. Competitors ingest full trajectories. Isn't minimal collection a permanent accuracy handicap they will beat you with?",
+   "question_ko": "프라이버시 최소수집 설계는 트립당 도착지 한 점만 수집합니다. 경쟁사는 궤적 전체를 받습니다. 최소수집은 그들이 이길 영구적인 정확도 열위 아닙니까?",
+   "angle": "차별점의 이면 (최소수집 = 정확도 트레이드오프)",
+   "answerable": "partial",
+   "answer_sketch_ko": "조합 가능: ① 존 귀속에 필요한 것은 좌표가 아니라 '원 안인가' 한 비트이며, 원시 스키마는 트립당 한 줄 17열·궤적 경로 미수집·POI 조회 없음, 좌표는 허용목록 DTO(sanitizeGaipBundleForUi)로 표시 계층 유출 차단, 지도는 자택 기준 상대변위 10m 반올림. ② 존 대조는 단말에서 수행 가능하고 보험사로는 월 집계만 올릴 수 있다(파일럿 설계 옵션). ③ 도로 위계를 안 넣은 것은 능력이 아니라 우선순위·거버넌스 판단 — 맵매칭 = 궤적 재구성이라 최소수집 원칙과 정면 충돌하며, 2단계 안(평균속도·출발 시간대 기반 경량 확률 추정, 집계값만 사용)을 준비해 뒀다. ④ 법적 정합 — 가장 보수적으로 6개월을 잡아도 위치 원본은 상시 직전 2개월분(zone_refresh_policy: rolling_2m).",
+   "gap": "최소수집 대 전량수집의 정확도 트레이드오프를 실제로 잰 자료가 0건 — '덜 받아도 판정이 같다'를 보인 실험이 없다. 또한 '위치정보법 때문에 업계가 위치를 안 쓴다'는 인과 주장은 문헌 미확인으로 must_not_say이고, 법 해석 자체가 registry에서 unverified(조문 사실 vs 자체 해석 분리 필요, 법무 미검토, OPEN_ITEMS A). 싱가포르 심사위원 대상이면 PDPA·GDPR 대응 스탠스가 필요한데 지식층에는 국내 법령(위치정보법 23조·방통위 고시·통비법 시행령)만 있고 해외 규제 이식성 topic이 0건이다.",
+   "risk": "medium",
+   "used_positions": [
+    "6b. 최소수집·파생값 설계",
+    "경로 데이터 사용 여부",
+    "13번 — 도로 위계: 미반영 사유와 2단계 안",
+    "6. 위치데이터 보존의 법적 제약 — 법령 사실 교정",
+    "검증의 정직 한계 (전 문서 공통)"
+   ]
+  },
+  {
+   "question_en": "Who on your team has actually priced and launched an insurance product? And do you have a carrier committed to the pilot?",
+   "question_ko": "팀에서 실제로 보험 상품을 요율 산출하고 출시해 본 사람이 있습니까? 그리고 파일럿에 참여를 약속한 보험사가 있습니까?",
+   "angle": "실행 역량·파트너 확보 (왜 당신들인가)",
+   "answerable": "none",
+   "answer_sketch_ko": "근거 없음. 팀 구성·이력·보험사 파트너·LOI·MOU를 다룬 topic이 0건이다. 지식층에서 파일럿에 대해 말할 수 있는 전부는 설계뿐 — 기준선 2개월 + 관찰 6개월, 개입군/대조군 병행, 지역 유형 2개 이상, N은 모수 확인 후 확정이라 숫자 발화 금지, 실데이터 확보가 파일럿 1차 과제. 요율도 최종 요율이 아니라 샌드박스 예시값임이 코드 필드로 못 박혀 있다(tariff_status = illustrative_economics_sandbox_not_final_tariff, 감액 13%p는 손익 예시값). 즉 '아직 요율을 산출한 적이 없다'가 우리 문서의 공식 입장이다.",
+   "gap": "팀·파트너·실행 트랙레코드 전부 공백. 이 축의 질문이 나오면 방법론 지식층은 도움이 되지 않는다. 특히 '요율 샌드박스는 최종 요율이 아니다'라는 정직 장치가, 상용화 준비도를 묻는 질문 앞에서는 오히려 불리하게 작동할 수 있는데 그 상황에 대한 프레이밍 문장이 없다.",
+   "risk": "high",
+   "used_positions": [
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "감액 13%p의 지위 — 샌드박스 예시값",
+    "부록 C — 산식·파라미터 전체"
+   ]
+  },
+  {
+   "question_en": "You've validated that your logic is internally consistent on synthetic scenarios. But a logically consistent model of a fictional world is still fictional. What evidence do you have that these scenarios resemble real Korean senior driving at all?",
+   "question_ko": "합성 시나리오에서 로직 일관성을 검증했다고 하셨습니다. 그런데 가상 세계에 대해 논리적으로 일관된 모델은 여전히 가상입니다. 이 시나리오가 실제 한국 고령 운전자를 닮았다는 근거가 있습니까?",
+   "angle": "기술 한계 — 합성 데이터의 외적 타당성",
+   "answerable": "full",
+   "answer_sketch_ko": "먼저 인정하고 시작한다: 'data'는 부정확한 표현이었고 실물은 합성 시나리오(synthetic scenarios)다(positions '8번 — 합성 데이터 정정'). 검증 대상은 예측력이 아니라 판정 로직의 일관성이며, 실제 사고·손해율 효과는 미검증이라고 정직 라벨을 붙인다('검증의 정직 한계'). 절대값(월 방문 13~42회, 위험률 3%/72%)은 설계값임을 선제 인정하고, 문헌이 주는 것은 숫자가 아니라 분포이며 우리 값이 그 분포 어디에 있는지를 표로 제시한다('데이터생성 — 파라미터 원칙(문헌 회랑)'). 방향성 앵커는 실제 국내 통계다 — 월 방문 13은 5대광역시 실측 13.1과 거의 일치, 32는 국내 상한 28.8과 해외 하단 35 사이, 해외는 DRIVES 39.4~44.4/월·Bayat 34.8~38.2/월('데이터생성 — 월 방문 수 설계값의 문헌 위치'). 운용 결함도 공개한다: LLM 라벨 44/60 동일 명칭 수렴, 중복 57건만 결정론 치환 후 판정 불변 검증. 경험분포 대체는 파일럿의 몫.",
+   "gap": "답변은 완결되지만 한 군데 취약점 — 데이터 파티션 108/36/36(개발/검증/홀드아웃)을 제시하면서 동시에 '규칙은 어느 파티션에도 적합하지 않았다'고 한다. 아무것도 적합하지 않았다면 홀드아웃이 검증하는 것이 없다는 반박에 대한 스탠스가 지식층에 없다. 홀드아웃을 근거로 내세우지 말고 순환논증 절단 3조건(엔진 블라인드·오탐 대조군·임계 선언값)만으로 방어할 것.",
+   "risk": "low",
+   "used_positions": [
+    "8번 — 합성 데이터 정정",
+    "8번 — 합성 검증의 목적",
+    "합성 시나리오 방법론 — 검증 대상은 로직 일관성",
+    "검증의 정직 한계 (전 문서 공통)",
+    "시뮬레이션 파라미터 절대값",
+    "데이터생성 — 파라미터 원칙 (문헌 회랑)",
+    "데이터생성 — 월 방문 수 설계값 13/24/32/40/42의 문헌 위치",
+    "3. 시뮬레이션 방법론과 'data' 용어",
+    "데이터생성 — 산출 규모와 파티션"
+   ]
+  },
+  {
+   "question_en": "Which specific assumptions do you expect to break first when you move from synthetic scenarios to real telematics data — and what pilot result would make you abandon this approach?",
+   "question_ko": "합성 시나리오에서 실제 텔레매틱스 데이터로 넘어갈 때 가장 먼저 무너질 가정이 구체적으로 무엇입니까? 그리고 파일럿에서 어떤 결과가 나오면 이 접근을 포기하시겠습니까?",
+   "angle": "실데이터 전환 — 실패 기준(kill criteria)",
+   "answerable": "partial",
+   "answer_sketch_ko": "교체 계획은 있다: eps 260m는 파일럿 k-거리 그래프로 재도출(같은 날 중복은 하루로 접은 뒤 무릎점), 가중치 30/30/20/20은 파일럿 경험 손해율로 재적합, 기준선 기간은 실데이터 방문 빈도 분포로 재보정, 페르소나 파라미터는 실주행 경험분포로 대체('로드맵 — 캘리브레이션과 eps 재도출', '7b. 기준선 민감도 실측 — 백로그'). HDBSCAN은 challenger로 두고 사람당 방문점 수백 개가 되는 실데이터 파일럿에서 승격 후보이며 전환 조건까지 정의해 뒀다('10번 — HDBSCAN 대비 현행 유지'). 파라미터 철학: 정할 수 없는 동안은 문헌과 원리로 시작하고, 잴 수 있게 되면 잰다.",
+   "gap": "'무엇을 재보정할지'는 있으나 '무엇이 먼저 무너지는가'의 우선순위와 파일럿 실패(kill) 기준이 지식층 전체에 없다. 특히 검증되지 않은 채 실데이터에서 깨질 수 있는 가정 — 트립:방문 1:1 스키마, 개인 P90의 시간적 안정성, '서로 다른 3일' 규칙의 실데이터 노이즈 내성 — 에 대한 스탠스가 없다. '파일럿에서 X가 나오면 접는다'는 문장이 어디에도 없으므로 즉흥 창작 금지, '아직 정의하지 않았고 파일럿 프로토콜에서 확정한다'로 답할 것.",
+   "risk": "high",
+   "used_positions": [
+    "로드맵 — 캘리브레이션과 eps 재도출",
+    "시뮬레이션 파라미터 절대값",
+    "검증의 정직 한계 (전 문서 공통)",
+    "생활권 — k-거리 재산정 계획 (ε 캘리브레이션)",
+    "10번 — HDBSCAN 대비 현행 유지",
+    "8번 — 모수 절대값의 지위",
+    "7b. 기준선 민감도 실측 — 백로그 (정직 고지)"
+   ]
+  },
+  {
+   "question_en": "Your life zone is rebuilt every month from the trailing 60 days. In a market with severe winters, monsoon season, and agricultural cycles, how does a 2-month rolling window distinguish seasonality from a genuine behavioral change worth intervening on?",
+   "question_ko": "생활권을 매달 직전 60일로 재형성한다고 하셨습니다. 혹한기·장마·농번기가 있는 시장에서, 2개월 롤링 창이 계절성과 개입이 필요한 진짜 행동 변화를 어떻게 구별합니까?",
+   "angle": "기술 한계 — 계절성",
+   "answerable": "none",
+   "answer_sketch_ko": "현재 승인된 자료로는 뒷받침할 수 없다. 인접한 것만 있다 — 명절 귀성·병원 통원·여행 같은 단발 예외는 이동 축만 건드리므로 AND 게이트가 열리지 않고(월 트립 중앙값 32건이라 예외 1건이 밖 비중을 움직이는 폭은 약 3.1%p, 임계 25%p의 1/8), 오탐 대조군 30 시나리오에서 이동지표 임계 초과 191 케이스-월에도 케어 발동 0건이었다('AND 게이트 오탐 대조군 실측', '단발 예외 운행은 판정에 진입하지 못한다'). 그러나 이 논거는 전부 '단발'을 전제하며, 두 달 이상 지속되는 계절 패턴은 오히려 롤링 창에 흡수돼 '새로운 평소'가 되는 쪽이다.",
+   "gap": "지식층 전체(positions 161·cards 53·key_numbers 252·sources 11종)에 '계절/겨울/여름/농번기/장마' 키워드 0회. 합성 14개월(2025-11~2026-12)에도 계절 변동 모델이 없다 — 즉 계절성은 검증되지 않았을 뿐 아니라 데이터에 존재조차 하지 않는다. 더 위험한 것은 롤링 2개월 창 자체가 계절 전환기(예: 11~12월 기준선 대비 1월)에 구조적 오탐/미탐을 낼 수 있는데 이 방향의 분석이 전혀 없다는 점. 무대에서는 '합성 데이터에 계절 변동을 넣지 않았습니다 — 파일럿 1년차 필수 검증 항목입니다'로 정직 고지할 것.",
+   "risk": "high",
+   "used_positions": [
+    "단발 예외 운행은 판정에 진입하지 못한다",
+    "AND 게이트 오탐 대조군 실측",
+    "생활권 형성 주기 — 갱신형(rolling) 채택",
+    "케어와 생활권 갱신의 분리"
+   ]
+  },
+  {
+   "question_en": "Take a 75-year-old who signs up today. What does she pay in months one and two, before you have a baseline? And your own Poisson calculation says two months captures only 76% of habitual destinations — what about the other quarter?",
+   "question_ko": "오늘 가입한 75세 고객이 있다고 합시다. 기준선이 없는 첫 두 달 동안 이 고객은 얼마를 냅니까? 그리고 귀사 자체 푸아송 계산으로도 2개월은 습관 목적지의 76%만 포착합니다 — 나머지 4분의 1은 어떻게 됩니까?",
+   "angle": "기술 한계 — 콜드스타트",
+   "answerable": "partial",
+   "answer_sketch_ko": "포착률은 정직하게 공개돼 있다: λ=월 2회 가정에서 P(N≥3)이 1개월 32.3% / 2개월 76.2% / 3개월 93.8%, 3개월은 +17.6%p를 얻는 대신 시작이 한 달 늦어지므로 2개월을 채택했다(76.2%는 실측이 아니라 내부 추정임을 병기)('생활권 — 기준선 관찰 창 2개월 채택 근거(푸아송 계산)'). 불이익 방향은 닫혀 있다 — 커버리지 80% 미만이거나 생활권 근거가 없는 달은 우대·케어 모두 '보류'로 빠지고(min_data_coverage_pct 80.0) 이는 벌점이 아니다('우대 조건'). 케어 게이트는 첫 2개월 발동 불가('부록 C — 산식·파라미터 전체'). 그리고 상품 지위상 할증 항 자체가 코드에 없으므로 최악이 할증이 아니라 할인 미적용이다('상품 지위 — 할증 경로가 구조상 없다').",
+   "gap": "신규 가입 1~2개월차의 요율 취급에 대한 명시적 스탠스가 없다 — '기존 마일리지 할인 그대로'인지 '보류'인지 지식층이 답하지 않는다. 미포착 23.8%의 목적지가 어떻게 처리되는지(원 밖으로 잡히는지, 다음 달 롤링에서 흡수되는지)에 대한 실측·서술도 없다. 콜드스타트라는 단어는 지역 티어 초기값 맥락에서 딱 1회만 등장한다. 조합으로 '위치 벌점 0 + 보류 무불이익 + 할증 부재'까지는 말할 수 있으나 요율 취급을 단정하지 말 것.",
+   "risk": "high",
+   "used_positions": [
+    "생활권 — 기준선 관찰 창 2개월 채택 근거 (푸아송 계산)",
+    "7. 베이스라인 2개월의 근거",
+    "우대 조건",
+    "케어 게이트",
+    "상품 지위 — 할증 경로가 구조상 없다",
+    "부록 C — 산식·파라미터 전체",
+    "로드맵 — 캘리브레이션과 eps 재도출"
+   ]
+  },
+  {
+   "question_en": "Everything depends on destination events actually arriving. What happens when the phone dies, the app is uninstalled, the customer leaves the phone at home, or GPS drifts 100-300 metres in a dense urban area — which is the same order of magnitude as your 260-metre detection radius?",
+   "question_ko": "모든 것이 도착지 이벤트가 실제로 도착하는 데 달려 있습니다. 휴대폰이 꺼지거나, 앱이 삭제되거나, 고객이 폰을 집에 두고 나가거나, 도심에서 GPS가 100~300m 튀면 어떻게 됩니까? 그 오차는 귀사의 260m 탐지 반경과 같은 자릿수입니다.",
+   "angle": "기술 한계 — 데이터 결측·기기/측위 고장",
+   "answerable": "partial",
+   "answer_sketch_ko": "결측 쪽만 답이 있다: 커버리지 80% 미만인 달은 우대·케어 모두 '보류'로 빠져(min_data_coverage_pct 80.0) 결측이 불이익이 되지 않으며, 미관측 축은 채점에서 제외하고 나머지 가중치로 재정규화한다(PARTIAL_SCORE_COMPONENTS_RENORMALIZED, INSUFFICIENT_EVIDENCE)('우대 조건', '11번 — 안 30 > 밖 20 = 신뢰도 원리'). 수집 부담이 낮다는 논거도 있다 — 요구하는 것이 도착지 이벤트 한 줄(17열, 궤적·경로 미수집)이라 플랫폼 간 스키마 차이가 작다('6b. 최소수집·파생값 설계', '13번 — 데이터 확보 3경로와 파일럿').",
+   "gap": "측위 오차·기기 고장·앱 삭제·동의 철회에 대한 스탠스가 지식층에 전혀 없다(GPS 오차/배터리/OBD/스마트폰/단말 고장 키워드 사실상 0회, '단말'은 온디바이스 존 대조라는 프라이버시 맥락 3회뿐). 특히 260m eps 대 도심 측위 오차의 크기 비교는 즉답이 필요한 질문인데 근거가 없다 — 여기서 숫자를 지어내면 발표 전체 신뢰가 무너진다. 답할 수 있는 최대치는 '결측은 보류로 무불이익' + '판정 경계는 eps가 아니라 max(500m, min(P90, 2km))라 측위 오차 대비 여유가 있다'는 구조 논거까지이며, 오차 크기 수치는 '측정한 바 없고 파일럿 항목'으로 넘길 것.",
+   "risk": "high",
+   "used_positions": [
+    "우대 조건",
+    "6b. 최소수집·파생값 설계",
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "탐지 기준거리 260m",
+    "eps와 생활권 원의 층 분리 — eps는 판정 기준이 아니다",
+    "11번 — 안 30 > 밖 20 = 신뢰도 원리(수위 명시)"
+   ]
+  },
+  {
+   "question_en": "Your target is the low-mileage, self-regulating senior. Yet in your own run, three of those thirty landed in 'hold' for sparse data. If the customers you most want to reward are the ones your model most often cannot score, is this a product or a filter?",
+   "question_ko": "타깃이 저주행·자기규제형 고령자라고 하셨는데, 정작 그 유형 30명 중 3명이 데이터 부족으로 '보류'가 났습니다. 가장 보상하고 싶은 고객이 모델이 가장 자주 채점하지 못하는 고객이라면, 이건 상품입니까 필터입니까?",
+   "angle": "사업성·윤리 — 타깃 세그먼트 배제",
+   "answerable": "partial",
+   "answer_sketch_ko": "실측은 공개돼 있다: ① 안전 저주행·자기규제형 30명 중 우대 27·보류 3(sparse 데이터 검증용으로 의도적으로 넣은 케이스), rolling 전체 집계는 우대 118 / 기본 56 / 보류 6 · 케어 30('유형 — 기대 vs 판정 실측 전량', '현행 실측 수치의 기준'). 보류는 불이익이 아니며 sparse 6건은 요율 변동 0이다('실측 — 안전할수록 이득이 커진다'). 그리고 저주행 고령 운전자는 km당 사고 위험이 오히려 높다는 것이 마일리지 할인의 한계 근거이므로, 저주행자를 마일리지만으로 보상하는 현행 구조를 우리가 대체하려는 것이라는 서사로 되받을 수 있다('저주행 고령 운전자의 km당 사고 위험').",
+   "gap": "'보류는 불이익 없음'까지가 전부이고, 만성적으로(12개월 중 4개월 이상) 판정 불가한 고객군의 비율·처우에 대한 스탠스가 없다. 우대 조건이 '12개월 중 9개월'이므로 유효 달이 9개월 미만이면 자동 hold — 즉 저주행자는 구조적으로 우대 문턱에서 탈락할 수 있는데, 이 탈락률의 실측이나 완화 장치(문턱 조정·저주행 전용 트랙)에 대한 결정이 없다. '보류가 반복되면 어떻게 하나'에 대한 답이 없으므로 실측 6건과 무불이익 원칙까지만 말할 것.",
+   "risk": "medium",
+   "used_positions": [
+    "유형 — 기대 vs 판정 실측 전량 (번들 집계)",
+    "우대 조건",
+    "현행 실측 수치의 기준 — 전부 rolling 산출",
+    "실측 — 안전할수록 이득이 커진다 (유형별 할인율)",
+    "저주행 고령 운전자의 km당 사고 위험 (마일리지 한계 근거)",
+    "고령자 한정(타깃 선정) 논리"
+   ]
+  },
+  {
+   "question_en": "Walk me through the pilot as a study design. How do you randomise, what is the primary endpoint, and how many drivers do you need to detect the loss-ratio effect you're claiming within six months?",
+   "question_ko": "파일럿을 연구 설계로 설명해 주십시오. 무작위 배정은 어떻게 하고, 1차 지표는 무엇이며, 주장하신 손해율 효과를 6개월 안에 검출하려면 운전자가 몇 명 필요합니까?",
+   "angle": "A/B 검증 설계 — 검정력·엔드포인트",
+   "answerable": "partial",
+   "answer_sketch_ko": "골격은 있다: 기준선 2개월 + 관찰 6개월, 개입군/대조군 병행, 코호트는 지역 유형 2개 이상(고밀도 도심·교외 중밀도·광역 저밀도 중 2개), N은 미확정(key_numbers '파일럿 설계'). 캘리브레이션 일정도 있다 — 파일럿 4~6개월 차 k-거리 1차 측정, 6개월 차 Scale-up부터 반영, 연 1회 재점검(key_numbers 'k-거리 캘리브레이션 시점'). 경제성 기준선은 손익분기 감도로 제시돼 있다: 케어 세그먼트 클레임을 12.4% 줄이면 균형(심도 가산 없는 1.0×), 고령 심도 1.2× 시나리오에서 10.3%('12번 — 손익분기 감도'). N은 '귀사 UBI 가입 고령 고객 모수 확인 후'로 답하고 숫자를 말하지 않는 것이 명시적 do_not_say 규칙이다.",
+   "gap": "무작위 배정 방법(개인 단위인지 지점/코호트 단위인지), 1차 지표 정의, 검정력·최소 검출 효과크기, 표본 수 계산이 전부 없다. 더 큰 구멍은 실현 가능성 — 12.4%의 클레임 빈도 감소를 6개월 관찰로 유의하게 검출하려면 필요한 N이 얼마인지에 대한 계산이 없고, '할인을 무작위 배정하는 것이 규제·형평상 가능한가'라는 보험 특유의 제약에 대한 스탠스도 없다. 심사위원이 통계 전문가면 여기서 설계가 아니라 '희망'으로 보일 위험이 크다.",
+   "risk": "high",
+   "used_positions": [
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "실현 가능성 — 데이터 3경로·사고잦은곳·도로 위계",
+    "12번 — 손익분기 감도",
+    "로드맵 — 캘리브레이션과 eps 재도출",
+    "생활권 — k-거리 재산정 계획 (ε 캘리브레이션)",
+    "검증의 정직 한계 (전 문서 공통)"
+   ]
+  },
+  {
+   "question_en": "Once this is live, your thresholds — 0.25 and 0.20 on the AND gate, the 30/30/20/20 weights, the 260-metre radius — will drift out of calibration as the book ages and as customers adapt. What is your monitoring and re-calibration governance?",
+   "question_ko": "출시 후에는 AND 게이트의 0.25/0.20, 가중치 30/30/20/20, 260m 반경 같은 값들이 포트폴리오가 늙고 고객이 적응하면서 캘리브레이션에서 벗어납니다. 모니터링과 재보정 거버넌스는 무엇입니까?",
+   "angle": "기술 한계 — 모델 드리프트·거버넌스",
+   "answerable": "partial",
+   "answer_sketch_ko": "부분적으로 답이 있다: eps는 파일럿 4~6개월 차 k-거리 1차 측정 후 6개월 차 Scale-up부터 반영, 연 1회 재점검이고 기존 고객 소급 변경은 없다(key_numbers 'k-거리 캘리브레이션 시점'). 가중치 최종값은 논쟁이 아니라 파일럿 경험 손해율 적합으로 정하고 채널별 분산으로 신뢰도를 정식 추정한다('로드맵 — 캘리브레이션과 eps 재도출'). 값 변동에 대한 둔감성 근거도 있다 — 969개 조합 전수 민감도에서 ±5 이웃 판정 변화 중앙 3건·최대 9건, 주장하는 것은 값이 아니라 순서('가중치 30/30/20/20 민감도 방어'). 재현·감사 가능성 쪽도 있다 — 시드 sha256 기반 결정론 엔진, 판정 계약 테스트 27건 상시 고정('9번 — 판정 결정론 엔진과 에이전트 잔여 역할').",
+   "gap": "'드리프트/모니터링/재학습 트리거'라는 개념 자체가 지식층에 0회 등장한다. 있는 것은 eps의 연 1회 재점검 하나뿐이고, 케어 임계 0.25/0.20과 가중치의 재보정 주기·트리거·감시 지표가 없다. 인접한 위험은 이미 식별돼 있으나 계약에 미포함 — 롤링 지도가 위험행동을 '새로운 평소'로 흡수하는 위험의 정상화는 케어 분리로 막았지만, 생활권 버전·변경 이유 기록(감사 재현성)을 포함한 안전장치 6종은 파일럿 검토안일 뿐 현 계약에 없다고 명시돼 있다. 모델 거버넌스를 이미 갖춘 것처럼 말하면 금지 사항 위반이다.",
+   "risk": "medium",
+   "used_positions": [
+    "로드맵 — 캘리브레이션과 eps 재도출",
+    "생활권 — k-거리 재산정 계획 (ε 캘리브레이션)",
+    "가중치 30/30/20/20 민감도 방어",
+    "가중치 30/30/20/20 — 값이 아니라 순서를 주장",
+    "케어와 생활권 갱신의 분리",
+    "안전장치 6종·지속성 장치·절충 규칙의 지위",
+    "9번 — 판정 결정론 엔진과 에이전트 잔여 역할"
+   ]
+  },
+  {
+   "question_en": "You report 3.9% zone flicker and zero clustering failures across 2,160 driver-months — which means your fallback path has never actually executed. How do you know it works, and what happens if it fires three months running for the same customer?",
+   "question_ko": "2,160 드라이버-월에서 명멸 3.9%, 군집 실패 폴백 0건이라고 하셨는데, 그건 폴백 경로가 한 번도 실행된 적이 없다는 뜻입니다. 그게 작동한다는 걸 어떻게 압니까? 같은 고객에게 석 달 연속 폴백이 걸리면 어떻게 됩니까?",
+   "angle": "기술 한계 — 클러스터링 실패 케이스",
+   "answerable": "partial",
+   "answer_sketch_ko": "실측은 투명하게 공개돼 있다: 명멸 85/2,160 드라이버-월(3.9%), 군집 실패 폴백 0건, 과병합 0.0%(3환경 모두), 정기거점 누락 1.6/2.4/3.1%, 파편화 3.1%, 존 안정성 IoU 0.943/0.910/0.828('rolling 재시뮬 결과', '10번 — 클러스터링 실측 채점표'). 설계상 명멸이 나도 위치 벌점 0·동일 잣대라 판정 불이익이 없다('위치 무벌점 · 안 30 > 밖 20 동일 잣대'). 전역 eps의 밀도 한계는 DBSCAN 원저자가 스스로 인정한 것이며(Ester 1996 p.229) 이를 전제로 3층 안전장치를 만들었다('DBSCAN 도농 밀도차 안전장치 3중'). 저주행자 거점 명멸 대응(데이터 충분성·거점 지속성 확인, 부족 시 기존 유지/보류)은 파일럿 안전장치 6종의 항목이며 8/2 결정에서 신규 메커니즘 추가가 금지돼 현 계약에는 없다고 정직 고지한다.",
+   "gap": "폴백 0건은 곧 미실행 경로다 — 폴백 로직이 실제로 옳게 동작하는지에 대한 별도 단위검증 근거가 지식층에 없다(pytest 254건 중 폴백 경로 커버리지 언급 없음). 연속 폴백 상한, 에스컬레이션 규칙, 폴백 지도가 몇 달까지 유효한지의 결정이 없다. 심사위원이 '0건이면 검증이 아니라 미발생'이라고 밀어붙일 때 반박할 실측이 없으므로 '경로는 구현돼 있으나 합성에서 발동하지 않았고, 실데이터 파일럿에서 발동률과 지속성 규칙을 정한다'로 정직하게 넘길 것.",
+   "risk": "medium",
+   "used_positions": [
+    "rolling 재시뮬 결과",
+    "rolling 재검증 결과",
+    "10번 — 클러스터링 실측 채점표",
+    "DBSCAN 도농 밀도차 안전장치 3중",
+    "DBSCAN 전역 eps 한계 — 심사 지적 대응 카드",
+    "안전장치 6종·지속성 장치·절충 규칙의 지위",
+    "위치 무벌점 · 안 30 > 밖 20 동일 잣대 (설계)",
+    "생활권 형성 주기 — 갱신형(rolling) 채택"
+   ]
+  },
+  {
+   "question_en": "Many Korean seniors split their residence — a city flat and a rural family home, or several months living with an adult child. Your rolling window will oscillate between two maps. Which one counts as 'inside', and does the customer get penalised during the transition?",
+   "question_ko": "한국 고령자 중에는 도시 아파트와 시골 본가를 오가거나, 몇 달씩 자녀 집에 머무는 분이 많습니다. 롤링 창은 두 지도 사이를 오갈 텐데, 어느 쪽이 '생활권 안'입니까? 그 전환기에 고객이 불이익을 받습니까?",
+   "angle": "기술 한계 — 다중 거주·일시 체류",
+   "answerable": "partial",
+   "answer_sketch_ko": "인접 근거는 강하다. ⑤ 복수 생활권형 30 시나리오는 기대 우대 → 실측 우대 30 전원, 평균 할인 19.5%→24.3%('유형 — 기대 vs 판정 실측 전량'). 생활권은 원이 하나가 아니라 거점 여러 개로 이뤄지고 반경은 개인 실측 P90이 정한다('생활권 최종 반경', '지역 차이는 개인 실측(P90)이 흡수한다'). 이사·가족 돌봄으로 이동만 급변한 경우는 오탐 대조군 30건에서 이동지표 임계 초과 191 케이스-월에도 케어 0건, 평균 할인은 21.2%→26.7%로 오히려 상승했다('유형 — ③ 오탐 대조군의 역할과 결과'). 새 거처는 매달 직전 2개월 재군집으로 두 달 안에 흡수된다.",
+   "gap": "⑤ 복수 생활권형은 '한 사람에게 거점이 여러 개'이지 '주거지 자체가 두 곳을 교대'하는 시나리오가 아니다 — 두 거처 왕래 케이스는 합성 데이터에 존재하지 않는다. 장기여행·친척집 한 달 체류가 새 거점이 되는 문제('일시 체류의 생활권화')는 안전장치 6종에 문제로 식별돼 있고 필요한 장치가 '일시적/지속적 변화 구분'이라고 적혀 있으나, 8/2 결정으로 신규 메커니즘 추가가 금지돼 현 계약에 없다. 즉 문제는 알지만 해법은 미구현이며, 이 상태를 구현된 것처럼 말하는 것은 must_not_say 위반이다.",
+   "risk": "medium",
+   "used_positions": [
+    "유형 — 기대 vs 판정 실측 전량 (번들 집계)",
+    "유형 — ③ 오탐 대조군(이동변화 안전유지형)의 역할과 결과",
+    "생활권 최종 반경",
+    "지역 차이는 개인 실측(P90)이 흡수한다",
+    "안전장치 6종·지속성 장치·절충 규칙의 지위",
+    "생활권 형성 주기 — 갱신형(rolling) 채택",
+    "실측 — 안전할수록 이득이 커진다 (유형별 할인율)"
+   ]
+  },
+  {
+   "question_en": "Once customers learn the rule — stay inside the circle, and never let two things change in the same month — they can optimise the score without becoming safer. Have you modelled gaming, or adverse selection into the rider by drivers who already know they qualify?",
+   "question_ko": "고객이 규칙을 학습하면 — 원 안에 머물고, 한 달에 두 가지가 동시에 변하지 않게 하면 — 더 안전해지지 않고도 점수를 최적화할 수 있습니다. 게이밍이나, 이미 자격이 된다는 걸 아는 운전자만 이 특약에 몰리는 역선택을 모델링하셨습니까?",
+   "angle": "사업성·윤리 — 게이밍·역선택",
+   "answerable": "partial",
+   "answer_sketch_ko": "구조 논거는 조합할 수 있다. 위치로 벌하지 않는다 — location_penalty 0.0이 전 반환 경로에 하드코딩돼 있고 안(30)·밖(20)에 동일한 _safety_score 함수를 쓰며, 밖 주행 0인 달은 채점 제외 후 재정규화라 '밖에 나가지 않아도, 나가서 안전해도 손해가 없다'('위치 무벌점 · 안 30 > 밖 20 동일 잣대', '부록 C — 위치가 등장하는 지점 전수'). 따라서 '원 안에 숨는' 게이밍의 보상이 구조상 0이다. 할증 항 자체가 코드에 없어 최악이 할인 축소이고(180건 전건 candidate_surcharge_rate_pct=0), 케어는 자동 요율 반영이 아니라 사람 검토(care_review)로 간다('상품 지위 — 할증 경로가 구조상 없다', '감액 13%p의 지위'). AND 게이트는 이동·위험행동 두 축이 동시에 움직여야 열리므로 단일 축 조작으로는 회피 이득이 없다.",
+   "gap": "'게이밍·역선택·도덕적 해이·어뷰징' 키워드가 지식층 전체에 0회. 위 논거는 전부 우리가 지금 조합해 만드는 것이지 승인된 스탠스가 아니며, 게이밍을 모델링한 시나리오나 실측이 없다. 특히 역선택(가입자 자기선택으로 케어 세그먼트 비중이 설계보다 낮아지는 것)은 손익분기 계산의 전제를 직접 흔드는데 이에 대한 분석이 전무하다. 무대에서는 '설계상 게이밍 보상이 0인 이유'까지만 말하고 '모델링했다'고 하지 말 것.",
+   "risk": "medium",
+   "used_positions": [
+    "위치 무벌점 · 안 30 > 밖 20 동일 잣대 (설계)",
+    "부록 C — 위치가 등장하는 지점 전수",
+    "상품 지위 — 할증 경로가 구조상 없다",
+    "감액 13%p의 지위 — 샌드박스 예시값",
+    "AND 게이트 오탐 대조군 실측",
+    "케어 게이트",
+    "우리 저장소 시뮬레이션 실측값"
+   ]
+  },
+  {
+   "question_en": "Your break-even needs a 12.4% claim reduction in the care segment. But that segment is 16.7% of your book only because you designed ten personas per type. On a real portfolio that share is unknown — so what does the break-even number actually mean?",
+   "question_ko": "손익분기가 케어 세그먼트에서 클레임 12.4% 감소를 요구한다고 하셨습니다. 그런데 그 세그먼트가 16.7%인 이유는 유형당 10명씩 균등 배분했기 때문입니다. 실제 포트폴리오에서 그 비중은 알 수 없는데, 그렇다면 이 손익분기 숫자가 실제로 의미하는 게 무엇입니까?",
+   "angle": "사업성 — 합성 구성비가 경제성 주장에 미치는 오염",
+   "answerable": "partial",
+   "answer_sketch_ko": "전제는 이미 우리가 인정하고 있다: 유형별 10명 균등 배분은 인구 비율이 아니라 각 판정 경로를 같은 검증력으로 시험하는 통제 설계다('8번 — 순환논증 절단'). 감액 13%p는 요율 샌드박스의 손익 예시값이고(source_status = illustrative_economics_sandbox_not_final_tariff) 최종 요율이 아니다('감액 13%p의 지위'). 손익분기 자체는 심도를 요율에 넣지 않고도 성립한다는 감도 분석으로 제시된 것 — 케어 세그먼트 클레임 12.4% 감소로 균형(심도 1.0×), 고령 심도 1.2× 시나리오에서 10.3%('12번 — 손익분기 감도'). 실제 사고·손해율 효과는 미검증이라는 정직 라벨이 전 문서 공통으로 붙어 있다.",
+   "gap": "'균등 배분은 인구 비율이 아니다'라는 방어는 있으나, 그렇다면 12.4%/10.3%가 실제 포트폴리오에서 무엇을 뜻하는지 재해석하는 스탠스가 없다 — 세그먼트 비중을 모수로 둔 감도(예: 케어 비중이 5%면 필요 감소율이 얼마인가)가 계산돼 있지 않다. 국내 고령 UBI 가입자 모수·예상 케어 비율 추정치도 없고, 파일럿 N은 '숫자 제시 금지'가 명시적 규칙이라 규모로 되받을 수도 없다. 시장 규모·수익성 수치가 지식층에 부재하므로 사업성 축 질문 전반이 취약하다.",
+   "risk": "high",
+   "used_positions": [
+    "12번 — 손익분기 감도",
+    "8번 — 순환논증 절단",
+    "감액 13%p의 지위 — 샌드박스 예시값",
+    "검증의 정직 한계 (전 문서 공통)",
+    "데이터생성 — 산출 규모와 파티션",
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "현행 실측 수치의 기준 — 전부 rolling 산출"
+   ]
+  },
+  {
+   "question_en": "You have built a product that watches only old people. Isn't age-based targeting itself the stigma — you are telling a 75-year-old that his driving is a supervised category?",
+   "question_ko": "고령자만 골라 감시하는 상품을 만든 것 아닙니까? 연령 기반 타겟팅 자체가 낙인 아닌가요 — 75세 고객에게 '당신의 운전은 관리 대상'이라고 말하는 셈인데요.",
+   "angle": "윤리 — 고령자 낙인 (타겟 선정)",
+   "answerable": "partial",
+   "answer_sketch_ko": "조합 가능한 방어선: (1) 고령 선택 이유는 위험군이라서가 아니라 '개인 기준선이 성립하는 조건'이기 때문 — 재는 것은 위험의 절대 수준이 아니라 평소 대비 변화이고, 30~50대 패턴 다양성은 우리 방식에서 신호가 아니라 노이즈('고령자 한정(타깃 선정) 논리', '1. 타겟 한정 — 왜 고령자인가'). (2) 나이는 판정 입력이 아니다 — 판정 입력 화이트리스트 8개(4축 점수·변화지수 2·zone_available·data_coverage_pct)에 연령·심도·손해액·사고 라벨 없음('12번 — 사고 심도 비예측'). (3) 위치에도 벌점 없음(location_penalty 0.0). (4) 결과가 불이익 쪽으로 열리지 않음 — 180 시나리오 전건 candidate_surcharge_rate_pct 0.0, 하한 0% = 기준 요율이라 할증 경로가 코드에 존재하지 않음('상품 지위 — 할증 경로가 구조상 없다'). (5) 신체 취약성 기반 심도 예측을 인수차별로 규정하고 스스로 배제했다는 점을 선제 제시. 정직 고지 병기 필수: 케어 확정 시 보너스 정지 + 그해 할인 13%p 축소로 전보다 내는 돈이 늘 수 있다.",
+   "gap": "낙인이 독립 position topic으로 존재하지 않는다. 지식층 전체에서 '낙인'은 단 1회 — qa/cards.yaml:392의 '왜 고령자로만 한정했나' 카드 followup 2줄뿐이고, official_positions.yaml에는 0건. stigma/ageism 영어 프레이밍 0건, 관련 외부 문헌 0건(evidence registry에 낙인·수용도 topic 없음). 고령 고객이 이 상품을 실제로 어떻게 받아들이는지의 근거가 전무 — 유일한 고객 니즈 수치인 '86% 이동권 희망'은 status: unverified·서지 URL 없음으로 무대 인용 보류 상태.",
+   "risk": "high",
+   "used_positions": [
+    "고령자 한정(타깃 선정) 논리",
+    "1. 타겟 한정 — 왜 고령자인가",
+    "상품 지위 — 할증 경로가 구조상 없다",
+    "12번 — 사고 심도 비예측",
+    "위치 무벌점 · 안 30 > 밖 20 동일 잣대 (설계)"
+   ]
+  },
+  {
+   "question_en": "When care review opens on a 78-year-old, who is notified? The driver only, or his adult children? On whose consent do you contact the family?",
+   "question_ko": "78세 고객에게 케어가 열리면 누구에게 통보됩니까? 본인만입니까, 아니면 자녀·가족에게도 갑니까? 가족에게 알린다면 누구의 동의로 알리는 겁니까?",
+   "angle": "윤리 — 가족 통보 동의 / 제3자 고지",
+   "answerable": "none",
+   "answer_sketch_ko": "현재 승인된 자료로는 뒷받침할 수 없다. 말할 수 있는 인접 사실은 두 가지뿐: (a) 리포트는 '고객·직원용 문안'까지만 정의돼 있고(sources/02_마스터답변안_전항목.md 396행, LLM은 문안만 쓰고 숫자는 엔진 확정값 인용만), (b) 동의는 특약 가입 시 목적 특정 동의이고 목적은 '생활권 학습·월 판정'으로 한정, 철회 시 파기('6b. 최소수집·파생값 설계'). 즉 제3자 통보는 현재 선언된 동의 목적 범위 밖이라는 것까지가 정직하게 말할 수 있는 최대치이고, 그 이상은 지어내면 안 된다.",
+   "gap": "가족·보호자·자녀 통보에 관한 설계·스탠스가 지식층에 0건이다. knowledge 전체의 '가족' 4건은 전부 '이사·가족 돌봄' 페르소나(오탐 대조군 30건)를 가리키며 통보와 무관 — 검색하면 오답이 나오는 위험한 동음이의 구조. '보호자'·'자녀'·'통보'·'알림' 검색 결과 각 0건. 제3자 고지 동의 구조, 통보 여부의 고객 선택권, 통보 시 기록 보존 규칙 모두 미정의.",
+   "risk": "high",
+   "used_positions": [
+    "6b. 최소수집·파생값 설계",
+    "9번 — 판정 결정론 엔진과 에이전트 잔여 역할"
+   ]
+  },
+  {
+   "question_en": "Can a customer decline the care review? If he refuses the recommended check-up, does he still lose the 13 percentage points — and if he complies, does he get them back?",
+   "question_ko": "고객이 케어를 거부할 수 있습니까? 권유받은 점검을 거부하면 13%p 축소는 그대로 적용됩니까, 반대로 점검을 받으면 회복됩니까?",
+   "angle": "윤리 — 케어 거부권 / 개입 수용의 자발성",
+   "answerable": "partial",
+   "answer_sketch_ko": "답할 수 있는 부분: 케어는 자동 요율 반영이 아니라 '사람 검토(care_review)' 상태이고 운영상 개입은 벌점·할증이 아니라 점검 권유와 예방 지원이다('감액 13%p의 지위 — 샌드박스 예시값'). 해제에 고객의 신청이 필요 없다 — 지표가 정상으로 돌아온 그 달에 닫힌다(care_open = fires or (care_open and sustained)). 발동 조건도 이동 +25%p AND 위험행동 +20%p 동시 급변이라 한 달 내내 바뀐 생활만 잡힌다('케어 게이트'). 정직 고지: 현 규칙은 평가 12개월 중 케어 월이 1개만 있어도 그해 13%p 축소이고 rolling 실측 케어 30건이 전원 1개월 발동이라 이 역전이 실측의 전형 — 그래서 감액을 발생 월수 비례(13.0 × 발생월수 ÷ 12, 1개월 시 1.08%p)로 바꾸자는 권고가 올라가 있다.",
+   "gap": "'케어를 수용/거부한다'는 개념 자체가 설계에 없다. 케어는 고객이 동의하거나 거부하는 프로그램이 아니라 엔진이 여는 상태이며, 점검 권유 거부 시의 처리 규칙 0건. opt-out·거부권 스탠스 0건(옵트/거부권 검색 0). 더 중요한 구멍: 감액 13%p가 '권유 수용 여부'와 무관하게 지표만으로 결정된다면 '권유'라는 표현이 무대에서 되치기당한다 — 권유와 감액의 인과관계를 정리한 스탠스가 없다. 월수 비례 권고안은 '팀 결정 필요, 미결' 상태라 확정으로 말할 수 없다.",
+   "risk": "high",
+   "used_positions": [
+    "감액 13%p의 지위 — 샌드박스 예시값",
+    "케어 게이트",
+    "케어의 갱신·해제 분리 원칙",
+    "케어 할인 축소 개선",
+    "권고 — 감액을 발생 월수에 비례 (팀 결정 필요, 미결)",
+    "연간 케어 any 규칙 — 실측 결과 (정직 고지)"
+   ]
+  },
+  {
+   "question_en": "Zero false positives out of thirty is a synthetic result. In a real pilot you will flag someone wrongly. What is that customer's remedy — who reviews it, how does he contest it, and is the discount restored retroactively?",
+   "question_ko": "30건 중 오탐 0건은 합성 결과입니다. 실제 파일럿에서는 반드시 오탐이 납니다. 그 고객의 구제 절차는 무엇입니까 — 누가 재검토하고, 고객은 어떻게 이의를 제기하며, 할인은 소급 복원됩니까?",
+   "angle": "윤리 — 오탐 시 구제 절차 / 이의제기권",
+   "answerable": "partial",
+   "answer_sketch_ko": "방어 가능한 부분(오탐이 잘 안 난다): AND 게이트 오탐 대조군(이동변화·안전유지형) 30 시나리오에서 이동변화지수가 임계를 넘은 달이 191/360 케이스-월(최대 73.9%p), 직전 2개월 대비로 좁혀도 46 케이스-월인데 케어 발동 0건, 위험행동 변화지수 전건 0('5b. AND 게이트 오탐 방어 실측'). 단발 예외 운행은 월 트립 중앙값 32건 기준 밖 비중을 약 3.1%p 움직여 임계의 1/8이라 구조적으로 진입 불가('단발 예외 운행은 판정에 진입하지 못한다'). 명절·병원·여행은 이동 축만 건드린다. 정직 고지 필수: 이것은 합성 데이터이므로 오탐 방어의 실증이 아니라 확률 논리다('검증의 정직 한계'). 구제 절차 질문 자체에는 답할 재료가 없다.",
+   "gap": "구제·이의제기·정정·소급 복원 절차가 지식층에 0건이다('구제'·'불복'·'이의제기'·'appeal' 검색 전부 0). '사람 검토(care_review)'라는 표현이 세 곳에 등장하지만 누가 검토하는지, 무엇을 근거로 뒤집을 수 있는지, 고객이 그 검토에 참여하는지가 어디에도 정의돼 있지 않다 — 무대에서 '사람 검토'라고 답하면 즉시 '누가, 무엇을 보고, 며칠 안에'로 파고들 수 있는 빈 껍데기다. 또 evidence registry는 이 실측에 '오탐 방어의 실증은 아님(합성 데이터 — 확률 논리로만 주장)' 플래그를 직접 달아둬서, 숫자를 방패로 쓰는 순간 자기 문서에 반박당한다.",
+   "risk": "high",
+   "used_positions": [
+    "5b. AND 게이트 오탐 방어 실측",
+    "AND 게이트 오탐 대조군 실측",
+    "단발 예외 운행은 판정에 진입하지 못한다",
+    "케어 게이트",
+    "검증의 정직 한계 (전 문서 공통)"
+   ]
+  },
+  {
+   "question_en": "You cite MCI-detection driving studies. Suppose your system sees exactly that pattern in a real customer. Do you tell him? Do you have a duty to warn a regulator or a physician? And if you don't tell anyone, having seen it — what is your liability?",
+   "question_ko": "MCI 판별 주행 연구를 인용하셨는데, 실제 고객에게서 그 패턴이 그대로 관측됐다고 합시다. 본인에게 알립니까? 감독당국이나 의사에게 알릴 의무가 있습니까? 보고도 아무에게도 알리지 않았다면 그 책임은 누가 집니까?",
+   "angle": "윤리·법 — 인지저하 의심 통보의 지위 / duty to warn",
+   "answerable": "partial",
+   "answer_sketch_ko": "방어선까지는 있다: 이 3편(DRIVES·Bayat·LongROAD ML)은 결과 변수가 사고가 아니라 인지 상태인 질병 판별 연구이므로 문제정의 본문에 넣지 않고 Q&A 백업으로만 쓰며, '저희 상품은 질병을 진단하지 않습니다'를 반드시 병기한다. 표현도 '사고 이전에 나타난다'가 아니라 '진단·자각 이전에'가 정확하다('질병 판별 연구 3편의 사용 범위'). 인용 수치도 주행 단독 AUC 0.82이지 'GPS만으로 0.96'이 아니다(0.96은 연령·APOE 결합). 그리고 판정 입력 화이트리스트 8개에 의료·인지 관련 변수가 없다. 여기까지가 전부이고, 통보 의무·의료 연계·책임 귀속은 답할 근거가 없다.",
+   "gap": "'진단하지 않는다'는 부정 선언 다음이 통째로 비어 있다. 인지저하 의심 패턴이 관측됐을 때의 행동 규범 — 본인 고지 여부, 의료기관 연계 프로토콜, 기록 보존, 고객이 고지를 거부할 때의 처리 — 0건. duty to warn / 보고 의무 / 면책에 관한 법·윤리 스탠스 0건('윤리' 검색 knowledge·sources 통틀어 0). 케어 리포트 문안에 인지 관련 표현이 들어가는지 여부도 미규정. 참고로 관련 수치 상당수가 금지 표현으로 묶여 있어(MCI 60%/치매 81%는 원논문 실제 유병률 39.5%의 오독으로 인용 금지) 즉흥 대응 시 금지선을 밟을 위험이 높다.",
+   "risk": "high",
+   "used_positions": [
+    "질병 판별 연구 3편(DRIVES·Bayat·LongROAD ML)의 사용 범위",
+    "12번 — 사고 심도 비예측",
+    "AI 역할 서술"
+   ]
+  },
+  {
+   "question_en": "Korea and Japan both run licence-surrender schemes for older drivers. Once an insurer flags someone for care review, that flag becomes de facto pressure to hand in the licence. Is that your intent — and if not, what stops it?",
+   "question_ko": "한국과 일본 모두 고령운전자 면허 자진반납 제도를 운영합니다. 보험사가 케어 대상으로 지정하는 순간 그것이 사실상 면허 반납 압박이 됩니다. 그것이 의도입니까? 아니라면 무엇이 그걸 막습니까?",
+   "angle": "윤리 — 운전면허 반납 압박 / 이동권 위축",
+   "answerable": "none",
+   "answer_sketch_ko": "현재 승인된 자료로는 뒷받침할 수 없다. 간접적으로 끌어올 수 있는 것은 '개입은 벌점이 아니라 점검 권유와 예방 지원'이라는 한 줄과, 사고잦은곳을 판정 감점이 아니라 케어 리포트의 안전 안내로 배치하며 '담당자 상담과 지자체 안전 프로그램 연계'를 언급한 대목(sources/02_마스터답변안_전항목.md 566행)뿐이다. 이것으로 '운전 중단이 아니라 계속 운전을 돕는 방향'이라는 취지는 말할 수 있으나, 면허 반납과의 관계를 명시한 스탠스가 아니므로 확정 답변으로 제시하면 창작이 된다.",
+   "gap": "면허 반납·자진반납에 관한 position·evidence·금지표현이 전부 0건이다. knowledge의 '면허' 2건은 Harootunian 2014의 '타주 면허(비친숙 대리지표)'로 완전히 다른 맥락. '이동권 유지'를 상품 목적으로 세우려 해도 유일한 근거인 '86% 이동권 희망'이 status: unverified이고 sources 어디에도 서지·URL이 없어 인용 보류 상태 — 즉 이 질문에 쓸 수 있는 무대 인용 가능 숫자가 하나도 없다. 케어가 운전 중단 권유로 이어지는 경로가 설계상 존재하는지 아닌지조차 정의되지 않았다.",
+   "risk": "high",
+   "used_positions": [
+    "감액 13%p의 지위 — 샌드박스 예시값",
+    "13번 — 사고잦은곳: 자리를 바꿔 채택"
+   ]
+  },
+  {
+   "question_en": "Your data comes from a smartphone app. The oldest, frailest, most at-risk drivers are precisely the ones least likely to use one. Doesn't your product structurally select for the healthiest, most digital seniors and miss the people it claims to protect?",
+   "question_ko": "데이터가 스마트폰 앱에서 나옵니다. 가장 고령이고 가장 위험한 운전자가 바로 앱을 못 쓰는 사람들입니다. 결국 가장 건강하고 디지털에 익숙한 고령자만 걸러 받는 구조 아닙니까? 보호하겠다는 대상이 빠지는데요.",
+   "angle": "윤리 — 디지털 소외 / 선택편의",
+   "answerable": "partial",
+   "answer_sketch_ko": "부분 답변: (1) 데이터 3경로가 앱 단일 의존이 아니다 — ① 기존 UBI 채널(앱 산정 점수만 동의하에 전송하는 국내 표준 구조 위에 파생 지수를 얹음) ② 특약 동의 신규 수집 ③ 공공·제휴('13번 — 데이터 확보 3경로와 파일럿'), 단계 확보는 자체 앱 → OEM → 제휴 순이라 차량 단말 경로가 로드맵에 있다. (2) 수집 필드가 도착지 좌표+방문 날짜뿐이라 궤적·경로·체류시간을 받지 않아 동의 범위와 사용자 부담이 통상 UBI보다 좁다. (3) 데이터가 부족한 달은 불이익이 아니라 판정 보류다 — min_data_coverage_pct 80.0 미만이면 우대·케어 모두 보류, sparse 6건 전건 변동 0(41.0%→41.0%). 여기까지가 '결측이 벌이 되지 않는다'는 답이고, '애초에 가입하지 못한다'는 선택편의 자체에는 답이 없다.",
+   "gap": "디지털 소외·스마트폰 보유율·고령 UX 관련 스탠스와 문헌이 전부 0건이다('디지털'·'소외'·'스마트폰' 검색 knowledge 0). 앱을 쓸 수 없는 고령자의 가입 경로가 구체적으로 정의돼 있지 않다 — OEM·차량 단말은 3경로 서술에 한 단어로만 등장하고 설계가 없다. 커버리지 80% 규칙은 가입 이후의 결측만 다루므로 가입 자체의 선택편의(가장 위험한 코호트가 표본에서 빠짐)에는 대응하지 못한다. 파일럿 N·모수도 미확정이라 '어떤 고령자가 몇 명 들어오는가'를 숫자로 말하는 것이 금지돼 있다.",
+   "risk": "medium",
+   "used_positions": [
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "실현 가능성 — 데이터 3경로·사고잦은곳·도로 위계",
+    "6b. 최소수집·파생값 설계",
+    "5b. AND 게이트 오탐 방어 실측"
+   ]
+  },
+  {
+   "question_en": "Your product judges where an autonomous adult goes every day and changes his price when his life changes. Where is the line between prevention and surveillance? Why is this not paternalism dressed as an insurance product?",
+   "question_ko": "자율적인 성인이 매일 어디에 가는지를 판정하고, 생활이 바뀌면 가격을 바꾸는 상품입니다. 예방과 감시의 경계는 어디입니까? 이것이 보험 상품의 옷을 입은 온정적 간섭이 아니라고 할 근거가 무엇입니까?",
+   "angle": "윤리 — 자율성 침해 / 패터널리즘",
+   "answerable": "partial",
+   "answer_sketch_ko": "기술적 방어는 두껍다: 궤적·경로 미수집, POI 조회 없음, 트립당 한 줄 17열, 라벨은 Routine Hub A/B·New Hub 일반 라벨뿐, 지도는 자택 기준 상대변위 10m 반올림, 좌표는 허용목록 DTO(sanitizeGaipBundleForUi)로 표시 계층 유출 차단, 존 대조는 단말 수행 가능해 보험사로는 월 집계만 넘길 수 있다('6b. 최소수집·파생값 설계'). 위치 자체에 벌점이 없고(location_penalty 0.0) 생활권은 판정의 기준선이지 벌점의 경계선이 아니며, 명제는 '밖에서 사고가 난다'가 아니라 '평소 대비 이동과 행동이 동시에 급변했다'이다. 결과도 할인 자격뿐이고 할증 경로가 코드에 없다. 이 조합으로 '어디에 갔는지가 아니라 평소와 달라졌는지만 본다'는 규범적 답변을 구성할 수는 있으나, 그 문장 자체가 승인된 스탠스로 존재하지는 않는다.",
+   "gap": "자율성·감시·패터널리즘을 정면으로 다룬 스탠스가 0건이다('자율'·'autonomy'·'감시' 검색 0). 현존 방어는 전부 '무엇을 안 받는가'라는 기술적 최소수집 논거이고, '왜 이것이 감시가 아닌가'라는 규범 논거로 승인된 문장이 없다 — 서구권 심사위원이 가장 반복해서 던지는 형태의 질문인데 답이 기술 스펙으로만 돼 있어 축이 어긋난다. 실사용자 인터뷰·수용도 조사 0건이라 '고객이 감시로 느끼지 않는다'를 뒷받침할 근거도 없다. 위치정보법 23조 해석은 status: unverified이고 OPEN_ITEMS A에 '조문(사실) vs 자체 해석(법무 미검토) 분리 필요'로 남아 있어 법적 정당화로 기대기도 위험하다.",
+   "risk": "medium",
+   "used_positions": [
+    "6b. 최소수집·파생값 설계",
+    "6. 위치데이터 보존의 법적 제약 — 법령 사실 교정",
+    "위치 무벌점 · 안 30 > 밖 20 동일 잣대 (설계)",
+    "상품 지위 — 할증 경로가 구조상 없다"
+   ]
+  },
+  {
+   "question_en": "If your target cohort is defined by the possibility of cognitive change, is consent given at enrolment still valid in year two? Who checks that the person still understands what he agreed to?",
+   "question_ko": "인지 변화 가능성을 전제로 코호트를 정한 상품이라면, 가입 시점에 받은 동의가 2년 차에도 유효합니까? 그 고객이 자신이 무엇에 동의했는지 여전히 이해하고 있는지는 누가 확인합니까?",
+   "angle": "윤리·법 — 동의 능력(capacity)과 재동의",
+   "answerable": "none",
+   "answer_sketch_ko": "현재 승인된 자료로는 뒷받침할 수 없다. 존재하는 것은 '동의는 특약 가입 시 목적 특정 동의(생활권 학습·월 판정), 철회 시 파기' 한 줄뿐이며('6b. 최소수집·파생값 설계'), 이 한 줄은 최초 1회 동의만 상정한다. 인접 사실로 '저희 상품은 질병을 진단하지 않습니다'를 병기해 인지 상태를 상품이 판정하지 않는다는 점은 말할 수 있으나, 그것이 동의 능력 문제에 대한 답은 아니다.",
+   "gap": "동의 능력·재동의·대리동의(가족·후견) 관련 스탠스가 0건이다. 규제 축이 한국법(위치정보법 제23조, 방통위 고시 제6조 제5항, 통신비밀보호법 시행령 제41조)으로만 구성돼 있고, 그 위치정보법 해석마저 status: unverified·법무 미검토(OPEN_ITEMS A 11건 중 1건)로 남아 있다. 결선 개최지·심사위원 구성을 감안하면 GDPR·싱가포르 PDPA 대응 스탠스가 필요한데 지식층에 0건이다.",
+   "risk": "medium",
+   "used_positions": [
+    "6b. 최소수집·파생값 설계",
+    "6. 위치데이터 보존의 법적 제약 — 법령 사실 교정",
+    "질병 판별 연구 3편(DRIVES·Bayat·LongROAD ML)의 사용 범위"
+   ]
+  },
+  {
+   "question_en": "A customer withdraws consent halfway through the policy year. What happens to his discount, his learned zone, and his care state? Does he go back to base rate, and can he re-enrol without starting the two-month baseline over?",
+   "question_ko": "고객이 보험 연도 중간에 동의를 철회하면 어떻게 됩니까? 할인, 학습된 생활권, 케어 상태는 각각 어떻게 처리됩니까? 기준요율로 돌아갑니까, 재가입 시 2개월 기준선을 처음부터 다시 쌓아야 합니까?",
+   "angle": "고객 — 동의 철회의 결과 / 데이터 주체 권리",
+   "answerable": "partial",
+   "answer_sketch_ko": "말할 수 있는 것: 철회 시 파기가 원칙이고('6b. 최소수집·파생값 설계'), 위치 원본이 필요한 창은 어느 시점에도 직전 2개월분뿐이며(zone_refresh_policy: rolling_2m) 평가 12개월이 붙잡는 것은 좌표가 아니라 거점 중심·반경 파생값과 월별 안/밖 카운트다. 데이터가 없으면 커버리지 80% 미만으로 판정이 보류되지 불이익이 되지 않는다. 구조상 기준요율(하한 0%)이 바닥이라 철회가 할증으로 이어질 경로는 없다. 여기까지는 조합 가능하나 계약·할인의 실제 처리 규칙은 답할 근거가 없다.",
+   "gap": "'철회 시 파기' 한 줄 이후가 비어 있다. 철회 후 할인 소멸 여부, 기준요율 복귀 절차, 케어 상태의 처리, 파기 후 재가입 시 2개월 기준선 재학습 필요 여부가 전부 미정의. 커버리지 80% 보류 규칙은 '결측 달'을 다루는 규칙이지 '동의 철회'를 다루는 규칙이 아니므로 그대로 끌어 쓰면 논리 비약이 된다. 데이터 주체 권리(열람·정정·이동성) 스탠스도 0건.",
+   "risk": "medium",
+   "used_positions": [
+    "6b. 최소수집·파생값 설계",
+    "6. 위치데이터 보존의 법적 제약 — 법령 사실 교정",
+    "케어의 갱신·해제 분리 원칙"
+   ]
+  },
+  {
+   "question_en": "Show me what the customer actually reads. Your report text is written by a language model. What stops it from producing a sentence like 'your driving pattern suggests decline' — the exact sentence that would humiliate a 78-year-old?",
+   "question_ko": "고객이 실제로 읽는 문장을 보여주십시오. 리포트 문안을 언어모델이 씁니다. '당신의 주행 패턴은 능력 저하를 시사합니다' 같은 문장 — 78세 고객에게 가장 모욕적인 그 문장이 나오는 것을 무엇이 막습니까?",
+   "angle": "윤리 — 낙인의 실물(고객 대면 문안) / LLM 가드레일",
+   "answerable": "partial",
+   "answer_sketch_ko": "있는 가드는 수치 가드뿐이다: 에이전트가 남은 자리는 두 곳이고 둘 다 판정 밖 — 페르소나 이동 프로파일 오프라인 1회 생성·캐시 커밋, 그리고 고객·직원용 리포트 문안 생성. 문안 생성에서는 프롬프트가 재계산·수치 생성을 금지하고 엔진 확정값 인용만 허용하며, 호출 실패 시 동일 스키마의 결정론 폴백으로 떨어진다('AI 역할 서술', '9번 — 판정 결정론 엔진과 에이전트 잔여 역할'). 인용 규칙 차원에서는 '저희 상품은 질병을 진단하지 않습니다' 병기 의무와 '사고 이전에 나타난다' 금지가 있다. 톤·낙인 가드가 있다고는 말할 수 없다.",
+   "gap": "고객 대면 문안의 톤·금지 표현 규정이 0건이다. forbidden_claims.yaml 129개는 전부 심사위원 대상 발표·인용 표현을 규율하며 고객이 읽는 문장은 규율하지 않는다. LLM 문안 가드는 '숫자를 지어내지 마라' 하나뿐이고 '낙인적 표현을 쓰지 마라'가 없다 — 이 질문이 정확히 그 틈을 찌른다. 실제 리포트 문안 샘플이 지식층에 한 건도 없어 '보여달라'는 요구에 내놓을 실물이 없다(sources에도 문안 예시 없음).",
+   "risk": "medium",
+   "used_positions": [
+    "AI 역할 서술",
+    "9번 — 판정 결정론 엔진과 에이전트 잔여 역할",
+    "질병 판별 연구 3편(DRIVES·Bayat·LongROAD ML)의 사용 범위"
+   ]
+  },
+  {
+   "question_en": "Put the bargain plainly. The customer hands over where he goes every day. In your own simulation, 30 of 180 end up with the bonus stopped and 13 points of discount cut. Why would a rational 70-year-old sign this?",
+   "question_ko": "거래를 있는 그대로 놓고 봅시다. 고객은 매일 어디에 가는지를 내줍니다. 그런데 자체 시뮬레이션에서 180명 중 30명은 보너스가 정지되고 할인이 13%p 깎입니다. 합리적인 70세가 왜 이걸 가입합니까?",
+   "angle": "고객 — 거래의 공정성 / 상품 수용성",
+   "answerable": "partial",
+   "answer_sketch_ko": "숫자로는 답이 선다: 요율표가 아니라 기존 마일리지 할인 위에 얹히는 할인 자격 점수(오버레이)라 할증 경로가 코드에 없고(180 시나리오 전건 candidate_surcharge_rate_pct = 0, 하한 0% = 기준 요율), 실측 180건 중 150건이 기존 마일리지 특약과 같거나 낮은 보험료이며 그중 113건은 더 낮다('5. 안전 운전자 상품 매력도 — 할증 없음'). 유형별 평균 할인율도 안정 저주행형 33.8→38.9%, 이사형 21.2→26.7%, 복수 생활권형 19.5→24.3% 등 안전할수록 이득이 커진다. 내주는 것도 궤적이 아니라 도착지 좌표와 방문 날짜뿐이다. 정직 고지 필수: 케어 확정 시 보너스 정지 + 13%p 축소로 전보다 내는 돈이 늘 수 있고, 그 감액을 월수 비례로 바꾸자는 권고가 미결로 올라가 있다.",
+   "gap": "숫자 답은 완비돼 있으나 '고객이 실제로 이 거래를 받아들이는가'의 근거가 0건이다 — 수요·수용도·지불의사 조사 전무, 유일한 고객 니즈 수치 '86% 이동권 희망'은 status: unverified·서지 미상으로 무대 인용 보류. 또 인용하려는 실측이 전부 합성 180 시나리오이므로 '검증 대상은 로직 일관성이지 실주행 예측력이 아니다'라는 정직 한계를 함께 말해야 하고, 감액 월수 비례 개선안은 '팀 결정 필요, 미결'이라 확정으로 제시하면 안 된다.",
+   "risk": "low",
+   "used_positions": [
+    "5. 안전 운전자 상품 매력도 — 할증 없음",
+    "상품 지위 — 할증 경로가 구조상 없다",
+    "실측 — 안전할수록 이득이 커진다 (유형별 할인율)",
+    "5c. 연간 감액 규칙의 결함과 권고 (정직 고지)",
+    "6b. 최소수집·파생값 설계",
+    "검증의 정직 한계 (전 문서 공통)"
+   ]
+  },
+  {
+   "question_en": "What is the primary endpoint of your pilot? Tell me the single number that decides whether this succeeded or failed.",
+   "question_ko": "파일럿의 1차 종결점(primary endpoint)은 무엇입니까? 성공과 실패를 가르는 단 하나의 숫자를 말해 주십시오.",
+   "angle": "파일럿 설계 — 성공기준",
+   "answerable": "partial",
+   "answer_sketch_ko": "설계 골격은 있습니다: 기준선 2개월 + 관찰 6개월, 개입군/대조군 병행, 지역 유형 2개 이상 코호트. 경제성 기준선도 하나 있습니다 — 케어 세그먼트(180건 중 30건·16.7%)의 클레임을 12.4% 줄이면 손익분기(심도 가산 없는 1.0× 기준), 고령 심도 1.2× 감도 시나리오에서는 10.3%로 내려갑니다. 파일럿에서 심도는 요율 변수가 아니라 '케어 개입 전후 건당 손해액 변화'를 재는 지표로 쓰기로 정해 뒀습니다. 캘리브레이션 일정도 있습니다: 가중치는 파일럿 경험 손해율로 재적합, eps는 4~6개월차 k-거리 실측으로 재도출, 이후 연 1회 재점검. 정직 고지도 준비돼 있습니다 — 현재 검증된 것은 예측력이 아니라 판정 로직의 일관성이며 실제 사고·손해율 효과는 미검증입니다.",
+   "gap": "성공/실패를 가르는 1차 종결점과 그 임계값이 어디에도 선언된 적이 없습니다. 12.4%는 손익분기 역산값이지 '파일럿 성공 기준'으로 채택된 적이 없고, 검정력·필요 표본·관찰 6개월로 그 효과크기를 탐지할 수 있는지에 대한 계산이 전무합니다. 이차 지표(케어 판정 정확도, 고객 이탈, 민원 건수)도 정의되지 않았습니다. knowledge/·sources/ 전체에 '성공기준'·'KPI' 0회.",
+   "risk": "high",
+   "used_positions": [
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "12번 — 손익분기 감도",
+    "로드맵 — 캘리브레이션과 eps 재도출",
+    "검증의 정직 한계 (전 문서 공통)",
+    "파일럿 시 기준거리 재보정"
+   ]
+  },
+  {
+   "question_en": "How many policyholders will the pilot need, and what will it cost? If you cannot tell me the number, tell me how you would derive it.",
+   "question_ko": "파일럿에 몇 명이 필요하고 비용은 얼마입니까? 숫자를 못 대시겠다면, 그 숫자를 어떻게 도출할지라도 말씀해 주십시오.",
+   "angle": "파일럿 설계 — 규모·예산",
+   "answerable": "partial",
+   "answer_sketch_ko": "정본에 준비된 답이 있습니다: \"귀사 UBI 가입 고령 고객 모수를 확인해야 확정할 수 있어 지금 숫자를 말씀드리지 않겠습니다. 필요한 필드가 도착지 이벤트뿐이라 단말·수집 부담은 통상 UBI 파일럿보다 낮게 잡힙니다.\" forbidden_claims.yaml에 '파일럿 N 규모 숫자 제시'가 금지 표현으로 등재돼 있어(사유: 모수 확인 전 미확정) 무대에서 숫자를 말하면 규약 위반입니다. 규모 감각의 유일한 앵커는 eps 캘리브레이션 쪽에 있는 문장 — \"고객 수백 명 × 2~3개월이면 방문점 수만 개로 충분\"(k-거리 1차 측정 기준).",
+   "gap": "N을 못 말하는 것과 '어떻게 정할지'조차 못 말하는 것은 다릅니다. 효과크기·검정력 가정에서 필요 표본을 역산하는 절차가 없고, 예산은 금액도 항목 구성(수집·검토 인건비·인프라)도 0입니다. '예산'이라는 단어는 지식층·원문층 통틀어 이 회피 답변 한 곳에만 나옵니다. \"고객 수백 명\"은 eps 측정 충분성 기준이지 판정 성능 검증용 표본 근거가 아니라 그대로 옮겨 쓰면 위험합니다.",
+   "risk": "high",
+   "used_positions": [
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "생활권 — k-거리 재산정 계획 (ε 캘리브레이션)",
+    "실현 가능성 — 데이터 3경로·사고잦은곳·도로 위계"
+   ]
+  },
+  {
+   "question_en": "You keep saying a human reviews every care case. Who is that human, how many do you need, and what does one review cost?",
+   "question_ko": "케어 건마다 사람이 검토한다고 반복해 말씀하셨습니다. 그 사람은 누구고, 몇 명이 필요하며, 1건 검토에 얼마가 듭니까?",
+   "angle": "케어 검토 인력·비용",
+   "answerable": "none",
+   "answer_sketch_ko": "설계상의 성격 규정만 있습니다 — 월 신호 → 연간 판정 → care_review 사람 검토의 3중 구조이고, 개입은 벌점이 아니라 점검 권유와 예방 지원이며, 보험료·인수·케어 최종 결정은 사람이 한다는 원칙이 명시돼 있습니다. 물량 감각으로 쓸 수 있는 유일한 실측은 180 시나리오 중 케어 30건(16.7%)이고 rolling에서 전원 1개월 발동이라 케이스-월 부하가 케어 건수와 같은 자릿수라는 점 정도입니다.",
+   "gap": "검토자가 누구인지(보험사 직원인지 우리인지 외주인지), 몇 명인지, 1건당 소요 시간·단가, SLA, 검토 결과 기록·고객 이의제기 절차 — 어느 것도 없습니다. knowledge/·sources/ 전체에 '인력'·'인건비'·'상담원' 0회, '비용'은 발표 준비 우선순위 표의 열 제목 1회뿐. 16.7% 발동률을 실제 계약 규모에 곱했을 때 운영비가 할인 오버레이의 마진을 잠식하는지 계산한 적이 없습니다. 우리 스스로 '사람 검토'를 최강 방어막으로 내세우기 때문에 심사위원이 반드시 당겨볼 실입니다.",
+   "risk": "high",
+   "used_positions": [
+    "감액 13%p의 지위 — 샌드박스 예시값",
+    "단발 예외 운행은 판정에 진입하지 못한다",
+    "AI 역할 서술",
+    "안전 운전자 매력 — 할증 경로 부재 + AND 게이트",
+    "케어 월수 — rolling 실측"
+   ]
+  },
+  {
+   "question_en": "Care fires on an 78-year-old. What happens next in the real world — who contacts him, through what channel, and what do they actually say?",
+   "question_ko": "78세 고객에게 케어가 발동했습니다. 현실에서 그 다음에 무슨 일이 일어납니까 — 누가, 어떤 채널로 연락하고, 실제로 무슨 말을 합니까?",
+   "angle": "콜센터·고객 접점 운영",
+   "answerable": "none",
+   "answer_sketch_ko": "말할 수 있는 것: 개입의 성격은 벌점이 아니라 점검 권유와 예방 지원이고, 해제는 고객이 신청할 필요가 없습니다(지표가 정상으로 돌아온 그 달에 자동으로 닫힘 — care_open = fires or (care_open and sustained)). 케어 리포트에는 사고다발지 안전 안내가 들어가며(판정 감점이 아니라 정보 제공으로 자리를 바꿔 채택), 후속 답변에 \"지점을 특정하면 담당자 상담과 지자체 안전 프로그램 연계가 구체화된다\"는 한 줄이 있습니다. 정직 고지: 케어 확정 시 보너스 정지 + 그해 할인 13%p 축소로 전보다 내는 돈이 늘 수 있습니다.",
+   "gap": "'담당자 상담' 다섯 글자가 고객 접점에 대한 서술의 전부입니다. 누가·언제·어떤 채널로(전화/앱/우편/설계사) 알리는지, 안내 문안, 고령 고객 응대 프로토콜, 가족 고지 여부와 그 동의 근거, 고객이 거부할 때의 처리 — 전부 공백. '콜센터' 단어는 지식층·원문층 통틀어 0회입니다. 케어가 '벌'이 아니라 '돌봄'이라는 우리 서사 전체가 이 접점 설계에 걸려 있는데 그 설계가 없습니다.",
+   "risk": "high",
+   "used_positions": [
+    "감액 13%p의 지위 — 샌드박스 예시값",
+    "13번 — 사고잦은곳: 자리를 바꿔 채택",
+    "연간 케어 any 규칙 — 실측 결과 (정직 고지)",
+    "요율 구조"
+   ]
+  },
+  {
+   "question_en": "Your system flags a driver as 'care' in March. In May he causes a fatal crash. The family's lawyer asks why you detected the deterioration and did nothing. Where does liability sit?",
+   "question_ko": "3월에 시스템이 어떤 운전자를 '케어'로 표시했습니다. 5월에 그가 사망사고를 냅니다. 유족 측 변호사가 '악화를 감지하고도 왜 아무것도 하지 않았느냐'고 묻습니다. 책임은 누구에게 있습니까?",
+   "angle": "사고 시 책임 소재",
+   "answerable": "none",
+   "answer_sketch_ko": "직접 답은 없고, 인접한 방어막만 있습니다: (1) \"저희 상품은 질병을 진단하지 않습니다\"가 병기 의무 문구이고, 인지 판별 문헌 3편(DRIVES·Bayat·LongROAD ML)은 문제정의 본문이 아니라 Q&A 백업으로만 쓰며 표현도 '사고 이전에 나타난다'가 아니라 '진단·자각 이전에'로 제한돼 있습니다. (2) 심도를 예측하지 않습니다 — 판정 입력이 화이트리스트 8개로 코드에 고정돼 있고 심도·손해액·사고 라벨이 없으며, 신체 취약성 기반 심도 예측은 인수차별 직결이라 의도적으로 배제했습니다. (3) 위치정보법 해석은 자체 해석이고 법무 검토를 받은 적이 없으며, 법무 검토는 파일럿 전 필수 절차로 잡혀 있습니다. 즉 \"우리는 예측·진단 주체가 아니다\"가 유일하게 조립 가능한 뼈대입니다.",
+   "gap": "경보 후 사고에 대한 스탠스가 존재하지 않습니다. knowledge/·sources/ 전체에 '책임'·'소송' 0회, '배상'은 대인배상 담보를 언급하는 1회뿐. 미조치(경보 후 개입 실패), 미탐지(false negative), 안전 안내를 따랐다가 발생한 사고 — 세 경우 모두 정리되지 않았습니다. 서구권 심사위원, 특히 법률 배경이 있는 심사위원이 가장 좋아할 각도이고 우리 답이 즉흥이 될 수밖에 없습니다.",
+   "risk": "high",
+   "used_positions": [
+    "질병 판별 연구 3편(DRIVES·Bayat·LongROAD ML)의 사용 범위",
+    "12번 — 사고 심도 비예측",
+    "위치데이터 보유 — 4개월 창 + 파생값 판정",
+    "AI 역할 서술"
+   ]
+  },
+  {
+   "question_en": "Your care report tells an elderly driver to 'get checked'. Checked by whom? Do you have any clinical partner, and who validated that a change in driving pattern means anything medical?",
+   "question_ko": "케어 리포트가 고령 운전자에게 '점검하시라'고 합니다. 어디서 점검합니까? 임상 파트너가 있습니까? 그리고 운행 패턴 변화가 의학적으로 의미가 있다는 것을 누가 검증했습니까?",
+   "angle": "의료 제휴·임상 검증",
+   "answerable": "partial",
+   "answer_sketch_ko": "방향은 분명합니다 — 진단하지 않습니다. 인지 판별 연구 3편은 결과 변수가 사고가 아니라 인지 상태인 질병 판별 연구라서 문제정의 본문에 넣지 않고 Q&A 백업으로만 쓰며, 인용할 때 \"저희 상품은 질병을 진단하지 않습니다\"를 반드시 병기하고 'GPS만으로 0.96' 같은 표현은 금지돼 있습니다. 인용 가능한 범위는 DRIVES(Neurology 2025, n=298, AUC 0.82)와 Bayat 2021(n=139)의 AUC와 정성 결론까지입니다. 데이터 3경로 ③에 복지부 노인실태조사·건보공단 이용 통계가 있으나 이는 통계 인용이고 제휴가 아니며, 원문이 '가용성 확인 필요'로 표기하고 있습니다.",
+   "gap": "의료기관·의사 파트너, 임상 검증 파트너, 인지검사 연계 경로가 하나도 없습니다. 케어 리포트가 '점검하세요'라고 할 때 보낼 곳이 정해져 있지 않습니다. 관련 evidence 항목은 전부 unverified 또는 인용 범위 제한 상태이고, '의료기관'은 출처부록에 서지로만 등장합니다. \"진단하지 않는다\"는 방어에는 강하지만 \"그럼 누가 하느냐\"에는 답이 없습니다.",
+   "risk": "medium",
+   "used_positions": [
+    "질병 판별 연구 3편(DRIVES·Bayat·LongROAD ML)의 사용 범위",
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "12번 — 사고 심도 비예측"
+   ]
+  },
+  {
+   "question_en": "You mention municipal safety programmes and public data. Have you actually talked to any city or agency? Name one signed partner.",
+   "question_ko": "지자체 안전 프로그램과 공공 데이터를 언급하셨습니다. 실제로 접촉한 지자체나 기관이 있습니까? 체결된 파트너를 하나만 대 주십시오.",
+   "angle": "지자체·공공 제휴",
+   "answerable": "partial",
+   "answer_sketch_ko": "정본이 지시하는 답은 '없습니다 + 로드맵'입니다. 발표 원칙 세 줄 중 세 번째가 \"✕는 물으면 '없습니다 + 로드맵'으로 답한다\"이고, evidence registry에서 '3경로 확보 계획'은 status unverified·등급 ✕(공백, 계획 단계·실행 전)이며 항목에 \"질문 시 '없습니다 + 로드맵'으로 답하도록 지정됨\"이 그대로 적혀 있습니다. 실제로 말할 수 있는 것: 3경로 ③에 TAAS(이미 위험유형 가중치 산출에 사용 중), 복지부 노인실태조사·건보공단 이용 통계, 지자체 고령자 이동지원 데이터가 후보로 올라 있고 문서가 '가용성 확인 필요'로 명시. 도로교통공단 사고다발지역은 공개 데이터라 제휴 없이 바로 쓸 수 있고, 이미 판정 감점이 아닌 케어 리포트 안전 안내로 쓰기로 결정했습니다. 공공데이터 출처 링크는 19개로 문서 중 가장 충실합니다(등급 ○).",
+   "gap": "접촉한 지자체·MOU·파일럿 지역 후보가 0입니다. '지자체 고령자 이동지원 데이터'도 registry에서 unverified. 면허 자진반납 지원사업 등 기존 고령자 이동 정책과의 접점 설계도 없습니다. 다만 '없습니다 + 로드맵' 프로토콜이 정본에 명시돼 있어 즉흥 창작 위험은 낮습니다.",
+   "risk": "medium",
+   "used_positions": [
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "13번 — 사고잦은곳: 자리를 바꿔 채택",
+    "실현 가능성 — 데이터 3경로·사고잦은곳·도로 위계",
+    "발표 원칙 세 줄 (전 항목 공통)"
+   ]
+  },
+  {
+   "question_en": "If we signed tomorrow, how many months until this is live in our policy administration and rating systems? What does the integration actually touch?",
+   "question_ko": "내일 계약한다면, 저희 계약관리·요율 시스템에서 이것이 실제로 가동되기까지 몇 개월입니까? 연동은 정확히 무엇을 건드립니까?",
+   "angle": "시스템 구축 기간·연동",
+   "answerable": "partial",
+   "answer_sketch_ko": "통합 부담이 낮은 구조적 이유는 강하게 답할 수 있습니다: (1) 요율표 교체가 아니라 기존 마일리지 할인 위에 얹는 할인 오버레이이고 할증 항목이 코드에 존재하지 않습니다. (2) 국내 UBI는 이미 외부 앱이 산정한 점수만 동의하에 보험사로 전송하는 구조라(보험연구원 KIRI리포트 2024.7) 원좌표 반출 없이 같은 채널에 파생 지수를 얹어 시작할 수 있고, 신규 수집도 궤적이 아니라 도착지 좌표+방문 날짜뿐입니다. (3) 엔진이 결정론이고 모든 값이 DEFAULT_PRODUCT_RULES 선언 상수라 파라미터 변경이 재계산으로 즉시 반영됩니다. (4) 현재 상태: main e2d2e49 = 배포 데모(foursure) = 확정수치카드 = 문서가 한 몸이고 외부 접속으로 확인 완료, 판정 계약 pytest 27(전체 254)·JS 22·타입체크·빌드·audit 전부 통과, 프론트 계산기도 백엔드 2단계 케어와 180건 패리티. (5) 일정 뼈대: 파일럿 0~6개월, 4~6개월차 k-거리 1차 측정, 6개월차 Scale-up 진입, 기존 고객은 계약 기간 중 소급 변경 없음.",
+   "gap": "'계약부터 라이브까지 N개월'이라는 구축 기간 수치가 없습니다. 보험사 기간계/계약관리·요율 엔진 연동 설계, 데이터 파이프라인 SLA, 보안·정보보호 심사 절차가 전무합니다 — '코어 시스템'·'기간계'·'연동'·'API 연계' 지식층·원문층 통틀어 0회. 지금 있는 것은 PoC 저장소와 데모이지 운영 아키텍처가 아니며, 그 구분을 우리가 먼저 말하지 않으면 데모를 제품으로 오인시킨 것이 됩니다.",
+   "risk": "medium",
+   "used_positions": [
+    "배포·검증 상태 (한 몸 확인)",
+    "부록 C — 산식·파라미터 전체",
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "상품 지위 — 할증 경로가 구조상 없다",
+    "생활권 — k-거리 재산정 계획 (ε 캘리브레이션)",
+    "부록 B — 실측 검증 총괄"
+   ]
+  },
+  {
+   "question_en": "Tell me about your team. Has anyone here priced an insurance product before? Do you have an actuary?",
+   "question_ko": "팀에 대해 말씀해 주십시오. 여기 보험 상품 요율을 산출해 본 분이 있습니까? 계리사가 있습니까?",
+   "angle": "팀 역량",
+   "answerable": "none",
+   "answer_sketch_ko": "지식층이 팀에 대해 말하는 것은 사실상 두 줄뿐입니다: 인물화 60명은 NVIDIA Nemotron-Personas의 방법론을 따라 '팀이 자체 정의'했다(데이터셋을 가져온 것이 아니다), 그리고 가중치 30/30/20/20은 AI가 고른 것이 아니라 사람이 설계한 초기값(prior)이며 보험료·인수·케어 최종 결정은 사람이 한다. 간접 증거로 쓸 수 있는 것은 실행 속도입니다 — 베이스라인 상충을 발견한 뒤 결정·엔진 이식·재검증·배포까지 하루에 완결했고, 그 결과 덱·문서·코드·데모가 지금 같은 숫자입니다.",
+   "gap": "팀 구성·경력·보험 실무 경험·자문단 어느 것도 없습니다('역량'·'계리사'·'채용' 0회). 더 아픈 지점은 계리 논리의 지위입니다 — 4축이 순보험료 분해에 1:1 대응한다는 '축-순보험료 대응 논증'이 evidence registry에서 status unverified이고 사유가 \"○ 수준의 원리이나 인용 없음 → △, 교과서·문헌 인용 확보 전까지 논증으로만 사용\"입니다. 계리 배경 심사위원이 자격을 물으면 자격 카드도 없고 그 논증을 받쳐 줄 인용도 없습니다.",
+   "risk": "high",
+   "used_positions": [
+    "AI 역할 서술",
+    "유형 — 6개 페르소나의 설계 원리 (문헌 3축 조합)",
+    "베이스라인 이슈의 경위",
+    "11번 — 가중치 30/30/20/20의 지위",
+    "배포·검증 상태 (한 몸 확인)"
+   ]
+  },
+  {
+   "question_en": "What result from the pilot would make you stop? Give me the number at which you walk away.",
+   "question_ko": "파일럿에서 어떤 결과가 나오면 중단하시겠습니까? 접겠다고 결정하는 숫자를 말씀해 주십시오.",
+   "angle": "실패 시나리오·중단 기준",
+   "answerable": "partial",
+   "answer_sketch_ko": "기술 축의 전환 트리거는 실제로 정의돼 있고 이게 강점입니다: (1) 파일럿 k-거리 측정에서 산포가 사람마다 크게 널뛰어 고정값이 위험하다고 나오면 그때 HDBSCAN으로 간다 — 같은 측정이 eps 값과 '고정값으로 될 일인가'를 동시에 알려줍니다. HDBSCAN은 이미 승격 후보이고 전환 조건까지 정의해 뒀습니다. (2) 가중치는 파일럿 경험 손해율로 재적합하고, 지역 티어는 콜드스타트 초기값으로만 남습니다. (3) 케어 any 규칙은 k≥2로 보수화하면 연간 케어 0건·동시변화형 평균 할인 7.93%→19.57%라는 실측이 이미 나와 있어 규칙 교체가 즉시 가능합니다. (4) 설계 실패 양상도 비대칭으로 분석해 뒀습니다 — 고정은 전면 이주자에서 얕게 실패하고, 무장치 갱신은 서서히 악화하는 케어 대상에서 깊게 실패합니다. (5) 정직 한계 선언: 검증된 것은 판정 로직의 일관성이지 예측력이 아니며 실제 사고·손해율 효과는 미검증입니다.",
+   "gap": "사업을 접는 기준은 없습니다. 위의 트리거는 전부 \"알고리즘·파라미터를 바꾼다\"이지 \"상품을 접는다\"가 아닙니다. 손해율이 개선되지 않으면, 수용률이 목표에 못 미치면, 민원이 임계를 넘으면 어떻게 한다는 임계값과 의사결정 게이트가 0입니다 — '중단'·'철수' 0회. 답을 조립할 수는 있지만 질문이 요구한 '숫자'는 못 냅니다.",
+   "risk": "medium",
+   "used_positions": [
+    "운영 eps 결정 절차 — k-거리 산포 측정 (파일럿)",
+    "10번 — HDBSCAN 대비 현행 유지",
+    "로드맵 — 캘리브레이션과 eps 재도출",
+    "연간 케어 any 규칙 — 실측 결과 (정직 고지)",
+    "고정 vs 무장치 갱신의 비대칭 (결정 전 분석 기록, 8/2로 종결)",
+    "검증의 정직 한계 (전 문서 공통)"
+   ]
+  },
+  {
+   "question_en": "Will 75-year-olds actually consent to location tracking and install your app? What take-up rate are you assuming?",
+   "question_ko": "75세 고객이 실제로 위치 수집에 동의하고 앱을 설치하겠습니까? 가입·동의율을 몇 퍼센트로 가정하고 계십니까?",
+   "angle": "고객 수용성·모집 실행",
+   "answerable": "partial",
+   "answer_sketch_ko": "설득 논리는 튼튼합니다: (1) 수집하는 것은 궤적이 아니라 도착지 좌표 + 방문 날짜(+트립 거리·위험 이벤트 수)뿐이라 동의 범위가 통상 UBI보다 오히려 좁습니다 — 경로·체류시간·통과 도로는 받지 않습니다. (2) 국내 UBI는 이미 앱이 산정한 점수만 동의하에 보험사로 넘기는 구조라(KIRI리포트 2024.7) 원좌표 반출 없이 시작할 수 있습니다. (3) 상품 쪽에서 '감시당하면 손해 본다'는 거부 이유가 구조적으로 약합니다 — 할증 경로가 코드에 존재하지 않고(180건 전건 할증 0), 하한이 기준 요율이며, 150건이 기존 마일리지 대비 동등 이상 유리하고 113건은 더 저렴합니다. 위치는 무벌점이고 '밖에 나가지 않아도, 나가서 안전해도 손해가 없다'가 설계 원칙입니다. (4) 단말·수집 부담은 필요한 필드가 도착지 이벤트뿐이라 통상 UBI 파일럿보다 낮게 잡힌다는 답변이 준비돼 있습니다.",
+   "gap": "수용률 숫자 자체가 없습니다 — '동의율'·'가입률'·'스마트폰'·'수용성'·'거부감' 지식층·원문층 통틀어 0회. 고령층 스마트폰/앱 사용률 근거도, 모집 채널(설계사·다이렉트·자녀 대리 가입)도, 앱 없이 참여할 대안 경로(OEM 단말)의 실현 계획도 없습니다. 논리로는 '거부할 이유가 적다'까지 갈 수 있지만 '실제로 몇 %가 든다'는 전혀 답할 수 없습니다.",
+   "risk": "medium",
+   "used_positions": [
+    "13번 — 데이터 확보 3경로와 파일럿",
+    "6b. 최소수집·파생값 설계",
+    "상품 지위 — 할증 경로가 구조상 없다",
+    "부록 C — 위치가 등장하는 지점 전수",
+    "실현 가능성 — 데이터 3경로·사고잦은곳·도로 위계"
+   ]
+  },
+  {
+   "question_en": "Who approves this discount? Walk me through the filing path and how long it takes.",
+   "question_ko": "이 할인은 누가 승인합니까? 신고·인가 절차와 소요 기간을 설명해 주십시오.",
+   "angle": "인가·규제 실행 절차",
+   "answerable": "partial",
+   "answer_sketch_ko": "인가 부담이 낮다는 구조적 논거는 있습니다: (1) 요율표 교체가 아니라 기존 마일리지 할인 위에 얹는 오버레이이고, 할증 경로가 코드에 없으며 하한이 기준 요율이라 불이익 방향의 요율 변경이 아닙니다. (2) 모든 값이 DEFAULT_PRODUCT_RULES 선언 상수이고 tariff_status = illustrative_economics_sandbox_not_final_tariff로 '최종 요율이 아님'을 문서·코드에 명시해 뒀습니다 — 13%p 감액도 샌드박스 예시값입니다. (3) 설명가능성을 인가 논거로 준비해 뒀습니다: eps를 개인별 실시간 추정이 아니라 전체 1회 측정한 고정 상수로 쓰는 이유가 \"약관·민원에 쓸 수 있는 숫자\", 그리고 \"모든 고객에게 같은 문장\"이라는 판정 일관성입니다. (4) 위치정보법 해석은 자체 해석이고 법무 검토를 받은 적이 없으며, 법무 검토는 파일럿 전 필수 절차로 잡혀 있습니다(발표 전 잔여 액션 ④, 외부 의존). \"법적 문제 없다\"는 표현은 금지돼 있습니다.",
+   "gap": "실제 신고·인가 절차의 구체가 없습니다 — 어느 절차로, 몇 개월, 누가 주관하는지, 감독당국 사전 접촉 여부, 규제 샌드박스 신청 계획 어느 것도 없습니다('금감원'·'인가 절차' 0회). 싱가포르 무대라면 한국 밖 이식성(PDPA·GDPR 하에서 도착지 좌표 수집의 적법 근거)은 더 큰 공백이며, 우리 법령 근거가 애초에 국내 위치정보법 자체 해석 하나뿐입니다.",
+   "risk": "medium",
+   "used_positions": [
+    "부록 C — 산식·파라미터 전체",
+    "상품 지위 — 할증 경로가 구조상 없다",
+    "감액 13%p의 지위 — 샌드박스 예시값",
+    "위치데이터 보유 — 4개월 창 + 파생값 판정",
+    "발표 전 우선순위 (투자 대비 효과순, 잔여 액션)",
+    "HDBSCAN과의 관계 — 계산은 빌리되 고정값으로 적용"
+   ]
+  }
+ ],
+ "summary": {
+  "findings": "[]",
+  "verdict": "72문항 중 완전히 답할 수 있는 항목은 0건이고, 전면 공백(none) 22건 · 부분(partial) 49건이며 high 위험이 약 38건이다. 구멍의 분포가 무작위가 아니라는 점이 핵심 진단이다 — 알고리즘·판정 로직·근거 위생은 official_positions.yaml 161 topic으로 과할 만큼 촘촘한 반면(claim_type 분포도 team_decision 99 · simulation_result 29로 방법론에 편중), 사업·경쟁·해외규제·케어 이후 운영은 키워드 수준에서 0이다(실측 확인: 경쟁 0 · 계절 0 · 콜센터 0 · 계리사 0 · 책임 0 · 특허 0 · 재보험 0 · GDPR 0 · PDPA 0 · 이의제기 0, knowledge/·sources/ 통틀어). 즉 지식층은 \"이 방법론이 옳은가\"에 최적화돼 있고 \"이것이 사업이고 상품인가\"는 한 번도 다룬 적이 없는데, GAIP 결선의 8분 Q&A는 정확히 후자를 묻는다. 결선까지 17일이라는 제약상 P0 9개를 균일한 깊이로 메우는 것은 불가능하므로, 외부 조사가 필요한 3축(시장·경쟁·해외규제)과 팀 회의 한 번으로 확정 가능한 4축(고객 권리·케어 운영·파일럿 기준·인용 위생)을 분리해 후자를 먼저 끝내는 것이 유일하게 실행 가능한 순서다.",
+  "gap_clusters": [
+   {
+    "theme": "사업 경제성 축 전면 공백 — 시장규모·수익모델·CAC·단위경제·ROI (Q1,2,5,6,11,32,62)",
+    "missing": "TAM/SAM/SOM, 65세 이상 자동차보험 가입자 수·보험료 풀, 목표 점유율, 판매 채널(설계사·다이렉트·방카·제휴)과 1인 획득비용, 계약당 연간 운영원가(검토 인건비·앱/단말·데이터 처리·사업비 부가), 파일럿 투자액·회수기간이 전부 0건. '시장' 5회는 전부 '시장을 좁힌 선택이 아니다'라는 방어 문구 맥락이고, 수익 논지가 오직 클레임 절감 하나에 걸려 있어 신규획득·유지율·교차판매 경로가 없다. 파일럿 N 언급 자체가 must_not_say라 규모로 되받을 수도 없다.",
+    "action": "문헌 확보 + 새 position 작성. 보험개발원·KOSIS·경찰청 고령 운전면허 통계 등 공개 통계만으로 TAM/SAM 산출식을 세우고 '추정치이며 출처는 X'로 등급을 명시(가정 공개형). 단위경제는 팀 결정 필요 — 케어 발동률 16.7%를 계약 규모에 곱한 검토 부하 계산을 최소 1개 시나리오로 만들고, 12.4% 손익분기가 클레임 축만인지 운영비 포함인지 정의를 position에 못 박을 것. SOM·회수기간은 '가정 기반 레인지 + 파일럿 후 확정'으로 한계를 함께 선언.",
+    "priority": "P0"
+   },
+   {
+    "theme": "12.4%/10.3% 손익분기의 전제·개입 효과크기 근거·포트폴리오 구성비 오염 (Q2,3,47,10)",
+    "missing": "손익분기 산정의 전제(보험료 기준선, 케어 세그먼트 기대 클레임 풀 산정법, 사업비 포함 여부)가 position에 없고 evidence_ref는 scripts/loss_ratio_counterfactual.py라는 파일명뿐. 개입→클레임 감소의 effect size를 지지하는 문헌·실측이 0건(CMT는 횡단면 세분화 근거이지 개입 효과 근거가 아님). 케어 비중 16.7%는 유형당 10명 균등 배분의 산물인데 실제 포트폴리오 비중을 모수로 둔 감도(예: 케어 5%면 필요 감소율 얼마)가 계산돼 있지 않아 헤드라인 숫자의 의미가 정의되지 않은 상태다.",
+    "action": "새 position 작성 + 답할 수 없음을 인정하는 스탠스. (1) 손익분기 계산의 전제 4가지를 문장으로 공개하고 운영비 포함 여부를 명시, (2) 케어 세그먼트 비중을 파라미터로 둔 감도표(5/10/16.7/25%)를 재계산해 '12.4%는 균등배분 하의 값이며 실제 비중에 따라 이렇게 움직인다'로 재해석, (3) 개입 효과크기는 '우리가 측정한 바 없고 외부 비교기준도 확보하지 못했다 — 파일럿 1차 종결점'으로 정직 고지. 이 숫자는 발표의 헤드라인이므로 전제 없이 단독 인용하지 말 것.",
+    "priority": "P0"
+   },
+   {
+    "theme": "경쟁 지형·차별성·해자·지식재산 (Q4,25,26,29,30,31,33,34,35)",
+    "missing": "'경쟁' 단어가 knowledge/·sources/ 전체 0회. Progressive Snapshot·Root·CMT·캐롯손보·티맵 등 실사업자와 대조한 표나 스탠스가 없고, Progressive는 forbidden_claims와 registry에 status: banned로만 존재해 무대에서 언급하는 순간 인용 금지 규칙과 충돌한다. 특허·상표·데이터 해자·전환비용·선점 효과가 0건이고, 우리가 인용하는 CMT 백서(행동점수만으로 클레임 빈도 3배 격차)가 그대로 역이용될 수 있는데 대비 문장이 없다. 국내 UBI 구조의 유일한 근거인 KIRI리포트 2024.7은 banned인데 positions 13번이 evidence_ref로 그대로 쓰고 있다.",
+    "action": "문헌 확보 + 새 position 작성. 각 사업자의 공개 자료(상품 페이지·연차보고서·백서)만으로 '데이터 수집 범위 / 요율 반영 방식 / 대상 연령 / 개입 유무' 4열 비교표를 만들고 인용 가능 등급을 부여. 증분가치 논거는 '행동점수는 무엇을 하는가 vs 개인 기준선은 무엇을 더하는가'를 실측 없이도 성립하는 구조 논거로 확정하되 '우리 방식이 더 예측력이 높다'는 주장은 실측이 없으므로 금지 표현에 추가. 해자는 정직하게 '현재 IP는 없다 — 방어선은 규제 승인 선점과 파일럿 데이터'로 스탠스를 잡을 것.",
+    "priority": "P0"
+   },
+   {
+    "theme": "해외 관할 이식성 — 싱가포르 PDPA/MAS·GDPR 22조/DPIA·EU AI Act·연령차별·국외이전·요율 인가 (Q7,13,14,15,16,19,21,23,56,71)",
+    "missing": "GDPR·PDPA 언급 0건, AI Act 부속서 III 해당 여부 판단 없음, 케어 판정이 GDPR 22조 자동화 결정에 해당하는지 스탠스 없음, 적법근거(동의 vs 계약이행) 선택 기록·DPIA·정보주체 권리 창구 없음, 국외이전 근거(적정성·SCC)·컨트롤러/프로세서 역할 배분 없음, 요율 신고·인가 절차와 소요기간이 어느 관할에서도 0건. 근거가 한국 위치정보법 23조 하나인데 그 해석마저 OPEN_ITEMS A에서 status: unverified·법무 미검토이고 '법적 문제 없다' 발언은 forbidden_claims로 금지돼 있다. 개최지가 싱가포르이고 심사위원이 서구권·아시아 보험 전문가라 이 축은 반드시 나온다.",
+    "action": "문헌 확보 + 새 position 작성 + 법무 미검토 인정 스탠스 3종 결합. 조문 원문 확인이 가능한 최소 세트만(PDPA 동의·목적제한, GDPR 6/9/22조, AI Act 부속서 III 보험 항목, 연령 요율 규제) 사실 진술로 정리하고, 우리 스탠스는 '해당 여부는 법무 검토 전이며 현재 설계는 한국 위치정보법 기준으로 만들어졌다 — 이식 시 바꿔야 할 항목은 이 체크리스트다'라는 이식 체크리스트 형태로 방어. 절대 '준수한다/문제없다'로 답하지 말고 '설계 원칙이 무엇을 이미 충족하는가(최소수집·목적 특정 동의·사람 검토)'까지만 말할 것.",
+    "priority": "P0"
+   },
+   {
+    "theme": "공정성·대리차별(disparate impact)과 선택편의 (Q17,54,16)",
+    "missing": "검증이 전부 합성 데이터·3지형(도심/교외/광역)에서만 수행됐고 인종·소득·이민자 지위 등 보호속성 라벨이 데이터에 아예 없어 차별적 영향을 측정한 적이 없다. 공정성 지표(4/5 rule, demographic parity, equalized odds) 정의·산출 0건, 레드라이닝 규제·NAIC 모델법·EU 비차별 지침 0건. 동시에 앱 기반 수집이라 '가장 고령이고 가장 위험한 운전자가 표본에서 빠지는' 선택편의가 구조적으로 존재하는데 커버리지 80% 규칙은 가입 이후 결측만 다뤄 이를 막지 못한다. 위치 기반 상품에 서구권 심사위원이 던지는 표준 각도다.",
+    "action": "새 position 작성(파일럿 공정성 프로토콜 선언) + 답할 수 없음을 인정하는 스탠스. '보호속성 라벨이 없으므로 disparate impact를 측정한 적이 없다'를 먼저 인정하고, 파일럿에서 어떤 속성으로 무슨 지표를 어떤 임계로 볼지를 사전 선언하는 문단을 만들 것. 설계 논거(지형 유형은 위치가 아니라 밀도 대리, 할증 경로 부재로 하방 리스크가 없음, 판정 기준이 개인 기준선이라 지역 간 비교가 아님)를 규범 언어로 정리해 방어선을 하나 세우되 '공정하다'고 단정하지 말 것.",
+    "priority": "P0"
+   },
+   {
+    "theme": "케어 이후의 실체 — 검토 인력·비용·고객 접점·의료 연계·사고 시 책임 (Q62,63,64,65,6,20)",
+    "missing": "'사람 검토(care_review)'가 우리 최강 방어막인데 검토자가 누구인지(보험사/우리/외주), 몇 명인지, 1건당 소요시간·단가·SLA, 검토 기록 보존이 전부 0건. 고객 접점은 '담당자 상담' 다섯 글자가 전부이고 채널·안내 문안·고령 응대 프로토콜이 없다('콜센터' 0회). 케어 리포트가 '점검하시라'고 할 때 보낼 의료 파트너가 없고 임상 검증 주체도 없다. 가장 위험한 것은 '3월에 케어 표시, 5월 사망사고' 시나리오 — 미조치·미탐지·안내 이행 후 사고 세 경우 모두 스탠스가 없고 '책임' 0회다.",
+    "action": "팀 결정 필요 + 새 position 작성. (1) 검토 주체·1건 소요시간·월 처리량 가정을 1개 시나리오로 확정해 운영원가와 연결, (2) 케어 발동 후 72시간 내 무엇이 일어나는지 타임라인 한 장(누가·어느 채널·무슨 문안), (3) 책임 스탠스는 법무 없이 확정하지 말고 '우리는 진단하지 않고 운전 적합성을 판정하지 않는다 — 케어는 보험사의 고객 안내 트리거이며 의료·행정 판단을 대체하지 않는다'는 역할 한계 선언으로 방어선을 만들 것. 의료 파트너는 '없습니다 + 로드맵' 프로토콜 적용.",
+    "priority": "P0"
+   },
+   {
+    "theme": "케어 대상 고객의 권리와 윤리 정당성 — 통보·거부권·이의제기·낙인·자율성·면허반납 압박 (Q48,49,50,51,52,53,55,57,58,24)",
+    "missing": "제3자 고지(가족·자녀·감독당국·의사) 설계 0건 — knowledge의 '가족' 4건은 전부 오탐 대조군 페르소나라 검색하면 오답이 나오는 위험한 구조. 케어 수용/거부 개념 자체가 설계에 없고, 점검 권유 거부 시 13%p 감액이 그대로인지 미정의(권유와 감액의 인과가 정리되지 않아 '권유'라는 표현이 되치기당함). 오탐 구제·이의제기·소급 복원 절차 0건, 동의 철회 후 할인·케어·재가입 기준선 처리 미정의. 낙인은 qa/cards.yaml:392 followup 2줄뿐이고 official_positions에 0건, 자율성/패터널리즘 정면 논거 0건, 면허 자진반납 압박 스탠스 0건. 고객 대면 문안의 톤·금지표현 규정도 없다(forbidden_claims 129건은 전부 심사위원 대상 발화만 규율).",
+    "action": "팀 결정 필요 — 회의 한 번으로 가장 많이 메울 수 있는 클러스터. 확정할 것: ① 통보 대상은 본인 한정인가(가족·당국·의사 요구 시 원칙 포함), ② 케어 거부 시 요율 취급, ③ 이의제기 창구·재검토 주체·소급 복원 여부·처리 기한, ④ 동의 철회 시 할인/케어/기준선 처리, ⑤ 고객 대면 문안 금지표현 목록(능력·저하·치매·위험 등)과 LLM 가드 추가, ⑥ '감시가 아니라 돌봄'을 기술 스펙이 아닌 규범 문장으로 쓴 스탠스. 수용도 조사가 0건이므로 '고객이 감시로 느끼지 않는다'는 실증 주장은 금지하고 설계 근거까지만 말할 것.",
+    "priority": "P0"
+   },
+   {
+    "theme": "파일럿 설계 정합성 — 1차 종결점·표본 도출 절차·kill 기준·예산·리스크 보유 (Q37,42,60,61,69,8,11)",
+    "missing": "성공/실패를 가르는 1차 종결점과 임계값이 선언된 적 없고('성공기준'·'KPI' 0회), 12.4%는 손익분기 역산값이지 성공 기준으로 채택된 적이 없다. 무작위 배정 단위, 검정력·최소 검출 효과크기·필요 표본 역산 절차, 관찰 6개월로 탐지 가능한지 계산이 전무. 예산은 금액도 항목 구성도 0이고 '예산' 단어가 회피 답변 한 곳에만 등장. '파일럿에서 X가 나오면 접는다'는 kill 기준 0건이며 기존 트리거는 전부 '파라미터를 바꾼다'이지 '상품을 접는다'가 아니다. 파일럿의 리스크 보유 주체·재보험·요율 인가 경로도 0건.",
+    "action": "팀 결정 필요 + 새 position 작성. N을 못 말하는 것과 'N을 어떻게 정할지'도 못 말하는 것은 다르다 — 최소한 (효과크기 가정 → 검정력 → 필요 표본) 역산 절차와 예산 항목 구성(수집·검토 인건비·인프라·인센티브)을 문장으로 확정할 것. 1차 종결점 1개 + 이차 지표 3개(케어 판정 수용률, 이탈률, 민원 건수)를 선언하고, kill 기준은 '아직 정의하지 않았고 파일럿 프로토콜에서 확정한다'가 아니라 최소 1개 임계를 실제로 정할 것 — 이 질문은 숫자를 요구하는 형태로 들어온다. 'eps 측정용 수백 명' 기준을 성능 검증 표본 근거로 전용하지 말 것.",
+    "priority": "P0"
+   },
+   {
+    "theme": "인용 지뢰와 내부 상충 확정 — OPEN_ITEMS A 11건 · B 4건 (Q28,31,25,52,53,59,22)",
+    "missing": "evidence registry 176건 중 unverified 41 + banned 14 = 55건(31%)이 무대 인용 불가/보류인데, banned 문헌이 position의 evidence_ref로 그대로 남아 있다(KIRI리포트 2024.7 → positions 13번). 데이터 확보 3경로가 근거지도 §13('자체 앱→OEM→제휴')과 마스터 §13('기존 UBI 채널·특약 신규 수집·공공/제휴') 두 버전으로 상충해 팀원마다 다른 말을 할 위험이 있다. 유일한 고객 니즈 수치 '86% 이동권 희망'은 서지·URL 없이 unverified, MCI 60%/치매 81%는 원논문 39.5%의 오독으로 금지, Burdett 2017은 핵심 논거인데 banned, DEGURBA는 '채택 결정만 있고 미구현'.",
+    "action": "팀 결정 필요 + 문헌 확보 — 비용 대비 효과가 가장 큰 항목이므로 최우선 착수. (1) OPEN_ITEMS A의 △(초록만) 규약화 제안을 즉시 채택하면 5건이 한 번에 정리된다, (2) Burdett 2017·KIRI리포트 2024.7 두 건은 원문 확인에 인력을 투입할 가치가 있다(핵심 논거·국내 경쟁 서술의 전제), (3) 3경로 정의를 한 버전으로 확정하고 두 원문층을 동시에 수정, (4) banned를 evidence_ref로 참조하는 position을 전수 검사해 대체 근거 또는 '문헌 없이 구조 논거로만'으로 강등. 인용 불가 문헌을 밟으면 자기 문서에 반박당한다.",
+    "priority": "P0"
+   },
+   {
+    "theme": "실데이터 전환 시 첫 파열점의 정직 고지 세트 — 계절성·콜드스타트·측위오차·다중거주·폴백·파라미터 이식성 (Q9,22,38,39,40,44,45)",
+    "missing": "'계절/겨울/장마/농번기' 키워드 0회 — 합성 14개월 데이터에 계절 변동이 모델링돼 있지 않아 롤링 2개월 창의 계절 전환기 구조적 오탐/미탐이 검증되지 않은 게 아니라 데이터에 존재조차 하지 않는다. 신규 가입 1~2개월차 요율 취급 미정의, 2개월이 습관 목적지의 76%만 포착할 때 나머지 23.8%의 처리 미서술. GPS 오차·앱 삭제·기기 고장 스탠스 0건인데 도심 측위 오차가 260m eps와 같은 자릿수라 즉답이 필요하다. 폴백 0건은 검증이 아니라 미실행이고, 두 거처 왕래 케이스는 합성 데이터에 없으며 일시 체류의 생활권화는 문제만 식별되고 8/2 결정으로 신규 메커니즘이 금지돼 미구현이다.",
+    "action": "답할 수 없음을 인정하는 스탠스 — 한 배치로 6개를 동시에 작성. 각 항목마다 '① 구조 논거로 말할 수 있는 최대치(보류=무불이익, 판정 경계는 eps가 아니라 max(500m, min(P90,2km)), 케어와 지도 갱신 분리) → ② 측정한 바 없음을 명시 → ③ 파일럿 검증 항목으로 넘김' 3단 템플릿을 적용. 특히 GPS 오차 크기와 콜드스타트 요율은 숫자를 지어내는 순간 발표 전체 신뢰가 무너지므로 금지표현으로 등록할 것. 계절성은 '합성 데이터에 계절 변동을 넣지 않았습니다 — 파일럿 1년차 필수 항목입니다'로 선제 고지.",
+    "priority": "P1"
+   },
+   {
+    "theme": "실행 신뢰 — 팀 역량·파트너·데이터 경로·시스템 연동 (Q36,68,28,66,67)",
+    "missing": "팀 구성·보험 실무 경험·계리 자격·자문단이 0건('계리사'·'채용' 0회)이고, 4축이 순보험료 분해에 대응한다는 축-순보험료 논증마저 registry에서 unverified('교과서·문헌 인용 확보 전까지 논증으로만 사용'). 파일럿 참여를 약속한 보험사·OEM·텔레매틱스 벤더·지자체 접촉 사실이 전부 0건이고 벤더를 파트너로 볼지 경쟁자로 볼지 스탠스도 없다. 보험사 기간계·요율 엔진 연동, 구축 소요기간, 보안 심사 절차 0회 — 지금 있는 것은 PoC 저장소와 데모이지 운영 아키텍처가 아니다.",
+    "action": "새 position 작성(프레이밍 1문단) — 17일 안에 실체를 만들 수 없으므로 프레이밍이 곧 대응이다. '우리가 파는 것은 요율표가 아니라 판정 방법론과 그 감사가능성이며, 요율 산출·신고는 파트너 보험사의 몫'이라는 역할 경계를 먼저 세우고, 팀·파트너·연동은 '없습니다 + 로드맵' 프로토콜로 통일. 축-순보험료 논증은 교과서 인용 1건만 확보해도 방어력이 크게 오르므로 P0 문헌 작업에 끼워 넣을 것. 데모를 제품으로 오인시키지 않도록 PoC/운영 구분 문장을 발표 초반에 배치.",
+    "priority": "P1"
+   },
+   {
+    "theme": "언더라이팅 가정 — 역선택·게이밍·이탈·보류의 구조적 탈락 (Q10,46,41)",
+    "missing": "'역선택·게이밍·도덕적 해이·이탈(lapse)' 키워드 0회. 할증 경로가 없어 고객에게 공짜 옵션이므로 좋은 위험만 남을 때 손익분기가 어떻게 움직이는지 감도 분석이 없고, 케어 판정 후 해지 시나리오·재가입 인수심사 연동 스탠스가 없다. 규칙을 학습한 고객이 안전해지지 않고 점수만 최적화하는 게이밍을 모델링한 적이 없다. 타깃인 저주행형 30명 중 3명이 데이터 부족으로 보류가 났고 우대 조건이 '12개월 중 9개월'이라 저주행자가 구조적으로 문턱에서 탈락할 수 있는데, 만성 판정 불가 고객군의 비율·처우 결정이 없다.",
+    "action": "새 position 작성 + 팀 결정 필요. 게이밍은 '설계상 보상이 0인 이유'(원 안에 머무는 것이 실제로 노출 감소, 케어는 지표 기반이라 신고로 회피 불가)까지만 말하고 '모델링했다'는 표현을 금지할 것. 역선택은 P0-2의 세그먼트 비중 감도표에 자연스럽게 흡수되므로 함께 계산. 만성 보류 고객의 처우(문턱 조정 또는 저주행 전용 트랙)는 8/2 신규 메커니즘 금지 결정과 충돌하므로 '현 계약에는 없다 — 파일럿 검토안'으로 명확히 구분할 것.",
+    "priority": "P1"
+   },
+   {
+    "theme": "왜 지금인가 · 고령 이후의 성장 경로 (Q27,12,33)",
+    "missing": "'왜 지금'을 하나의 승인 스탠스로 묶은 topic이 없다 — 있는 재료는 전부 '문제가 심각하다'와 '방법론이 성립한다'이지 '지금이 창(window)이다'가 아니다. 텔레매틱스·커넥티드카 보급률 추이, 고령운전자 규제·정책 변화 시점, 보험사 수요 시그널이 0건이고 5.6%→21.6% 추세선은 심각성 근거로만 승인돼 있다. 확장 로드맵은 '학습 창 재조정' 한 줄과 '정기 통근자 후보'뿐이며 claim_type이 hypothesis라 방어 강도가 가장 낮은데도 성장 질문의 관문이 된다.",
+    "action": "새 position 작성. 타이밍은 공개 통계 2~3개(고령 운전자 비율 추이, 텔레매틱스 보급률, 정책 변화 시점)로 3문장 스탠스를 만들면 충분하다. 확장은 '방법론은 재조정으로 이식 가능하다(hypothesis, 미검증) / 사업 경로는 아직 없다'로 절반을 명시적으로 포기하고, 확장 질문이 사업 쪽으로 이어지면 P0-1의 시장 자료로 넘기는 연결을 만들 것.",
+    "priority": "P1"
+   },
+   {
+    "theme": "모델 거버넌스·드리프트·재보정과 스케일 운영 (Q43,9,67)",
+    "missing": "'드리프트·모니터링·재학습 트리거' 개념 자체가 0회 등장. 있는 것은 eps 연 1회 재점검 하나뿐이고 케어 임계 0.25/0.20과 가중치 30/30/20/20의 재보정 주기·트리거·감시 지표가 없다. 생활권 버전·변경 이유 기록을 포함한 안전장치 6종은 파일럿 검토안일 뿐 현 계약에 미포함이라고 명시돼 있어, 거버넌스를 이미 갖춘 것처럼 말하면 금지 사항 위반이다. 계약 수 증가에 따른 처리량·전국 확대 시 클러스터 품질 저하 곡선도 0건.",
+    "action": "새 position 작성. 감시 지표 3개(케어 발동률 추이, 판정 뒤집힘률, 보류율)와 재보정 주기·트리거를 선언 수준으로만 정의해도 방어가 성립한다. 현 계약에 없는 안전장치 6종은 '식별했으나 미구현 — 파일럿 검토안'으로 반드시 구분해 말할 것. 스케일은 결정론 엔진이라 계산 부하가 선형이라는 구조 논거까지만.",
+    "priority": "P2"
+   },
+   {
+    "theme": "재보험·자본·리스크 이전, 국가별 데이터 가용성과 국경간 아키텍처 (Q8,18,21)",
+    "missing": "재보험·자본·지급여력·리스크 이전 0건이고 파일럿 손실을 누가 감당하는지 승인된 답이 없다. 싱가포르·EU·미국의 데이터 확보 주체(OEM·텔레매틱스 사업자·현지 UBI 앱), 해외 공공 사고통계(ERSO unverified, IIHS·CARE 미등재), 국가별 텔레매틱스 보급률·데이터 비용이 0건. 데이터 레지던시·클라우드 리전·컨트롤러/프로세서 역할 배분도 없고 온디바이스 존 대조는 파일럿 설계 옵션일 뿐 미구현이다.",
+    "action": "답할 수 없음을 인정하는 스탠스로 최소 대응하고 나머지는 파일럿 이후로 미룰 것. '파일럿 리스크는 파트너 보험사가 보유하며 우리는 판정 방법론 제공자'라는 역할 문장 하나만 확정하면 결선에서는 충분하다. 해외 데이터 가용성과 국경간 아키텍처는 계약 단계 논의이므로 '관할이 정해지면 그 관할의 요건에 맞춰 설계한다'로 넘기되, 국내 통계 부재 확인('국내 고령자 연간 주행거리 통계 없음')을 해외 가용성 주장의 근거로 전용하지 말 것.",
+    "priority": "P2"
+   }
+  ],
+  "strengths": [
+   "판정 알고리즘의 내부 정합성 — 클러스터링 방식, eps 260m, 2개월 기준선, AND 게이트 0.25/0.20, 가중치 30/30/20/20과 민감도 재실행까지 official_positions.yaml 161 topic으로 촘촘하게 승인돼 있어 방법론 축 질문은 즉답 가능",
+   "합성 시뮬레이션 실측의 재현성 — 180 시나리오·2,160 드라이버-월, 명멸 3.9%, 폴백 0건, 오탐 대조군 30건 0건이 숫자와 함께 고정돼 있고 rolling 재시뮬 결과까지 별도 topic으로 보존",
+   "설명가능성·결정론 설계 — 선언 상수와 고정 반경으로 판정 경로를 재현·감사할 수 있고, 규칙 기반이라 '왜 이 판정이 났는가'를 문장 단위로 되짚을 수 있다(다만 이를 '경쟁우위'로 프레이밍한 문장은 아직 없음)",
+   "최소수집 프라이버시 기술 스펙 — 트립당 도착지 1점, 경로 미사용, 파생값 설계가 조문 근거와 함께 정리돼 '무엇을 받지 않는가'에 대한 답이 구체적",
+   "요율 구조의 소비자 보호 설계 — 할증 경로 부재, 보류=무불이익, 케어와 생활권 갱신의 분리가 각각 독립 position으로 서 있어 '고객이 손해 보는 경로'를 묻는 질문에 구조로 답할 수 있음",
+   "근거 위생 체계 자체가 자산 — forbidden_claims 129건, evidence registry 176건의 status 등급(verified/internal/unverified/banned), \"없습니다 + 로드맵\" 응답 프로토콜, OPEN_ITEMS의 상충 이력 보존은 다른 결선 팀이 갖고 있지 않을 수준의 규율",
+   "한계를 스스로 문서화한 정직성 — '5c 연간 감액 규칙의 결함과 권고', '7b 기준선 민감도 백로그', '오탐 방어의 실증은 아님(합성 데이터)' 플래그처럼 불리한 사실을 먼저 적어둔 topic들이 있어 정직 고지 전략의 신뢰 기반이 이미 마련돼 있음"
+  ]
+ }
+}
