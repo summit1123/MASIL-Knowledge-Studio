@@ -533,7 +533,7 @@ numbers:
     value: 링크 19개
     context: 항목 13 — 문서 중 가장 충실
   - name: 단발 운행 vs 임계
-    value: 월 집계에서 임계의 1/7 수준
+    value: 월 집계에서 임계의 1/8 수준
     context: 단발 운행이 케어를 트리거하지 않는 이유
   - name: 연간 판정 (확정 rolling)
     value: 우대 118 / 기본 56 / 보류 6 (케어 30 동일)

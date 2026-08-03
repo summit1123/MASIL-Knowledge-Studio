@@ -1,1211 +1,2064 @@
-# 소스: seniorcareservice/final (승인 세트) · 수치 정본: 확정수치카드 @ e2d2e49 (2026-08-02 rolling)
-# 생성: 2026-08-04 자동 추출 + 카드 대조 — 사람 검토 전 DRAFT
+# 문헌·근거 원장 · 소스: sources/ (승인 원문 11종)
+# status: verified=원문 대조 확인 / unverified=팩트체크 미결(발표 인용 주의) / banned=인용 금지 / internal=우리 실측·코드
+# 동일 출처 다중 등재는 대표키로 병합, 지위가 갈렸던 건은 보수적 채택 + status_conflict에 이력 기록
+# 2026-08-04 정규화
 
 entries:
-  - source: Ehsani & Tefft 2021, CHANCE 34(1)
-    what_it_supports: 2.5배 · +27% 수치 (원문 확인됨)
-    what_it_does_not_support: "'TEFFT' 단독 표기로 인용하는 것"
-    status: verified
-    citation: Ehsani & Tefft 2021 (CHANCE 34(1))
-  - source: Marshall et al. 2023, J Gerontol A 78(12) — Candrive (원문 PDF 확인)
-    what_it_supports: "70세+ 코호트, 저위험군 대비 at-fault 사고 위험(주행거리 보정) 중위험 2.47배 · 고위험 5.26배(95% CI 2.81–9.84, 인년의 2.9%). 보너스 앵커: 70+ 연평균 주행 11,017.6km(SD 6,959.9)"
-    what_it_does_not_support: "'동일 연령대 3배'(원문에 3배 없음), '사고빈도' 표현"
-    status: verified
-    citation: Marshall et al. 2023, J Gerontol A 78(12)
-  - source: TAAS 2024 246개 시군구 실집계 (도로교통공단 교통사고분석시스템)
-    what_it_supports: 위험운전 유형 구성비 44.6/42.4/13.0 유도 — 표시 전용
-    what_it_does_not_support: 판정 진입 근거 (판정 미진입)
-    status: verified
-  - source: eTAS — 한국교통안전공단 운행기록분석시스템
-    what_it_supports: "위험운전행동 '정의'의 표준 (실재 명칭, 써머리 표기 유지)"
-    what_it_does_not_support: 합성 데이터 생성 임계 (합성 엔진에 eTAS 임계 구현 없음)
-    status: verified
-  - source: LongROAD 0.35g 앵커
-    what_it_supports: 합성 위험운전 빈도의 앵커
-    status: verified
-    what_it_does_not_support: 위험운전행동 유형 정의(그건 eTAS 표준)
-  - source: scripts/resim_rolling.py (8/2 재시뮬)
-    what_it_supports: rolling 재시뮬 1차 — 고정 모드 재현 180/180 통과, rolling 집계 우대 118/기본 56/보류 6·케어 30
-    status: verified
-  - source: 커밋 4bdf119 (8/2 엔진 정식 이식)
-    what_it_supports: 번들·대시보드 rolling 산출, 재계산 잔여 없음
-    status: verified
-  - source: scripts/weight_sensitivity.py · notebooks/weight_sensitivity.ipynb
-    what_it_supports: 가중치 민감도 검증 실물 (Colab 실행 가능)
-    status: verified
-  - source: deliverables/…EXPERIMENT.html 배너
-    what_it_supports: eps 150m이 7/13 합성 비교실험의 당시 후보값이었다는 사실
-    what_it_does_not_support: eps 150m의 현재 사용
-    status: verified
-  - source: eps 260m 문헌 (Zheng/Montoliu)
-    what_it_supports: 탐지 기준거리 260m의 문헌 200~300m 근거 후보
-    status: unverified
-    what_it_does_not_support: 확정 인용 — 원문 미확인, 팩트체크 표시 필요
-  - source: "\"사고 70% 자택 8km(5마일)\""
-    what_it_supports: (원문 미확인 — 사용 시 팩트체크 표시 필요)
-    status: unverified
-  - source: "\"86% 이동권 희망\""
-    what_it_supports: (원문 미확인 — 사용 시 팩트체크 표시 필요)
-    status: unverified
-  - source: MCI 60%/치매 81% · 제동 2.28초/90% · 55.7% vs 27.5%
-    what_it_supports: 없음 — 인용 금지 (출처부록 ✕ 등급)
-    status: banned
-  - source: DRIVES
-    what_it_supports: "표기 시 '진단 이전'으로 (\"사고 이전\" 아님)"
-    status: verified
-    what_it_does_not_support: "'사고 이전'이라는 표현"
-  - source: Nemotron
-    what_it_supports: 방법론을 따라 자체 정의했다는 서술
-    what_it_does_not_support: 데이터셋을 직접 사용했다는 서술
-    status: verified
-  - source: 과속 기준치 (2010–2020)
-    what_it_supports: 위험운전 가중 중 과속 항목의 기준치
-    status: verified
-    what_it_does_not_support: 확인 필요 — 원문 출처 명시가 카드에 없음
-  - source: "LongROAD — PMC8968289 (https://pmc.ncbi.nlm.nih.gov/articles/PMC8968289/)"
-    what_it_supports: 고령 운전자 최초 자기규제 1순위 = 야간 회피 58.8% (페르소나 공통 야간 축의 근거)
-    what_it_does_not_support: 30~50대 일반화
-    status: verified
-    citation: 야간 회피 58.8%
-  - source: "LongROAD — PMC7317610 (https://pmc.ncbi.nlm.nih.gov/articles/PMC7317610/)"
-    what_it_supports: 22.6%는 이웃 마을 밖으로 나가지 않는 축소 이동범위; 이동범위 표준 척도 DHQ의 회상 구간 3개월(기준선 스펙트럼 표)
-    status: verified
-    citation: 축소 이동범위 22.6%; DHQ 회상 구간 3개월
-  - source: TAAS 2010~2024 원천 CSV (팀 직접 산출, taas_risk_weights.py)
-    what_it_supports: 고령운전자 사고 치명률 가중 1.40배, 노인 사고 2.52배(2024년 행), 고령운전자 사고 비중 5.6%(2010)→21.6%(2024); 위험 이벤트 유형 분해 급제동 44.55/과속 42.43/급가속 13.02%, 외곽 야간 42.99/29.2/27.81%
-    what_it_does_not_support: 유형 분해 가중치는 표시 전용 — 판정에 미진입(가중치 교체 후 180건 판정 diff 0 검증)
-    status: verified
-    citation: 치명률 1.40배 / 2.52배; 5.6%→21.6%
-  - source: DRIVES — Neurology 2025, n=298 (PMC12662389)
-    what_it_supports: 주행 변수만으로 MCI 판별 AUC 0.82; 기저에서 두 군 주행이 대체로 유사, 차이는 개인 내 궤적 — 진단·자각 이전에 잡힘 (개인 내 변화가 조기 신호라는 근거)
-    what_it_does_not_support: 30~50대 코호트
-    status: verified
-    citation: AUC 0.82, n=298
-  - source: LongROAD ML — PMC8167558
-    what_it_supports: "연령 다음 최상위 주행 예측 변수 = '집 15마일 이내 통행 비율' (개념 근거)"
-    what_it_does_not_support: 확정 근거로 사용 금지 — 저자가 preliminary로 규정
-    status: verified
-    citation: 집 15마일 이내 통행 비율, preliminary
-  - source: Candrive/Ozcandrive — Langford et al. 2013, AAP (PubMed 23477415)
-    what_it_supports: 연 5,000km 미만 저주행 고령 집단의 km당 사고 위험이 오히려 높음 (마일리지 체계의 미충족 구간 논거; 저주행 구간에 만성 위험행동형 배치 근거)
-    status: verified
-    citation: 저주행 고령 km당 위험 상승
-  - source: Candrive 국제 코호트 (PubMed 23541299)
-    what_it_supports: 재평가 주기 4개월, n=928 (기준선 스펙트럼 표의 운전 연구 선례)
-    status: verified
-    citation: 4개월 재평가 주기
-  - source: "Ehsani, J. P., & Tefft, B. (2021). Crash Risk and Roadway Familiarity. CHANCE 34(1):44–48 (doi:10.1080/09332480.2021.1885934)"
-    what_it_supports: "거리 분석(버지니아비치 사례-대조 약 3,000명): 대조군 58%가 자택 5마일 이내인데 사고는 정확히 50% — 노출 대비 단위 위험은 집 근처가 낮음; 거리별 +28%(6~10마일)/+47%(11~20마일)/+77%(20마일 초과). 친숙도 분석(NMVCCS 1,482건, 조건부 로지스틱, 연령·성별·차종 보정): 월 1회 미만 주행 도로 +27%, 최초 주행 2.5배. 저자 결론: 집 근처 사고는 노출과 심리적 편안함, 낯선 도로 위험은 위험이 어디 숨었는지 알아채지 못하기 때문"
-    what_it_does_not_support: "친숙도 분석은 전통적 대조군 없이 quasi-induced exposure 가정(저자 명시) — 인용 시 반드시 병기; '밖이 위험하다'는 우리 결론의 근거로 단독 사용 금지"
-    status: verified
-    citation: "\"Overall, 58% of controls were within 5 miles from home ... Exactly 50%.\" (p.45); \"less than once a month ... 27% more likely ... very first time ... 2.5 times\" (p.47)"
-  - source: "Burdett et al. 2017, Safety Science 98:1–8 (doi:10.1016/j.ssci.2017.04.009)"
-    what_it_supports: "반대 결과의 존재: 집 11km 이내가 통행의 절반, 사고의 62% — Ehsani와 상반"
-    what_it_does_not_support: 우리 쪽 논거 아님 — 불확실성 병기용
-    status: verified
-    citation: 집 11km 이내 통행 절반, 사고 62%
-  - source: "Intini, Colonna & Ryeng 2019 (doi:10.1016/j.trf.2018.12.020)"
-    what_it_supports: "친숙도-위험 문헌 표준 리뷰의 정리: '부분적 확인에 그침, 측정 편차로 비교 곤란' — 이 불확실성이 위치로 판단하지 않는 이유"
-    what_it_does_not_support: 어느 한쪽 방향의 확정
-    status: verified
-    citation: 부분적 확인에 그침, 측정 편차로 비교 곤란
-  - source: Zheng 2009 / Montoliu 2013 (장소 인식 문헌)
-    what_it_supports: "eps 기준값 260m가 통용 대역의 한가운데: Zheng 2009 = 200m, Montoliu 2013 = 250m·권장 200~300m"
-    what_it_does_not_support: eps 절대값의 직접 근거(절대값을 주는 문헌은 없음 — 설계값 인정), 도심<농촌 방향
-    status: verified
-    citation: 200m / 250m (권장 200~300m)
-  - source: "Isaacman et al., Pervasive 2011, LNCS 6696 (https://mrmgroup.cs.princeton.edu/papers/Isaacman_pervasive11.pdf)"
-    what_it_supports: "60일 관찰 창에서 'more than 5% of the total days'(= 서로 다른 3일, Days factor > 2)를 중요 장소 기준으로 사용; 계수 단위도 call-days(하루 버스트 필터). 우리 규칙(2개월 창 + 서로 다른 3일 + 하루 중복 1일)과 관찰 창·계수 단위·임계값 세 축 일치"
-    what_it_does_not_support: 운전 연구 아님(통신 위치데이터) — 고령자 운전 행태 근거 아님; 보조 조건(첫·마지막 접촉 간격 14일 초과, 회귀 확률 20%) 병용 — 일치는 세 축까지만
-    status: verified
-    citation: "\"cell towers ... contacted on more than 5% of the total days\" (§3.2); \"Sorting by call-days rather than total calls\" (§3.1)"
-  - source: 위치정보법 제23조 제1항 (법무 검토 병기)
-    what_it_supports: "목적 달성 시 개인위치정보 즉시 파기 원칙(위치정보 확인자료 제외, 타 법률상 보유·별도 동의 시 예외 — 2022년 4월 시행 개정). '6개월 삭제 의무' 조항 부재"
-    what_it_does_not_support: 특정 개월 수 삭제 시한
-    status: verified
-    citation: 목적 달성 시 즉시 파기
-  - source: 방통위 고시 「위치정보의 관리적·기술적 보호조치 기준」 제6조 제5항
-    what_it_supports: "취급대장(확인자료) 최소 6개월 '보관' 의무 — 회의의 '6개월'의 실체이며 성격은 삭제 시한이 아니라 보관 하한"
-    what_it_does_not_support: 위치데이터 6개월 내 삭제 의무
-    status: verified
-    citation: 취급대장 최소 6개월 보관
-  - source: 통신비밀보호법 시행령 제41조
-    what_it_supports: 기지국 위치추적자료 12개월 보관은 전기통신사업자 대상 — 보험·LBS 사업자에 직접 적용되지 않음
-    what_it_does_not_support: 보험사에의 적용
-    status: verified
-    citation: 기지국 위치추적자료 12개월(전기통신사업자)
-  - source: 보험연구원 KIRI리포트 (2024.7)
-    what_it_supports: 국내 UBI는 외부 앱이 산정한 안전운전 점수만 동의하에 보험사로 전송하는 구조 — 원좌표가 보험사로 넘어가지 않는 구조가 업계 선례
-    what_it_does_not_support: "'위치정보법 때문에 위치를 안 쓴다'는 인과(그 인과를 밝힌 문헌은 확인되지 않음 — 인과 주장 금지)"
-    status: verified
-    citation: 점수만 동의하에 전송
-  - source: TS 2023 (한국교통안전공단)
-    what_it_supports: 전연령 연평균 주행거리 약 1.28만km (역산 앵커, 단 대상 연령 불일치)
-    what_it_does_not_support: 고령 운전자 연령별 주행거리 — TS 통계는 차종별만이며 연령별 출처 미확인
-    status: unverified
-    citation: 전연령 연 1.28만km
-  - source: 국토부 KTDB 2013
-    what_it_supports: 트립당 14.0km (전연령)
-    what_it_does_not_support: 고령자 한정 수치
-    status: verified
-    citation: 트립당 14.0km
-  - source: JAMA 2025 (일본)
-    what_it_supports: 일본 65세+ 연 약 3,500km — 합성 데이터 연 주행 중앙값 2,829km와의 정합 확인용
-    what_it_does_not_support: 국내 수치 대체
-    status: verified
-    citation: 65세+ 연 ~3,500km
-  - source: 건보공단 2022 주요통계
-    what_it_supports: 65세+ 1인 월평균 입내원 3.75일 — 푸아송 λ 앵커
-    status: verified
-    citation: 월평균 입내원 3.75일
-  - source: 2023 노인실태조사
-    what_it_supports: 경로당 이용자 주 2.9회 — λ 앵커. (해당 시설을 생활 거점으로 삼는 이용자 기준이며 전체 노인이 아님)
-    what_it_does_not_support: 복지관 이용자 주 1.5회는 단일 언론 인용으로 원보고서 표 재확인 중 — 확인 필요
-    status: unverified
-    citation: 경로당 주 2.9회 / 복지관 주 1.5회(⚠)
-  - source: 한국소비자원 2024 (n=300)
-    what_it_supports: 고령운전자 최빈 운전 빈도 주 3~5회 36.7% → 2개월이면 운전 26~43회
-    status: verified
-    citation: 주 3~5회 36.7%
-  - source: UMTRI 자연주행 (PubMed 29584495, n=108)
-    what_it_supports: "기준선 스펙트럼: \"Roughly the first 2 weeks ... baseline driving period\" — 운전 연구 기준선 2주 선례"
-    status: verified
-    citation: first 2 weeks baseline
-  - source: DRIVES 고령자 GPS 연구 (PMC9535782, n=161)
-    what_it_supports: "기준선 스펙트럼: 'first full month' — 운전 연구 기준선 1개월 선례"
-    status: verified
-    citation: first full month
-  - source: 업계 UBI rating period 관행 3~6개월
-    what_it_supports: 업계 관행 스펙트럼상 우리 2개월이 더 신속하다는 위치 설정
-    what_it_does_not_support: "단정적 인용 — 스니펫 수준·원문 미확인. 발표 시 '관행상 알려진' 수준으로만"
-    status: unverified
-    citation: 3~6개월(⚠ 원문 미확인)
-  - source: "Lally et al. 2010, EJSP 40(6):998–1009 (doi:10.1002/ejsp.674)"
-    what_it_supports: "자동성 도달 중앙값 66일이 '2개월과 대략 같은 시간 스케일'이라는 방향성 참고(팀 논의 배경)"
-    what_it_does_not_support: 기준선 2개월의 근거 — 새 습관의 형성 기간 연구(n=96, 12주)이지 기존 패턴의 관측 기간 근거가 아니며 범위 18~254일로 넓음. 방향성 참고 이상 인용 금지
-    status: verified
-    citation: 중앙값 66일, 범위 18~254일
-  - source: 보험개발원 마일리지 통계
-    what_it_supports: (사용 불가) 국내 고령 운전자 연령별 연평균 주행거리 역산 시도 대상이었으나 비공개
-    what_it_does_not_support: 역산 근거 — 공개 웹에 부재
-    status: unverified
-    citation: 비공개
-  - source: "코드·데이터 실물 — src/gaip_simulation/engine.py (1069-1070 pricing_sandbox, 150-198 캡, 1180-1182 감지식, 1187 해제, 38 BASELINE_MONTHS, 564 home_dx_m/dy_m, _rolling_hubs_by_month, _stable_seed), clustering.py:237, src/gaip_server_policy.ts sanitizeGaipBundleForUi, data/fixtures/gaip_visit_events.csv, mobility_profiles.json, rule_review.json"
-    what_it_supports: 할증 경로 부재(max(0,min(45,·))), AND 감지식(0.25/0.20), 즉시 해제, 기준선 상수·판정 제외, distinct_day_count>=3, 허용목록 DTO, 트립당 17열·경로 컬럼 부재, LLM 1회 캐시 커밋, 30명 시절 크리틱 위험 기록
-    what_it_does_not_support: 실주행 데이터 기반 검증(합성 시나리오임)
-    status: verified
-  - source: 180 시나리오 전수 실측 (6유형 60명 × 3환경 × 14개월, 80,032 트립)
-    what_it_supports: 케어 30/30 발동·오탐 0/30, 환경 간 케어 60/60·우대 54/60, 실험 A eps 통일 재판정 변화 0/180, 밖 축 미관측 56건 중 33건 우대, 페르소나② 안 안전점수 평균 15.8, 191 케이스-월 이동 초과에도 케어 0, 전건 할증 0, 150/180 같거나 낮은 보험료(113 더 낮음), 369 그룹 중 3일 미만 6개(1.6%), rolling 케어 월수 0개월 150/1개월 30, 969 조합 민감도 중앙 3·최대 9건, pytest 254·JS 22
-    what_it_does_not_support: 예측력·오탐 방어의 실증(합성 데이터 — 로직 일관성 검증만; 오탐 방어는 확률 논리로만 주장)
-    status: verified
-  - source: Isaacman et al. 2011
-    what_it_supports: "관찰창 60일 · \"5% of total days\" · Days>2(서로 다른 3일) · 같은 날 중복 1일(call-days) 계수 — 기준선 2개월과 3일 규칙의 직접 선례"
-    status: verified
-    citation: "https://link.springer.com/chapter/10.1007/978-3-642-21726-5_9 · https://mrmgroup.cs.princeton.edu/papers/Isaacman_pervasive11.pdf"
-  - source: Ester et al. 1996 (DBSCAN KDD-96)
-    what_it_supports: "p.229 원저자의 한계 자인 — 전역 Eps·MinPts(\"the same values for all clusters\")로 밀도가 다른 두 군집이 가까우면 \"may merge two clusters ... into one cluster\". 밀도 지적의 출발점이자 설계 전제. k-거리 그래프 휴리스틱의 출처"
-    what_it_does_not_support: 반박 대상이 아님 — 심사 지적을 인정하는 근거로만 사용
-    status: verified
-    citation: "http://cdn.aaai.org/KDD/1996/KDD96-037.pdf"
-  - source: "arXiv:1807.00546"
-    what_it_supports: 방문 횟수가 아닌 일수 기준 · 주 3일 예시
-    status: verified
-    citation: "https://arxiv.org/abs/1807.00546"
-  - source: "MDPI Applied Sciences 15(22):12278"
-    what_it_supports: "균일 ε 실패 실증(과병합·과분할), 국가별 DBSCAN 거리 임계 동적 결정(브라질 120m ~ 칠레 1,000m) — '지역별 임계값의 타당성' 근거로만"
-    what_it_does_not_support: "방법 이식(대상이 인구 격자·집계 레벨이라 개인 생활권과 스케일 상이). 부록 A는 'URL 미기재, 발표 인용 전 원문 재확인'으로 표기 — 본문 10번에는 URL이 있어 상충, 확인 필요"
-    status: unverified
-    citation: "https://www.mdpi.com/2076-3417/15/22/12278"
-  - source: DEGURBA (UN)
-    what_it_supports: "도시·교외·농촌 운영 분류 기준(인구밀도 1,500 / 300명·km² 임계), 3환경과 1:1 매핑, 운영 전환 시 채택 결정"
-    what_it_does_not_support: 현 시뮬레이션 분류(시나리오가 환경을 지정)
-    status: verified
-    citation: Degree of Urbanisation, UN 표준
-  - source: Zheng et al. 2009 · Montoliu et al. 2013
-    what_it_supports: 장소인식 공간 임계 대역 — Zheng 200m, Montoliu 권장 200~300m → 기준거리 260m의 문헌 대역
-    what_it_does_not_support: 260m라는 절대값 자체(대역 안의 설계 선택). 문서에 원문 링크 없음 — 확인 필요
-    status: verified
-    citation: 본문 10번 (1층) 인용
-  - source: Ehsani & Tefft 2021
-    what_it_supports: 같은 사고 현장 내 사례-대조(노출 통제) — 처음 도로 2.5배, 월 1회 미만 +27%
-    status: verified
-    citation: "CHANCE 34(1):44–48, https://www.tandfonline.com/doi/full/10.1080/09332480.2021.1885934"
-  - source: NMVCCS (NHTSA 2005–07)
-    what_it_supports: Ehsani & Tefft 분석의 원자료(친숙도 분석) · 사고 70% 자택 5마일 이내
-    status: verified
-    citation: "https://crashstats.nhtsa.dot.gov/Api/Public/ViewPublication/811059"
-  - source: LongROAD 자기규제 (n=1,557)
-    what_it_supports: 최초 자기규제 1순위 = 야간 회피 58.8% — 공통 야간 축 근거
-    status: verified
-    citation: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8968289/"
-  - source: LongROAD 이동범위 (n=2,990)
-    what_it_supports: 65~79세의 22.6%가 축소 이동범위 — 아키타입 이동범위 축 근거
-    status: verified
-    citation: "https://pmc.ncbi.nlm.nih.gov/articles/PMC7317610/"
-  - source: LongROAD ML (n=2,977)
-    what_it_supports: 인지 저하 예측 최상위 주행 변수 = 집 반경 내 통행 비율
-    status: verified
-    citation: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8167558/"
-  - source: DRIVES (Neurology 2025)
-    what_it_supports: 기저에선 두 군 주행 유사, 차이는 시간에 따른 궤적(개인 내 변화 기울기)에서 발현 — 진단·자각 이전의 인지상태 신호 · 주행만으로 MCI 판별 AUC 0.82
-    what_it_does_not_support: 사고 예측(결과 변수는 인지 상태이지 사고가 아님). 초록의 기울기 수치 인용 금지 — AUC와 정성 결론만
-    status: verified
-    citation: "Neurology 2025;105(12):e214440, https://pmc.ncbi.nlm.nih.gov/articles/PMC12662389/"
-  - source: Bayat et al. 2021
-    what_it_supports: 1년 주행 GPS로 전임상 알츠하이머 판별 — 주행 단독 AUC 0.82, 연령·APOE 결합 0.96 (n=139)
-    what_it_does_not_support: "\"GPS만으로 AUC 0.96\" — 0.96은 결합 모델 수치"
-    status: verified
-    citation: "Alz Res Ther 13:115, https://pmc.ncbi.nlm.nih.gov/articles/PMC8204509/"
-  - source: Candrive/Ozcandrive (Langford et al. 2013)
-    what_it_supports: 연 5,000km 미만 저주행 고령 집단의 km당 위험 상승 — 저주행 ≠ 저위험. 노출 배점 30 제한과 저주행 구간 만성 위험행동형(②) 배치 근거
-    status: verified
-    citation: "AAP 61:304-310, https://pubmed.ncbi.nlm.nih.gov/23477415/"
-  - source: CMT 2023 UBI 백서
-    what_it_supports: 행동 기준 5분위 최상·최하위 클레임 빈도 약 3배(n≈10만, 실클레임 ~1,500건) · 급제동·주의분산이 강한 예측 변수 — 만성 위험행동 축 근거
-    status: verified
-    citation: "https://m.cmtelematics.com/hubfs/CMT%20Study%20-%20UBI%20Engagement%20Impact.pdf"
-  - source: Burdett et al. 2017
-    what_it_supports: 자택 11km 이내가 주행의 절반 — 노출 해석의 근거
-    status: verified
-    citation: "https://www.sciencedirect.com/science/article/abs/pii/S092575351730783X"
-  - source: Harootunian et al. 2014
-    what_it_supports: 타주 면허(비친숙 대리지표) 단독차량 사고 과실 오즈 +17~92%
-    what_it_does_not_support: 일관된 효과 주장 — 4개 주 중 1개는 차이 없음(문서 자체 ⚠ 표기)
-    status: verified
-    citation: "AAP 72:32–43, https://www.sciencedirect.com/science/article/abs/pii/S0001457514001857"
-  - source: Intini, Colonna & Ryeng 2019
-    what_it_supports: "경로 친숙도 표준 리뷰 — \"사고 연루 연구에서는 부분적 확인에 그침, 측정 편차로 비교 곤란\". 우리가 불확실성을 먼저 인정하는 근거"
-    what_it_does_not_support: 친숙도 효과의 강한 확증
-    status: verified
-    citation: "TR-F 62:651–671, https://doi.org/10.1016/j.trf.2018.12.020"
-  - source: 활동공간 체계적 리뷰 47편 (PMC6737923)
-    what_it_supports: 최소 관측 일수 관행 1~4일 → 3일 기준은 관행 범위의 정중앙
-    status: verified
-    citation: "https://pmc.ncbi.nlm.nih.gov/articles/PMC6737923/"
-  - source: Birant & Kut 2007 (ST-DBSCAN)
-    what_it_supports: 공간+시간 이중 근방으로 근방 정의를 바꾸는 계보 — 비유클리드 제안(ⓒ) 평가 맥락
-    what_it_does_not_support: 현 데이터로의 검증(도로망 거리는 궤적 재구성 필요, 거버넌스상 미수집)
-    status: verified
-    citation: "DKE 60(1):208–221"
-  - source: UMTRI 자연주행
-    what_it_supports: 기준선 관찰창 선례 2주
-    status: verified
-    citation: "https://pubmed.ncbi.nlm.nih.gov/29584495/"
-  - source: DRIVES first-full-month (PMC9535782)
-    what_it_supports: "기준선 관찰창 선례 1개월(\"first full month\")"
-    status: verified
-    citation: "https://pmc.ncbi.nlm.nih.gov/articles/PMC9535782/"
-  - source: DHQ 회상 척도
-    what_it_supports: 기준선 관찰창 선례 3개월
-    status: verified
-    citation: 부록 A 기준선 기간 선례 표
-  - source: Candrive 재평가 주기
-    what_it_supports: 기준선 관찰창 선례 4개월
-    status: verified
-    citation: "https://pubmed.ncbi.nlm.nih.gov/23541299/"
-  - source: 업계 UBI 요율 산정 관행 3~6개월
-    what_it_supports: (확보 시) 기준선 선례 스펙트럼의 상단
-    what_it_does_not_support: "원문 미확보 — \"관행상 알려진\" 수준으로만 언급 가능, 수치 인용 금지"
-    status: unverified
-    citation: 등급 ⚠ (팩트체크 필요) · 5장, 10장 5순위
-  - source: 한국소비자원 2024
-    what_it_supports: 고령자 외출 빈도 주 3~5회 36.7% · 고령운전자 최빈 운전 주 3~5회 — 방문 빈도 방향성 앵커
-    what_it_does_not_support: 방문 횟수 절대값(13~42회)의 근거
-    status: verified
-    citation: 부록 A 국내 통계
-  - source: 국민건강보험공단 2022
-    what_it_supports: 65세 이상 월평균 내원일수 3.75일 — 방문 빈도 방향성 앵커
-    status: verified
-    citation: 부록 A 국내 통계
-  - source: TAAS 2010–2024
-    what_it_supports: 위험행동 유형별 가중치 유도(급제동 44.55/과속 42.43/급가속 13.02%, 외곽 야간 42.99/29.2/27.81%) · 치명률 가중(고령운전자 사고 1.40배(2024, 연도별 1.40~1.96), 노인 사고 2.52배) — 원천 CSV에서 taas_risk_weights.py가 직접 계산
-    what_it_does_not_support: 판정 입력 — 역할이 type_breakdown_display_only_decisions_unaffected로 선언, 가중치 교체 후 180건 판정 diff 0
-    status: verified
-    citation: src/gaip_simulation/taas_risk_weights.py
-  - source: NHTSA 2021 (DOT HS 813 488)
-    what_it_supports: 도시/농촌 도로 대비 — 농촌 주행 32% vs 사망 40%, 1억 VMT당 사망률 1.74 대 1.19
-    what_it_does_not_support: 국내 도로 위계(고속>간선>이면)별 건수·심도 차이 — 국내 수치는 출처 미확인이라 인용하지 않음
-    status: verified
-    citation: "https://crashstats.nhtsa.dot.gov/Api/Public/ViewPublication/813488.pdf"
-  - source: ERSO
-    what_it_supports: 75세 이상은 동일 운전량에서도 사망위험 5배↑ — 문제 배경(필요성 근거)용, 개인 판정 미사용
-    what_it_does_not_support: 개인 판정·요율 입력. 원문 링크는 이 문서 범위에 없음 — 확인 필요
-    status: verified
-    citation: 본문 12번 ②(a)
-  - source: 보험연구원 KIRI리포트 2024.7
-    what_it_supports: 국내 UBI는 외부 앱이 산정한 안전운전 점수만 동의하에 보험사로 전송(원좌표 반출 없음) — 기존 채널 활용 경로의 근거
-    status: verified
-    citation: 본문 13번 (A)
-  - source: 일본 65세+ 연 주행 실측 ~3,500km
-    what_it_supports: 합성 코호트 연 주행 중앙값 2,829km의 정합성 참조
-    what_it_does_not_support: 출처가 이 문서 범위에 미기재 — 확인 필요
-    status: unverified
-    citation: 본문 8번 무결성 실측
-  - source: 저장소 레거시 체인 산출물 (data/fixtures/candidate_rules.json · rule_review.json · simulation_summary.json)
-    what_it_supports: 생성→크리틱→승인 3단 체인의 실재 — senior-policy-candidate-rules/v1(가중치 후보 19·임계 후보 6·랭킹 114건) → senior-critic-rule-review/v1(findings 0/risks 2/required_follow_ups 1, verdict pass) → senior-report-agent/v1(approval gate 통과)
-    what_it_does_not_support: "현행 판정의 결정 절차(레거시 비교 도구였고 결정자가 아님) · '루프'(반복 아닌 단방향 체인)"
-    status: verified
-    citation: data/fixtures/candidate_rules.json, data/fixtures/rule_review.json, data/fixtures/simulation_summary.json
-  - source: data/fixtures/gaip_algorithm_lab.json
-    what_it_supports: 클러스터링 실측 채점표(과병합 0.0%, 누락 1.6/2.4/3.1%, IoU 0.943/0.910/0.828, 커버리지 90.9/90.5/85.9%) · eps 그리드 · HDBSCAN 비교 · product_zone_fixed
-    what_it_does_not_support: 판정 재실행(실험실은 군집 지표까지만 측정 — 문서 자체 명시)
-    status: verified
-    citation: data/fixtures/gaip_algorithm_lab.json
-  - source: 코드 실물 (src/gaip_simulation/engine.py · clustering.py · taas_risk_weights.py · scripts/loss_ratio_counterfactual.py · mobility_profiles.json)
-    what_it_supports: "결정론 시드(_stable_seed) · 판정 입력 화이트리스트 8개(decision_feature_contract.allowed_inputs) · 4축 가중(engine.py:151-156) · 서로 다른 3일(clustering.py:78-80) · 하버사인(clustering.py:17-25) · 반경 규칙(clustering.py:195-215) · SEVERITY_RELATIVITY [1.0,1.2] · 프로파일 1회 생성 캐시"
-    status: verified
-    citation: src/gaip_simulation/engine.py, src/gaip_simulation/clustering.py, src/gaip_simulation/taas_risk_weights.py, scripts/loss_ratio_counterfactual.py, mobility_profiles.json
   - source: "'300만원' 통계"
-    what_it_supports: (과거 심도 근거로 사용)
-    what_it_does_not_support: 모든 용도 — 원출처가 확인되지 않아 덱에서 제거 확정
     status: banned
-    citation: 본문 12번 ①
-  - source: 국내 도로 위계별 건수·심도 수치
-    what_it_supports: (없음)
-    what_it_does_not_support: 모든 인용 — 출처 미확인이라 인용하지 않음(도시/농촌 대비 NHTSA까지만)
-    status: banned
-    citation: 본문 13번 (C)
-  - source: 지자체 고령자 이동지원 데이터
-    what_it_supports: 공공·제휴 데이터 경로 후보
-    what_it_does_not_support: "가용성 — 문서가 '가용성 확인 필요'로 명시. 확인 필요"
-    status: unverified
-    citation: 본문 13번 (A)
-  - source: 보험사 사고데이터 GPS 좌표
-    what_it_supports: 사고잦은곳 결합의 잠재 재료
-    what_it_does_not_support: 좌표 표기 여부·정밀도 — 우리가 확인할 수 없어 협업 어젠다로 남김. 확인 필요
-    status: unverified
-    citation: 본문 13번 (B)
-  - source: "LongROAD 자기규제 — PMC8968289 (https://pmc.ncbi.nlm.nih.gov/articles/PMC8968289/)"
-    what_it_supports: 미국 65~79세 n=1,557에서 최초 자기규제 1순위 = 야간 회피 58.8%
-    what_it_does_not_support: 전 연령 일반화 아님 — 고령자 한정 근거 역할
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 1장
-  - source: "LongROAD 이동범위 — PMC7317610 (https://pmc.ncbi.nlm.nih.gov/articles/PMC7317610/)"
-    what_it_supports: 미국 65~79세 n=2,990 중 22.6%가 이웃 마을 밖으로 나가지 않는 축소 이동범위. 5장에서는 DHQ 이동범위 회상 구간 3개월 = 기준선 기간 선례(운전, 회상 설문)로도 인용
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 1장, 5장
-  - source: "MCI 자기규제 — PMC7027824 (https://pmc.ncbi.nlm.nih.gov/articles/PMC7027824/)"
-    what_it_supports: 고령 운전자에서 MCI군의 야간 회피가 더 강함 (13.5% vs 8.8%)
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 1장
-  - source: "Langford et al. (2013). Accid Anal Prev 61:304–310 (Candrive/Ozcandrive) — PubMed 23477415"
-    what_it_supports: "저주행 편향 — 연 5,000km 미만군의 사고위험 상승. \"저주행 ≠ 저위험\" (캐나다·호주 고령 코호트)"
-    what_it_does_not_support: "본문 미열람 — 인용 시 '초록 기준' 명시 필요"
-    status: verified
-    citation: 등급 △ (초록만 확인) · 1장
-  - source: "CMT UBI 백서 (2023) — https://m.cmtelematics.com/hubfs/CMT%20Study%20-%20UBI%20Engagement%20Impact.pdf"
-    what_it_supports: "전 연령 n≈10만, 실클레임 ~1,500건: 행동 기준 5분위 최상·최하위 클레임 빈도 약 3배 (Fig. 4)"
-    what_it_does_not_support: "고령자 한정 주장 — 전 연령 데이터이므로 '편차의 크기' 역할만. 고령자 성립은 LongROAD·Candrive 계열로"
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 1장
-  - source: TAAS 교통사고분석시스템 (2010–2024) — 우리 저장소 산출 taas_risk_weights.py
-    what_it_supports: "국내 전수: 위험행동 유형 가중치 · 고령운전자 치명률 가중 1.40배 · 노인 사고 2.52배 · 고령 사고 비중 5.6%(2010)→21.6%(2024)"
-    status: verified
-    citation: 등급 ◎ · 1장 · 저장소 산출 스크립트
-  - source: "Chen L, Carr DB, Singh RK, et al. (2025). Neurology 105(12):e214440 (DRIVES) — PMC12662389"
-    what_it_supports: "DRIVES n=298(MCI 56/NC 242), 평균 75.1세, 최대 40개월: 기저에선 두 군 주행이 대체로 유사, 차이는 시간에 따른 궤적에서 발현. 주행 변수만으로 MCI 판별 AUC 0.82 (+인구·APOE·인지 0.87)"
-    what_it_does_not_support: "초록의 기울기 수치(−0.501 등)와 트립·야간 빈도는 인용 금지(서술·부호 불일치, 야간 171.4 > 주간 58.8 라벨 뒤바뀜 의심) — AUC와 정성 결론만 사용. 결과 변수는 사고가 아니라 인지 상태 → \"사고 이전\" 금지, \"진단·자각 이전에\"만. 문제정의 본문 사용 금지(Q&A 백업 전용)"
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 2장, 9장 주의
-  - source: "Bayat S, Babulal GM, Schindler SE, et al. (2021). Alzheimers Res Ther 13:115 — PMC8204509"
-    what_it_supports: "n=139(전임상 AD 64/비AD 75), 1년 GPS: 전임상 알츠하이머 판별 주행 단독 AUC 0.82, 연령·APOE 결합 0.96. 6-1장: 고유 목적지 34.8~38.2/월 · 트립 103~114/월"
-    what_it_does_not_support: "\"GPS만으로 0.96\" 금지 — 0.96은 연령·APOE 결합 모델. 결과 변수는 인지 상태(질병 판별 연구) — Q&A 백업 전용"
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 2장, 6-1장
-  - source: "Burdett, B. R. D., Starkey, N. J., & Charlton, S. G. (2017). Safety Science 98:1–8 — doi:10.1016/j.ssci.2017.04.009"
-    what_it_supports: "뉴질랜드 통행 31,102건 ↔ 부상사고 6,295건: 집 11km 이내가 전체 주행의 절반, 전체 사고의 62% — 노출 통제 후에도 집 근처 과대표집. \"친숙한 도로의 행동적 효과가 요인일 수 있다\""
-    status: verified
-    citation: 등급 ◎ (초록·Highlights 확인) · 3장
-  - source: "Intini, P., Colonna, P., & Ryeng, E. O. (2019). Transp Res Part F 62:651–671 — doi:10.1016/j.trf.2018.12.020"
-    what_it_supports: "문헌 리뷰: \"사고 연루를 다룬 선행 연구에서는 부분적 확인에 그쳤고, 친숙도 측정 방식의 편차 때문에 비교가 어렵다\" — 우리의 불확실성 인정 근거. 리뷰가 필요하면 2018년판 대신 이 2019년판을 쓴다"
-    status: verified
-    citation: 등급 ◎ (초록 확인) · 3장
-  - source: "Harms, I. M., Burdett, B. R. D., & Charlton, S. G. (2021). Transp Res Interdiscip Perspect 9:100331 — doi:10.1016/j.trip.2021.100331"
-    what_it_supports: "PRISMA 94편(운전 72·보행 15·자전거 6·이륜 1, Scopus 단일 DB): 경로 친숙도가 행동에 영향을 준다는 것은 확립"
-    what_it_does_not_support: "사고율은 메타분석하지 않음. 저자 표기를 \"Charlton & Starkey\"로 쓰면 오기(Starkey는 저자 아님)"
-    status: verified
-    citation: 등급 ◎ (전문 확인) · 3장
-  - source: "Harootunian, K., Lee, B. H. Y., & Aultman-Hall, L. (2014). Accid Anal Prev 72:32–43 — ScienceDirect S0001457514001857"
-    what_it_supports: "미국 4개 주: 타주 면허(비친숙 대리지표) 단독차량 사고 과실 오즈 +17~92%"
-    what_it_does_not_support: 플로리다는 차이 없음, 노출 미통제 — 한계 병기 필요
-    status: verified
-    citation: 등급 ◎ (초록 확인) · 3장
-  - source: "NHTSA, Run-Off-Road Crashes: An On-Scene Perspective, DOT HS 811 500 (2011) — https://crashstats.nhtsa.dot.gov/Api/Public/ViewPublication/811500"
-    what_it_supports: "NMVCCS 분석 Table 8: 친숙한 운전자 OR 2.07 (단독차량 사고 중 도로이탈 유형일 오즈)"
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 3장
-  - source: "Intini et al. (2018). Accid Anal Prev 111:280–296"
-    what_it_supports: "(사용 불가) 결론이 \"친숙함이 위험요인으로 확인됐고, 비친숙함의 영향은 불명확한 측면이 있다\""
-    what_it_does_not_support: 우리 논지와 반대 — 인용 금지. 리뷰가 필요하면 Intini 2019년판 사용
-    status: banned
-    citation: 등급 ✕ (인용 금지) · 3장, 9장
-  - source: "\"Charlton & Starkey, PRISMA 94개 연구\" (저자 오기 서지)"
-    what_it_supports: (사용 불가) 실체는 Harms, Burdett & Charlton (2021)이며 Starkey는 저자가 아니다
-    what_it_does_not_support: 이 표기로의 인용 일체
-    status: banned
-    citation: 등급 ✕ (저자 오기) · 3장, 9장
-  - source: "Ester, M., Kriegel, H.-P., Sander, J., & Xu, X. (1996). A Density-Based Algorithm for Discovering Clusters (KDD-96), p.229 — https://cdn.aaai.org/KDD/1996/KDD96-037.pdf"
-    what_it_supports: 원저자의 한계 자인 — 전역 eps는 밀도가 다른 군집을 하나로 병합할 수 있다. 심사 지적이 원논문이 인정한 문제임을 보이는 카드
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 4장
-  - source: "Isaacman, S., et al. (2011). Identifying Important Places in People's Lives from Cellular Network Data. Pervasive 2011, LNCS 6696 — https://mrmgroup.cs.princeton.edu/papers/Isaacman_pervasive11.pdf"
-    what_it_supports: "관찰 창 60일, \"5% of total days\" = Days>2(서로 다른 3일), call-days로 계수(총 횟수 아님). 5장: 우리 기준선 60일의 선례(\"왜 3일\" 담당)"
-    what_it_does_not_support: "운전 연구 아님 — 휴대폰 통신 위치데이터 연구임을 반드시 병기. 차용은 '반복 방문지 식별 방법론'에 한정, 운전 기준선 선례는 5장 별도"
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 4장, 5장
-  - source: "arXiv:1807.00546 — https://arxiv.org/abs/1807.00546"
-    what_it_supports: 방문 횟수가 아닌 일수 기준, 주 3일 예시
-    what_it_does_not_support: "본문 미확인 — '초록 기준' 명시 필요"
-    status: verified
-    citation: 등급 △ (초록만) · 4장
-  - source: 활동공간 체계적 리뷰 47편 — PMC6737923
-    what_it_supports: 최소 관측 일수 관행 1~4일 → 우리 3일은 정중앙
-    what_it_does_not_support: "본문 미확인 — '초록 기준' 명시 필요"
-    status: verified
-    citation: 등급 △ (초록만) · 4장
-  - source: Zheng et al. (2009) 200m · Montoliu et al. (2013) 200~300m (eps 대역 근거)
-    what_it_supports: (확보 시) eps 260m의 문헌 대역 근거
-    what_it_does_not_support: 현재 원문 미확인 — 우리 문서에 서지만 존재. eps 260m의 유일한 문헌 근거이므로 우선 확보 대상(팩트체크 우선순위 1위). 확인 전 발표 인용 금지
-    status: unverified
-    citation: 등급 ⚠ (팩트체크 필요) · 4장, 10장 1순위
-  - source: "MDPI Applied Sciences 15(22):12278 (엔트로피 기반 지역별 ε, 브라질 120m~칠레 1,000m)"
-    what_it_supports: (확보 시) 지역별 eps의 국제 실증
-    what_it_does_not_support: 서지는 문서에 실재하나 URL이 추정 링크. 대상이 인구 격자라 집계 레벨도 다름. 확인 전 인용 금지
-    status: unverified
-    citation: 등급 ⚠ (팩트체크 필요) · 4장, 10장 6순위
-  - source: UMTRI 자연주행 기준선 (n=108) — PubMed 29584495
-    what_it_supports: 기준선 관찰 창 2주 선례 (운전 연구)
-    what_it_does_not_support: "본문 미확인 — '초록 기준' 명시 필요"
-    status: verified
-    citation: 등급 △ (초록만) · 5장
-  - source: "Aschenbrenner et al. (2022). J Gerontol B 77(10):1769–1778 / DRIVES \"first full month\" (n=161) — PMC9535782"
-    what_it_supports: "기준선 1개월 선례(운전, DRIVES). 6-2장: 일몰 이후 출발 정의로 야간 트립 62.9/월 ÷ 총 115.4 = 54.5%"
-    what_it_does_not_support: 태양고도 정의(6.7%)와 혼용 금지 — 정의를 빼면 7배 어긋난다
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 5장, 6-2장
-  - source: Candrive 재평가 주기 (n=928) — PubMed 23541299
-    what_it_supports: 기준선 4개월 선례 (운전 연구)
-    what_it_does_not_support: "본문 미확인 — '초록 기준' 명시 필요"
-    status: verified
-    citation: 등급 △ (초록만) · 5장
-  - source: Progressive Snapshot 공식 6개월
-    what_it_supports: (사용 불가)
-    what_it_does_not_support: 2차 자료만 존재 — 인용 금지 목록(9장) 등재
-    status: banned
-    citation: 등급 ✕ (인용 금지) · 5장, 9장
-  - source: "Lally et al. (2010). EJSP 40(6):998–1009 — doi:10.1002/ejsp.674"
-    what_it_supports: 습관 자동성 중앙값 66일, 범위 18~254일 — 시간 스케일 참고
-    what_it_does_not_support: 새 습관 형성 연구(n=96, 12주)이지 기존 패턴 관측 기간 근거가 아니다. 시간 스케일 참고 이상으로 쓰지 말 것
-    status: verified
-    citation: 등급 △ · 5장
-  - source: AAA LongROAD 브리프 (Molnar et al. 2019; 야간 정의 Molnar 2017/2019) — aaafoundation.org 18-0453 PDF
-    what_it_supports: "미국 65~79세 n=2,131, GPS 12개월: 트립 119.4/월(SD 53.4) · 운전일 22.5일/월(SD 5.0) · 791.4 mile/월. 야간(태양고도 96° 초과 구간이 트립의 80% 이상 정의) 평균 6.7%(SD 5.1, 관측 범위 0~39.3) · 65-69세 7.5 / 70-74세 6.4 / 75-79세 5.8"
-    what_it_does_not_support: "80세 이상 실측(79세에서 끊김). '고령일수록 야간이 많다'는 서술(기울기는 감소)"
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 6-1장, 6-2장
-  - source: Roe et al. (2019). J Alzheimers Dis — PMC6488385
-    what_it_supports: "DRIVES n=20, 평균 73.1세: 고유 목적지 39.4~44.4/월 · 트립 107~122/월 · 운전일 24/월"
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 6-1장
-  - source: "마강래·윤영호 (2009). 서울도시연구 10(4):159–171 — si.re.kr PDF"
-    what_it_supports: "수도권 가구통행실태조사, 65세+ 49,380명: 2006년 0.79 목적통행/인·일(전체샘플) · 2.40(통행자 기준)"
-    what_it_does_not_support: 목적통행 단위이므로 방문지와 직접 비교 불가 — 귀가 48% 감안 ×0.52 환산 필요
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 6-1장
-  - source: 한국교통연구원 (2001), 고령운전자 운전행태
-    what_it_supports: "5대광역시 65세+: 0.83 목적통행/인·일"
-    what_it_does_not_support: "표본수·조사연도 미상 — '초록 기준' 수준 주의"
-    status: verified
-    citation: 등급 △ · 6-1장
-  - source: "Molnar et al. (2018). Transp Res Part F 54:367–377 — PMC6190922"
-    what_it_supports: "야간 정의의 출처: 주간 0~89°, 시민박명 90~96°, 야간 96° 초과"
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 6-2장
-  - source: arXiv 2603.00691 Fig.6(c)
-    what_it_supports: (사용 불가)
-    what_it_does_not_support: LongROAD 야간 비중을 30~50%로 표기해 원 brief 6.7%와 충돌 — 인용 금지
-    status: banned
-    citation: 등급 ✕ (인용 금지) · 6-2장, 9장
-  - source: AAA LongROAD RDE 브리프 (2020) — aaafoundation.org 20-0005 PDF
-    what_it_supports: "임계 0.35g: 5.3 ± 6.2건/1,000 mile (범위 0~91) = 0.33건/100km. 임계 0.75g: 0.005 ± 0.06건/1,000 mile"
-    what_it_does_not_support: 임계값(g) 없는 인용 — 0.35g와 0.75g가 1,000배 차이
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 6-3장
-  - source: "Hill LL et al. (2020). Injury Epidemiology 7:38 — escholarship PDF"
-    what_it_supports: "≥0.35g: 5.42/1,000 mile (중앙값 4.0, SD 6.38)"
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 6-3장
-  - source: "Hill LL et al. (2021). Geriatrics 6(1):20 — PMC8005989"
-    what_it_supports: "≥0.4g: 전체 1.16/1,000 mile · 도시 1.40 vs 교외·농촌 0.70"
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 6-3장
-  - source: "FHWA, Our Nation's Highways (NPTS) — https://www.fhwa.dot.gov/ohim/onh00/bar8.htm"
-    what_it_supports: "미국 65세+: 7,646 mile = 12,305 km/년 (남 16,583 / 여 7,701)"
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 6-4장
-  - source: Betz et al., LongROAD — PMC7151033
-    what_it_supports: "미국 65~79세 n=2,807: 연 3,000 mile 미만 = 6.38% · 약 3,000km 미만 = 1.78%"
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 6-4장
-  - source: Charlton et al. (2018). J Safety Research (Ozcandrive)
-    what_it_supports: "호주 75세+ n=191: 1년차 8,993 km(SD 5,169) → 5년차 6,787 km"
-    what_it_does_not_support: "본문 미열람(페이월) — '초록 기준' 명시 필요"
-    status: verified
-    citation: 등급 △ (페이월) · 6-4장
-  - source: 국내 연령별 주행거리 부재 확인 — 한국교통안전공단 「자동차 주행거리통계 실태조사」 · 국토교통부 공공데이터·통계누리 · 보험개발원 · 국가교통조사 「자동차 이용실태조사」(n=5,334) · 보험연구원 2025-13
-    what_it_supports: "국내에 운전자 연령별 주행거리 통계가 없다는 것을 확인(◎ — 없다는 것을 확인함): 공단은 운전자 연령 미수집(차량 단위 계기판 누적거리), 국토부는 용도·차종·연료·시도별만, 보험개발원은 연령별 미공표, 국가교통조사는 연령 구간이 '50세 이상'에서 종료, 보험연구원 2025-13 p.24 \"데이터의 한계로 지급보험금에 영향을 줄 수 있는 주요 요소를 분석에 포함시킬 수 없어…\""
-    what_it_does_not_support: "국내 고령자 주행거리 수치의 존재 — \"통계에 따르면…\" 화법 금지"
-    status: verified
-    citation: 등급 ◎ (부재 확인) · 6-4장
-  - source: 2023년도 노인실태조사 (보건복지부·KIHASA), 표 3-8 — mohw.go.kr PDF
-    what_it_supports: "65세+ n=10,078: 보건의료기관 방문 1.5회/월 (없음 31.2% / 1회 34.8% / 2~3회 25.0%)"
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 7장
-  - source: 2023년도 노인실태조사 — 여가문화시설 (요약 p.20)
-    what_it_supports: 경로당 이용자 주 2.9회 (이용률 26.5%)
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 7장
-  - source: 노인복지관 주 1.5회 (2023 노인실태조사 관련 언론 인용)
-    what_it_supports: (확보 시) 7번 λ 앵커 보강
-    what_it_does_not_support: 단일 언론 인용으로만 확인 — 원보고서 표 확보 전 인용 금지
-    status: unverified
-    citation: 등급 ⚠ (팩트체크 필요) · 7장, 10장 4순위
-  - source: 한국소비자원 「고령운전자 안전실태조사」(2024.7) — kca.go.kr PDF
-    what_it_supports: "만 65세+ n=300: 운전 빈도 주 3~5회 36.7% / 주 1~2회 27.0% / 주 6~7회 24.0% / 주 1회 미만 12.3%"
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 7장
-  - source: 국가데이터처 「한국의 사회동향 2025」(2025.12.26) p.20 — korea.kr PDF
-    what_it_supports: 2024년 고령 운전자 사고의 55.7%가 안전운전의무 불이행 · 최근 5년 고령운전자 연평균 9.2% 증가 · 사고 1건당 사망자 비율 차량단독 10.1% / 차대사람 2.8% / 차대차 1.1%
-    what_it_does_not_support: "보도자료에 인쇄된 전체 27.5%와의 대비 — 원자료 직접 집계 시 전체도 55.6%이므로 '2배' 주장 금지"
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 7장
-  - source: 도로교통공단 「가해운전자 법규위반별 주야별 교통사고 통계 2024」 — 공공데이터포털 data.go.kr/data/15070170
-    what_it_supports: "전체 운전자도 안전운전의무 불이행 55.6%(109,139 / 196,349건). 합계가 경찰청 공식 총계와 일치 — '고령 vs 전체 2배' 반박 근거"
-    status: verified
-    citation: 등급 ◎ (원자료 직접 집계) · 7장
-  - source: 한국소비자원 보도자료 (2025.4.10) p.2 — 시뮬레이터 고령·비고령 각 17명
-    what_it_supports: 시야제한 어린이 돌발 상황 제동 반응 2.28초 vs 1.20초, 교차로 우회전 상황은 0.02초 차이 (수치 실재 확인)
-    what_it_does_not_support: "발표 사용 안 함(9장) — 원문에 \"평균\"도 \"90%\"도 없음, 다른 상황은 0.02초 차이로 체리피킹 리스크, n=17에 SD·p값 없음"
-    status: verified
-    citation: 등급 ◎ (원문 확인, 단 사용 안 함) · 7장, 9장
-  - source: 보험연구원 연구보고서 2025-13
-    what_it_supports: "고령운전자 교통사고 특징 · 주행거리 데이터 부재를 저자가 명시(p.17, p.24) → 우리 '국내 통계 부재' 주장의 뒷받침"
-    status: verified
-    citation: 등급 ◎ (원문 확인) · 6-4장, 8장
-  - source: 우리 저장소 실측 — gaip_simulation_bundle.json · engine.py
-    what_it_supports: 할증 경로 부재(180 시나리오 전건 candidate_surcharge_rate_pct=0) · 가중치 30/30/20/20 · 케어 임계 0.25/0.20 AND · location_penalty 0.0
-    status: verified
-    citation: 등급 ◎ (저장소 실측) · 8장
-  - source: "Hirsch et al. (2014). Int J Health Geographics 13:51 — 활동공간 = 이동자원 지표"
-    what_it_supports: (확보 시) 페르소나 근거 등급 △→○ 승급
-    what_it_does_not_support: 팀 조사에서 서지만 넘어옴 — DOI·결론 문구 원문 대조 전 인용 금지
-    status: unverified
-    citation: 등급 ⚠ (팩트체크 필요) · 8장, 10장 3순위
-  - source: Ji et al. (2023). Transactions in GIS — 규칙성 정의
-    what_it_supports: (확보 시) 규칙성 정의 근거
-    what_it_does_not_support: 서지·수치 확인 전 인용 금지
-    status: unverified
-    citation: 등급 ⚠ (팩트체크 필요) · 8장, 10장 3순위
-  - source: Goulet-Langlois et al. (2017) — 규칙성 조작적 정의
-    what_it_supports: (확보 시) 규칙성 조작적 정의 근거
-    what_it_does_not_support: 서지 확인 전 인용 금지
-    status: unverified
-    citation: 등급 ⚠ (팩트체크 필요) · 8장, 10장 3순위
-  - source: KIRI 보험연구원 — 마일리지 UBI 오분류
-    what_it_supports: (확보 시) 마일리지 UBI 오분류 근거
-    what_it_does_not_support: 리포트 번호·발행연도 확인 전 인용 금지
-    status: unverified
-    citation: 등급 ⚠ (팩트체크 필요) · 8장
-  - source: 국가데이터처 77.3% 반복경로
-    what_it_supports: (확보 시) 반복경로 비중 근거
-    what_it_does_not_support: 원문 확인 전 인용 금지
-    status: unverified
-    citation: 등급 ⚠ (팩트체크 필요) · 8장
-  - source: 삼성교통안전문화연구소 — 페달 오조작 70.5% / 2.8명
-    what_it_supports: (확보 시) 페달 오조작 통계
-    what_it_does_not_support: 원문 확인 전 인용 금지
-    status: unverified
-    citation: 등급 ⚠ (팩트체크 필요) · 8장
-  - source: Nature Sci Rep — MCI 경로 다양성
-    what_it_supports: (확보 시) MCI 경로 다양성 근거
-    what_it_does_not_support: 서지 확인 전 인용 금지
-    status: unverified
-    citation: 등급 ⚠ (팩트체크 필요) · 8장
-  - source: "Turró-Garriga et al. (2016). J Alzheimers Dis 51(2):357–366 — PubMed 26890611"
-    what_it_supports: "\"MCI 60%/치매 81%\" 오류의 정정 근거: 원논문의 실제 (무자각) 유병률은 39.5%이며, 81%는 \"12개월 지속률 80.0%\"의 오독(StatPearls를 거쳐 확산)"
-    what_it_does_not_support: "\"60%/81%\" 수치의 인용"
-    status: verified
-    citation: 9장 인용 사슬 추적 결과 (원논문 확인)
-  - source: "Cacciamani et al. (2021). Front Aging Neurosci 13:697234 — PMC8370471"
-    what_it_supports: "\"60%/81%\" 대체 수치: AD 치매 자각 결여 40~91% (개별 연구 범위)"
-    what_it_does_not_support: 통합추정치로의 인용 — 통합추정 아님, 개별 연구 범위임을 명시
-    status: verified
-    citation: 9장 대체 출처
-  - source: "Shin & Lee (2012). J Phys Ther Sci 24(7):567–570 — jstage PDF"
-    what_it_supports: "\"2.28초=90% 지연\" 대체 수치: 고령 1.70초 vs 청년 0.96초 (n=12+12, SD·p값 있음)"
-    status: verified
-    citation: 9장 대체 출처
-  - source: LongROAD 자기규제 연구
-    what_it_supports: 고령층 이동 반경이 좁고 자기규제적 — 야간 회피 58.8%, 이웃 마을 밖 안 나감 22.6% (항목 1)
-    what_it_does_not_support: 젊은 층에서 우리 방식이 작동하지 않는다는 실증
-    status: verified
-    citation: LongROAD — 문서 등급 ○ (원문 링크 확보)
-  - source: NMVCCS 70% 자택 5마일
-    what_it_supports: 사고가 자택 근처에 몰림 — 70%가 자택 5마일 이내 (항목 2)
-    what_it_does_not_support: 생활권 안이 노출 대비 더 위험하다는 해석
-    status: verified
-    citation: NMVCCS — 등급 ○
-  - source: Burdett 2017
-    what_it_supports: 주행 자체가 자택 근처에 집중 — 자택 11km 이내가 주행 절반 (노출의 지도 논거)
-    status: verified
-    citation: Burdett 2017 — 등급 ○
-  - source: Isaacman 2011
-    what_it_supports: "통신 위치데이터로 반복 방문지를 찾은 대표 연구 — 60일 관찰에서 '전체 일수의 5% = 3일' 기준 사용. 우리의 관찰 창(2개월)·문턱(서로 다른 3일)과 같은 창·같은 문턱의 선례."
-    status: verified
-    citation: Isaacman et al. 2011 (출처부록 5장 관찰 창 선례)
-    what_it_does_not_support: "운전 데이터에 대한 검증 — 통신 데이터 연구이지 운전 연구가 아니므로 '문제 구조가 같아 방법론으로 참고'까지만."
-  - source: 소비자원 2024
-    what_it_supports: "고령운전자 최빈 운전 빈도 주 3~5회 (36.7%) — '월 2회' 가정의 국내 앵커."
-    status: verified
-    citation: 소비자원 2024
-  - source: 관찰 창 선례 5건
-    what_it_supports: 관찰 창 설정의 연구 선례(연구 기준선 2주~1개월보다 우리가 보수적)
-    status: verified
-    citation: UMTRI (Traffic Inj Prev 2018, PubMed 29584495) / DRIVES (PMC9535782) / Isaacman (PDF) / DHQ (PMC7317610) / Candrive (Marshall 2013, PubMed 23541299) — 5건 전부 링크 확보·응답 확인, 근거 노트 2-2 반영 (2026-07-29 보강)
-  - source: Ester 1996 KDD p.229
-    what_it_supports: DBSCAN 밀도차 한계를 원논문이 자인 (항목 10 도입 논거)
-    what_it_does_not_support: 우리 eps 260m 값 자체의 타당성
-    status: verified
-    citation: Ester 1996 KDD p.229 — 원문 인용 + PDF 링크 확보, 등급 ○
-  - source: Zheng 2009 / Montoliu 2013
-    what_it_supports: eps 260m이 문헌 대역의 중간 — Zheng 200m / Montoliu 250m(권장 200~300m)
-    status: verified
-    citation: Zheng 2009, Montoliu 2013 — 등급 ○
-  - source: 빈도 앵커(건보·경로당·복지관)
-    what_it_supports: "'월 2회급' 저빈도 생활 거점 가정 — 건보 65세+ 월 3.75일 / 경로당 주 2.9회 / 복지관 주 1.5회"
-    what_it_does_not_support: 링크 없는 상태로의 발표 인용
-    status: unverified
-    citation: 등급 △ (링크 없음) — 인용 전 확인 필요
-  - source: 위치정보법 제23조(자체 해석)
-    what_it_supports: "'6개월 삭제 의무' 조항 부재, 목적 달성 시 즉시 파기 원칙 (항목 6)"
-    what_it_does_not_support: 법적 리스크가 해소되었다는 판단 — 법무 검토를 받은 적 없음(자체 해석)
-    status: unverified
-    citation: 위치정보법 제23조 — 문서에 조문 인용은 있으나 링크 없음, 등급 △; 법무 검토는 파일럿 전 필수 절차. 확인 필요
-  - source: 업계 UBI 3~6개월 관행
-    what_it_supports: (의도됐던 용도) 베이스라인 2개월의 업계 비교
-    what_it_does_not_support: 어떤 발표 인용에도 사용 불가
-    status: banned
-    citation: "원출처 미확보 — 등급 ✕, 발표 인용 금지. '연구 기준선(2주~1개월)보다 보수적'까지만 말하고 업계 비교는 생략"
-  - source: KTDB 2013 트립당 14.0km
-    what_it_supports: (의도됐던 용도) 주행거리 앵커
-    status: banned
-    citation: 원문 링크 미확보 — 등급 ✕, 발표에서 쓰지 않음
-  - source: 유형 실재 문헌 ①②④
-    what_it_supports: 페르소나 유형 ①②④의 실재 (항목 8)
-    status: verified
-    citation: LongROAD·CMT·Candrive·DRIVES·Bayat — 등급 ○
-  - source: 유형 실재 문헌 ③⑤⑥
-    what_it_supports: 페르소나 유형 ③⑤⑥의 실재
-    what_it_does_not_support: 링크 미확보 상태로의 발표 인용
-    status: unverified
-    citation: "Hirsch 2014 / Ji 2023 / KIRI — 등급 △, 링크 미확보. 우선순위 4: 링크 확보 시 △→○ 3건. 확인 필요"
-  - source: 해법 계보(VDBSCAN·OPTICS 등)
-    what_it_supports: DBSCAN 밀도차 문제의 해법 계보 서술 (항목 10)
-    status: unverified
-    citation: 서지는 정확, 링크는 일부만 — 등급 ○/△ 혼재. 확인 필요
-  - source: 신뢰도 원리(인용 없음)
-    what_it_supports: 안 30 > 밖 20 — 표본이 두꺼운 쪽에 무게(credibility, 계리학 표준 개념)
-    what_it_does_not_support: 출처 제시가 필요한 자리에서의 인용 — 교과서 인용 없음
-    status: unverified
-    citation: 등급 △. 확인 필요
-  - source: 축-순보험료 대응 논증(인용 없음)
-    what_it_supports: "네 축이 순보험료 분해에 1:1 대응한다는 계리 원리 논증"
-    status: unverified
-    citation: ○ 수준의 원리이나 인용 없음 → 등급 △. 확인 필요
-  - source: location_penalty 0.0 하드코딩
-    what_it_supports: "위치 벌점 부재 — 전 반환 경로에 location_penalty: 0.0 하드코딩"
-    status: verified
-    citation: 코드 — 등급 ◎
-  - source: DEFAULT_PRODUCT_RULES + _safety_score 동일 함수
-    what_it_supports: 안 30 > 밖 20을 같은 잣대(동일 함수)로 채점
-    status: verified
-    citation: 코드 — 등급 ◎
-  - source: 밖축 제외 실측(56건/33건)
-    what_it_supports: 밖 없으면 축 제외 — 180건 중 56건 밖축 없이 판정, 그중 33건 우대 (rolling)
-    status: verified
-    citation: 합성 실측 — 등급 ◎
-  - source: ② 유형 실측(안 15.8점·우대 0/30)
-    what_it_supports: "안(생활권 내)의 위험도 잡힘 — 만성≠변화 구분: 안 안전점수 15.8점, 우대 0/30, 케어 0/30"
-    status: verified
-    citation: 합성 실측 — 등급 ◎
-  - source: 생성 체인 4단계 코드·픽스처
-    what_it_supports: 사람 정의 → LLM 프로필 → 결정론 엔진 → TAAS 유형분해 체인의 실재
-    status: verified
-    citation: 코드·픽스처(mobility_profiles.json 등) — 등급 ◎
-  - source: 시드 고정 재현성
-    what_it_supports: 합성 생성의 재현성 — sha256(전역시드|driver_id|month)
-    status: verified
-    citation: 코드 — 등급 ◎
-  - source: decision_feature_contract 허용목록 8개
-    what_it_supports: 채점 엔진에 유형 라벨 누출 없음(허용목록 8개에 라벨 없음)
-    what_it_does_not_support: 실데이터 예측력
-    status: verified
-    citation: 코드 — 등급 ◎
-  - source: TAAS 가중치 diff 0
-    what_it_supports: TAAS 가중치는 표시 전용 — 가중치 교체 후 180건 판정 diff 0
-    status: verified
-    citation: 합성 실측 — 등급 ◎
-  - source: 원장 구조(도착지만 봄)
-    what_it_supports: 판정이 보는 것은 도착지 하나뿐 — 원장 좌표 1쌍, 출발점 컬럼 부재, one_visit_event_per_trip
-    status: verified
-    citation: 코드 — 등급 ◎
-  - source: eps 등가·단일 eps 재판정 0건 차이
-    what_it_supports: eps가 판정 경계에 영향 없음 — 지역 eps vs 단일 260에서 원 반경 500/500·500/500·813/813 동일, 180 시나리오 전건 판정 동일(신규 실측)
-    what_it_does_not_support: 3단 eps 방향(도심 소·농촌 대)의 검증
-    status: verified
-    citation: "합성 실측 — 등급 ◎. 상세: 근거자료/생활권반경_eps_정리.md"
-  - source: 3지형 판정 실측
-    what_it_supports: 고객 지형을 바꿔도(3환경) 케어 60/60 유지 · 우대 54/60 — 갈림 6명 = 케어 5·문턱 1(사유 실측, 벌점 아님)
-    status: verified
-    citation: 합성 실측 — 등급 ◎
-  - source: 개인별 원 갈림(813m vs 500m)
-    what_it_supports: 원이 개인 P90에 따라 갈림 — 광역 813m vs 도심·교외 500m
-    status: verified
-    citation: 합성 실측 — 등급 ◎
-  - source: ENVIRONMENTS 순환 위험 고지
-    what_it_supports: 합성 검증의 순환 한계 — 생성 파라미터(visit_jitter_m)와 분석 파라미터(dbscan_eps_m) 공존, 운영값은 실데이터 k-거리로 재도출한다고 선제 고지
-    status: verified
-    citation: 코드 구조 — 고지 대상으로 문서에 명시
-  - source: candidate_surcharge_rate_pct = 0 (180건 전건)
-    what_it_supports: 할증 경로 부재 — 180 시나리오 전건 0
-    status: verified
-    citation: 합성 실측 — 등급 ◎
-  - source: _monthly_results 월 집계
-    what_it_supports: 월 단위 비율 계산으로 판정 — 단발 운행은 임계의 1/7 수준
-    status: verified
-    citation: 코드 — 등급 ◎
-  - source: AND 게이트(이동 25%p AND 위험 20%p)
-    what_it_supports: "이동·행동 동시 급변이라야 발동 — gate_logic: \"AND\""
-    status: verified
-    citation: 코드 — 등급 ◎
-  - source: ③ 유형 오탐 대조군(191 케이스-월/케어 0)
-    what_it_supports: AND 게이트 실작동의 반증 가능한 증거 — 이동 임계 초과 191 케이스-월(최대 73.9%p)에 케어 0건, 엔진 재실행 재현. 항목 8의 최강 카드
-    status: verified
-    citation: 합성 실측 — 등급 ◎
-  - source: care_discount_reduction_pct 13.0
-    what_it_supports: 케어 시 할인 축소는 사실 — 13.0% (문서가 정직 고지)
-    status: verified
-    citation: 코드 — 등급 ◎
-  - source: 케어 발동 30/30·rolling 케어 월수 전원 1개월
-    what_it_supports: 케어 발동 정확성 — 급변 달에 정확히 발동(30/30), rolling 실측 케어 월수 전원 1개월 → 월수 비례 권고의 실증
-    status: verified
-    citation: 합성 실측 — 등급 ◎
-  - source: 4개월 창 구조(코드)
-    what_it_supports: 위치 보유 창 = 학습(기준선) 2개월 + 감지 직전 2개월 비교 — 코드 구조와 일치
-    status: verified
-    citation: 코드 — 등급 ◎
-  - source: privacy_filtered_features 구조
-    what_it_supports: 4개월 이후 파생값(존 중심·반경·비율)만으로 판정 성립 — 존 레코드 구조 실재
-    status: verified
-    citation: 코드 — 등급 ◎
-  - source: 푸아송 오류율 계산
-    what_it_supports: 3일 임계의 오류율 — 2일=오인 26%, 3일=8%, 4일=진짜 거점 절반 누락
-    status: verified
-    citation: 재계산 가능 — 등급 ◎
-  - source: 369개 목적지 그룹 실측
-    what_it_supports: 우리 데이터 실측 — 369개 중 3일 미만 6개(1.6%), 진짜 거점 탈락 0
-    status: verified
-    citation: 합성 실측 — 등급 ◎
-  - source: "규칙 '서로 다른 3일'(코드)"
-    what_it_supports: 반복성이 기준선의 조건 — 우리 규칙 자체가 반복성 요구
-    status: verified
-    citation: 코드 — 등급 ◎
-  - source: 학습 창 파라미터 분리(코드)
-    what_it_supports: 확장이 파라미터 문제 — 학습 창이 파라미터로 분리돼 있음
-    status: verified
-    citation: 코드 — 등급 ◎
-  - source: dbscan_distinct_days(코드)
-    what_it_supports: "밀도 단독으로 거점 인정 안 함 — '서로 다른 3일' AND 규칙"
-    status: verified
-    citation: 코드 — 등급 ◎
-  - source: 실험실 채점표
-    what_it_supports: DBSCAN 실측 성적 — 과병합 0%, 누락 1.6/2.4/3.1%, 커버리지 90.9/90.5/85.9%; 원이 군집 모양과 무관(eps 바꿔도 존 반경 동일)
-    status: verified
-    citation: 합성 실측 — 등급 ◎
-  - source: HDBSCAN 9지표 비교
-    what_it_supports: HDBSCAN 대비 판정 성능 동급, 거점 수·노이즈만 차이 (9지표 실측)
-    what_it_does_not_support: "'HDBSCAN 커버리지 90%→71.9%' 열세 주장 — 철회됨"
-    status: verified
-    citation: 합성 실측 — 등급 ◎
-  - source: HDBSCAN 커버리지 71.9% 서술(철회)
-    what_it_supports: "(과거 서술) HDBSCAN 열세 — 2026-07-29 철회: 71.9%는 대표 사례 1명의 값이고 같은 사람의 DBSCAN도 71.9%였음(인과 오귀속)"
-    what_it_does_not_support: 어떤 용도로도 사용 불가 — 옛 슬라이드에 있으면 반드시 제거
-    status: banned
-    citation: 마스터 답변안 10번은 정정된 버전
-  - source: 오버레이 구조(코드)
-    what_it_supports: 할인 자격 점수 배분(요율 아님) — 할증 경로 0, 하한 = 기준 요율
-    status: verified
-    citation: 코드 — 등급 ◎
-  - source: 민감도 969 조합 전수
-    what_it_supports: "가중치 민감도 — 969 조합 전수(8/2 실측): ±5 이웃 중앙 3·최대 9건, 현행 30이 지배 축(주행·안)의 최저점. 항목 11의 ✕ → ◎ 전환"
-    status: verified
-    citation: 합성 실측 — 등급 ◎ (2026-08-02 완료)
-  - source: 심도 항 부재(코드)
-    what_it_supports: 심도 비예측 — weights 4개에 심도 없음, allowed_inputs 8개에 없음
-    status: verified
-    citation: 코드 — 등급 ◎
-  - source: 재시도 구조(코드)
-    what_it_supports: "재시도 조건이 JSON 구조 계약 위반뿐(최대 3회), 판정 결과는 재시도 입력이 아님 — '루프' 불가능 구조"
-    status: verified
-    citation: 코드 — 등급 ◎
-  - source: mobility_profiles.json 고정 커밋
-    what_it_supports: 산출물 1회 생성 후 고정 커밋 실재
-    status: verified
-    citation: 커밋 — 등급 ◎
-  - source: 공공데이터 링크 19개
-    what_it_supports: 실현 가능성(항목 13) 공공데이터 출처 — 문서 중 가장 충실
-    status: verified
-    citation: 링크 19개 — 등급 ○
-  - source: 파라미터 절대값(설계값)
-    what_it_supports: 합성 파라미터 절대값(월 방문 13~42회, 위험률 3%/72%) — 근거 없음, 방향성만 문헌(문서가 인정)
-    what_it_does_not_support: 절대값의 실증적 타당성
-    status: unverified
-    citation: 등급 ▽ — 먼저 인정, 파일럿에서 실주행 경험분포로 대체
-  - source: 3단 eps 방향 가정(설계값)
-    what_it_supports: (과거 방어선) 도심 소·농촌 대 — 가정이며 반대일 수 있음(도심 주차난 시 산포가 더 클 수 있음); 합성 도심 산포를 40/70/130m로 가장 작게 설정해 방향 확인 불가
-    what_it_does_not_support: 지역별 차등의 방향성 검증
-    status: unverified
-    citation: 등급 ▽ — 단일 eps 재판정 0건 차이가 논쟁을 무력화
-  - source: eps 260 값(설계값)
-    what_it_supports: eps 값 자체는 문헌 대역 기반 설계값
-    status: unverified
-    citation: 등급 ▽ — 운영값은 k-거리로 재도출
-  - source: 가중치 30/30/20/20 값(설계값)
-    what_it_supports: "값 자체는 회랑(35:15 ↔ 25:25)의 중간인 설계값 — 문서가 인정"
-    status: unverified
-    citation: 등급 ▽ — 값이 아니라 순서를 주장
-  - source: 10명 균등 배분(설계)
-    what_it_supports: 페르소나 10명 균등 배분은 인구 비율이 아니라 테스트 설계 — 논증
-    status: unverified
-    citation: 등급 ▽
-  - source: 젊은 층 직접 실험(공백)
-    what_it_supports: "없음 — '젊은 층이 노이즈가 된다'는 논증이지 실측 아님"
-    what_it_does_not_support: 젊은 층 배제의 실증
-    status: unverified
-    citation: "등급 ✕ — '안 해봤고, 방법론적 예측'으로 답할 것"
-  - source: DEGURBA(공백)
-    what_it_supports: 지역 분류 기준으로 DEGURBA(UN 표준) 채택 — 결정만 있고 미구현
-    status: unverified
-    citation: 등급 ✕
-  - source: 덱 문구 교체(미완)
-    what_it_supports: "없음 — '루프'·'data'·71.9% 제거가 미완(팀 액션). 안 되면 3·9·10 답변이 무의미"
-    status: unverified
-    citation: 등급 ✕ — 발표 전 우선순위 상위(1시간)
-  - source: 3경로 확보 계획(공백)
-    what_it_supports: 데이터 확보 계획(자체 앱 → OEM → 제휴) — 계획, 실행 전
-    status: unverified
-    citation: 등급 ✕
-  - source: 사고잦은곳 채택 방식(공백)
-    what_it_supports: 케어 리포트 안전 안내로 채택 — 설계 결정, 미구현
-    status: unverified
-    citation: 등급 ✕
-  - source: 케어 지속성 규칙 검증(대기)
-    what_it_supports: 없음 — 5번 케어 지속성 규칙(any → k≥2) 검증이 발표 전 우선순위 3(순환 논거 제거, 몇 분)
-    status: unverified
-    citation: 발표 전 우선순위 표 — 확인 필요
-  - source: 확정수치카드(8/2)
-    what_it_supports: 모든 확정 수치의 단일 기준(연간 판정 118/56/6, 화면 113/31/30/6, 3지형 60/60·54/60, 요율 150·113, 보너스 중앙 5.6, 민감도 중앙 3·최대 9 등). 덱 갱신 시 여기서 복사.
-    what_it_does_not_support: 발송 답변서(7/30)의 구 고정 기준 수치.
-    status: verified
-    citation: "브리핑 meta: \"모든 수치는 확정수치카드(8/2) 기준\""
-  - source: 저장소 main e2d2e49
-    what_it_supports: 코드=데모=확정수치카드=문서 동일성. 재검증 코드 보관처. 외부 접속으로 판정 113·rolling 문구 표시 확인 완료.
-    status: verified
-    citation: "\"저장소 main e2d2e49 = 공개 데모와 동일\", §8"
-  - source: 발송 답변서 3종(통합·1차·현장, 7/30)
-    what_it_supports: "당시 고정 기준 검증 결과(우대 56/60·114건). 5번 항목 \"이후 12개월 내내 고정되는 비교 기준값\"은 케어 평소값 서술이라 rolling과 모순 없음."
-    what_it_does_not_support: 현재 rolling 확정 수치(54/60·113) — 구수치 잔존, 회수 불가. 원문 보존 + 수치 시점 고지 배너로 처리.
-    status: verified
-    citation: §7, §1 케어 분리 정합
-  - source: Zheng (eps 200m)
-    what_it_supports: eps 기준값 260m이 참고한 문헌 대역의 한쪽(200m). 260m 자체는 문헌이 직접 준 값 아님 — 설계값.
-    what_it_does_not_support: 260m을 문헌 수치로 직접 인용하는 것.
-    status: unverified
-    citation: "§5, §9-5 \"팩트체크 잔여 수령: Zheng/Montoliu 결과물\" — 확인 필요(결과물 수령 대기)"
-  - source: Montoliu (eps 200~300m)
-    what_it_supports: eps 기준값 260m이 참고한 문헌 대역의 다른 쪽(200~300m).
-    what_it_does_not_support: 260m을 문헌 수치로 직접 인용하는 것.
-    status: unverified
-    citation: §5, §9-5 — 확인 필요(팩트체크 결과물 수령 대기)
-  - source: LongROAD
-    what_it_supports: 시뮬레이션 위험행동 빈도의 앵커(3층 구조 ① 통계적 성질).
-    what_it_does_not_support: 구체 인용 수치는 이 문서에 없음 — 세부 수치 인용 시 원문 확인 필요.
-    status: verified
-    citation: "§4 \"위험행동 빈도는 LongROAD 앵커\""
-  - source: 건강보험(건보) 외출일 통계
-    what_it_supports: 외출일 3.75일 앵커.
-    what_it_does_not_support: 출처 서지 정보는 문서에 없음 — 확인 필요.
-    status: verified
-    citation: "§4 \"외출일은 건보 3.75일\""
-  - source: 경로당 이용 통계
-    what_it_supports: 주 2.9회 앵커.
-    what_it_does_not_support: 출처 서지 정보는 문서에 없음 — 확인 필요.
-    status: verified
-    citation: "§4 \"경로당 주 2.9회\""
-  - source: 방문 빈도 문헌 회랑(국내·해외)
-    what_it_supports: 국내 12.5~13.1회 ↔ 해외 35~44회 회랑. 페르소나 방문수 13/24/32/40/42가 이 회랑을 커버.
-    what_it_does_not_support: 개별 문헌명은 문서에 없음 — 확인 필요.
-    status: verified
-    citation: §4
-  - source: 일본 65세+ 연 주행 실측
-    what_it_supports: 시뮬 연 주행 중앙값 2,829km의 외부 정합.
-    what_it_does_not_support: 출처 서지 정보는 문서에 없음 — 확인 필요.
-    status: verified
-    citation: "§4 \"연 주행 중앙값 2,829km(일본 65세+ 실측과 정합)\""
-  - source: Marshall 2023 (Candrive)
-    what_it_supports: "거리 보정 최대 5배 — Candrive \"3배\" 표현의 교체 근거."
-    what_it_does_not_support: "\"3배\" 표현(금지)."
-    status: verified
-    citation: "§10 \"Candrive ~~3배~~(→ 거리 보정 최대 5배, Marshall 2023)\""
-  - source: "Candrive \"3배\""
-    what_it_supports: 없음 — 금지 표현.
-    what_it_does_not_support: 무대·장표 어디에서도 사용 불가. 거리 보정 최대 5배(Marshall 2023)로 교체.
-    status: banned
-    citation: §10
-  - source: Hirsch 2014
-    what_it_supports: 용도가 이 문서에 미기재 — 확인 필요.
-    status: unverified
-    citation: §9-5 팩트체크 잔여 수령 목록
-  - source: "\"70% 자택 8km\""
-    what_it_supports: 팩트체크 미완 — 수령 전까지 인용 보류. 확인 필요.
-    status: unverified
-    citation: §9-5 팩트체크 잔여 수령 목록
-  - source: "\"86% 이동권\""
-    what_it_supports: 팩트체크 미완 — 수령 전까지 인용 보류. 확인 필요.
-    status: unverified
-    citation: §9-5 팩트체크 잔여 수령 목록
-  - source: "\"55.7%\""
-    what_it_supports: 없음 — 금지 수치(출처·맥락은 이 문서에 미기재, 확인 필요).
-    what_it_does_not_support: 무대·장표 어디에서도 사용 불가.
-    status: banned
-    citation: §10
-  - source: 재현 코드(독립 재현)
-    what_it_supports: 고정 모드 180/180 일치(통제 실험), rolling 판정 변화 우대 4건·케어 0건, 엔진 이식 후 번들 재생성 180/180 일치.
-    status: verified
-    citation: §1 검증
-  - source: Ester et al. 1996 (DBSCAN 원논문)
-    what_it_supports: ε을 정하는 표준 방법으로 k-거리 분포 제시 — k-거리 재산정 계획의 방법론적 근거.
-    what_it_does_not_support: 260m라는 구체값.
-    status: verified
-    citation: Ester et al. 1996
-  - source: Zheng (200m) · Montoliu (200~300m)
-    what_it_supports: "위치데이터 연구 관행 200~300m — ε=260m의 '제안 시작값' 참고 범위."
-    what_it_does_not_support: "260m가 논문 직접값이라는 주장 — 문서가 '논문 직접값 아님'을 명시."
-    status: unverified
-    citation: 부록B 파라미터 사전 — 관행 참고, 실데이터 축적 후 k-거리 실측으로 재산정 예정
-  - source: 건강보험 통계 2022
-    what_it_supports: "65세+ 월평균 입내원 3.75일 — '월 2회' 가정의 국내 앵커."
-    status: verified
-    citation: 건강보험 통계 2022
-  - source: 노인실태조사 2023
-    what_it_supports: "경로당 이용자 주 2.9회 — '월 2회' 가정의 국내 앵커."
-    status: verified
-    citation: 노인실태조사 2023
-  - source: AAA LongROAD — 자기규제·이동범위
-    what_it_supports: 최초 자기규제 1순위 야간 회피 58.8% (n=1,557) · 축소 이동범위 22.6% (n=2,990) — 이동범위 축소 축과 ① 유형의 근거. 둘 다 ◎.
-    status: verified
-    citation: AAA LongROAD (등급 ◎)
-  - source: LongROAD (Molnar 2019, AAA)
-    what_it_supports: 65~79세 n=2,131, GPS 12개월 — 트립 119.4/월 · 운전일 22.5일/월 (월 방문 수 해외 앵커).
-    status: verified
-    citation: Molnar 2019 (등급 ◎)
-  - source: LongROAD (Molnar 2017/2019) — 야간 비중
-    what_it_supports: "야간 정의: 태양고도 96° 초과 구간이 트립의 80% 이상. 평균 6.7% (SD 5.1, 관측 범위 0~39.3) — 설계값 0.06~0.18의 앵커."
-    what_it_does_not_support: 정의 없는 야간 비중 인용 — Aschenbrenner(일몰 이후 출발 54.5%)와 7배 어긋남.
-    status: verified
-    citation: Molnar 2017/2019 (등급 ◎)
-  - source: Aschenbrenner 2022
-    what_it_supports: 일몰 이후 출발 정의 기준 야간 비중 54.5% — 정의에 따라 야간 수치가 7배 달라짐을 보여주는 대조 문헌.
-    what_it_does_not_support: 우리 설계값의 직접 앵커 (우리는 LongROAD 정의 기준).
-    status: verified
-    citation: Aschenbrenner 2022 (등급 ◎)
-  - source: LongROAD RDE (급제동 실측)
-    what_it_supports: 0.35g 기준 5.3건/1,000mile = 0.33건/100km — 우리 산출(0.00~0.89건/100km)이 같은 자릿수임을 확인하는 환산 대조.
-    what_it_does_not_support: g 임계 없는 인용 — 같은 코호트에서 0.35g면 5.3건, 0.75g면 0.005건으로 1,000배 차.
-    status: verified
-    citation: LongROAD RDE · 참조 Hill 2020 (≥0.35g, 5.42/1,000mile) · Hill 2021 (≥0.4g, 1.16)
-  - source: LongROAD (Betz)
-    what_it_supports: 미국 65~79세 연 3,000mile 미만 = 6.38% — 저주행 분포 앵커.
-    status: verified
-    citation: Betz, LongROAD (등급 ◎)
-  - source: DRIVES (Chen et al., Neurology 2025;105(12), n=298)
-    what_it_supports: 차이는 시간에 따른 궤적에서 발현, 주행 변수만으로 인지 판별 AUC 0.82 — 운전 패턴 변화 축과 ④ 동시변화형의 근거. 부록D 표 ④의 교체 문헌.
-    what_it_does_not_support: "'사고 이전' 예측 — 표기 규칙은 '진단·자각 이전'."
-    status: verified
-    citation: Chen et al., Neurology 2025;105(12), n=298 (등급 ◎)
-  - source: DRIVES (Roe 2019)
-    what_it_supports: 평균 73.1세, 고유 목적지 39.4~44.4/월 — 월 방문 수 해외 앵커.
-    status: verified
-    citation: Roe 2019 (등급 ◎)
-  - source: "Bayat et al. 2021 (Alz Res Ther 13:115, n=139)"
-    what_it_supports: 운전 패턴 변화 축 근거 · 고유 목적지 34.8~38.2/월 (월 방문 수 해외 앵커). 부록D 표 ④ 교체 문헌.
-    status: verified
-    citation: "Bayat et al. 2021, Alzheimer's Research & Therapy 13:115 (등급 ◎)"
-  - source: "Burdett, Starkey & Charlton (2017), Safety Science 98:1–8"
-    what_it_supports: "집 11km 이내가 주행의 절반·사고의 62% (close-to-home) — ② 생활권 내 위험행동형의 근거. 'ScienceDirect 2017' 표기의 올바른 서지."
-    status: verified
-    citation: "Burdett, Starkey & Charlton (2017), Safety Science 98:1–8 (등급 ◎)"
-  - source: Goulet-Langlois et al. 2017 (규칙성 정의 계열)
-    what_it_supports: 규칙성은 거점 개수가 아니라 각 거점 방문의 반복성으로 측정 — ⑤ 복수 생활권형의 개념 근거.
-    what_it_does_not_support: "문헌명 인용 — 서지 확정 필요. 확정 전엔 문헌명 없이 '이동패턴 연구의 규칙성 정의'로. (확인 필요)"
-    status: unverified
-    citation: 서지 확정 필요 상태
-  - source: "Langford et al. (2013), Accid Anal Prev 61:304–310"
-    what_it_supports: "연 5,000km 미만 저주행군의 km당 위험이 오히려 높음 ('저주행≠저위험') — ⑥ 광역 이동·안정형 근거이자 KIRI 교체 문헌. 연 주행거리 하향 재보정의 편향 참고."
-    what_it_does_not_support: 등급 △ — 강한 단독 근거로 쓰기엔 제한.
-    status: unverified
-    citation: "Langford et al. 2013, Accident Analysis & Prevention 61:304–310 (등급 △)"
-  - source: Candrive (Marshall 2023)
-    what_it_supports: 캐나다 70세+ 연 주행 11,017.6km (SD 6,959.9), 코호트 내 변동성 큼 — 연 주행거리 해외 앵커, ⑥ 보조 근거.
-    status: verified
-    citation: Marshall 2023, Candrive (등급 ◎, 원문 PDF 확보)
-  - source: Ozcandrive (Charlton 2018)
-    what_it_supports: 호주 75세+ 1년차 8,993km → 5년차 6,787km — 연 주행거리 해외 앵커(감소 추세).
-    what_it_does_not_support: 등급 △.
-    status: unverified
-    citation: Charlton 2018, Ozcandrive (등급 △)
-  - source: FHWA (NPTS, 미국 65세+)
-    what_it_supports: 연 12,305km (남 16,583 / 여 7,701) — 연 주행거리 해외 앵커.
-    status: verified
-    citation: FHWA NPTS (등급 ◎)
-  - source: CMT UBI 백서 2023 (n≈10만)
-    what_it_supports: 행동 5분위 최상·최하위 클레임 빈도 약 3배 — 만성 위험행동 축의 방향성 근거.
-    what_it_does_not_support: 고령 한정 근거 — 전 연령 데이터임을 병기하고 고령 한정 근거와 역할 구분.
-    status: verified
-    citation: CMT UBI 백서 2023 (등급 ◎, ⚠전 연령)
-  - source: Hirsch et al. (2014)
-    what_it_supports: 활동공간 연구 계열 — ③ 이동변화 안전유지형의 후보 근거.
-    what_it_does_not_support: 현재 인용 — 출처부록 기준 원문 대조 미완(팩트체크 목록). 확인됐으면 유지, 아니면 LongROAD 축소 이동범위(◎)로 교체. (확인 필요)
-    status: unverified
-    citation: Hirsch et al. 2014 — 원문 대조 미완 상태
-  - source: "국가데이터처 '55.7% 안전운전의무 불이행'"
-    what_it_supports: (사용하지 않음)
-    what_it_does_not_support: 고령 특이성 주장 — 전 연령도 55.6%라 고령 특이성이 없는 수치. 인용 금지 목록.
-    status: banned
-    citation: "부록D 0절 #3 — DRIVES(Neurology 2025)+Bayat 2021로 교체"
-  - source: KIRI (리포트)
-    what_it_supports: (사용하지 않음)
-    what_it_does_not_support: 인용 전반 — 리포트 번호·연도 원문 미확인, 인용 금지 상태.
-    status: banned
-    citation: "부록D 0절 #4 — Langford et al. 2013 (저주행≠저위험)으로 교체"
+    status_reason: "원출처 미확인으로 덱에서 제거 확정 — 마스터답변안 12번 ① 명시 ('심도 근거로 쓰던 300만원 통계는 원출처가 확인되지 않아 제거 확정')"
+    topics:
+      - 사고 심도
+    key: 300만원통계
   - source: "'ScienceDirect 2017/2021' (출처 표기)"
-    what_it_supports: (출처 표기로 사용 불가)
-    what_it_does_not_support: ScienceDirect는 플랫폼이지 출처가 아님. ②는 Burdett, Starkey & Charlton (2017), Safety Science로, ⑤ 규칙성 정의 문헌은 서지 확정 필요.
+    citation_full: (출처 표기 오류 — ScienceDirect는 플랫폼)
     status: banned
-    citation: "부록D 0절 #5"
-  - source: 가구통행실태조사 2006 수도권 (마강래·윤영호 2009)
-    what_it_supports: 65세+ n=49,380, 0.79 통행/인·일 → 월 방문지 환산 12.5곳 — 국내 월 방문 수 하단 앵커.
-    status: verified
-    citation: 마강래·윤영호 2009 (등급 ◎)
-  - source: 한국교통연구원 2001, 5대광역시
-    what_it_supports: 65세+ 0.83 통행/인·일 → 월 방문지 환산 13.1곳 — ② 위험행동형 설계값 13의 앵커.
-    what_it_does_not_support: 등급 △.
-    status: unverified
-    citation: 한국교통연구원 2001 (등급 △)
-  - source: 보험연구원 2025-13
-    what_it_supports: "국내 연령별 주행거리 통계의 부재를 저자가 명시 (p.17·24) — '부재 확인'의 근거."
-    status: verified
-    citation: 보험연구원 리포트 2025-13, p.17·24
-  - source: TAAS 교통사고분석시스템 원천 CSV (2010–2024, 시군구 전수)
-    what_it_supports: 위험 유형 구성비 44.6/42.4/13.0% (급제동/과속/급가속) — 산출 코드 taas_risk_weights.py. 과속은 2021년부터 원천 미집계라 2010–2020 평균 기준치(provenance 기록).
-    what_it_does_not_support: 판정 — 표시 전용, 구성비 교체 재판정 diff 0건.
-    status: verified
-    citation: TAAS 원천 CSV 2010–2024 · taas_risk_weights.py
-  - source: eTAS (한국교통안전공단 운행기록분석시스템)
-    what_it_supports: 위험운전행동의 정의 표준 — 유형 정의가 따르도록 설계. 실서비스에서 eTAS 임계 적용 예정.
-    what_it_does_not_support: 합성 데이터 생성 — 합성 엔진에 eTAS 임계(g값) 구현은 없음.
-    status: verified
-    citation: eTAS 위험운전행동 정의
-  - source: NVIDIA Nemotron-Personas
-    what_it_supports: "인물화(60명: 이름·나이·가구·서사)의 방법론 참고 — 방법론을 따라 팀이 자체 정의."
-    what_it_does_not_support: 데이터셋 사용 — 데이터셋을 가져온 것이 아님.
-    status: verified
-    citation: NVIDIA Nemotron-Personas (방법론 참고)
-  - source: engine.py — rolling 재군집 (커밋 4bdf119, 8/2 이식)
-    what_it_supports: 생활권 형성 주기의 rolling(매달 직전 2개월 재형성) 정식 구현. 현행 실측 수치(우대 118/기본 56/보류 6·케어 30)가 전부 rolling 산출이라는 주장.
-    what_it_does_not_support: 파일럿 안전장치 6종·절충 규칙(계약 미포함 검토안).
-    status: verified
-    citation: "생활권_형성주기_이슈정리.md — \"재시뮬·엔진 정식 이식 완료(8/2, 커밋 4bdf119)\""
-  - source: "engine.py:1069-1070 — masil_rate 산식"
-    what_it_supports: masil_rate = clip(korea_mileage + bonus − reduction, 0, 45). 할증 항 자체가 없고 하한 0% = 기준 요율.
-    what_it_does_not_support: 케어 감액 13%p가 최종 요율이라는 해석(샌드박스 예시값).
-    status: verified
-    citation: 안전운전자_매력도_정리.md 1절 (근거 등급 ◎ 코드)
-  - source: "engine.py:1187 — care_open = fires or (care_open and sustained)"
-    what_it_supports: 케어 해제에 신청이 필요 없고 지표 정상 복귀한 그 달에 닫힌다는 절차.
-    status: verified
-    citation: 안전운전자_매력도_정리.md 4절
-  - source: 180 시나리오 결선 번들 (60명 × 3환경)
-    what_it_supports: 전건 candidate_surcharge_rate_pct = 0(할증 부재), 유형별 평균 할인율 표, 150/180 같거나 낮은 보험료(113건 더 낮음), sparse 6건 변동 0, 케어 발동 월수 분포(0개월 150/1개월 30/2개월+ 0), 실험 A 재판정 분포.
-    what_it_does_not_support: "\"그런 사례가 없다\"를 안전의 근거로 쓰는 것(순환 문제 — §6). any 규칙 자체의 타당성."
-    status: verified
-    citation: 안전운전자_매력도_정리.md 1·5·6절 (근거 등급 ◎ 번들)
-  - source: data/processed/monthly_zone_snapshots.json
-    what_it_supports: 원안(국내)이 rolling이었다는 실물 증거 — 30명 × 12개월, rolling_60_day_dbscan_p90.
-    what_it_does_not_support: 결선 시연용 데이터로 사용 불가(레거시 30명 — 결선 번들과 데이터가 다름).
-    status: verified
-    citation: 생활권_형성주기_이슈정리.md 1절 실물 증거 행
-  - source: gaip_visit_events.csv 원장 스키마 + trip_visit_summary.one_visit_event_per_trip
-    what_it_supports: "좌표 컬럼이 latitude/longitude 한 쌍뿐이고 출발점·경로 컬럼 부재, 트립:방문 = 1:1 — 지형이 판정에 개입할 통로가 없다는 주장."
-    what_it_does_not_support: 경로 기반 익숙함 판정(경로는 수집하지 않음, 로드맵 과제).
-    status: verified
-    citation: 생활권반경_eps_정리.md 1절 (근거 등급 ◎ 원장 스키마)
-  - source: 오탐 대조군 실측 — 이동변화·안전유지형 10명 × 3환경 = 30 시나리오
-    what_it_supports: "AND 게이트가 이동 단독 변화에 열리지 않음: 이동변화지수 임계 초과 191/360 케이스-월(장기 기준, 최대 73.9%p), 직전 2개월 대비 46 케이스-월(최대 65.4%p), 위험행동 변화지수 전건 0, 케어 발동 0건."
-    what_it_does_not_support: 일반적 오탐률 0의 보장(합성 데이터 기반).
-    status: verified
-    citation: 안전운전자_매력도_정리.md 3절
-  - source: 발송 답변서(7/30) 5번
-    what_it_supports: "\"이후 12개월 내내 고정되는 비교 기준값\" 문장은 평소값(숫자)에 대한 서술."
-    what_it_does_not_support: 생활권 지도의 형성 주기에 대한 공개 선언 — 형성 주기는 공개적으로 선언된 적이 없다.
-    status: verified
-    citation: 생활권_형성주기_이슈정리.md 1절
-  - source: "Candrive/Ozcandrive — Langford et al. 2013, AAP (https://pubmed.ncbi.nlm.nih.gov/23477415/)"
-    what_it_supports: 연 5,000km 미만 저주행 고령 집단의 km당 사고 위험이 오히려 높다는 보고 — 거리만 보는 마일리지의 한계.
-    what_it_does_not_support: 저주행 고령자 전반이 위험하다는 일반화.
-    status: unverified
-    citation: "안전운전자_매력도_정리.md 8절. 확인 필요: 문서 표기(Langford et al. 2013·Candrive/Ozcandrive)를 그대로 옮김 — 원 논문 서지 대조 미실시."
-  - source: Zheng 2009 (200m) · Montoliu 2013 (250m, 권장 200~300m)
-    what_it_supports: 장소 인식 문헌의 공간 임계 통용 대역 200~300m — eps 260m가 그 대역의 중앙값이라는 설계 근거.
-    what_it_does_not_support: 260m의 절대값 근거(절대값을 주는 문헌은 없다 — 설계값임을 인정). 3단(260/520/1,100)의 지역별 방향.
-    status: unverified
-    citation: "생활권반경_eps_정리.md 5·9절. 확인 필요: 서지 상세는 기준선_방문임계_근거.md 2-3 참조."
-  - source: 기준선_방문임계_근거.md 2-3
-    what_it_supports: eps 260 근거 4겹(설계값 인정·문헌 대역·×2 축척 규칙·실측 과병합 0%/반복거점 누락 1.6~3.1%).
-    status: verified
-    citation: 생활권반경_eps_정리.md 5절
-  - source: 산식_구조이슈_3건_검토.md 이슈 ①
-    what_it_supports: 감액 발생 월수 비례 권고(13.0 × 발생월수 ÷ 12, 1개월 시 1.08%p)의 상세 검토.
-    what_it_does_not_support: 도입 확정(팀 결정 필요 — 미결).
-    status: verified
-    citation: 안전운전자_매력도_정리.md 6·9절
-  - source: 요율 샌드박스 (source_status = illustrative_economics_sandbox_not_final_tariff)
-    what_it_supports: 감액 13%p는 손익 예시값이라는 지위 표시.
-    what_it_does_not_support: 13%p를 최종 요율·확정 감액으로 쓰는 것.
-    status: verified
-    citation: 안전운전자_매력도_정리.md 4절
+    status_reason: "부록D 0절 #5 — ScienceDirect는 플랫폼이지 출처가 아님, 출처 표기로 사용 불가. ②는 Burdett, Starkey & Charlton (2017), Safety Science로, ⑤ 규칙성 정의 문헌은 서지 확정 필요."
+    topics:
+      - 출처 표기 오류
+      - 금지 표기
+    flags:
+      - "교체: ② Burdett 2017 (doi:10.1016/j.ssci.2017.04.009) / ⑤ 서지 확정 대기"
+    key: sciencedirect20172021출처표기
+  - source: "Burdett et al. 2017, Safety Science 98:1–8 (doi:10.1016/j.ssci.2017.04.009)"
+    status: banned
+    status_reason: 출처부록 3장·9장 등급 ✕ — 저자 오기. 실체는 Harms, Burdett & Charlton (2021)이며 Starkey는 저자가 아님. 이 표기로의 인용 일체 금지
+    url: "https://doi.org/10.1016/j.ssci.2017.04.009"
+    citation_full: "Harms, I. M., Burdett, B. R. D., & Charlton, S. G. (2021). Transportation Research Interdisciplinary Perspectives 9:100331. doi:10.1016/j.trip.2021.100331 (PRISMA 94편)"
+    topics:
+      - 반대 결과 병기
+      - 불확실성 인정
+      - 노출 해석
+      - 사고 위치 통계
+      - 경로 친숙도
+      - 집 근처 사고 과대표집
+      - PRISMA 리뷰
+      - 서지 오류
+      - 사고 위치·친숙도
+      - close-to-home 사고
+    flags:
+      - 우리 쪽 논거 아님 — 불확실성 병기용
+      - "저자 표기 주의 — 'Charlton & Starkey' 표기는 오기(Starkey는 저자 아님)"
+      - 사고율은 메타분석하지 않음 — 행동 영향까지만
+      - "ScienceDirect 링크도 sources/에 병존: https://www.sciencedirect.com/science/article/abs/pii/S092575351730783X"
+      - ◎이나 확인 범위는 초록·Highlights(전문 아님)
+    key: burdett-2017
+    aliases:
+      - "Burdett et al. 2017, Safety Science 98:1–8 (doi:10.1016/j.ssci.2017.04.009)"
+      - Burdett et al. 2017
+      - "Burdett, B. R. D., Starkey, N. J., & Charlton, S. G. (2017). Safety Science 98:1–8 — doi:10.1016/j.ssci.2017.04.009"
+      - "Harms, I. M., Burdett, B. R. D., & Charlton, S. G. (2021). Transp Res Interdiscip Perspect 9:100331 — doi:10.1016/j.trip.2021.100331"
+      - "\"Charlton & Starkey, PRISMA 94개 연구\" (저자 오기 서지)"
+      - Burdett 2017
+    status_conflict: "병합 전 지위 상충: banned vs verified → 보수적으로 banned 유지"
+  - source: "Candrive \"3배\""
+    citation_full: (금지 표현 — 서지 없음)
+    status: banned
+    status_reason: "브리핑 §10 금지 표현 목록: Candrive ~~\"3배\"~~(→ 거리 보정 최대 5배, Marshall 2023). 확정수치카드: 'Candrive 동일 연령대 3배 → 금지' — 원문(Marshall 2023)에 3배 없음."
+    topics:
+      - 금지 표현
+      - Candrive
+    flags:
+      - "교체 표현: '거리 보정 최대 5배(Marshall 2023)'"
+      - 무대·장표 어디에서도 사용 불가
+    key: candrive3배
+  - source: HDBSCAN 커버리지 71.9% 서술(철회)
+    status: banned
+    status_reason: 2026-07-29 철회 — 71.9%는 대표 사례 1명의 값이고 같은 사람의 DBSCAN도 71.9%(인과 오귀속). 어떤 용도로도 사용 불가, 옛 슬라이드에서 반드시 제거
+    topics:
+      - eps·DBSCAN
+      - 철회·정정
+    flags:
+      - 마스터답변안 10번은 정정된 버전 사용
+    key: hdbscan커버리지719서술철회
+  - source: "Intini, Colonna & Ryeng 2019 (doi:10.1016/j.trf.2018.12.020)"
+    status: banned
+    status_reason: "출처부록 3장·9장 등급 ✕ 인용 금지 — 결론('친숙함이 위험요인으로 확인, 비친숙함 영향 불명확')이 우리 논지와 반대. 리뷰 필요 시 Intini 2019년판 사용"
+    url: "https://doi.org/10.1016/j.trf.2018.12.020"
+    citation_full: "Intini, P., Colonna, P., & Ryeng, E. O. (2019). Transportation Research Part F 62:651–671. doi:10.1016/j.trf.2018.12.020"
+    topics:
+      - 친숙도 문헌 리뷰
+      - 위치 중립 설계 근거
+      - 불확실성 인정 근거
+      - 경로 친숙도
+      - 문헌 리뷰
+    flags:
+      - 리뷰 인용 시 Intini 2018(✕ 인용 금지) 대신 이 2019년판 사용
+      - 친숙도 효과의 강한 확증으로 사용 금지
+      - 2018년판(✕) 대신 이 2019년판 사용
+    key: intini-2019
+    aliases:
+      - "Intini, Colonna & Ryeng 2019 (doi:10.1016/j.trf.2018.12.020)"
+      - Intini, Colonna & Ryeng 2019
+      - "Intini, P., Colonna, P., & Ryeng, E. O. (2019). Transp Res Part F 62:651–671 — doi:10.1016/j.trf.2018.12.020"
+      - "Intini et al. (2018). Accid Anal Prev 111:280–296"
+    status_conflict: "병합 전 지위 상충: verified(출처부록 3장 ◎(초록 확인) — '부분적 확인에 그침, 측정 편차로 비교 곤란' = 불확실성 인정 근거) vs banned(출처부록 3장·9장 등급 ✕ 인용 금지 — 결론('친숙함이 위험요인으로 확인, 비친숙함 영향 불명확')이 우) → 보수적으로 banned 채택"
+  - source: MCI 60%/치매 81% · 제동 2.28초/90% · 55.7% vs 27.5%
+    status: banned
+    status_reason: "출처부록 9장 인용 금지 목록 ✕ — MCI/치매 수치는 원논문 오독(실제 유병률 39.5%, 81%는 지속률 오독), 2.28초는 원문에 '평균'도 '90%'도 없음(체리피킹 리스크), 55.7 vs 27.5는 원자료 집계 시 전체도 55.6%"
+    topics:
+      - 인용 금지
+      - 문제정의 구수치
+      - 금지 수치
+      - 안전운전의무 불이행
+      - 페르소나 ④ 교체 대상
+    flags:
+      - "대체 후보: Cacciamani 2021(PMC8370471) AD 자각 결여 40~91%"
+      - "대체 후보: Shin & Lee 2012 고령 1.70초 vs 청년 0.96초"
+      - "수치 자체는 원자료에 실재하나 '고령 특이성' 주장이 공공데이터로 반박됨"
+      - "대체: '공통 최대 요인'으로 서술하거나 고령 특이성은 치사율로"
+      - "원자료 자체(사회동향 2025 p.20)는 출처부록 ◎로 실재 — 금지되는 것은 '고령 특이성' 주장"
+      - "전체 운전자 대조 원자료: https://www.data.go.kr/data/15070170/fileData.do"
+    key: 국가데이터처-55.7
+    url: "https://www.korea.kr/common/download.do?fileId=198311269&tblKey=GMN"
+    citation_full: 국가데이터처 「한국의 사회동향 2025」(2025.12.26) p.20 — 2024년 고령 운전자 사고의 55.7% 안전운전의무 불이행
+    aliases:
+      - MCI 60%/치매 81% · 제동 2.28초/90% · 55.7% vs 27.5%
+      - "\"55.7%\""
+      - "국가데이터처 '55.7% 안전운전의무 불이행'"
+  - source: Progressive Snapshot 공식 6개월
+    status: banned
+    status_reason: 출처부록 5장·9장 등급 ✕ 인용 금지 — 2차 자료만 존재, 인용 금지 목록(9장) 등재
+    topics:
+      - 기준선 관찰기간 선례
+      - UBI 업계 관행
+    key: progressivesnapshot공식6개월
+  - source: arXiv 2603.00691 Fig.6(c)
+    status: banned
+    status_reason: 출처부록 6-2장·9장 등급 ✕ 인용 금지 — LongROAD 야간 비중을 30~50%로 표기해 원 brief 6.7%와 충돌
+    topics:
+      - 야간 비중
+    key: arxiv260300691fig6c
+  - source: 국내 도로 위계별 건수·심도 수치
+    status: banned
+    status_reason: "마스터답변안 13번(C) — '국내 위계별 건수·심도 수치는 출처 미확인이라 인용하지 않는다' (도시/농촌 대비 NHTSA 813 488까지만 인용)"
+    topics:
+      - 도로위계
+    key: 국내도로위계별건수심도수치
+  - source: 국토부 KTDB 2013
+    status: banned
+    status_reason: "근거지도 항목 7 '✕ — 원문 링크 미확보, 발표에서 쓰지 않음'(0729 보강에서도 남은 공백 2건 중 하나로 '발표에서 사용 금지' 명시)"
+    topics:
+      - 트립당 거리(14.0km, 전연령)
+      - 주행거리 앵커
+    flags:
+      - registry 초안 status verified와 상충 — 근거지도 기준으로 하향
+      - 발표 사용 금지(원문 확보 전)
+      - 고령자 한정 수치 아님
+      - "registry 앞부분 '국토부 KTDB 2013' 항목은 verified로 등재돼 상충 — 근거지도 기준으로는 발표 인용 금지"
+      - sources/ 전체에 URL 없음
+    key: ktdb
+    status_conflict: "병합 전 지위 상충: unverified(근거지도 7번 — '원문 링크 미확보' ✕, '발표에서 쓰지 않는다' 명시) vs banned(근거지도 항목 7 '✕ — 원문 링크 미확보, 발표에서 쓰지 않음'(0729 보강에서도 남은 공백 2건 중 ) → 보수적으로 banned 채택"
+    citation_full: 국토부 KTDB 2013, 트립당 14.0km (전연령)
+    aliases:
+      - 국토부 KTDB 2013
+      - KTDB 2013 트립당 14.0km
+  - source: 보험연구원 KIRI리포트 (2024.7)
+    status: banned
+    status_reason: "부록D 0절 #4 — '리포트 번호·연도 원문 미확인 — 인용 금지 상태'. 출처부록 8장 ⚠(문서에 서지만 존재, 원문 미확인). Langford et al. 2013(저주행≠저위험)으로 교체 지시."
+    topics:
+      - 국내 UBI 구조(점수만 전송)
+      - 데이터 확보 경로
+      - 국내 UBI 구조
+      - 요율·상품
+      - 국내 통계 부재
+      - 연간주행거리
+      - 고령운전자 사고 특성
+      - 마일리지 UBI 한계
+      - 페르소나 ③⑤⑥
+      - KIRI
+    flags:
+      - registry 초안 status verified와 상충 — 출처부록 8장 ⚠ 기준으로 하향
+      - 국내 UBI 구조의 유일한 선례라 확보 우선
+      - "'위치정보법 때문에 위치를 안 쓴다'는 인과 주장 금지(문헌 미확인)"
+      - sources에 URL 없음
+      - registry 종전 status verified → unverified 하향 제안 (출처부록 ⚠ 우선)
+      - 국내 UBI 구조의 유일한 선례 — 팩트체크 2순위
+    key: kiri
+    citation_full: 국내 연령별 주행거리 통계 부재 확인 — 한국교통안전공단·국토교통부·보험개발원·국가교통조사·보험연구원 2025-13 (p.17, p.24) 5개 처 대조
+    aliases:
+      - 보험연구원 KIRI리포트 (2024.7)
+      - 보험연구원 KIRI리포트 2024.7
+      - 국내 연령별 주행거리 부재 확인 — 한국교통안전공단 「자동차 주행거리통계 실태조사」 · 국토교통부 공공데이터·통계누리 · 보험개발원 · 국가교통조사 「자동차 이용실태조사」(n=5,334) · 보험연구원 2025-13
+      - 보험연구원 연구보고서 2025-13
+      - KIRI 보험연구원 — 마일리지 UBI 오분류
+      - KIRI (리포트)
+    status_conflict: "병합 전 지위 상충: banned vs verified → 보수적으로 banned 유지"
+  - source: 업계 UBI rating period 관행 3~6개월
+    status: banned
+    status_reason: "근거지도 항목 7 '✕ 발표 인용 금지 — 원출처 미확보'. '연구 기준선(2주~1개월)보다 보수적'까지만 말하고 업계 비교는 생략"
+    topics:
+      - 기준선 선례 스펙트럼 상단
+      - 기준선 관찰기간 선례
+      - UBI 업계 관행
+      - 기준선(관찰 창)
+      - 업계 관행
+    flags:
+      - "발표 시 수치 인용 금지 — '관행상 알려진' 수준으로만"
+      - Progressive Snapshot 6개월은 별도로 ✕ 인용 금지(2차 자료만)
+      - 팩트체크 우선순위 5위
+      - "문서 간 등급 상이: 출처부록 5장은 ⚠('관행상 알려진' 수준 언급만 허용, 수치 인용 금지) — registry 앞부분 동일 취지 항목들은 unverified로 등재돼 있어 조정 필요"
+      - sources/ 전체에 URL 없음
+    key: 업계-ubi-3-6개월-관행
+    aliases:
+      - 업계 UBI rating period 관행 3~6개월
+      - 업계 UBI 요율 산정 관행 3~6개월
+      - 업계 UBI 3~6개월 관행
+    status_conflict: "병합 전 지위 상충: unverified(출처부록 5장 ⚠(팩트체크 필요 — 원문 미확보, 스니펫 수준) · 10장 5순위) vs banned(근거지도 항목 7 '✕ 발표 인용 금지 — 원출처 미확보'. '연구 기준선(2주~1개월)보다 보수적'까지만 ) → 보수적으로 banned 채택"
   - source: 합성 데이터 k-거리 리허설 (도심 9/18/21m, 교외 16/31/37m, 광역 30/59/71m — 중앙값/P90/P95)
-    what_it_supports: k-거리 측정 절차가 지역별 산포 차이를 잡아낸다는 절차 검증만.
-    what_it_does_not_support: eps 260의 근거(합성 데이터는 우리가 산포를 넣어 만들었으므로 값 자체는 무의미 — 우리가 넣은 값을 다시 읽는 것). 실제 값은 파일럿에서 잰다.
+    citation_full: 합성 데이터 k-거리 리허설 — 도심 9/18/21m · 교외 16/31/37m · 광역 30/59/71m (중앙값/P90/P95)
     status: banned
-    citation: "생활권반경_eps_정리.md 6절 ⚠ — \"이 숫자는 260의 근거가 아니다\""
-  - source: 실험 A(전국 단일 eps 260m 재판정) · 실험 B(60명 × 3지형 판정)
-    what_it_supports: "A: 180 시나리오 판정 0건 변화(고정 기준; 갱신형 재검증 경계 3건). B: 케어 60/60·우대 54/60 동일(갈린 6명 = 케어 5명 + 광역 문턱 근접 1명, 우대 월 8/12) — 지역이 판정을 바꾸지 않는다는 공정성 증거."
-    what_it_does_not_support: 3단 eps 방향(도심 작음)의 타당성. A와 B는 별개 실험 — 섞어 인용 금지.
+    status_reason: "생활권반경_eps_정리.md 6절 ⚠ — '이 숫자는 260의 근거가 아니다'. 합성 데이터는 우리가 산포를 넣어 만든 것이라 값 자체가 순환(우리가 넣은 값을 다시 읽음). eps 근거로 인용 금지."
+    topics:
+      - k-거리 리허설
+      - 순환 위험
+      - eps
+    flags:
+      - 절차 검증(k-거리 측정이 지역별 산포 차이를 잡아냄) 용도로만 유효 — 그 한도에서는 내부 실측
+      - 실제 운영값은 파일럿 실데이터 k-거리로 측정
+    key: 합성데이터k거리리허설도심91821m교외163137m광역305971m중앙값
+  - source: "\"70% 자택 8km\""
+    citation_full: NMVCCS (NHTSA, 2005–07) — 사고 70% 자택 5마일(8km) 이내 (원문 대조 미완)
+    url: "https://crashstats.nhtsa.dot.gov/Api/Public/ViewPublication/811059"
+    status: unverified
+    status_reason: "확정수치카드 '원문 미확인(팩트체크 표시 필요)' 목록에 명시 — \"사고 70% 자택 8km(5마일)\". 브리핑 §9-5 팩트체크 잔여 수령 목록. 수령 전까지 인용 보류."
+    topics:
+      - 사고 위치 분포
+      - 생활권 내 사고
+    flags:
+      - 마스터답변안 근거 색인에 NMVCCS(NHTSA 811059) 링크와 함께 등재돼 있고 근거지도는 ○로 표기 — 그러나 후행 정본인 확정수치카드(8/2)가 원문 미확인으로 지정, 카드 우선
+    key: 70자택8km
+  - source: "\"86% 이동권 희망\""
+    status: unverified
+    status_reason: "확정수치카드 '원문 미확인 — 사용 시 팩트체크 표시 필요' · 브리핑_0803 팩트체크 잔여 목록"
+    topics:
+      - 문제정의
+      - 이동권
+    flags:
+      - sources 어디에도 서지·URL 없음
+    key: 86이동권희망
+  - source: "\"86% 이동권\""
+    citation_full: "(서지 미상 — \"86% 이동권 희망\")"
+    status: unverified
+    status_reason: "확정수치카드 '원문 미확인(팩트체크 표시 필요)' 목록에 명시 — '86% 이동권 희망'. 브리핑 §9-5 팩트체크 잔여 수령 목록. 수령 전까지 인용 보류."
+    topics:
+      - 이동권
+      - 고령자 니즈
+    flags:
+      - sources/ 내 서지·링크 전무
+    key: 86이동권
+  - source: "\"사고 70% 자택 8km(5마일)\""
+    status: unverified
+    status_reason: "확정수치카드 '원문 미확인 — 사용 시 팩트체크 표시 필요' · 브리핑_0803 팩트체크 잔여 목록"
+    topics:
+      - 문제정의
+      - 사고 위치 통계
+    flags:
+      - "후보 원문: NMVCCS 811059(마스터답변안 부록 A '사고 70% 자택 5마일 이내') — 원문 대조 후 승급 검토"
+    key: 사고70자택8km5마일
+  - source: 2023 노인실태조사
+    status: unverified
+    status_reason: 복지관 주 1.5회가 출처부록 7장 ⚠(단일 언론 인용으로만 확인) · 10장 4순위 — 이 엔트리가 복지관 수치를 포함해 확인 필요 유지. 경로당 주 2.9회 자체는 ◎(원문 확인)
+    url: "https://www.mohw.go.kr/boardDownload.es?bid=0019&list_no=1483359&seq=1"
+    citation_full: 2023년도 노인실태조사 (보건복지부·KIHASA), 표 3-8·요약 p.20 — 65세+ n=10,078, 경로당 이용자 주 2.9회
+    topics:
+      - 경로당·복지관 이용 빈도 λ 앵커
+      - 국내통계
+      - 방문빈도 앵커
+      - 의료기관 방문
+      - 경로당 이용
+      - 방문 빈도 앵커
+      - 월 2회 가정
+      - 국내 통계
+      - 경로당
+    flags:
+      - 경로당 주 2.9회(이용률 26.5%)만 쓰면 ◎ — 출처부록 7장 별도 행
+      - 복지관 주 1.5회는 원보고서 표 확보 전 인용 금지
+      - 이용자 기준(전체 노인 아님) 병기
+      - 팩트체크 우선순위 4위 — 원보고서 표 확보 시 승급
+      - "같은 조사의 '노인복지관 주 1.5회'는 별도로 ⚠ 팩트체크 필요(단일 언론 인용) — 혼용 주의"
+    key: 노인실태조사-2023
+    status_conflict: "병합 전 지위 상충: unverified vs verified → 보수적으로 unverified 유지"
+    aliases:
+      - 2023 노인실태조사
+      - 2023년도 노인실태조사 (보건복지부·KIHASA), 표 3-8 — mohw.go.kr PDF
+      - 2023년도 노인실태조사 — 여가문화시설 (요약 p.20)
+      - 노인복지관 주 1.5회 (2023 노인실태조사 관련 언론 인용)
+      - 노인실태조사 2023
+  - source: 3경로 확보 계획(공백)
+    status: unverified
+    status_reason: "근거지도 13번 등급 ✕(공백) — '계획, 실행 전'. 자체 앱 → OEM → 제휴 3경로는 계획 단계로 실측·문헌 근거 없음."
+    topics:
+      - 데이터 확보 전략
+      - 실현 가능성
+    flags:
+      - 계획 단계 — 실행 전
+      - "질문 시 '없습니다 + 로드맵'으로 답하도록 지정됨"
+    key: 3경로확보계획공백
+  - source: Candrive/Ozcandrive — Langford et al. 2013, AAP (PubMed 23477415)
+    status: unverified
+    status_reason: "출처부록 1장 등급 △ — 초록·요약만 확인, 본문 미열람. 인용 가능하되 '초록 기준' 명시 필수. 강한 단독 근거로 쓰기엔 제한."
+    url: "https://pubmed.ncbi.nlm.nih.gov/23477415/"
+    citation_full: "Langford et al. (2013). Accid Anal Prev 61:304–310 (Candrive/Ozcandrive) — 연 5,000km 미만 저주행군의 km당 사고위험 상승 ('저주행≠저위험')"
+    topics:
+      - 저주행≠저위험
+      - 마일리지 체계 미충족 구간
+      - 노출 배점 30 제한 근거
+      - 저주행 편향
+      - 고령운전자 코호트
+      - 마일리지 한계
+      - 페르소나 ⑥ 광역 이동·안정형
+      - KIRI 교체 문헌
+      - 안전 운전자 매력도
+    flags:
+      - "등급 △ — 본문 미열람, 인용 시 '초록 기준' 명시 필요"
+      - "등급 △ — 인용 시 '초록 기준' 명시 필요"
+      - 부록D에서 KIRI의 교체 문헌으로 지정
+      - "등급 △ — 인용 시 '초록 기준' 명시"
+      - 저주행 고령자 전반이 위험하다는 일반화 금지
+      - "인용 시 '초록 기준' 명시(등급 △)"
+    key: candrive-langford-2013
+    aliases:
+      - Candrive/Ozcandrive — Langford et al. 2013, AAP (PubMed 23477415)
+      - Candrive/Ozcandrive (Langford et al. 2013)
+      - "Langford et al. (2013). Accid Anal Prev 61:304–310 (Candrive/Ozcandrive) — PubMed 23477415"
+      - "Langford et al. (2013), Accid Anal Prev 61:304–310"
+      - "Candrive/Ozcandrive — Langford et al. 2013, AAP (https://pubmed.ncbi.nlm.nih.gov/23477415/)"
+    status_conflict: "병합 전 지위 상충: verified(출처부록 1장 △(초록만 확인) — 인용 가능하되 '초록 기준' 명시. 연 5,000km 미만군 km당 위험) vs unverified(출처부록 1장 등급 △ — 초록·요약만 확인, 본문 미열람. 인용 가능하되 '초록 기준' 명시 필수. 강한 ) → 보수적으로 unverified 채택"
+  - source: Charlton et al. (2018). J Safety Research (Ozcandrive)
+    citation_full: Charlton et al. (2018). J Safety Research (Ozcandrive) — 호주 75세+ n=191. 1년차 8,993km(SD 5,169) → 5년차 6,787km
+    status: unverified
+    status_reason: "출처부록 6-4장 등급 △(페이월 — 초록만 확인, 본문 미열람). 인용 시 '초록 기준' 명시 필요."
+    topics:
+      - 연간주행거리
+      - 고령운전자 코호트
+      - 연 주행거리 해외 앵커
+      - 감소 추세
+    flags:
+      - "등급 △ (페이월) — 인용 시 '초록 기준' 명시 필요"
+      - sources/에 원문 링크 없음
+      - 페이월로 본문 미열람
+      - sources/ 내 링크 없음
+    key: ozcandrive-charlton-2018
+    status_conflict: "병합 전 지위 상충: verified(출처부록 6-4장 등급 △ (페이월, 본문 미열람) — '초록 기준' 명시 필요) vs unverified(출처부록 6-4장 등급 △(페이월 — 초록만 확인, 본문 미열람). 인용 시 '초록 기준' 명시 필요.) → 보수적으로 unverified 채택"
+    aliases:
+      - Charlton et al. (2018). J Safety Research (Ozcandrive)
+      - Ozcandrive (Charlton 2018)
+  - source: DEGURBA (UN)
+    status: unverified
+    status_reason: "근거지도 10번 '✕ — 채택 결정만 있고 미구현'. 운영 전환 시 채택이라는 결정의 기록이지 구현·검증 근거 아님"
+    citation_full: DEGURBA (Degree of Urbanisation), UN 표준 — 인구밀도 1,500 / 300명·km² 임계
+    topics:
+      - 도시·교외·농촌 운영 분류 기준
+      - 지역 분류(DEGURBA)
+      - 공백(근거 없음)
+    flags:
+      - sources에 원문 URL 없음
+      - 채택 결정만 있고 미구현(근거지도 4번 ✕는 구현 상태 표기) — 현 시뮬레이션은 시나리오가 환경 지정
+      - "registry 앞부분 'DEGURBA (UN)' 항목(기준 자체의 실재)은 별도 — 이 항목은 우리 구현 공백을 가리킴"
+    key: degurba
+    status_conflict: "병합 전 지위 상충: verified(UN 운영 표준(Degree of Urbanisation, 인구밀도 1,500/300명·km² 임계) — 마) vs unverified(근거지도 10번 '✕ — 채택 결정만 있고 미구현'. 운영 전환 시 채택이라는 결정의 기록이지 구현·검증 근) → 보수적으로 unverified 채택"
+    aliases:
+      - DEGURBA (UN)
+      - DEGURBA(공백)
+  - source: ERSO
+    citation_full: ERSO(European Road Safety Observatory) — 75세 이상 동일 운전량 사망위험 5배 증가
+    status: unverified
+    status_reason: "마스터답변안 12번 ②(a)에 수치만 실재하고 원문 링크가 승인 문서 범위에 없음(registry 자체가 '확인 필요' 명시). 출처부록 등급표에도 미등재 → 원문 미확인"
+    topics:
+      - 고령운전자 치명률
+      - 문제 배경
+    flags:
+      - registry 종전 status verified → unverified 하향 제안
+      - 용도는 문제 배경 서술 한정, 개인 판정 미사용
+    key: erso
+  - source: Goulet-Langlois et al. (2017) — 규칙성 조작적 정의
+    status: unverified
+    status_reason: "출처부록 8장 '⚠ 팩트체크 필요(팀 제공 문헌)' — 서지 확인 필요, 원문 대조 전 인용 금지. 10장 팩트체크 우선순위 3(확보 시 페르소나 ③⑤⑥ 등급 △→○)"
+    citation_full: Goulet-Langlois et al. (2017) — 규칙성 조작적 정의 (서지 미확정)
+    topics:
+      - 페르소나 ③⑤⑥
+      - 규칙성 정의
+    flags:
+      - sources/ 전체에 URL 없음
+      - "부록D도 '서지 확정 필요, 확정 전엔 문헌명 사용 금지' 취지로 기재"
+    key: gouletlangloisetal2017규칙성조작적정의
+  - source: Goulet-Langlois et al. 2017 (규칙성 정의 계열)
+    citation_full: Goulet-Langlois et al. (2017) — 규칙성 조작적 정의 (서지 확정 필요)
+    status: unverified
+    status_reason: "출처부록 8장 '⚠ 팩트체크 필요(팀 제공 문헌)' — 서지 확인 필요. 부록D: '서지 확정 필요, 확정 전엔 문헌명 없이 이동패턴 연구의 규칙성 정의로'."
+    topics:
+      - 규칙성 정의
+      - 페르소나 ⑤ 복수 생활권형
+    flags:
+      - 팩트체크 우선순위 3(△→○ 승급 대상)
+      - 확정 전 문헌명 인용 금지
+    key: gouletlangloisetal2017규칙성정의계열
+  - source: Hirsch 2014
+    citation_full: "Hirsch et al. (2014). Int J Health Geographics 13:51 — 활동공간 = 이동자원 지표"
+    status: unverified
+    status_reason: "출처부록 8장 '⚠ 팩트체크 필요(팀 제공 문헌)' — 'DOI·결론 문구 원문 대조' 필요, 원문 대조 전 인용 금지. 브리핑 §9-5 팩트체크 잔여 수령 목록에도 등재."
+    topics:
+      - 활동공간
+      - 페르소나 ③ 이동변화 안전유지형
+    flags:
+      - "부록D 지시: 확인되면 유지, 아니면 LongROAD 축소 이동범위(◎)로 교체"
+      - 팩트체크 우선순위 3(△→○ 승급 대상)
+    key: hirsch2014
+  - source: Hirsch et al. (2014)
+    citation_full: "Hirsch et al. (2014). Int J Health Geographics 13:51 — 활동공간 = 이동자원 지표"
+    status: unverified
+    status_reason: "출처부록 8장 '⚠ 팩트체크 필요' — 원문 대조 미완, DOI·결론 문구 대조 전 인용 금지. 브리핑 §9-5 잔여 수령 목록."
+    topics:
+      - 활동공간
+      - 페르소나 ③ 이동변화 안전유지형
+    flags:
+      - "부록D 지시: 확인되면 유지, 미확인이면 LongROAD 축소 이동범위(◎)로 교체"
+    key: hirschetal2014
+  - source: "Hirsch et al. (2014). Int J Health Geographics 13:51 — 활동공간 = 이동자원 지표"
+    citation_full: "Hirsch, J. A. et al. (2014). International Journal of Health Geographics 13:51"
+    status: unverified
+    status_reason: 출처부록 8장·10장 3순위 ⚠ 팩트체크 필요 — 팀 조사에서 서지만 넘어옴, DOI·결론 문구 원문 대조 전 인용 금지. 근거지도 △ 링크 미확보
+    topics:
+      - 활동공간
+      - 페르소나 유형 실재 근거
+    flags:
+      - 팩트체크 우선순위 3위 — 확보 시 페르소나 근거 등급 △→○ 승급
+    key: hirschetal2014intjhealthgeographics1351활
+  - source: JAMA 2025 (일본)
+    status: unverified
+    status_reason: "sources에 서지·URL 부재 — 마스터답변안에 약칭 언급만 존재하고 원문 확인 흔적 없음. registry 후반 중복 엔트리도 '출처가 이 문서 범위에 미기재 — 확인 필요'로 unverified"
+    topics:
+      - 일본 65세+ 연 주행 ~3,500km
+      - 합성 중앙값 2,829km 정합성 참조
+      - 연간주행거리
+      - 합성 코호트 정합성 참조
+      - 연 주행거리 정합
+      - 합성 데이터 검증
+    flags:
+      - registry 초안 status verified와 상충 — 원문 확인 흔적 없어 하향
+      - 국내 수치 대체 불가
+      - "별도 entry 'JAMA 2025 (일본)'와 동일 출처로 추정 — 통합 검토 필요"
+      - registry 원안은 verified였으나 서지·링크 부재로 unverified로 정규화
+      - "registry 자체도 '출처 서지 정보는 문서에 없음 — 확인 필요' 병기"
+    key: 일본-65세-연주행
+    aliases:
+      - JAMA 2025 (일본)
+      - 일본 65세+ 연 주행 실측 ~3,500km
+      - 일본 65세+ 연 주행 실측
+    citation_full: 일본 65세+ 연 주행 실측 ~3,500km (서지 미상)
+  - source: Ji et al. (2023). Transactions in GIS — 규칙성 정의
+    citation_full: Ji, et al. (2023). Transactions in GIS
+    status: unverified
+    status_reason: 출처부록 8장·10장 3순위 ⚠ 팩트체크 필요 — 서지·수치 확인 전 인용 금지. 근거지도 △ 링크 미확보
+    topics:
+      - 이동 규칙성 정의
+      - 페르소나 유형 실재 근거
+    flags:
+      - 팩트체크 우선순위 3위
+    key: jietal2023transactionsingis규칙성정의
+  - source: "MDPI Applied Sciences 15(22):12278"
+    status: unverified
+    status_reason: 출처부록 4장 ⚠(URL이 추정 링크, 대상이 인구 격자라 집계 레벨 상이) · 10장 6순위
+    url: "https://www.mdpi.com/2076-3417/15/22/12278"
+    topics:
+      - 지역별 eps 국제 실증
+      - 균일 ε 실패 실증
+    flags:
+      - "마스터답변안 본문 10번에는 URL 실재 — 부록 A 'URL 미기재'와 상충, 발표 인용 전 원문 재확인"
+      - "방법 이식 주장 금지 — '지역별 임계값의 타당성' 근거로만"
+    key: mdpiappliedsciences152212278
+  - source: "MDPI Applied Sciences 15(22):12278 (엔트로피 기반 지역별 ε, 브라질 120m~칠레 1,000m)"
+    citation_full: "MDPI Applied Sciences 15(22):12278 — 엔트로피 기반 지역별 ε 동적 결정"
+    url: "https://www.mdpi.com/2076-3417/15/22/12278"
+    status: unverified
+    status_reason: "출처부록 4장·10장 6순위 ⚠ 팩트체크 필요 — 서지는 실재하나 URL이 추정 링크(부록 A도 'URL 미기재, 발표 인용 전 원문 재확인' 명시). 대상이 인구 격자라 집계 레벨 상이. 확인 전 인용 금지"
+    topics:
+      - 지역별 eps 실증
+      - 생활권 클러스터링
+    flags:
+      - "URL은 마스터답변안 부록에 있으나 '추정 링크'로 표기됨"
+      - 팩트체크 우선순위 6위
+    key: mdpiappliedsciences152212278엔트로피기반지역별ε브라
+  - source: Nature Sci Rep — MCI 경로 다양성
+    status: unverified
+    status_reason: 출처부록 8장 ⚠ 팩트체크 필요 — 서지 확인 전 인용 금지
+    citation_full: Nature Scientific Reports (서지 미확정)
+    topics:
+      - MCI·인지저하
+      - 경로 다양성
+    flags:
+      - sources/ 전체에 URL 없음
+    key: naturescirepmci경로다양성
+  - source: TS 2023 (한국교통안전공단)
+    status: unverified
+    status_reason: "마스터답변안 7번 ② — 'TS 통계는 차종별만 — 출처 미확인'. 연령별 출처 미확인"
+    topics:
+      - 전연령 주행거리 앵커(연 1.28만km)
+    flags:
+      - 고령 운전자 연령별 주행거리 근거로 사용 불가 — 대상 연령 불일치
+      - sources에 URL 없음
+    key: ts2023한국교통안전공단
+  - source: eps 260m 문헌 (Zheng/Montoliu)
+    status: unverified
+    status_reason: "출처부록 4장 ⚠(원문 미확인 — 서지만 존재) · 10장 팩트체크 우선순위 1위 · 확정수치카드 '원문 미확인(팩트체크 표시 필요)'"
+    topics:
+      - eps 200~300m 문헌 대역
+      - 생활권 클러스터링
+      - eps 200~300m 대역
+      - 탐지 기준거리 260m
+      - eps 260m 문헌 대역
+      - 장소 인식
+      - eps·DBSCAN
+      - eps 260m
+      - 생활권 군집화
+      - DBSCAN 파라미터
+    flags:
+      - eps 260m의 유일한 문헌 근거 — 확보 전 발표 인용 금지
+      - sources에 원문 URL 없음
+      - registry 초안 status verified와 상충 — 출처부록 기준으로 하향
+      - "부록B: 'Zheng 200m·Montoliu 200~300m를 참고한 제안 시작값, 논문 직접값 아님'"
+      - 확인 전 발표 인용 금지
+      - 260m 절대값의 직접 근거 아님(설계값 인정)
+    key: eps-문헌-zheng-montoliu
+    aliases:
+      - eps 260m 문헌 (Zheng/Montoliu)
+      - Zheng 2009 / Montoliu 2013 (장소 인식 문헌)
+      - Zheng et al. 2009 · Montoliu et al. 2013
+      - Zheng et al. (2009) 200m · Montoliu et al. (2013) 200~300m (eps 대역 근거)
+      - Zheng 2009 / Montoliu 2013
+      - Zheng (eps 200m)
+    citation_full: Zheng et al. (2009) 200m · Montoliu et al. (2013) 250m, 권장 200~300m — 장소 인식 문헌 공간 임계 통용 대역 (원문 미확인)
+  - source: 건강보험 통계 2022
+    citation_full: 건강보험 통계 2022 — 65세+ 월평균 입내원 3.75일 (서지 상세·링크 미확보)
+    status: unverified
+    status_reason: 근거지도 7번 등급 △(링크 없음 — 인용 전 확인 필요). 출처부록 7장 국내 통계 표에 미등재. 서지·링크가 sources/ 어디에도 없음.
+    topics:
+      - 방문 빈도 앵커
+      - 월 2회 가정
+      - 국내 통계
+    flags:
+      - registry 원안은 verified였으나 근거지도 △(링크 없음)에 따라 unverified로 정규화
+    key: 건강보험통계2022
+  - source: 건강보험(건보) 외출일 통계
+    citation_full: 건강보험 통계 — 65세+ 월평균 입내원 3.75일 (서지 상세 미확보)
+    status: unverified
+    status_reason: "근거지도 7번: \"'월 2회급' 빈도 앵커 | 건보 65세+ 월 3.75일 … | △ (링크 없음)\" — 등급 △는 '약칭만, 제목·링크 없음, 인용 전 확인 필요'. 출처부록 7장 국내 통계 표에도 이 항목은 없음."
+    topics:
+      - 방문 빈도 앵커
+      - 기준선 2개월
+      - 국내 통계
+    flags:
+      - registry 원안은 verified였으나 근거지도 등급 △(링크 없음)에 따라 unverified로 정규화
+      - "registry 자체도 '출처 서지 정보는 문서에 없음 — 확인 필요' 병기"
+    key: 건강보험건보외출일통계
+  - source: 국가데이터처 77.3% 반복경로
+    status: unverified
+    status_reason: 출처부록 8장 ⚠ 팩트체크 필요 — 원문 확인 전 인용 금지
+    topics:
+      - 반복경로·생활권 반복성
+    flags:
+      - sources/ 전체에 URL 없음
+      - 국가데이터처 「한국의 사회동향 2025」(55.7% 근거, korea.kr PDF)와는 다른 수치 — 해당 링크를 이 항목에 전용하지 말 것
+    key: 국가데이터처773반복경로
+  - source: 국민건강보험공단 2022
+    citation_full: 국민건강보험공단 2022 주요통계 — 65세 이상 월평균 내원일수 3.75일
+    status: unverified
+    status_reason: "출처부록(08)에 미등재. 근거지도 7번이 이 빈도 앵커를 △(문헌 약칭만·링크 없음, '인용 전 확인 필요')로 등급 — sources/ 전체에 원문 링크 부재"
+    topics:
+      - 국내통계
+      - 방문빈도 앵커
+    flags:
+      - registry 종전 status verified → unverified 하향 제안 (원문 링크·대조 미비)
+      - 마스터답변안·부록B에서 방향성 앵커로 광범위 사용 중 — 원문 확보 시 승급 대상
+    key: 국민건강보험공단2022
+  - source: 덱 문구 교체(미완)
+    status: unverified
+    status_reason: "근거지도 9번 항목 등급 ✕(공백) — 출처가 아니라 팀 액션 항목. '루프'·'data'·71.9% 제거가 미완이며 발표 전 우선순위 상위(1시간). 인용할 근거 실체가 없음."
+    topics:
+      - 발표 준비
+      - 덱 관리
+      - 루프 용어 정정
+    flags:
+      - 출처가 아닌 팀 액션 항목
+      - "근거지도의 ✕는 '공백(아직 없음)' 의미 — 출처부록의 ✕(인용 금지)와 다른 기호 체계"
+    key: 덱문구교체미완
+  - source: 보험개발원 마일리지 통계
+    status: unverified
+    status_reason: "마스터답변안 7번 ② — '보험개발원 마일리지 통계 비공개', 공개 웹에 부재(역산 근거 사용 불가)"
+    topics:
+      - 국내 연령별 주행거리 부재
+    flags:
+      - "'연령별 미공표'라는 부재 사실 자체는 출처부록 6-4장에서 ◎(부재 확인) — 수치 인용은 불가"
+    key: 보험개발원마일리지통계
+  - source: 보험사 사고데이터 GPS 좌표
+    status: unverified
+    status_reason: "마스터답변안 13번(B) — 좌표 표기 여부·정밀도를 우리가 확인할 수 없어 협업 어젠다로 남김 ('확인 필요')"
+    topics:
+      - 데이터 확보 경로
+      - 사고잦은곳 결합
+    key: 보험사사고데이터gps좌표
+  - source: 빈도 앵커(건보·경로당·복지관)
+    status: unverified
+    status_reason: "근거지도 항목 7 '△ (링크 없음) — 인용 전 확인 필요'. 세 앵커 묶음 중 건보 3.75일은 링크 부재, 복지관 주 1.5회는 단일 언론 인용(출처부록 ⚠, 10장 4순위)"
+    url: "https://www.mohw.go.kr/boardDownload.es?bid=0019&list_no=1483359&seq=1"
+    citation_full: 건보공단 2022 주요통계(월 3.75일) / 2023 노인실태조사(경로당 주 2.9회) / 복지관 주 1.5회(원보고서 표 재확인 중)
+    topics:
+      - 방문 빈도 앵커
+      - 기준선(관찰 창)
+    flags:
+      - 첨부 URL은 경로당 주 2.9회의 원문(2023 노인실태조사, 출처부록 7장 ◎)만 해당 — 건보·복지관 몫 아님
+      - 복지관 주 1.5회는 원보고서 표 확보 전 인용 금지
+    key: 빈도앵커건보경로당복지관
+  - source: 사고잦은곳 채택 방식(공백)
+    status: unverified
+    status_reason: "근거지도 13번 등급 ✕(공백) — '설계 결정 (미구현)'. 케어 리포트 안전 안내로 채택했다는 결정만 있고 구현 없음."
+    topics:
+      - 케어 리포트
+      - 안전 안내
+      - 실현 가능성
+    flags:
+      - 설계 결정만 존재, 미구현
+    key: 사고잦은곳채택방식공백
+  - source: 삼성교통안전문화연구소 — 페달 오조작 70.5% / 2.8명
+    status: unverified
+    status_reason: 출처부록 8장 ⚠ 팩트체크 필요 — 원문 확인 전 인용 금지
+    topics:
+      - 고령운전자 사고 특성
+    flags:
+      - sources/ 전체에 URL 없음
+    key: 삼성교통안전문화연구소페달오조작70528명
+  - source: 신뢰도 원리(인용 없음)
+    status: unverified
+    status_reason: "근거지도 항목 11 '△ — 계리학 표준 개념이나 교과서 인용 없음'. 출처 제시가 필요한 자리에서는 인용 불가"
+    topics:
+      - 요율·가중치
+      - 계리 원리
+    flags:
+      - "마스터답변안이 '뷜만 신뢰도를 적용했다고 말하지 않는다'로 수위 명시 — 원리 준수 서술까지만"
+    key: 신뢰도원리인용없음
+  - source: 위치정보법 제23조 제1항 (법무 검토 병기)
+    status: unverified
+    status_reason: "근거지도 항목 6 △ — 문서에 조문 인용은 있으나 링크 없음, 법무 검토 미실시(파일럿 전 필수 절차). '법적 리스크 해소' 판단에는 사용 불가"
+    topics:
+      - 위치데이터 보존
+      - 즉시 파기 원칙
+      - 위치정보 규제
+      - 데이터 거버넌스
+    flags:
+      - "법무 검토 미실시 — '파일럿 전 필수 절차'로 답변할 것(근거지도 6번)"
+      - sources에 법령 원문 링크 없음
+      - "'6개월 삭제 의무' 조항 부재가 핵심 — 특정 개월 수 삭제 시한 주장 금지"
+      - sources/ 전체에 법령 원문 URL 없음
+      - 자체 해석임을 반드시 병기
+    key: 위치정보법-23조
+    status_conflict: "병합 전 지위 상충: verified(마스터답변안 6번 ① 법령 사실 교정 — 목적 달성 시 즉시 파기 원칙(2022년 4월 시행 개정 조문 내용) vs unverified(근거지도 항목 6 △ — 문서에 조문 인용은 있으나 링크 없음, 법무 검토 미실시(파일럿 전 필수 절차). ) → 보수적으로 unverified 채택"
+    citation_full: 위치정보의 보호 및 이용 등에 관한 법률 제23조 제1항 (2022년 4월 시행 개정 반영)
+    aliases:
+      - 위치정보법 제23조 제1항 (법무 검토 병기)
+      - 위치정보법 제23조(자체 해석)
+  - source: 유형 실재 문헌 ③⑤⑥
+    status: unverified
+    status_reason: "근거지도 항목 8 '△ — Hirsch 2014 / Ji 2023 / KIRI 링크 미확보'. 출처부록 8장 ⚠ 원문 대조 전 인용 금지, 10장 우선순위 3(확보 시 △→○)"
+    citation_full: "Hirsch et al. (2014) Int J Health Geographics 13:51 / Ji et al. (2023) Transactions in GIS / KIRI 마일리지 UBI 오분류"
+    topics:
+      - 페르소나
+    flags:
+      - sources/ 전체에 세 건 모두 URL 없음
+    key: 유형실재문헌③⑤⑥
+  - source: 젊은 층 직접 실험(공백)
+    status: unverified
+    status_reason: "근거지도 항목 1 '✕ — 직접 실험 없음, 논증이지 실측 아님'. 실증 부재의 공백 기록"
+    topics:
+      - 확장성(연령)
+      - 공백(근거 없음)
+    flags:
+      - "후속질문에는 '안 해봤고, 방법론적 예측'으로 답할 것(문서 지시)"
+    key: 젊은층직접실험공백
+  - source: 지자체 고령자 이동지원 데이터
+    status: unverified
+    status_reason: "마스터답변안 13번(A) ③ 공공·제휴 경로 — 문서가 '가용성 확인 필요'로 명시"
+    topics:
+      - 데이터 확보 경로
+    key: 지자체고령자이동지원데이터
+  - source: 축-순보험료 대응 논증(인용 없음)
+    status: unverified
+    status_reason: "근거지도 항목 11 '○ 수준의 원리이나 인용 없음 → △'. 교과서·문헌 인용 확보 전까지 논증으로만 사용"
+    topics:
+      - 요율·가중치
+      - 계리 원리
+    key: 축순보험료대응논증인용없음
+  - source: 케어 지속성 규칙 검증(대기)
+    status: unverified
+    status_reason: "근거지도 '발표 전 우선순위' 3번 — 5번 케어 지속성 규칙(any → k≥2) 검증이 미실시(순환 논거 제거 목적, 소요 몇 분). 검증 대기 상태."
+    topics:
+      - 케어 판정
+      - 지속성 규칙
+      - 검증 백로그
+    flags:
+      - 검증 미실시 — 발표 전 우선순위 항목
+    key: 케어지속성규칙검증대기
+  - source: 한국교통연구원 2001, 5대광역시
+    citation_full: 한국교통연구원 (2001), 고령운전자 운전행태 — 5대광역시 65세+ 0.83 목적통행/인·일 → 월 방문지 환산 13.1곳 (표본수·조사연도 미상)
+    status: unverified
+    status_reason: "출처부록 6-1장 등급 △ — 표본수·조사연도 미상, 본문 미확인. 인용 시 '초록 기준' 수준 명시 필요."
+    topics:
+      - 국내 방문 빈도 앵커
+      - 페르소나 ② 설계값 13
+    flags:
+      - sources/ 내 링크 없음
+    key: 한국교통연구원20015대광역시
+  - source: 해법 계보(VDBSCAN·OPTICS 등)
+    status: unverified
+    status_reason: "근거지도 항목 10 '○/△ 혼재 — 서지는 정확, 링크는 일부만'. registry 자체도 '확인 필요' 표기"
+    citation_full: "VDBSCAN · OPTICS · ST-DBSCAN(Birant & Kut 2007, DKE 60(1):208–221) 등 밀도차 해법 계보"
+    topics:
+      - eps·DBSCAN
+    flags:
+      - ST-DBSCAN은 서지만 sources/에 존재, URL 없음
+    key: 해법계보vdbscanoptics등
+  - source: Aschenbrenner 2022
+    citation_full: "Aschenbrenner et al. (2022). J Gerontol B 77(10):1769–1778 — 일몰 이후 출발 정의, 야간 트립 62.9/월 ÷ 총 115.4 = 54.5%"
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC9535782/"
     status: verified
-    citation: 생활권반경_eps_정리.md 4절 + 8절 발표 답변(경계 3건 병기)
+    status_reason: 출처부록 6-2장 등급 ◎ — 원문 확인·링크 확보. 정의에 따라 야간 수치가 7배 달라짐을 보여주는 대조 문헌.
+    topics:
+      - 야간 비중 대조
+      - 정의 차이
+    flags:
+      - 우리 설계값의 직접 앵커 아님 — 우리는 LongROAD 태양고도 정의 기준
+    key: aschenbrenner2022
+  - source: "Bayat S, Babulal GM, Schindler SE, et al. (2021). Alzheimers Res Ther 13:115 — PMC8204509"
+    citation_full: "Bayat S, Babulal GM, Schindler SE, et al. (2021). Alzheimer's Research & Therapy 13:115 (n=139: 전임상 AD 64/비AD 75, 1년 GPS) — PMC8204509"
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8204509/"
+    status: verified
+    status_reason: 출처부록 2장·6-1장 등급 ◎ (원문 확인)
+    topics:
+      - 전임상 알츠하이머 판별
+      - 인지변화 조기신호
+      - 방문빈도 실증
+    flags:
+      - "'GPS만으로 0.96' 금지 — 0.96은 연령·APOE 결합 모델(9장)"
+      - 질병 판별 연구 — Q&A 백업 전용
+    key: bayatsbabulalgmschindlerseetal2021alzhei
+  - source: Bayat et al. 2021
+    status: verified
+    status_reason: 출처부록 2장 ◎(원문 확인) — 1년 GPS, 주행 단독 AUC 0.82·연령+APOE 결합 0.96 (n=139)
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8204509/"
+    citation_full: "Bayat S, Babulal GM, Schindler SE, et al. (2021). Alzheimers Res Ther 13:115, PMC8204509"
+    topics:
+      - 전임상 알츠하이머 판별
+      - 조기 신호
+    flags:
+      - "'GPS만으로 AUC 0.96' 금지 — 0.96은 연령·APOE 결합 모델"
+      - 질병 판별 연구 — Q&A 백업 전용
+    key: bayatetal2021
+  - source: "Bayat et al. 2021 (Alz Res Ther 13:115, n=139)"
+    citation_full: "Bayat S, Babulal GM, Schindler SE, et al. (2021). Alzheimers Res Ther 13:115 — n=139(전임상 AD 64/비AD 75), 1년 GPS. 주행 단독 AUC 0.82, 연령·APOE 결합 0.96. 고유 목적지 34.8~38.2/월"
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8204509/"
+    status: verified
+    status_reason: 출처부록 2장·6-1장 등급 ◎ — 원문 확인·링크 확보. 부록D 표 ④ 교체 문헌.
+    topics:
+      - 전임상 AD 판별
+      - 운전 패턴 변화 축
+      - 방문 빈도 해외 앵커
+      - 페르소나 ④
+    flags:
+      - "0.96은 연령·APOE 결합 모델 — 'GPS만으로 0.96' 금지"
+      - 질병 판별 연구 — Q&A 백업 전용
+    key: bayatetal2021alzresther13115n139
+  - source: Birant & Kut 2007 (ST-DBSCAN)
+    status: verified
+    status_reason: "마스터답변안 10번(5)ⓒ 서지 기재(DKE 60(1):208–221) — 근거지도 10번 '서지는 정확, 링크는 일부만'"
+    citation_full: "Birant & Kut (2007). ST-DBSCAN, Data & Knowledge Engineering 60(1):208–221"
+    topics:
+      - 비유클리드 근방 계보
+      - 심사 제안 ⓒ 평가 맥락
+    flags:
+      - sources에 원문 URL 없음
+      - 현 데이터로의 검증 불가(경로 미수집) — 파일럿 검토 항목
+    key: birantkut2007stdbscan
+  - source: CMT 2023 UBI 백서
+    status: verified
+    status_reason: 출처부록 1장 ◎(원문 확인) — 행동 기준 5분위 최상·최하위 클레임 빈도 약 3배(Fig. 4), n≈10만·실클레임 ~1,500건
+    url: "https://m.cmtelematics.com/hubfs/CMT%20Study%20-%20UBI%20Engagement%20Impact.pdf"
+    citation_full: CMT UBI 백서 (2023), 전 연령 n≈10만, 실클레임 ~1,500건
+    topics:
+      - 만성 위험행동 축
+      - 클레임 빈도 편차
+    flags:
+      - "전 연령 데이터 — 고령자 한정 근거와 역할 혼용 금지('편차의 크기' 역할만)"
+    key: cmt2023ubi백서
+  - source: "CMT UBI 백서 (2023) — https://m.cmtelematics.com/hubfs/CMT%20Study%20-%20UBI%20Engagement%20Impact.pdf"
+    citation_full: CMT(Cambridge Mobile Telematics) UBI 백서 (2023) — 전 연령 n≈10만, 실클레임 ~1,500건
+    url: "https://m.cmtelematics.com/hubfs/CMT%20Study%20-%20UBI%20Engagement%20Impact.pdf"
+    status: verified
+    status_reason: 출처부록 1장 등급 ◎ (원문 확인, Fig. 4)
+    topics:
+      - UBI 클레임 편차
+      - 행동 기반 위험
+    flags:
+      - "전 연령 데이터 — 고령자 한정 주장 금지, '편차의 크기' 역할만 (고령자 성립은 LongROAD·Candrive 계열로)"
+    key: cmtubi백서2023httpsmcmtelematicscomhubfscm
+  - source: CMT UBI 백서 2023 (n≈10만)
+    citation_full: CMT UBI 백서 (2023) — 전 연령 n≈10만, 실클레임 ~1,500건. 행동 5분위 최상·최하위 클레임 빈도 약 3배 (Fig. 4)
+    url: "https://m.cmtelematics.com/hubfs/CMT%20Study%20-%20UBI%20Engagement%20Impact.pdf"
+    status: verified
+    status_reason: 출처부록 1장 등급 ◎(⚠전 연령) — 원문 PDF 확인·링크 확보.
+    topics:
+      - 행동 기반 위험 편차
+      - 만성 위험행동 축
+      - UBI
+    flags:
+      - 전 연령 데이터 — 고령 한정 근거(LongROAD·Candrive 계열)와 역할 구분 필수, 병기 필요
+    key: cmtubi백서2023n10만
+  - source: "Cacciamani et al. (2021). Front Aging Neurosci 13:697234 — PMC8370471"
+    status: verified
+    status_reason: 출처부록 9장 대체 출처 — 원문 링크 확보(AD 치매 자각 결여 40~91%, 개별 연구 범위)
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8370471/"
+    citation_full: "Cacciamani et al. (2021). Front Aging Neurosci 13:697234"
+    topics:
+      - MCI·인지저하
+      - 인용 금지 정정(9장)
+    flags:
+      - "통합추정치로 인용 금지 — '개별 연구 범위'임을 명시"
+    key: cacciamanietal2021frontagingneurosci1369
+  - source: Candrive 국제 코호트 (PubMed 23541299)
+    status: verified
+    status_reason: 출처부록 5장 △(초록만) — 기준선 4개월 선례(재평가 주기, n=928), 링크 확보·응답 확인(근거지도 7번)
+    url: "https://pubmed.ncbi.nlm.nih.gov/23541299/"
+    topics:
+      - 기준선 4개월 선례
+    flags:
+      - "등급 △ — 인용 시 '초록 기준' 명시 필요"
+    key: candrive국제코호트pubmed23541299
+  - source: Candrive 재평가 주기
+    citation_full: Candrive 재평가 주기 (Marshall et al. 2013), n=928 — PubMed 23541299
+    url: "https://pubmed.ncbi.nlm.nih.gov/23541299/"
+    status: verified
+    status_reason: "출처부록 5장 등급 △ (초록만 확인, 본문 미열람) — '초록 기준' 명시 시 인용 가능. 링크는 확보(근거지도 ○)"
+    topics:
+      - 기준선 관찰기간 선례
+      - 고령운전자 코호트
+    flags:
+      - "등급 △ — 인용 시 '초록 기준' 명시 필요"
+    key: candrive재평가주기
+  - source: Candrive 재평가 주기 (n=928) — PubMed 23541299
+    citation_full: Candrive 재평가 주기 (Marshall et al. 2013, n=928) — PubMed 23541299
+    url: "https://pubmed.ncbi.nlm.nih.gov/23541299/"
+    status: verified
+    status_reason: "출처부록 5장 등급 △ (초록만 확인, 운전 연구) — '초록 기준' 명시 필요"
+    topics:
+      - 기준선 관찰기간 선례
+      - 고령운전자 코호트
+    flags:
+      - "등급 △ — 인용 시 '초록 기준' 명시 필요"
+    key: candrive재평가주기n928pubmed23541299
+  - source: DHQ 회상 척도
+    citation_full: LongROAD DHQ(Driving Habits Questionnaire) 이동범위 회상 구간 3개월 — PMC7317610
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC7317610/"
+    status: verified
+    status_reason: "출처부록 5장: 3개월 선례 = DHQ 이동범위 회상 구간(PMC7317610), 등급 ◎ (원문 확인). 근거지도 7번 '관찰 창 선례 5건 전부 링크 확보·응답 확인 ○'"
+    topics:
+      - 기준선 관찰기간 선례
+      - 이동범위 회상 설문
+    key: dhq회상척도
+  - source: DRIVES
+    status: verified
+    status_reason: "출처부록 2장 ◎ — 단 표기 규칙: 결과 변수가 사고가 아니라 인지 상태이므로 '사고 이전' 금지, '진단·자각 이전'만 (확정수치카드 동일)"
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC12662389/"
+    topics:
+      - 표기 규칙
+      - 조기 신호
+      - MCI 판별 AUC 0.82
+      - 기준선 1개월 선례(운전 연구)
+      - MCI 판별
+      - 기준선 1개월 선례
+      - 인지변화 조기신호
+      - 주행 궤적
+      - 인지 변화 조기 신호
+      - 페르소나 ④ 동시변화형
+    flags:
+      - "'사고 이전' 표현 금지 — '진단 이전'으로"
+      - 초록의 기울기·트립·야간 수치 인용 금지(내부 모순, 9장) — AUC와 정성 결론만
+      - "'사고 이전' 금지 — '진단·자각 이전'"
+      - 문제정의 본문 사용 금지 — Q&A 백업 전용
+      - 사고 예측 아님(결과 변수는 인지 상태)
+      - 초록 기울기 수치 인용 금지 — AUC와 정성 결론만
+    key: drives
+    citation_full: "Chen L, Carr DB, Singh RK, et al. (2025). Neurology 105(12):e214440 — DRIVES, n=298(MCI 56/NC 242), 평균 75.1세, 최대 40개월. 주행 변수만으로 MCI 판별 AUC 0.82"
+    aliases:
+      - DRIVES
+      - DRIVES — Neurology 2025, n=298 (PMC12662389)
+      - DRIVES 고령자 GPS 연구 (PMC9535782, n=161)
+      - DRIVES (Neurology 2025)
+      - DRIVES first-full-month (PMC9535782)
+      - "Chen L, Carr DB, Singh RK, et al. (2025). Neurology 105(12):e214440 (DRIVES) — PMC12662389"
+  - source: Ehsani & Tefft 2021, CHANCE 34(1)
+    status: verified
+    status_reason: "출처부록 3장 ◎(원문 PDF 확인) — 2.5배·+27% 원문 확인, 확정수치카드에도 '원문 확인됨' 명시"
+    url: "https://doi.org/10.1080/09332480.2021.1885934"
+    citation_full: "Ehsani, J. P., & Tefft, B. (2021). Crash Risk and Roadway Familiarity. CHANCE 34(1):44–48, doi:10.1080/09332480.2021.1885934"
+    topics:
+      - 경로 친숙도-사고 위험
+      - 위치 중립 설계 근거
+      - 저자 표기 규칙
+      - 경로 친숙도
+      - 노출 통제 사례-대조
+      - 노출 통제
+      - 친숙도 분석 원자료
+      - 사고 위치 통계
+      - 사고 위치·친숙도
+      - 문제 배경
+    flags:
+      - "'TEFFT' 단독 표기 금지 — Ehsani가 제1저자"
+      - "2.5배는 '사고 연루(crash involvement)' — '과실' 표현 금지"
+      - 친숙도 분석은 quasi-induced exposure 가정 — 인용 시 반드시 병기
+      - 친숙도 분석은 quasi-induced exposure 가정 — 반드시 병기
+      - "'밖이 위험하다' 결론의 단독 근거로 사용 금지"
+      - 거리 분석과 친숙도 분석을 섞어 말하지 말 것
+    key: ehsani-tefft-2021
+    aliases:
+      - Ehsani & Tefft 2021, CHANCE 34(1)
+      - "Ehsani, J. P., & Tefft, B. (2021). Crash Risk and Roadway Familiarity. CHANCE 34(1):44–48 (doi:10.1080/09332480.2021.1885934)"
+      - Ehsani & Tefft 2021
+      - NMVCCS (NHTSA 2005–07)
+      - NMVCCS 70% 자택 5마일
+  - source: Ester et al. 1996 (DBSCAN KDD-96)
+    status: verified
+    status_reason: "출처부록 4장 ◎(원문 확인) — p.229 원저자의 한계 자인('may merge two clusters ... into one cluster')"
+    url: "https://cdn.aaai.org/KDD/1996/KDD96-037.pdf"
+    citation_full: Ester, M., Kriegel, H.-P., Sander, J., & Xu, X. (1996). A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise (KDD-96), p.229
+    topics:
+      - DBSCAN 전역 eps 한계
+      - k-거리 그래프 휴리스틱
+      - DBSCAN
+      - 전역 eps 한계
+      - 생활권 클러스터링
+      - eps·DBSCAN
+      - eps 방법론
+      - k-거리
+      - 도농 밀도차
+    flags:
+      - 반박 대상 아님 — 심사 지적을 인정하는 근거로만 사용
+      - 우리 eps 260m 값 자체의 타당성 근거로는 사용 금지(심사 지적 인정용)
+      - k-거리 분포는 방법론 근거일 뿐 260m 구체값의 근거 아님
+    key: dbscan-원논문-ester-1996
+    aliases:
+      - Ester et al. 1996 (DBSCAN KDD-96)
+      - "Ester, M., Kriegel, H.-P., Sander, J., & Xu, X. (1996). A Density-Based Algorithm for Discovering Clusters (KDD-96), p.229 — https://cdn.aaai.org/KDD/1996/KDD96-037.pdf"
+      - Ester 1996 KDD p.229
+      - Ester et al. 1996 (DBSCAN 원논문)
+  - source: FHWA (NPTS, 미국 65세+)
+    citation_full: "FHWA, Our Nation's Highways (NPTS) — 미국 65세+ 7,646mile = 연 12,305km (남 16,583 / 여 7,701)"
+    url: "https://www.fhwa.dot.gov/ohim/onh00/bar8.htm"
+    status: verified
+    status_reason: 출처부록 6-4장 등급 ◎ — 원문 확인·링크 확보.
+    topics:
+      - 연 주행거리 해외 앵커
+    key: fhwanpts미국65세
+  - source: "FHWA, Our Nation's Highways (NPTS) — https://www.fhwa.dot.gov/ohim/onh00/bar8.htm"
+    citation_full: "FHWA, Our Nation's Highways (NPTS) — 미국 65세+ 연 7,646 mile = 12,305 km"
+    url: "https://www.fhwa.dot.gov/ohim/onh00/bar8.htm"
+    status: verified
+    status_reason: 출처부록 6-4장 등급 ◎ (원문 확인)
+    topics:
+      - 연간주행거리
+      - 미국 통계
+    key: fhwaournationshighwaysnptshttpswwwfhwado
+  - source: Harootunian et al. 2014
+    status: verified
+    status_reason: 출처부록 3장 ◎(초록 확인) — 타주 면허(비친숙 대리지표) 단독차량 사고 과실 오즈 +17~92%
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0001457514001857"
+    citation_full: "Harootunian, K., Lee, B. H. Y., & Aultman-Hall, L. (2014). Accid Anal Prev 72:32–43"
+    topics:
+      - 비친숙 대리지표
+      - 경로 친숙도
+    flags:
+      - 플로리다는 차이 없음·노출 미통제 — 한계 반드시 병기
+    key: harootunianetal2014
+  - source: "Harootunian, K., Lee, B. H. Y., & Aultman-Hall, L. (2014). Accid Anal Prev 72:32–43 — ScienceDirect S0001457514001857"
+    citation_full: "Harootunian, K., Lee, B. H. Y., & Aultman-Hall, L. (2014). Accident Analysis & Prevention 72:32–43"
+    url: "https://www.sciencedirect.com/science/article/abs/pii/S0001457514001857"
+    status: verified
+    status_reason: 출처부록 3장 등급 ◎ (초록 확인)
+    topics:
+      - 비친숙 도로 위험
+      - 타주 면허 대리지표
+    flags:
+      - 플로리다는 차이 없음·노출 미통제 — 한계 병기 필요
+    key: harootuniankleebhyaultmanhalll2014accida
+  - source: "Hill LL et al. (2020). Injury Epidemiology 7:38 — escholarship PDF"
+    citation_full: "Hill, L. L. et al. (2020). Injury Epidemiology 7:38"
+    url: "https://escholarship.org/content/qt7j86c17r/qt7j86c17r.pdf"
+    status: verified
+    status_reason: 출처부록 6-3장 등급 ◎ (원문 확인)
+    topics:
+      - 급제동 빈도 실증
+      - 위험행동
+    flags:
+      - g 임계값(≥0.35g) 병기 필수
+    key: hilllletal2020injuryepidemiology738escho
+  - source: "Hill LL et al. (2021). Geriatrics 6(1):20 — PMC8005989"
+    citation_full: "Hill, L. L. et al. (2021). Geriatrics 6(1):20 — PMC8005989"
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8005989/"
+    status: verified
+    status_reason: 출처부록 6-3장 등급 ◎ (원문 확인)
+    topics:
+      - 급제동 빈도 실증
+      - 도시/교외 대비
+    flags:
+      - g 임계값(≥0.4g) 병기 필수
+    key: hilllletal2021geriatrics6120pmc8005989
+  - source: "Isaacman et al., Pervasive 2011, LNCS 6696 (https://mrmgroup.cs.princeton.edu/papers/Isaacman_pervasive11.pdf)"
+    status: verified
+    status_reason: "출처부록 4장·5장 ◎(원문 확인) — 관찰 창 60일, '5% of total days'=서로 다른 3일, call-days 계수"
+    url: "https://mrmgroup.cs.princeton.edu/papers/Isaacman_pervasive11.pdf"
+    citation_full: "Isaacman, S., et al. (2011). Identifying Important Places in People's Lives from Cellular Network Data. Pervasive 2011, LNCS 6696 (springer: https://link.springer.com/chapter/10.1007/978-3-642-21726-5_9)"
+    topics:
+      - 3일 임계 선례
+      - 기준선 60일 선례
+      - 기준선 2개월·3일 규칙 직접 선례
+      - 반복 방문지 식별
+      - 관찰 창 60일
+      - 서로 다른 3일 규칙
+      - 생활권 학습(3일 규칙)
+      - 기준선(관찰 창)
+    flags:
+      - 운전 연구 아님 — 휴대폰 통신 위치데이터 연구임을 반드시 병기
+      - "차용은 '반복 방문지 식별 방법론'에 한정 — 보조 조건(14일 간격·회귀 확률 20%)은 미채용, 일치는 세 축까지"
+      - 운전 연구 아님(통신 위치데이터) — 반드시 병기
+      - 운전 연구 아님 — 휴대폰 통신 위치데이터 연구임을 반드시 병기, 차용은 방법론에 한정
+      - 부록 A에는 Springer 링크(link.springer.com/chapter/10.1007/978-3-642-21726-5_9)도 병존
+      - 통신 위치데이터 연구 — 운전 연구 아님을 반드시 병기
+    key: isaacman-2011
+    aliases:
+      - "Isaacman et al., Pervasive 2011, LNCS 6696 (https://mrmgroup.cs.princeton.edu/papers/Isaacman_pervasive11.pdf)"
+      - Isaacman et al. 2011
+      - "Isaacman, S., et al. (2011). Identifying Important Places in People's Lives from Cellular Network Data. Pervasive 2011, LNCS 6696 — https://mrmgroup.cs.princeton.edu/papers/Isaacman_pervasive11.pdf"
+      - Isaacman 2011
+  - source: "Lally et al. 2010, EJSP 40(6):998–1009 (doi:10.1002/ejsp.674)"
+    status: verified
+    status_reason: 출처부록 5장 △ — doi 링크 확보, 자동성 중앙값 66일·범위 18~254일. 단 새 습관 형성 연구라 시간 스케일 참고 이상 금지
+    url: "https://doi.org/10.1002/ejsp.674"
+    citation_full: "Lally, P. et al. (2010). European Journal of Social Psychology 40(6):998–1009. doi:10.1002/ejsp.674 (n=96, 12주)"
+    topics:
+      - 습관 자동성 66일
+      - 시간 스케일 참고
+      - 기준선 관찰기간 선례
+      - 습관 형성
+    flags:
+      - 기준선 2개월의 근거로 사용 금지 — 방향성 참고만(n=96, 12주, 범위 18~254일)
+      - 새 습관 형성 연구 — 기존 패턴 관측 기간 근거 아님, 시간 스케일 참고 이상 사용 금지
+    key: lallyetal2010ejsp4069981009doi101002ejsp
+    aliases:
+      - "Lally et al. 2010, EJSP 40(6):998–1009 (doi:10.1002/ejsp.674)"
+      - "Lally et al. (2010). EJSP 40(6):998–1009 — doi:10.1002/ejsp.674"
+  - source: LongROAD 0.35g 앵커
+    status: verified
+    status_reason: "출처부록 6-3장 ◎(원문 확인) — AAA LongROAD RDE 브리프(2020): 0.35g 기준 5.3±6.2건/1,000mile = 0.33건/100km"
+    url: "https://aaafoundation.org/wp-content/uploads/2026/02/20-0005_AAAFTS_LongROAD-RDE-Brief_FINAL.pdf"
+    citation_full: "AAA LongROAD RDE 브리프 (2020) — 0.35g 기준 5.3±6.2건/1,000mile = 0.33건/100km. 참조: Hill LL et al. 2020 Injury Epidemiology 7:38 (≥0.35g, 5.42) · Hill LL et al. 2021 Geriatrics 6(1):20 (≥0.4g, 1.16)"
+    topics:
+      - 합성 위험행동 빈도 앵커
+      - 급제동 빈도 실측
+      - 고령자 자기규제
+      - 야간 회피 축
+      - 축소 이동범위
+      - 기준선 3개월 선례(DHQ)
+      - 인지 저하 예측 변수
+      - 집 반경 통행 비율
+      - 아키타입 이동범위 축
+      - 인지 저하 예측
+    flags:
+      - 급제동은 반드시 g 임계와 함께 인용 — 0.35g와 0.75g가 1,000배 차이(출처부록 9장)
+      - 30~50대 일반화 금지 — 고령자 한정 근거
+      - 저자가 preliminary로 규정 — 확정 근거 사용 금지, 개념 근거로만
+      - 전 연령 일반화 금지
+      - 저자 preliminary 규정 — 확정 근거 사용 금지
+      - 고령자 한정 근거 — 전 연령 일반화 금지
+    key: longroad
+    aliases:
+      - LongROAD 0.35g 앵커
+      - "LongROAD — PMC8968289 (https://pmc.ncbi.nlm.nih.gov/articles/PMC8968289/)"
+      - "LongROAD — PMC7317610 (https://pmc.ncbi.nlm.nih.gov/articles/PMC7317610/)"
+      - LongROAD ML — PMC8167558
+      - LongROAD 자기규제 (n=1,557)
+      - LongROAD 이동범위 (n=2,990)
+  - source: "MCI 자기규제 — PMC7027824 (https://pmc.ncbi.nlm.nih.gov/articles/PMC7027824/)"
+    citation_full: MCI 자기규제 연구 — 고령 운전자, MCI군 야간 회피 13.5% vs 8.8% — PMC7027824
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC7027824/"
+    status: verified
+    status_reason: 출처부록 1장 등급 ◎ (원문 확인)
+    topics:
+      - MCI
+      - 고령운전자 자기규제
+      - 야간 회피
+    key: mci자기규제pmc7027824httpspmcncbinlmnihgovar
+  - source: Marshall et al. 2023, J Gerontol A 78(12) — Candrive (원문 PDF 확인)
+    status: verified
+    status_reason: "확정수치카드 — '원문(Marshall et al. 2023, J Gerontol A 78(12), 원문 PDF 확인)' 명시. 데이터생성_상세정리도 ◎(원문 PDF)"
+    citation_full: Marshall et al. 2023, J Gerontol A 78(12) — Candrive, 70세+ 코호트. 거리 보정 at-fault 위험 중위험 2.47배 · 고위험 5.26배(95% CI 2.81–9.84)
+    topics:
+      - 고령 사고위험 배수(중위험 2.47배·고위험 5.26배)
+      - 저주행≠저위험
+      - 70+ 연평균 주행거리 앵커(11,017.6km)
+      - 기준선 관찰기간 선례
+      - 야간 비중
+      - 고령 운전 위험
+      - 거리 보정 위험비
+      - Candrive
+      - 금지 표현 교체
+      - 연 주행거리 해외 앵커
+    flags:
+      - sources에 원문 URL 없음(원문 PDF 확인 표기만 존재)
+      - "'동일 연령대 3배' 표기 금지 — 원문에 3배 없음, '거리 보정 최대 5배'로"
+      - "'사고빈도'가 아니라 '사고 위험(주행거리 보정)'으로 표기"
+      - 야간 정의 혼용 금지 — 일몰 이후 출발 정의(54.5%)와 태양고도 정의(6.7%)는 7배 차이
+      - 원문 PDF 확보 표기는 있으나 sources/ 내 링크는 없음
+      - "'사고빈도'가 아니라 '사고 위험(거리 보정)'으로 표기할 것"
+    key: candrive-marshall-2023
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC9535782/"
+    aliases:
+      - Marshall et al. 2023, J Gerontol A 78(12) — Candrive (원문 PDF 확인)
+      - "Aschenbrenner et al. (2022). J Gerontol B 77(10):1769–1778 / DRIVES \"first full month\" (n=161) — PMC9535782"
+      - Marshall 2023 (Candrive)
+      - Candrive (Marshall 2023)
+  - source: "Molnar et al. (2018). Transp Res Part F 54:367–377 — PMC6190922"
+    citation_full: "Molnar, L. J. et al. (2018). Transportation Research Part F 54:367–377 — PMC6190922"
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC6190922/"
+    status: verified
+    status_reason: 출처부록 6-2장 등급 ◎ (원문 확인) — 야간 정의(주간 0~89° / 시민박명 90~96° / 야간 96° 초과)의 출처
+    topics:
+      - 야간 정의
+      - 야간 비중
+    key: molnaretal2018transprespartf54367377pmc6
+  - source: NHTSA 2021 (DOT HS 813 488)
+    citation_full: NHTSA (2021). DOT HS 813 488 — 도시/농촌 도로 사망률 대비
+    url: "https://crashstats.nhtsa.dot.gov/Api/Public/ViewPublication/813488.pdf"
+    status: verified
+    status_reason: 마스터답변안 13번(C)에 원문 PDF 링크와 수치(농촌 주행 32% vs 사망 40%, 1억 VMT당 1.74 vs 1.19) 직접 인용
+    topics:
+      - 도시/농촌 대비
+      - 도로위계
+    flags:
+      - 국내 도로 위계별 수치로의 확장 인용 금지 — 도시/농촌 대비까지만
+    key: nhtsa2021doths813488
+  - source: "NHTSA, Run-Off-Road Crashes: An On-Scene Perspective, DOT HS 811 500 (2011) — https://crashstats.nhtsa.dot.gov/Api/Public/ViewPublication/811500"
+    citation_full: "NHTSA (2011). Run-Off-Road Crashes: An On-Scene Perspective. DOT HS 811 500 (NMVCCS 분석, Table 8)"
+    url: "https://crashstats.nhtsa.dot.gov/Api/Public/ViewPublication/811500"
+    status: verified
+    status_reason: 출처부록 3장 등급 ◎ (원문 확인)
+    topics:
+      - 경로 친숙도
+      - 도로이탈 사고
+    key: nhtsarunoffroadcrashesanonsceneperspecti
+  - source: NVIDIA Nemotron-Personas
+    citation_full: NVIDIA Nemotron-Personas — 인물화(60명) 방법론 참고
+    status: verified
+    status_reason: "확정수치카드 표기 — '데이터셋을 쓴 게 아니라 방법론을 따라 자체 정의'. 사용 범위(방법론 참고)가 정본 카드에서 확정됨."
+    topics:
+      - 페르소나 생성 방법론
+      - 합성 데이터
+    flags:
+      - 데이터셋 사용 아님 — 방법론 참고로만 인용
+      - sources/ 내 링크 없음
+    key: nvidianemotronpersonas
+  - source: Nemotron
+    status: verified
+    status_reason: 데이터생성_상세정리 §3·§7 및 확정수치카드 — NVIDIA Nemotron-Personas의 방법론을 따라 자체 정의(데이터셋 직접 사용 아님)
+    topics:
+      - 페르소나 인물화 방법론
+    flags:
+      - "'데이터셋을 사용했다' 서술 금지"
+      - sources에 원문 URL 없음
+    key: nemotron
+  - source: Roe et al. (2019). J Alzheimers Dis — PMC6488385
+    citation_full: "Roe, C. M. et al. (2019). Journal of Alzheimer's Disease (DRIVES n=20, 평균 73.1세) — PMC6488385"
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC6488385/"
+    status: verified
+    status_reason: 출처부록 6-1장 등급 ◎ (원문 확인)
+    topics:
+      - 방문빈도 실증
+      - 고유 목적지
+    key: roeetal2019jalzheimersdispmc6488385
+  - source: "Shin & Lee (2012). J Phys Ther Sci 24(7):567–570 — jstage PDF"
+    status: verified
+    status_reason: "출처부록 9장 대체 출처 — 원문 PDF 링크 확보. '2.28초=90% 지연' 대체 수치(고령 1.70초 vs 청년 0.96초, n=12+12, SD·p값 있음)"
+    url: "https://www.jstage.jst.go.jp/article/jpts/24/7/24_567/_pdf"
+    citation_full: "Shin & Lee (2012). J Phys Ther Sci 24(7):567–570"
+    topics:
+      - 제동 반응
+      - 인용 금지 정정(9장)
+    key: shinlee2012jphysthersci247567570jstagepd
+  - source: TAAS 2024 246개 시군구 실집계 (도로교통공단 교통사고분석시스템)
+    status: verified
+    status_reason: "확정수치카드 '위험운전 가중' 확정값(44.6/42.4/13.0 유도) · 데이터생성_상세정리 §5(원천 CSV → taas_risk_weights.py 직접 산출)"
+    topics:
+      - 위험운전 유형 구성비
+      - 표시 전용·판정 미진입
+      - 치명률 가중
+      - 위험행동 유형 가중치
+      - 고령 사고 비중 추이
+      - 국내 사고통계
+      - 내부 산출
+      - 판정 엔진
+      - 결정론 시드
+      - 판정 입력 화이트리스트
+    flags:
+      - 표시 전용 — 판정 미진입(구성비 교체 후 180건 재판정 diff 0)
+      - sources에 TAAS 원천 URL 없음
+      - 공공 원천 + 내부 산출 병존(internal 성격)
+      - 유형 분해 가중치는 표시 전용 — 판정 미진입(180건 diff 0)
+      - 공공 원천 + 내부 산출 혼성 — 출처부록 등급 ◎
+      - 공공 원천 + 내부 산출 코드의 복합 — 산출 자체는 internal 성격
+    key: taas
+    aliases:
+      - TAAS 2024 246개 시군구 실집계 (도로교통공단 교통사고분석시스템)
+      - TAAS 2010~2024 원천 CSV (팀 직접 산출, taas_risk_weights.py)
+      - TAAS 2010–2024
+      - 코드 실물 (src/gaip_simulation/engine.py · clustering.py · taas_risk_weights.py · scripts/loss_ratio_counterfactual.py · mobility_profiles.json)
+      - TAAS 교통사고분석시스템 (2010–2024) — 우리 저장소 산출 taas_risk_weights.py
+      - TAAS 가중치 diff 0
+    status_conflict: "병합 전 지위 상충: verified vs internal → 보수적으로 verified 유지"
+    citation_full: 도로교통공단 TAAS 교통사고분석시스템 원천 CSV (2010–2024, 시군구 전수) — 산출 코드 taas_risk_weights.py. 위험 유형 구성비 44.6/42.4/13.0%
+  - source: "Turró-Garriga et al. (2016). J Alzheimers Dis 51(2):357–366 — PubMed 26890611"
+    status: verified
+    status_reason: "출처부록 9장 인용 사슬 추적 — 원논문 확인. 'MCI 60%/치매 81%' 오류의 정정 근거(실제 무자각 유병률 39.5%, 81%는 '12개월 지속률 80.0%'의 오독)"
+    url: "https://pubmed.ncbi.nlm.nih.gov/26890611/"
+    citation_full: "Turró-Garriga et al. (2016). J Alzheimers Dis 51(2):357–366"
+    topics:
+      - MCI·인지저하
+      - 인용 금지 정정(9장)
+    flags:
+      - "'60%/81%' 수치 자체는 인용 금지 — 이 논문은 정정 근거로만 사용"
+    key: turrógarrigaetal2016jalzheimersdis512357
+  - source: UMTRI 자연주행
+    status: verified
+    status_reason: 출처부록 5장 △(초록만) — 기준선 관찰창 2주 선례(운전 연구)
+    url: "https://pubmed.ncbi.nlm.nih.gov/29584495/"
+    topics:
+      - 기준선 2주 선례
+    flags:
+      - "등급 △ — 인용 시 '초록 기준' 명시 필요"
+    key: umtri자연주행
+  - source: UMTRI 자연주행 (PubMed 29584495, n=108)
+    status: verified
+    status_reason: "출처부록 5장 △(초록만) — 기준선 2주 선례('Roughly the first 2 weeks ... baseline driving period'), 링크 확보"
+    url: "https://pubmed.ncbi.nlm.nih.gov/29584495/"
+    topics:
+      - 기준선 2주 선례(운전 연구)
+    flags:
+      - "등급 △ — 인용 시 '초록 기준' 명시 필요"
+    key: umtri자연주행pubmed29584495n108
+  - source: UMTRI 자연주행 기준선 (n=108) — PubMed 29584495
+    citation_full: UMTRI 자연주행 기준선 연구 (Traffic Inj Prev 2018, n=108) — PubMed 29584495
+    url: "https://pubmed.ncbi.nlm.nih.gov/29584495/"
+    status: verified
+    status_reason: "출처부록 5장 등급 △ (초록만 확인, 운전 연구) — '초록 기준' 명시 필요. 링크 확보(근거지도 ○)"
+    topics:
+      - 기준선 관찰기간 선례
+    flags:
+      - "등급 △ — 인용 시 '초록 기준' 명시 필요"
+    key: umtri자연주행기준선n108pubmed29584495
+  - source: "arXiv:1807.00546"
+    status: verified
+    status_reason: 출처부록 4장 △(초록만) — 방문 횟수가 아닌 일수 기준, 주 3일 예시
+    url: "https://arxiv.org/abs/1807.00546"
+    topics:
+      - 일수 기준 계수
+      - 3일 규칙 보조
+    flags:
+      - "등급 △ — 인용 시 '초록 기준' 명시 필요"
+    key: arxiv180700546
+  - source: "arXiv:1807.00546 — https://arxiv.org/abs/1807.00546"
+    citation_full: "arXiv:1807.00546 — 방문 횟수가 아닌 일수 기준, 주 3일 예시"
+    url: "https://arxiv.org/abs/1807.00546"
+    status: verified
+    status_reason: "출처부록 4장 등급 △ (초록만 확인) — '초록 기준' 명시 필요"
+    topics:
+      - 방문 일수 기준
+      - 생활권 클러스터링
+    flags:
+      - "등급 △ — 인용 시 '초록 기준' 명시 필요"
+    key: arxiv180700546httpsarxivorgabs180700546
+  - source: eTAS — 한국교통안전공단 운행기록분석시스템
+    status: verified
+    status_reason: "확정수치카드 표기 주의 — 실재 명칭 확인(이전 카드의 '없는 명칭' 표기는 오류로 정정), 위험운전행동 정의의 표준"
+    topics:
+      - 위험운전행동 정의 표준
+      - 써머리 표기
+      - 위험운전행동 정의
+      - eTAS 표준
+      - 실서비스 임계
+    flags:
+      - "합성 엔진에 eTAS 임계(g값) 구현 없음 — '합성을 eTAS 임계로 생성했다' 표현 금지"
+      - "정확한 문장: '유형 정의는 eTAS 표준, 합성 빈도는 LongROAD 0.35g 앵커, 실서비스에서 eTAS 임계 적용'"
+      - sources에 원문 URL 없음
+      - "합성 엔진에 eTAS 임계(g값) 구현 없음 — '합성을 eTAS 임계로 생성했다' 서술 금지"
+      - sources/ 내 링크 없음
+    key: etas
+    citation_full: eTAS — 한국교통안전공단 운행기록분석시스템 (위험운전행동 정의의 표준)
+    aliases:
+      - eTAS — 한국교통안전공단 운행기록분석시스템
+      - eTAS (한국교통안전공단 운행기록분석시스템)
+  - source: 가구통행실태조사 2006 수도권 (마강래·윤영호 2009)
+    citation_full: "마강래·윤영호 (2009). 서울도시연구 10(4):159–171 — 수도권 가구통행실태조사, 65세+ n=49,380. 2006년 0.79 목적통행/인·일 → 월 방문지 환산 12.5곳"
+    url: "https://www.si.re.kr/atch/filePreview.do?cnncSn=1001080005&cnncTy=bbs&ordr=1"
+    status: verified
+    status_reason: 출처부록 6-1장 등급 ◎ — 원문 PDF 링크 확보.
+    topics:
+      - 국내 방문 빈도 하단 앵커
+      - 통행 실태
+    flags:
+      - 목적통행 기준 — 65세+ 목적통행의 48%가 귀가라 방문지 ≈ 통행×0.52 환산 적용
+    key: 가구통행실태조사2006수도권마강래윤영호2009
+  - source: 건보공단 2022 주요통계
+    status: verified
+    status_reason: 국내 공식 통계 — 65세+ 월평균 입내원 3.75일, 푸아송 λ 앵커(마스터답변안 7번·부록 A). 단 근거지도 7번 등급 △(링크 없음)
+    topics:
+      - 방문 빈도 λ 앵커
+      - 기준선 역산
+    flags:
+      - 원보고서 URL 미확보 — 인용 전 링크 확보 권장(근거지도 △)
+    key: 건보공단2022주요통계
+  - source: 경로당 이용 통계
+    citation_full: 2023년도 노인실태조사 (보건복지부·KIHASA) 요약 p.20 — 경로당 이용자 주 2.9회 (이용률 26.5%)
+    url: "https://www.mohw.go.kr/boardDownload.es?bid=0019&list_no=1483359&seq=1"
+    status: verified
+    status_reason: 출처부록 7장 등급 ◎ — 2023년도 노인실태조사 요약 p.20에서 원문 확인, PDF 링크 확보.
+    topics:
+      - 방문 빈도 앵커
+      - 기준선 2개월
+      - 국내 통계
+      - 경로당
+    flags:
+      - "registry 엔트리는 '출처 서지 정보는 문서에 없음'이라 했으나 출처부록에서 노인실태조사 2023으로 서지·링크 확인됨"
+    key: 경로당이용통계
+  - source: 공공데이터 링크 19개
+    status: verified
+    status_reason: "근거지도 항목 13 등급 ○ — '링크 19개로 문서 중 가장 충실'. 마스터답변안 13번 이하 서지 표에 링크 19건 실재 확인"
+    topics:
+      - 실현 가능성(데이터 확보)
+    flags:
+      - "19건 대부분은 문헌 링크이며 공공데이터포털 직접 링크는 도로교통공단 1건(https://www.data.go.kr/data/15070170/fileData.do)만 sources/에서 확인 — '공공데이터'라는 명명과 실체 확인 필요"
+    key: 공공데이터링크19개
+  - source: 과속 기준치 (2010–2020)
+    status: verified
+    status_reason: 데이터생성_상세정리 §5 — 과속 항목은 2021년부터 TAAS 원천 미집계라 2010–2020 평균 기준치 사용, provenance에 기록
+    topics:
+      - 위험 유형 분해
+      - TAAS 구성비
+    flags:
+      - "registry 초안이 '원문 출처 명시가 카드에 없음 — 확인 필요' 기재 — 데이터생성_상세정리 §5로 출처 확인됨"
+      - 표시 전용 — 판정 미진입
+    key: 과속기준치20102020
+  - source: 관찰 창 선례 5건
+    status: verified
+    status_reason: "근거지도 항목 7 등급 ○ — '5건 전부 링크 확보·응답 확인'(2026-07-29 보강, 근거 노트 2-2 반영)"
+    url: "https://pubmed.ncbi.nlm.nih.gov/29584495/ · https://pmc.ncbi.nlm.nih.gov/articles/PMC9535782/ · https://mrmgroup.cs.princeton.edu/papers/Isaacman_pervasive11.pdf · https://pmc.ncbi.nlm.nih.gov/articles/PMC7317610/ · https://pubmed.ncbi.nlm.nih.gov/23541299/"
+    citation_full: UMTRI(Traffic Inj Prev 2018, PubMed 29584495) / DRIVES(PMC9535782) / Isaacman 2011(PDF) / DHQ(PMC7317610) / Candrive(Marshall 2013, PubMed 23541299)
+    topics:
+      - 기준선(관찰 창)
+    flags:
+      - "출처부록 5장 개별 등급은 UMTRI·Candrive △(초록만), DRIVES·DHQ·Isaacman ◎ — 개별 인용 시 '초록 기준' 명시 필요 건 있음"
+    key: 관찰창선례5건
+  - source: 국가데이터처 「한국의 사회동향 2025」(2025.12.26) p.20 — korea.kr PDF
+    citation_full: 국가데이터처 「한국의 사회동향 2025」 (2025.12.26) p.20
+    url: "https://www.korea.kr/common/download.do?fileId=198311269&tblKey=GMN"
+    status: verified
+    status_reason: 출처부록 7장 등급 ◎ (원문 확인)
+    topics:
+      - 국내통계
+      - 고령운전자 사고 특성
+      - 안전운전의무 불이행
+    flags:
+      - "'고령 55.7% vs 전체 27.5% = 2배' 대비 주장 금지(9장) — 원자료 직접 집계 시 전체도 55.6%"
+    key: 국가데이터처한국의사회동향202520251226p20koreakrpdf
+  - source: 도로교통공단 「가해운전자 법규위반별 주야별 교통사고 통계 2024」 — 공공데이터포털 data.go.kr/data/15070170
+    citation_full: 도로교통공단 「가해운전자 법규위반별 주야별 교통사고 통계 2024」 — 공공데이터포털 (전체 안전운전의무 불이행 55.6% = 109,139/196,349건)
+    url: "https://www.data.go.kr/data/15070170/fileData.do"
+    status: verified
+    status_reason: 출처부록 7장 등급 ◎ (원자료 직접 집계 — 합계가 경찰청 공식 총계와 일치 확인)
+    topics:
+      - 국내통계
+      - 안전운전의무 불이행
+      - 2배 주장 반박 근거
+    flags:
+      - 55.6%는 공공 원자료를 우리가 직접 집계한 값 — 집계 방법 병기 권장
+    key: 도로교통공단가해운전자법규위반별주야별교통사고통계2024공공데이터포털data
+  - source: "마강래·윤영호 (2009). 서울도시연구 10(4):159–171 — si.re.kr PDF"
+    citation_full: "마강래·윤영호 (2009). 서울도시연구 10(4):159–171 (수도권 가구통행실태조사, 65세+ 49,380명)"
+    url: "https://www.si.re.kr/atch/filePreview.do?cnncSn=1001080005&cnncTy=bbs&ordr=1"
+    status: verified
+    status_reason: 출처부록 6-1장 등급 ◎ (원문 확인)
+    topics:
+      - 국내 고령자 통행 실증
+      - 방문빈도
+    flags:
+      - 목적통행 단위 — 방문지와 직접 비교 불가, 귀가 48% 감안 ×0.52 환산 필요
+    key: 마강래윤영호2009서울도시연구104159171sirekrpdf
+  - source: 방문 빈도 문헌 회랑(국내·해외)
+    citation_full: 국내 12.5~13.1회(마강래·윤영호 2009 ◎ · 한국교통연구원 2001 △) ↔ 해외 35~44회(Roe 2019 ◎ · Bayat 2021 ◎ 고유 목적지)
+    status: verified
+    status_reason: "출처부록 6-1장 — 회랑 구성 문헌 4건 중 3건이 ◎(원문 확인·링크 확보). 부록D 4절 파라미터 앵커 표 등급 '◎/△'. 페르소나 방문수 13/24/32/40/42가 이 회랑을 커버."
+    topics:
+      - 방문 빈도 앵커
+      - 합성 파라미터
+      - 페르소나 설계
+    flags:
+      - 복합 출처 — 단일 URL 없음(마강래·윤영호 si.re.kr PDF, Roe PMC6488385, Bayat PMC8204509)
+      - 국내 상단 13.1(한국교통연구원 2001)은 등급 △ — 표본수·조사연도 미상
+      - "단위 주의: 트립≠방문지, 국내는 목적통행×0.52 환산"
+    key: 방문빈도문헌회랑국내해외
+  - source: 방통위 고시 「위치정보의 관리적·기술적 보호조치 기준」 제6조 제5항
+    status: verified
+    status_reason: "마스터답변안 6번 ① — 취급대장(확인자료) 최소 6개월 '보관' 의무 = 회의의 '6개월'의 실체(삭제 시한 아닌 보관 하한). 자체 해석·링크 없음(근거지도 6번 △)"
+    topics:
+      - 취급대장 6개월 보관 하한
+      - 위치데이터 법령
+    flags:
+      - 법무 검토 미실시
+      - sources에 고시 원문 링크 없음
+      - "'위치데이터 6개월 내 삭제 의무'로 오독 금지"
+    key: 방통위고시위치정보의관리적기술적보호조치기준제6조제5항
+  - source: 유형 실재 문헌 ①②④
+    status: verified
+    status_reason: 근거지도 항목 8 등급 ○ — LongROAD·CMT·Candrive·DRIVES·Bayat 전부 원문 링크 확보(출처부록 1·2장 ◎~△)
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8968289/ · https://pmc.ncbi.nlm.nih.gov/articles/PMC7317610/ · https://m.cmtelematics.com/hubfs/CMT%20Study%20-%20UBI%20Engagement%20Impact.pdf · https://pubmed.ncbi.nlm.nih.gov/23477415/ · https://pmc.ncbi.nlm.nih.gov/articles/PMC12662389/ · https://pmc.ncbi.nlm.nih.gov/articles/PMC8204509/"
+    citation_full: LongROAD(PMC8968289·PMC7317610) · CMT 2023 UBI 백서 · Candrive/Ozcandrive(Langford 2013, PubMed 23477415) · DRIVES(Neurology 2025, PMC12662389) · Bayat 2021(PMC8204509)
+    topics:
+      - 페르소나
+    flags:
+      - "개별 인용 시 각 논문의 금지 표현(DRIVES 기울기 수치, Bayat 'GPS만 0.96', Candrive '3배') 주의"
+    key: 유형실재문헌①②④
+  - source: 통신비밀보호법 시행령 제41조
+    status: verified
+    status_reason: 마스터답변안 6번 ① — 기지국 위치추적자료 12개월 보관은 전기통신사업자 대상(보험·LBS 사업자 직접 적용 없음). 자체 해석·링크 없음(근거지도 6번 △)
+    topics:
+      - 기지국 자료 12개월
+      - 적용 범위 한정
+    flags:
+      - 법무 검토 미실시
+      - sources에 법령 원문 링크 없음
+      - 보험사에의 적용 주장 금지
+    key: 통신비밀보호법시행령제41조
+  - source: 한국교통연구원 (2001), 고령운전자 운전행태
+    citation_full: 한국교통연구원 (2001). 고령운전자 운전행태 — 5대광역시 65세+ 0.83 목적통행/인·일
+    status: verified
+    status_reason: "출처부록 6-1장 등급 △ — 표본수·조사연도 미상, '초록 기준' 수준 주의"
+    topics:
+      - 국내 고령자 통행 실증
+      - 방문빈도
+    flags:
+      - 등급 △ — 표본수·조사연도 미상
+      - sources/에 원문 링크 없음
+    key: 한국교통연구원2001고령운전자운전행태
+  - source: 한국소비자원 2024 (n=300)
+    status: verified
+    status_reason: 출처부록 7장 ◎(원문 확인) — 「고령운전자 안전실태조사」(2024.7), 운전 빈도 주 3~5회 36.7%
+    url: "https://www.kca.go.kr/smartconsumer/board/download.do?fno=10046786&bid=00000146&did=1003858738&menukey=7301"
+    citation_full: 한국소비자원 보도자료 (2025.4.10) p.2 — 시뮬레이터 실험, 고령·비고령 각 17명
+    topics:
+      - 고령운전자 운전 빈도
+      - 2개월 운전 26~43회 역산
+      - 국내통계
+      - 고령운전자 운전빈도
+      - 방문빈도 앵커
+      - 제동 반응
+      - 운전 빈도 앵커
+      - 기준선(관찰 창)
+    flags:
+      - "발표 사용 안 함 — 원문에 '평균'도 '90%'도 없음, 다른 상황은 0.02초 차이(체리피킹 리스크), n=17에 SD·p값 없음"
+      - "9장 인용 금지 항목('제동 반응 2.28초 = 90% 지연')의 원자료"
+      - sources/에 원문 링크 없음
+    key: 소비자원-2.28초
+    aliases:
+      - 한국소비자원 2024 (n=300)
+      - 한국소비자원 2024
+      - 한국소비자원 「고령운전자 안전실태조사」(2024.7) — kca.go.kr PDF
+      - 한국소비자원 보도자료 (2025.4.10) p.2 — 시뮬레이터 고령·비고령 각 17명
+      - 소비자원 2024
+  - source: 활동공간 체계적 리뷰 47편 (PMC6737923)
+    status: verified
+    status_reason: 출처부록 4장 △(초록만) — 최소 관측 일수 관행 1~4일, 우리 3일은 정중앙
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC6737923/"
+    topics:
+      - 최소 관측 일수 관행
+      - 3일 규칙 보조
+      - 활동공간
+    flags:
+      - "등급 △ — 인용 시 '초록 기준' 명시 필요"
+    key: 활동공간체계적리뷰47편pmc6737923
+    citation_full: 활동공간(activity space) 체계적 리뷰 47편 — PMC6737923
+    aliases:
+      - 활동공간 체계적 리뷰 47편 (PMC6737923)
+      - 활동공간 체계적 리뷰 47편 — PMC6737923
+  - source: 10명 균등 배분(설계)
+    status: internal
+    status_reason: 등급 ▽ 설계 — 페르소나 10명 균등 배분은 인구 비율이 아니라 테스트 설계라는 논증
+    topics:
+      - 합성 데이터 생성
+      - 설계값
+    key: 10명균등배분설계
+  - source: 180 시나리오 결선 번들 (60명 × 3환경)
+    citation_full: 180 시나리오 결선 번들 — 60명 × 3환경. 할증 전건 0, 150/180 동등 이하 보험료(113건 더 낮음), 케어 발동 월수 분포
+    status: internal
+    status_reason: 우리 실측 번들 — 안전운전자_매력도_정리.md 1·5·6절(근거 등급 ◎ 번들). 전건 candidate_surcharge_rate_pct = 0 등 실측 산출.
+    topics:
+      - 결선 번들
+      - 판정 실측
+      - 요율 실측
+      - 할증 부재
+    flags:
+      - "'그런 사례가 없다'를 안전의 근거로 쓰는 것은 순환 문제(§6) — any 규칙 자체의 타당성은 미검증"
+    key: 180시나리오결선번들60명3환경
+  - source: 180 시나리오 전수 실측 (6유형 60명 × 3환경 × 14개월, 80,032 트립)
+    status: internal
+    status_reason: 우리 실측 — 합성 시나리오 전수 재실행 결과(케어 30/30·오탐 0/30·할증 전건 0 등), 근거지도 등급 ◎
+    topics:
+      - 판정 로직 일관성 검증
+      - 오탐 대조군
+      - 민감도 실측
+    flags:
+      - registry 초안 verified → internal로 정규화(우리 실측·코드)
+      - 예측력·오탐 방어의 실증 아님 — 로직 일관성 검증만(오탐 방어는 확률 논리로만 주장)
+    key: 180시나리오전수실측6유형60명3환경14개월80032트립
+  - source: 369개 목적지 그룹 실측
+    status: internal
+    status_reason: 우리 합성 실측 — 등급 ◎. 369개 중 3일 미만 6개(1.6%), 진짜 거점 탈락 0
+    topics:
+      - 생활권 학습(3일 규칙)
+      - 합성 데이터 검증
+    flags:
+      - 미탐 방어 실측 한정 — 오탐 방어 주장에는 사용 금지(마스터답변안 명시)
+    key: 369개목적지그룹실측
+  - source: 3단 eps 방향 가정(설계값)
+    status: internal
+    status_reason: 등급 ▽ 설계값 — 도심 소·농촌 대는 가정이며 반대일 수 있음(도심 주차난 논리). 합성 도심 산포를 가장 작게 설정해 방향 확인 불가
+    topics:
+      - eps·DBSCAN
+      - 설계값
+    flags:
+      - 방향성 검증에 사용 금지
+      - 단일 eps 재판정 0건 차이 실측이 논쟁을 무력화 — 방어는 그쪽으로
+    key: 3단eps방향가정설계값
+  - source: 3지형 판정 실측
+    status: internal
+    status_reason: 우리 합성 실측 — 등급 ◎. 3환경 케어 60/60 유지·우대 54/60(갈림 6명 사유 실측)
+    topics:
+      - 합성 데이터 검증
+      - 케어 판정
+    key: 3지형판정실측
+  - source: 4개월 창 구조(코드)
+    status: internal
+    status_reason: 우리 코드 실물 — 등급 ◎. 위치 보유 창 = 기준선 2개월 + 감지 직전 2개월 비교
+    topics:
+      - 데이터 거버넌스
+      - 기준선(관찰 창)
+    key: 4개월창구조코드
+  - source: AND 게이트(이동 25%p AND 위험 20%p)
+    status: internal
+    status_reason: "우리 코드 실물 — 등급 ◎. gate_logic: AND(이동·행동 동시 급변이라야 발동)"
+    citation_full: src/gaip_simulation/engine.py (1180-1182 감지식)
+    topics:
+      - 케어 판정
+      - 판정 로직(코드)
+    key: and게이트이동25pand위험20p
+  - source: DEFAULT_PRODUCT_RULES + _safety_score 동일 함수
+    status: internal
+    status_reason: 우리 코드 실물 — 등급 ◎. 안 30 > 밖 20을 동일 함수로 채점
+    citation_full: src/gaip_simulation/engine.py
+    topics:
+      - 판정 로직(코드)
+      - 요율·가중치
+    key: default_product_rules_safety_score동일함수
+  - source: ENVIRONMENTS 순환 위험 고지
+    status: internal
+    status_reason: 우리 코드 구조 — 생성 파라미터(visit_jitter_m)와 분석 파라미터(dbscan_eps_m) 공존의 순환 한계를 문서가 선제 고지
+    topics:
+      - 합성 데이터 한계
+    flags:
+      - 운영값은 실데이터 k-거리로 재도출 예정임을 함께 서술
+    key: environments순환위험고지
+  - source: HDBSCAN 9지표 비교
+    status: internal
+    status_reason: 우리 합성 실측 — 등급 ◎. 판정 성능 동급, 거점 수·노이즈만 차이
+    topics:
+      - eps·DBSCAN
+      - 합성 데이터 검증
+    flags:
+      - "'HDBSCAN 커버리지 90%→71.9% 열세' 주장은 철회됨 — 동급 서술만 사용"
+    key: hdbscan9지표비교
+  - source: _monthly_results 월 집계
+    status: internal
+    status_reason: 우리 코드 실물 — 등급 ◎. 월 단위 비율 계산 판정(단발 운행은 임계의 1/7 수준)
+    citation_full: src/gaip_simulation/engine.py (_monthly_results)
+    topics:
+      - 판정 로직(코드)
+    key: _monthly_results월집계
+  - source: candidate_surcharge_rate_pct = 0 (180건 전건)
+    status: internal
+    status_reason: 우리 합성 실측 — 등급 ◎. 180 시나리오 전건 할증 0(할증 경로 부재)
+    topics:
+      - 요율·가중치
+      - 합성 데이터 검증
+    key: candidate_surcharge_rate_pct0180건전건
+  - source: care_discount_reduction_pct 13.0
+    status: internal
+    status_reason: 우리 코드 실물 — 등급 ◎. 케어 시 할인 축소 13.0%(문서가 정직 고지)
+    topics:
+      - 케어 판정
+      - 요율·가중치
+    key: care_discount_reduction_pct130
+  - source: data/fixtures/gaip_algorithm_lab.json
+    status: internal
+    status_reason: 우리 저장소 픽스처 실물 — 클러스터링 실측 채점표·eps 그리드·HDBSCAN 비교. 근거지도 등급 ◎
+    topics:
+      - 클러스터링 실측
+      - eps 그리드
+      - HDBSCAN 비교
+      - 내부 산출물
+    flags:
+      - 실험실은 군집 지표까지만 측정 — 판정 재실행 근거로 사용 금지
+    key: datafixturesgaip_algorithm_labjson
+  - source: data/processed/monthly_zone_snapshots.json
+    citation_full: data/processed/monthly_zone_snapshots.json — 30명 × 12개월, rolling_60_day_dbscan_p90
+    status: internal
+    status_reason: 우리 데이터 실물 — 생활권_형성주기_이슈정리.md 1절. 원안(국내)이 rolling이었다는 실물 증거.
+    topics:
+      - rolling 원안 증거
+      - 레거시 데이터
+    flags:
+      - 레거시 30명 — 결선 번들과 데이터가 달라 결선 시연용 사용 불가
+    key: dataprocessedmonthly_zone_snapshotsjson
+  - source: dbscan_distinct_days(코드)
+    status: internal
+    status_reason: "우리 코드 실물 — 등급 ◎. 밀도 단독으로 거점 인정 안 함('서로 다른 3일' AND)"
+    citation_full: src/gaip_simulation/clustering.py
+    topics:
+      - 생활권 학습(3일 규칙)
+      - eps·DBSCAN
+    key: dbscan_distinct_days코드
+  - source: decision_feature_contract 허용목록 8개
+    status: internal
+    status_reason: 우리 코드 실물 — 등급 ◎. 허용목록 8개에 유형 라벨 없음(라벨 누출 차단)
+    citation_full: src/gaip_simulation/engine.py (decision_feature_contract.allowed_inputs)
+    topics:
+      - 판정 로직(코드)
+      - 데이터 거버넌스
+    flags:
+      - 실데이터 예측력 근거 아님
+    key: decision_feature_contract허용목록8개
+  - source: deliverables/…EXPERIMENT.html 배너
+    status: internal
+    status_reason: "우리 저장소 산출물 — 확정수치카드: eps 150m은 7/13 합성 비교실험 당시 후보값(배너 참조)"
+    topics:
+      - eps 150m 이력 증빙
+    flags:
+      - eps 150m 현재 사용 금지 — 이력 증빙 용도만
+      - registry 초안 verified → internal로 정규화
+    key: deliverablesexperimenthtml배너
+  - source: engine.py — rolling 재군집 (커밋 4bdf119, 8/2 이식)
+    citation_full: engine.py rolling 재군집 (_rolling_hubs_by_month) — 커밋 4bdf119, 2026-08-02 정식 이식
+    status: internal
+    status_reason: "우리 코드 — 생활권_형성주기_이슈정리.md '재시뮬·엔진 정식 이식 완료(8/2, 커밋 4bdf119)'. 현행 실측 수치(우대 118/기본 56/보류 6·케어 30)가 전부 rolling 산출."
+    topics:
+      - rolling 형성 주기
+      - 엔진 구현
+      - 생활권 재형성
+    flags:
+      - 파일럿 안전장치 6종·절충 규칙은 계약 미포함 검토안 — 이 커밋의 근거 범위 아님
+    key: enginepyrolling재군집커밋4bdf11982이식
+  - source: "engine.py:1069-1070 — masil_rate 산식"
+    citation_full: "engine.py:1069-1070 — masil_rate = clip(korea_mileage + bonus − reduction, 0, 45)"
+    status: internal
+    status_reason: 우리 코드 — 안전운전자_매력도_정리.md 1절(근거 등급 ◎ 코드). 할증 항 부재·하한 0% = 기준 요율이 코드로 증명됨.
+    topics:
+      - 요율 산식
+      - 할증 부재
+      - 할인 상한
+    flags:
+      - 케어 감액 13%p는 샌드박스 예시값 — 최종 요율로 해석 금지
+    key: enginepy10691070masil_rate산식
+  - source: "engine.py:1187 — care_open = fires or (care_open and sustained)"
+    citation_full: "engine.py:1187 — 케어 해제 로직 (신청 불요, 지표 정상 복귀 월에 자동 해제)"
+    status: internal
+    status_reason: 우리 코드 — 안전운전자_매력도_정리.md 4절. 케어 해제 절차가 코드로 증명됨.
+    topics:
+      - 케어 해제 로직
+      - 케어 절차
+    key: enginepy1187care_openfiresorcare_openand
+  - source: eps 260 값(설계값)
+    status: internal
+    status_reason: 등급 ▽ 설계값 — 문헌 대역(200~300m) 기반 설계값이며 문헌이 직접 준 값 아님. 운영값은 실데이터 k-거리로 재도출 예정
+    topics:
+      - eps·DBSCAN
+      - 설계값
+    flags:
+      - 근거 대역인 Zheng/Montoliu 자체가 원문 미확인(팩트체크 1순위) 상태
+    key: eps260값설계값
+  - source: eps 등가·단일 eps 재판정 0건 차이
+    status: internal
+    status_reason: 우리 합성 실측 — 등급 ◎. 지역 eps vs 단일 260m에서 원 반경 동일·180건 판정 동일
+    citation_full: "상세: 근거자료/생활권반경_eps_정리.md"
+    topics:
+      - eps·DBSCAN
+      - 합성 데이터 검증
+    flags:
+      - 3단 eps 방향(도심 소·농촌 대) 검증은 아님
+      - rolling 재검증에서는 3/180 경계 사례(마스터답변안 4번) — 인용 시 기준 명시
+    key: eps등가단일eps재판정0건차이
+  - source: gaip_visit_events.csv 원장 스키마 + trip_visit_summary.one_visit_event_per_trip
+    citation_full: "gaip_visit_events.csv 원장 스키마 — 좌표 latitude/longitude 한 쌍, 출발점·경로 컬럼 부재, 트립:방문 = 1:1"
+    status: internal
+    status_reason: 우리 데이터 스키마 실물 — 생활권반경_eps_정리.md 1절(근거 등급 ◎ 원장 스키마). 지형이 판정에 개입할 통로가 없다는 주장의 근거.
+    topics:
+      - 원장 스키마
+      - 도착지 전용
+      - 위치 중립
+    flags:
+      - 경로 기반 익숙함 판정은 지원 안 함 — 경로 미수집, 로드맵 과제
+    key: gaip_visit_eventscsv원장스키마trip_visit_summ
+  - source: location_penalty 0.0 하드코딩
+    status: internal
+    status_reason: 우리 코드 실물 — 등급 ◎. 전 반환 경로에 location_penalty 0.0 하드코딩(위치 벌점 부재)
+    citation_full: src/gaip_simulation/engine.py (저장소 main e2d2e49)
+    topics:
+      - 판정 로직(코드)
+      - 위치 중립
+    key: location_penalty00하드코딩
+  - source: mobility_profiles.json 고정 커밋
+    status: internal
+    status_reason: 우리 저장소 커밋 실물 — 등급 ◎. 산출물 1회 생성 후 고정 커밋
+    citation_full: mobility_profiles.json (저장소 커밋)
+    topics:
+      - 합성 데이터 생성
+      - 재현성
+    key: mobility_profilesjson고정커밋
+  - source: privacy_filtered_features 구조
+    status: internal
+    status_reason: 우리 코드 실물 — 등급 ◎. 4개월 이후 파생값(존 중심·반경·비율)만으로 판정 성립
+    topics:
+      - 데이터 거버넌스
+    key: privacy_filtered_features구조
+  - source: scripts/resim_rolling.py (8/2 재시뮬)
+    status: internal
+    status_reason: "우리 저장소 스크립트 실측 — 확정수치카드: 고정 모드 재현 180/180 통과, rolling 집계 우대 118/기본 56/보류 6·케어 30"
+    topics:
+      - rolling 재시뮬
+      - 판정 집계
+    flags:
+      - registry 초안 verified → internal로 정규화(우리 실측·코드)
+    key: scriptsresim_rollingpy82재시뮬
+  - source: scripts/weight_sensitivity.py · notebooks/weight_sensitivity.ipynb
+    status: internal
+    status_reason: "우리 저장소 검증 실물 — 확정수치카드 '검증 실물'(Colab 실행 가능), 민감도 969 조합 전수"
+    topics:
+      - 가중치 민감도 검증
+    flags:
+      - registry 초안 verified → internal로 정규화(우리 실측·코드)
+    key: scriptsweight_sensitivitypynotebooksweig
+  - source: ② 유형 실측(안 15.8점·우대 0/30)
+    status: internal
+    status_reason: 우리 합성 실측 — 등급 ◎. 만성 위험행동형의 생활권 내 위험이 잡힘(안 안전점수 15.8, 우대 0/30, 케어 0/30)
+    topics:
+      - 합성 데이터 검증
+      - 페르소나
+    key: ②유형실측안158점우대030
+  - source: ③ 유형 오탐 대조군(191 케이스-월/케어 0)
+    status: internal
+    status_reason: 우리 합성 실측 — 등급 ◎. 이동 임계 초과 191 케이스-월(최대 73.9%p)에 케어 0건, 엔진 재실행 재현
+    topics:
+      - 케어 판정
+      - 합성 데이터 검증
+    flags:
+      - 오탐 방어의 실증은 아님(합성 데이터 — 확률 논리로만 주장)
+    key: ③유형오탐대조군191케이스월케어0
+  - source: 가중치 30/30/20/20 값(설계값)
+    status: internal
+    status_reason: "등급 ▽ 설계값 — 회랑(35:15 ↔ 25:25)의 중간인 사전 설계값임을 문서가 인정. 주장하는 것은 값이 아니라 순서"
+    topics:
+      - 요율·가중치
+      - 설계값
+    flags:
+      - 민감도 969 조합 실측(◎)과 짝지어 사용
+    key: 가중치30302020값설계값
+  - source: 개인별 원 갈림(813m vs 500m)
+    status: internal
+    status_reason: 우리 합성 실측 — 등급 ◎. 원 반경이 개인 P90에 따라 갈림
+    topics:
+      - 생활권 반경
+      - 합성 데이터 검증
+    key: 개인별원갈림813mvs500m
+  - source: "규칙 '서로 다른 3일'(코드)"
+    status: internal
+    status_reason: 우리 코드 실물 — 등급 ◎. 규칙 자체가 반복성 요구
+    citation_full: "src/gaip_simulation/clustering.py:78-80"
+    topics:
+      - 생활권 학습(3일 규칙)
+      - 판정 로직(코드)
+    key: 규칙서로다른3일코드
+  - source: 기준선_방문임계_근거.md 2-3
+    citation_full: 기준선_방문임계_근거.md 2-3절 — eps 260 근거 4겹(설계값 인정·문헌 대역·×2 축척 규칙·실측 과병합 0%/반복거점 누락 1.6~3.1%)
+    status: internal
+    status_reason: 우리 내부 근거 문서 — 생활권반경_eps_정리.md 5절이 참조 지정. 실측(과병합 0% 등)과 설계 논리를 담은 팀 산출물.
+    topics:
+      - eps 260 근거
+      - 방문 임계
+      - 과병합 실측
+    flags:
+      - 4겹 중 문헌 대역(Zheng/Montoliu)은 원문 미확인 상태 — 그 부분은 unverified 항목에 의존
+    key: 기준선_방문임계_근거md23
+  - source: 민감도 969 조합 전수
+    status: internal
+    status_reason: 우리 합성 실측 — 등급 ◎(2026-08-02 완료). ±5 이웃 중앙 3·최대 9건, 현행 30이 지배 축 최저점
+    citation_full: scripts/weight_sensitivity.py · notebooks/weight_sensitivity.ipynb
+    topics:
+      - 요율·가중치
+      - 합성 데이터 검증
+    key: 민감도969조합전수
+  - source: 밖축 제외 실측(56건/33건)
+    status: internal
+    status_reason: 우리 합성 실측 — 등급 ◎. 180건 중 56건 밖축 없이 판정, 그중 33건 우대(rolling)
+    topics:
+      - 합성 데이터 검증
+      - 판정 로직(코드)
+    flags:
+      - 합성 데이터 — 실주행 예측력 근거 아님
+    key: 밖축제외실측56건33건
+  - source: 발송 답변서 3종(통합·1차·현장, 7/30)
+    citation_full: 발송 답변서 3종 — 통합·1차·현장 (2026-07-30 발송)
+    status: internal
+    status_reason: "우리 팀이 발송한 내부 산출 문서. 브리핑 §7 — 당시 고정 기준 검증 결과(우대 56/60·114건)가 잔존하며 회수 불가, 원문 보존 + '수치 시점 고지' 배너로 처리."
+    topics:
+      - 발송 답변서
+      - 구수치 잔존
+      - 수치 시점 고지
+    flags:
+      - 현재 rolling 확정 수치(54/60·113)와 불일치 — 구 고정 기준 수치임을 반드시 고지
+      - "5번 '12개월 내내 고정되는 비교 기준값'은 케어 평소값 서술이라 rolling과 모순 없음"
+    key: 발송답변서3종통합1차현장730
+  - source: 발송 답변서(7/30) 5번
+    citation_full: "발송 답변서(2026-07-30) 5번 항목 — '이후 12개월 내내 고정되는 비교 기준값'"
+    status: internal
+    status_reason: 우리 발송 문서 — 생활권_형성주기_이슈정리.md 1절. 해당 문장은 케어 평소값(숫자) 서술이라 rolling 채택과 모순 없음.
+    topics:
+      - 발송 답변서
+      - 케어 기준선 고정
+      - rolling 정합
+    flags:
+      - 생활권 지도의 형성 주기는 공개 선언된 적 없음 — 이 문서를 형성 주기 근거로 쓰지 말 것
+    key: 발송답변서7305번
   - source: 부록 B (생활권 형성 과정)
-    what_it_supports: 형성 과정 서술 — 주기 중립(주기를 다루지 않음)이라 rolling 채택에도 수정 불요.
-    what_it_does_not_support: 형성 주기에 대한 어떤 입장.
-    status: verified
-    citation: 생활권_형성주기_이슈정리.md 3절 실무 가드레일
+    citation_full: 부록 B — 생활권 형성 과정 서술 (제출 덱 부록)
+    status: internal
+    status_reason: 우리 제출 문서 — 생활권_형성주기_이슈정리.md 3절 실무 가드레일. 형성 과정 서술이 주기 중립이라 rolling 채택에도 수정 불요.
+    topics:
+      - 생활권 형성 과정
+      - 주기 중립
+      - 제출 덱
+    flags:
+      - 형성 주기에 대한 입장 근거로 인용 금지 — 주기를 다루지 않음
+    key: 부록b생활권형성과정
+  - source: 산식_구조이슈_3건_검토.md 이슈 ①
+    citation_full: 산식_구조이슈_3건_검토.md 이슈 ① — 감액 발생 월수 비례 권고(13.0 × 발생월수 ÷ 12, 1개월 시 1.08%p)
+    status: internal
+    status_reason: 우리 내부 검토 문서 — 안전운전자_매력도_정리.md 6·9절 참조. 월수 비례 감액 권고의 상세 검토.
+    topics:
+      - 감액 월수 비례
+      - 케어 요율
+      - 권고안
+    flags:
+      - 도입 미확정 — 팀 결정 필요(미결)
+      - rolling 실측 케어 전원 1개월 발동이 이 권고의 실증 사례
+    key: 산식_구조이슈_3건_검토md이슈①
+  - source: 생성 체인 4단계 코드·픽스처
+    status: internal
+    status_reason: 우리 코드·픽스처 실물 — 등급 ◎. 사람 정의 → LLM 프로필 → 결정론 엔진 → TAAS 유형분해 체인
+    citation_full: mobility_profiles.json 등 저장소 픽스처
+    topics:
+      - 합성 데이터 생성
+    key: 생성체인4단계코드픽스처
+  - source: 시드 고정 재현성
+    status: internal
+    status_reason: 우리 코드 실물 — 등급 ◎. sha256(전역시드|driver_id|month) 결정론 시드
+    citation_full: src/gaip_simulation/engine.py (_stable_seed)
+    topics:
+      - 합성 데이터 생성
+      - 재현성
+    key: 시드고정재현성
+  - source: 실험 A(전국 단일 eps 260m 재판정) · 실험 B(60명 × 3지형 판정)
+    citation_full: 실험 A — 전국 단일 eps 260m 재판정(180 시나리오 고정 기준 0건 변화, rolling 재검증 경계 3건) · 실험 B — 60명 × 3지형 판정(케어 60/60 · 우대 54/60)
+    status: internal
+    status_reason: 우리 실측 — 생활권반경_eps_정리.md 4절 + 8절 발표 답변. 지역이 판정을 바꾸지 않는다는 공정성 증거.
+    topics:
+      - eps 공정성 실측
+      - 지역 중립
+      - 3지형 판정
+    flags:
+      - A와 B는 별개 실험 — 섞어 인용 금지
+      - "'0건' 단독 인용 금지 — '고정 기준' 단서 필수(rolling 재검증 3/180 경계 사례 병기)"
+      - 3단 eps 방향(도심 작음)의 타당성 근거 아님
+    key: 실험a전국단일eps260m재판정실험b60명3지형판정
+  - source: 실험실 채점표
+    status: internal
+    status_reason: 우리 합성 실측 — 등급 ◎. 과병합 0%, 누락 1.6/2.4/3.1%, 커버리지 90.9/90.5/85.9%
+    citation_full: data/fixtures/gaip_algorithm_lab.json
+    topics:
+      - eps·DBSCAN
+      - 합성 데이터 검증
+    flags:
+      - 실험실은 군집 지표까지만 측정 — 판정 재실행 미포함(문서 자체 명시)
+    key: 실험실채점표
+  - source: 심도 항 부재(코드)
+    status: internal
+    status_reason: 우리 코드 실물 — 등급 ◎. weights 4개·allowed_inputs 8개에 심도 없음
+    topics:
+      - 판정 로직(코드)
+      - 요율·가중치
+    key: 심도항부재코드
+  - source: 오버레이 구조(코드)
+    status: internal
+    status_reason: 우리 코드 실물 — 등급 ◎. 할인 자격 점수 배분(요율 아님), 할증 경로 0·하한 = 기준 요율
+    topics:
+      - 요율·가중치
+      - 판정 로직(코드)
+    key: 오버레이구조코드
+  - source: 오탐 대조군 실측 — 이동변화·안전유지형 10명 × 3환경 = 30 시나리오
+    citation_full: 오탐 대조군 실측 — ③ 유형 10명 × 3환경 = 30 시나리오. 이동변화지수 임계 초과 191/360 케이스-월에도 위험행동 변화지수 전건 0·케어 발동 0건
+    status: internal
+    status_reason: 우리 실측 — 안전운전자_매력도_정리.md 3절. AND 게이트가 이동 단독 변화에 열리지 않음을 실측으로 확인.
+    topics:
+      - 오탐 대조군
+      - AND 게이트 검증
+      - 페르소나 ③
+    flags:
+      - 합성 데이터 기반 — 일반적 오탐률 0의 보장 아님
+    key: 오탐대조군실측이동변화안전유지형10명3환경30시나리오
+  - source: 요율 샌드박스 (source_status = illustrative_economics_sandbox_not_final_tariff)
+    citation_full: 요율 샌드박스 — source_status = illustrative_economics_sandbox_not_final_tariff
+    status: internal
+    status_reason: 우리 내부 산출물의 지위 표시 — 안전운전자_매력도_정리.md 4절. 감액 13%p는 손익 예시값이라는 상태 라벨.
+    topics:
+      - 요율 예시값
+      - 13%p 지위
+      - 손익 샌드박스
+    flags:
+      - 13%p를 최종 요율·확정 감액으로 인용 금지
+    key: 요율샌드박스source_statusillustrative_economic
+  - source: 우리 저장소 실측 — gaip_simulation_bundle.json · engine.py
+    status: internal
+    status_reason: 우리 저장소 실측 — 출처부록 8장 등급 ◎ (저장소 실측). 할증 경로 부재(180건 전건 candidate_surcharge_rate_pct=0)·가중치 30/30/20/20·케어 임계 AND·location_penalty 0.0
+    topics:
+      - 판정 엔진
+      - 요율 실측
+      - 내부 산출
+    key: 우리저장소실측gaip_simulation_bundlejsonenginep
+  - source: 원장 구조(도착지만 봄)
+    status: internal
+    status_reason: 우리 코드 실물 — 등급 ◎. 원장 좌표 1쌍·출발점 컬럼 부재·one_visit_event_per_trip
+    citation_full: data/fixtures/gaip_visit_events.csv · engine.py
+    topics:
+      - 데이터 거버넌스
+      - 판정 로직(코드)
+    key: 원장구조도착지만봄
+  - source: 재시도 구조(코드)
+    status: internal
+    status_reason: "우리 코드 실물 — 등급 ◎. 재시도 조건은 JSON 구조 계약 위반뿐(최대 3회) — '루프' 불가능 구조"
+    topics:
+      - 판정 로직(코드)
+      - LLM 파이프라인
+    key: 재시도구조코드
+  - source: 재현 코드(독립 재현)
+    citation_full: 독립 재현 코드 — 고정 모드 180/180 일치, rolling 판정 변화 우대 4건·케어 0건, 엔진 이식 후 번들 재생성 180/180 일치
+    status: internal
+    status_reason: 우리 실측·코드 — 브리핑 §1 검증 항목. 통제 실험(고정 모드 재현) 후 rolling 실행, 엔진 정식 이식 후 번들 재생성까지 독립 재현으로 확인.
+    topics:
+      - rolling 재검증
+      - 재현성
+      - 엔진 이식
+    key: 재현코드독립재현
+  - source: 저장소 main e2d2e49
+    citation_full: 저장소 main 커밋 e2d2e49 — 코드=데모=확정수치카드=문서 동일성
+    status: internal
+    status_reason: "우리 코드 저장소 커밋(내부 실물). 브리핑 §8: main e2d2e49 = 공개 데모(foursure.summit1123.co.kr) = 확정수치카드 = 문서 전체, 외부 접속으로 판정 113·rolling 문구 확인 완료."
+    topics:
+      - 배포 상태
+      - 재현성
+      - 검증 실물
+    flags:
+      - 데모 도메인 foursure.summit1123.co.kr 언급은 있으나 sources/ 내 마크다운 링크는 없음
+    key: 저장소maine2d2e49
+  - source: 저장소 레거시 체인 산출물 (data/fixtures/candidate_rules.json · rule_review.json · simulation_summary.json)
+    status: internal
+    status_reason: 우리 저장소 픽스처 실물 — 생성(candidate_rules)→크리틱(rule_review)→승인(simulation_summary) 3단 체인 산출물. 근거지도 등급 ◎(코드·데이터 실물)
+    topics:
+      - AI 에이전트 체인 증적
+      - 내부 산출물
+    flags:
+      - "'루프' 표현 금지 — 단방향 체인이며 현행 판정의 결정자가 아님"
+    key: 저장소레거시체인산출물datafixturescandidate_rulesjs
+  - source: 커밋 4bdf119 (8/2 엔진 정식 이식)
+    status: internal
+    status_reason: "우리 저장소 커밋 — 확정수치카드: 엔진 정식 이식 완료, 번들·대시보드 rolling 산출, 재계산 잔여 없음"
+    topics:
+      - rolling 엔진 이식
+    flags:
+      - registry 초안 verified → internal로 정규화(우리 실측·코드)
+    key: 커밋4bdf11982엔진정식이식
+  - source: 케어 발동 30/30·rolling 케어 월수 전원 1개월
+    status: internal
+    status_reason: 우리 합성 실측 — 등급 ◎. 급변 달 정확 발동 30/30, rolling 케어 월수 전원 1개월
+    topics:
+      - 케어 판정
+      - 합성 데이터 검증
+    key: 케어발동3030rolling케어월수전원1개월
+  - source: "코드·데이터 실물 — src/gaip_simulation/engine.py (1069-1070 pricing_sandbox, 150-198 캡, 1180-1182 감지식, 1187 해제, 38 BASELINE_MONTHS, 564 home_dx_m/dy_m, _rolling_hubs_by_month, _stable_seed), clustering.py:237, src/gaip_server_policy.ts sanitizeGaipBundleForUi, data/fixtures/gaip_visit_events.csv, mobility_profiles.json, rule_review.json"
+    status: internal
+    status_reason: 우리 저장소 코드·픽스처 실물 — 근거지도 등급 ◎(코드·데이터 실물, 재현 확인)
+    topics:
+      - 할증 경로 부재
+      - AND 감지식
+      - 프라이버시 허용목록 DTO
+      - 판정 로직 구조
+    flags:
+      - registry 초안 verified → internal로 정규화(우리 실측·코드)
+      - 실주행 데이터 기반 검증 아님 — 합성 시나리오
+    key: 코드데이터실물srcgaip_simulationenginepy1069107
+  - source: 파라미터 절대값(설계값)
+    status: internal
+    status_reason: 등급 ▽ 설계값 — 우리 설계 파라미터(월 방문 13~42회, 위험률 3%/72%). 절대값 근거 없음을 문서가 먼저 인정, 파일럿 실주행 경험분포로 대체 예정
+    topics:
+      - 합성 데이터 생성
+      - 설계값
+    flags:
+      - 절대값의 실증적 타당성 주장 금지 — 방향성만 문헌 앵커
+    key: 파라미터절대값설계값
+  - source: 푸아송 오류율 계산
+    status: internal
+    status_reason: 우리 자체 계산 — 등급 ◎(재계산 가능). 2일=오인 26%, 3일=8%, 4일=진짜 거점 절반 누락
+    topics:
+      - 생활권 학습(3일 규칙)
+    key: 푸아송오류율계산
+  - source: 학습 창 파라미터 분리(코드)
+    status: internal
+    status_reason: 우리 코드 실물 — 등급 ◎. 학습 창이 파라미터로 분리(확장은 파라미터 문제)
+    citation_full: src/gaip_simulation/engine.py (38 BASELINE_MONTHS)
+    topics:
+      - 확장성(연령)
+      - 판정 로직(코드)
+    key: 학습창파라미터분리코드
+  - source: 확정수치카드(8/2)
+    citation_full: 확정 수치 카드 — 장표·문서의 유일한 숫자 기준 (2026-08-02 기준, rolling 확정)
+    status: internal
+    status_reason: "팀 내부 수치 정본 문서(sources/00_확정수치카드.md). 브리핑 meta가 '모든 수치는 확정수치카드(8/2) 기준'으로 지정 — 외부 출처가 아니라 우리 산출물의 단일 기준."
+    topics:
+      - 확정 수치 기준
+      - 연간 판정
+      - 요율
+      - 민감도
+    flags:
+      - 다른 문서와 숫자가 다르면 이 카드가 우선
+      - 발송 답변서(7/30)의 구 고정 기준 수치는 이 카드가 대체
+    key: 확정수치카드82
