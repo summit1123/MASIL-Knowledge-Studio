@@ -20,6 +20,12 @@
 - **구수치 오염 0**: 자동 스캔 경고 9건은 전수 확인 결과 모두 정당한 맥락 — "구: 56/60" 같은 이력 표기, 금지 목록 안의 금지 표현 자체, 레거시 격자 "랭킹 114건"(요율 114건과 무관)
 - **'확인 필요' 플래그 32건**: 대부분 기존 팩트체크 미결 목록과 일치 (Zheng/Montoliu, MDPI 12278, 일본 ~3,500km, 2023 노인실태조사 등) — 출처부록의 미확인 등급이 그대로 이관된 것. `grep "확인 필요"` 로 전체 조회 가능
 
+## 저장 구조 — 2층 (8/4 보강)
+
+- **`sources/`** — 승인 원문 11종 전문 사본. AI에 knowledge/와 **함께** 넣어야 함(색인만 넣으면 답이 얕아짐)
+- **`knowledge/`** — 색인·규칙층. positions는 스탠스 + `detail_ko`(무엇을·왜·어떻게) + `source`(원문 앵커)
+- 얇았던 포지션 11건(케어 월수 비례·k-거리 실측 절차 등)에 detail_ko·source 보강 완료
+
 ## 검토 우선순위 (권장 순서)
 
 1. **`official_positions.yaml`** — 이게 시스템의 심장. 특히 `claim_type` 분류(team_decision vs simulation_result vs external_fact)가 맞는지. 잘못 분류되면 AI가 팀 결정을 외부 사실처럼 말함
@@ -30,8 +36,8 @@
 
 ## 검토 전 결정 필요 (미결 2건)
 
-1. **"MASIL Zone" 공식화 여부** — glossary에 후보로 들어 있으나, 현 대시보드·덱 EN은 전부 "living zone". 공식화하면 대시보드 EN 스윕 필요(내가 함). 결정 전까지 glossary에 `pending` 표시해 둠
-2. **이 레포가 아직 public** — 여기 내용물이 사실상 Q&A 전략 전체라 private 전환 후 푸시 권장:
+1. ~~"MASIL Zone" 공식화~~ — **확정(8/4)**: 공식 영어 MASIL Zone, 대시보드 EN 49곳 스윕 완료. 잔여: — glossary에 후보로 들어 있으나, 현 대시보드·덱 EN은 전부 "living zone". 공식화하면 대시보드 EN 스윕 필요(내가 함). 결정 전까지 glossary에 `pending` 표시해 둠
+2. ~~레포 public~~ — **private 전환 완료(8/4)**. (구) — 여기 내용물이 사실상 Q&A 전략 전체라 private 전환 후 푸시 권장:
    ```
    gh repo edit summit1123/MASIL-Knowledge-Studio --visibility private --accept-visibility-change-consequences
    ```
