@@ -1,0 +1,404 @@
+# 소스: seniorcareservice/final (승인 세트) · 수치 정본: 확정수치카드 @ e2d2e49 (2026-08-02 rolling)
+# 생성: 2026-08-04 자동 추출 + 카드 대조 — 사람 검토 전 DRAFT
+# 확정(2026-08-04 팀 결정): 생활권 공식 영어 = MASIL Zone · 금지: Living Zone/Home Zone/routine zone — 대시보드 EN 스윕 완료
+
+terms:
+  - korean: eTAS (운행기록분석시스템)
+    plain_english: KOTSA digital tachograph analysis system
+    notes: "한국교통안전공단. 위험운전행동 '정의'의 표준. 실재 명칭 — 이전 카드의 '없는 명칭' 표기는 오류로 정정됨. 써머리 표기 유지"
+    banned_variants:
+      - eTAS는 없는 명칭
+  - korean: TAAS (교통사고분석시스템)
+    plain_english: KoROAD Traffic Accident Analysis System
+    notes: "도로교통공단. 위험운전 유형 '구성비' 유도 — 표시 전용, 판정 미진입"
+  - korean: DBSCAN
+    notes: 생활권 클러스터링 채택 알고리즘. 성능 대등 시 설명 가능한 쪽 우선
+  - korean: HDBSCAN
+    notes: challenger — 실데이터 재비교 대상
+  - korean: 갱신형(rolling)
+    official_english: rolling
+    notes: 8/2 채택. 실물 근거 필드명 rolling_60_day_dbscan_p90
+    banned_variants:
+      - 가입 시 1회
+      - 첫 2개월 고정
+    plain_english: 매달 직전 2개월(60일) 기록으로 생활권을 재형성, 해당 월 제외, 군집 실패 시 직전 지도 폴백
+  - korean: 거점 조건
+    notes: "'서로 다른 3일 이상 방문'으로 표현 — min_pts 표기 지양"
+    banned_variants:
+      - min_pts
+  - korean: 케어
+    notes: 요율 영향은 보너스 정지 + 그해 할인 13%p 축소, 하한 0%라 할증 불가. 연간은 ANY(한 달이라도)
+    official_english: care_review
+    plain_english: "이동(≥0.25)과 위험행동(≥0.20)이 동시에 급변할 때 열리는 점검 상태 — 2단계 규칙(감지: 직전 2개월 대비 / 유지·해제: 학습 기준선 대비, 미달 달 자동 해제)"
+    banned_variants:
+      - 케어 5~7개월 지속
+      - 케어는 5개월 이상 지속
+  - korean: 우대 / 기본 / 보류
+    notes: 화면 4상태는 113 / 31 / 30 / 6 (우대∩케어 5명).
+    banned_variants:
+      - 120 / 54 / 6 (구수치)
+    plain_english: "연간 판정 3분류 (확정: 118 / 56 / 6)"
+  - korean: LongROAD 0.35g 앵커
+    notes: 합성 위험운전 빈도의 앵커
+  - korean: Candrive
+    notes: "Marshall et al. 2023, J Gerontol A 78(12). '최대 5배' 표기, CMT 교체 지시 폐기"
+    banned_variants:
+      - 동일 연령대 3배
+      - CANDRIVE→CMT 교체
+  - korean: DRIVES
+    notes: "'진단 이전'으로 표기 ('사고 이전' 아님)"
+    banned_variants:
+      - 사고 이전
+  - korean: Nemotron
+    notes: 데이터셋 사용 아님 — 방법론을 따라 자체 정의
+  - korean: 60 Drivers / 180 Scenarios
+    official_english: 60 Drivers, 180 Scenarios
+    notes: 병기 가능 표기 (60명 × 3환경 = 180 시나리오)
+  - korean: 합성 시나리오
+    official_english: synthetic scenarios
+    plain_english: 사전 정의 파라미터 기반으로 생성한 가상 주행 시나리오(6유형 60명 × 3환경 = 180 × 14개월)
+    banned_variants:
+      - data(단독)
+      - 실주행 데이터
+      - 실제 드라이빙 로그 기반
+      - data
+    notes: 검증 대상은 예측력이 아니라 판정 로직 일관성
+  - korean: 케어 (care_review)
+    plain_english: "직전 2개월 평균 대비 이동 +25%p AND 위험행동 +20%p 동시 급변 시 열리는 '사람 검토' 상태 — 자동 요율이 아니라 점검 권유"
+    banned_variants:
+      - 할증
+      - 벌점
+    notes: 해제는 신청 없이 지표 정상 복귀 그 달에(care_open = fires or (care_open and sustained))
+  - korean: 우대
+    plain_english: integrated_score ≥ 75인 달이 reward, 연간은 reward 월 ≥ 9개월
+    notes: 보너스 = 1.0 + clip((score−75)/25,0,1)×6.0 (1.0~7.0%p), 우대 & 케어 아님 조건
+    official_english: reward
+  - korean: 생활권 (Safe Zone)
+    plain_english: 반복 방문이 만들어낸 군집들의 집합 — 판정의 기준선이지 벌점의 경계선이 아님
+    banned_variants:
+      - 안전지대(밖=위험 함의)
+    notes: "매달 직전 2개월 창으로 재군집(zone_refresh_policy: rolling_2m)"
+  - korean: eps
+    plain_english: 생활권 군집의 축척 파라미터 — 채택 기준값 260m 단일
+    notes: 설계값임을 인정(Zheng 200m·Montoliu 200~300m 대역의 중간값). 판정 경계가 아님 — 최종 반경은 max(500m, min(개인 P90, 2km)). 운영값은 파일럿 k-거리 실측으로 재도출.
+    banned_variants:
+      - eps 150m
+      - 지역별 차등 eps
+      - 지역별 차등 반경(성과 표현)
+      - Safe Zone 판정 반경
+    official_english: eps
+  - korean: 생활권 원
+    plain_english: 도착지 안/밖을 판정하는 경계 = max(코어 500m, min(개인 P90, 2km))
+    notes: "실측: 도심·교외 500m, 광역 813m — P90이 지역 차이를 흡수"
+  - korean: P90
+    plain_english: Radius containing 90% of visits to that anchor
+    notes: 개인 실측(사람×거점마다 다름). 장날 한 번의 원거리 주차에 원이 4배 커지지 않게 하는 장치.
+    banned_variants:
+      - 최댓값 반경
+      - 평균 반경
+    official_english: 90th percentile visit distance
+  - korean: AND 게이트
+    plain_english: 이동 축(밖 비중 −직전 2개월 평균 ≥ 25%p)과 위험행동 축(≥ 20%p)이 동시에 넘어야 케어 신호 발동
+    notes: 명절·병원·여행은 이동 축만 건드려 열리지 않음. rolling 전환 후 이동 다리의 이벤트 기반 재정의가 파일럿 숙제
+  - korean: 오버레이 (할인 자격 점수)
+    plain_english: 기존 마일리지 할인 위에 얹히는 할인 자격 점수 — 요율표가 아니며 할증 경로가 구조상 없음(하한 0% = 기준 요율)
+    banned_variants:
+      - 요율표
+      - 할증 상품
+    notes: masil = korea_mileage + bonus − reduction, max(0, min(45, ·))
+  - korean: 기준선 (베이스라인) 2개월
+    plain_english: "생활권 학습 관찰 기간(engine.py:38 BASELINE_MONTHS). 기준선 월의 판정 결과는 BASELINE_OBSERVATION으로 불이익 없음"
+    notes: 1/2/3개월 민감도 실측은 미실행 백로그
+  - korean: 서로 다른 3일
+    official_english: distinct days (>= 3)
+    plain_english: 거점(제2거점) 인정 문턱 — 관찰 창(2개월)의 5%. 하루 중복 방문은 1일로 계수
+    banned_variants:
+      - 3일 고정
+    notes: "clustering.py:237 distinct_day_count >= 3; Isaacman 2011과 창·단위·임계 일치"
+  - korean: 재정규화 (observed_weight)
+    plain_english: "미관측 축(예: 밖에 안 나간 달의 밖 축)을 채점에서 제외하고 남은 가중치로 재분배 — 네 축(거리 30/안 30/밖 20/변화 20) 모두 같은 규칙"
+    notes: "outer_zone_policy: context_only_no_location_penalty"
+  - korean: 보류 (sparse)
+    plain_english: "커버리지 80% 미만인 달은 우대·케어 모두 판정 보류(min_data_coverage_pct: 80.0) — 결측이 불이익이 되지 않음"
+    notes: sparse 6건 전건 변동 0(41.0%→41.0%)
+  - korean: 존 단위 (도착지 귀속)
+    plain_english: "한 트립은 도착지가 속한 존 하나에 통째로 귀속, 부분 점수 없음 — '20km 중 10km 익숙' 문제가 구조적으로 발생하지 않음"
+    notes: 경로 미수집은 최소수집 거버넌스 설계
+  - korean: 합성 데이터
+    official_english: synthetic scenarios
+    plain_english: 사전 정의 6유형 파라미터로 생성한 시뮬레이션 데이터(60명 로스터 × 3환경 = 180 시나리오 · 14개월)
+    banned_variants:
+      - 실제 드라이빙 로그 기반 30명
+    notes: 답변 시 반드시 선제 정정과 함께 사용
+  - korean: 멀티 에이전트 파이프라인
+    official_english: multi-agent pipeline (생성→검토→승인 체인)
+    plain_english: 후보 규칙 생성 → 크리틱 검토 → 승인 게이트의 단방향 3단 체인 (레거시 설계 단계)
+    banned_variants:
+      - multi-agent loop
+      - 루프
+      - Agent–Validator Loop
+    notes: "대안 표기: agent-assisted design process. 덱 교체 확정, 반영 진행 중"
+  - korean: 생활권
+    plain_english: Union of anchor-point circles derived from driving arrival points
+    banned_variants:
+      - 생활권 밖이 위험하다
+      - 가입 시 1회 형성되는 생활권
+    notes: "형성 흐름 한 줄: 점 묶기(260m·3일) → 거점 확정 → 원 씌우기(max(500, min(P90, 2km))) → 원들의 합집합 = 생활권. 매달 직전 2개월 rolling 갱신. 공식 영문 표기는 문서에 없음(확인 필요)."
+  - korean: 판정 보류
+    official_english: MASIL Zone
+    plain_english: zone_available=False 또는 data_coverage_pct<80이면 판정하지 않음; 연간은 유효 달 9개월 미만이면 hold
+    notes: 부족한 데이터로 고객에게 불리한 추정을 하지 않는 소비자 보호 방향
+  - korean: 오버레이
+    plain_english: 기존 마일리지 할인율(korea_rate)을 base로 그 위에서만 움직이는 할인 자격 점수 — 요율을 만들지 않음
+    notes: 할증 항목 없음(candidate_surcharge_rate_pct 0.0), 하한 0·상한 45%, tariff_status = illustrative_economics_sandbox_not_final_tariff
+  - korean: 표시 전용 유형 분해
+    official_english: type_breakdown_display_only_decisions_unaffected
+    plain_english: "TAAS 유도 가중치로 위험 이벤트 '수'를 급제동·과속·야간 유형으로 나눠 리포트에 보여주는 것 — 판정 불변"
+    notes: 코드에 역할 문자열로 선언·테스트 고정, 가중치 교체 후 180건 판정 diff 0
+  - korean: 이사형 (이동변화·안전유지형)
+    plain_english: 이동만 급변하고 안전은 그대로인 페르소나 유형 ③ — 케어가 나오면 안 되는 오탐 대조군 30건
+    notes: 실측 오탐 0 — 순환논증 절단의 핵심 증거
+  - korean: 신뢰도 원리
+    official_english: credibility
+    plain_english: 관측 많고 교란 적은 채널에 큰 가중을 주는 계리 원리 — 안 30 > 밖 20의 근거
+    banned_variants:
+      - 뷜만 신뢰도를 적용했다
+    notes: Z=n/(n+k) 수치 추정 안 함. 연속 z 대신 관측/미관측 0/1 두 단의 보수적 근사
+  - korean: 재정규화
+    official_english: PARTIAL_SCORE_COMPONENTS_RENORMALIZED
+    plain_english: 미관측 축을 분모에서 제외하고 나머지 가중치로 점수를 다시 나누는 것
+    notes: 밖 주행 0인 달은 out_zone_safe_score=None → 나머지 80 가중치로 재정규화
+  - korean: 위치 중립
+    official_english: "outer_zone_policy: context_only_no_location_penalty"
+    plain_english: 위치(안/밖·거주지)에 벌점 경로가 없음 — location_penalty = 0.0 상수
+    banned_variants:
+      - 완전 지역 중립
+    notes: 중립성은 목적이 아니라 부수 효과 — 우대 54/60의 문턱 효과는 인정하고 설명
+  - korean: 서로 다른 3일 규칙
+    official_english: unique-days threshold (≥3)
+    plain_english: A place counts only if visited on 3 or more distinct days
+    banned_variants:
+      - 점 개수 min_samples 기준
+    notes: 표준 DBSCAN의 min_samples(점 개수)를 방문일 수로 치환. Isaacman 2011의 60일 관찰 5% = 3일과 동일 기준.
+  - korean: k-거리 그래프
+    official_english: k-distance graph
+    plain_english: DBSCAN 원논문의 표준 휴리스틱 — 실데이터에서 지역별 eps를 데이터로부터 재도출(무릎점 선택)하는 로드맵
+    notes: 이 시점부터 지역 분류 판단이 산포 측정으로 치환, 지역 티어는 콜드스타트 초기값만
+  - korean: DEGURBA
+    official_english: Degree of Urbanisation
+    plain_english: UN 표준 도시화 분류 — 인구밀도 1,500/300명·km² 임계로 도시·교외·농촌 구분
+    notes: "운영 전환 시 채택 결정, 3환경과 1:1 매핑. 현 시뮬레이션은 시나리오가 환경을 지정"
+  - korean: ◎ (원문 확인)
+    plain_english: full-text verified
+    notes: 원문(전문 또는 해당 표·절)을 직접 열어 수치를 확인함 — 자유롭게 인용. 현재 38건
+  - korean: △ (초록만 확인)
+    plain_english: abstract-only verified
+    notes: "초록·요약만 확인, 본문 미열람(페이월 등) — 인용 가능하되 \"초록 기준\" 명시. 현재 7건"
+  - korean: ⚠ (팩트체크 필요)
+    plain_english: unverified — fact-check required
+    notes: "서지는 있으나 원문에서 수치 미확인 — 발표 인용 금지, 원문 확보 후 승급. '없는 것'으로 취급. 현재 13건"
+  - korean: ✕ (인용 금지)
+    plain_english: banned
+    notes: 확인 결과 오류이거나 우리 논지와 반대 — 인용 금지. 현재 12건, 발표 직전 재확인(9장)
+  - korean: 트립
+    official_english: trip
+    notes: "트립 ≠ 방문지 — \"집→마트→집\"은 트립 2회, 방문지 1곳. 우리 값은 도착지 기준이므로 '고유 목적지'와 비교"
+    banned_variants:
+      - 트립 수를 방문지 수로 표현
+  - korean: 고유 목적지
+    official_english: unique destinations
+    notes: "월 단위 실증 분포: Roe 2019 39.4~44.4/월, Bayat 2021 34.8~38.2/월"
+  - korean: 목적통행
+    plain_english: purpose trip (국내 통행 통계 단위)
+    notes: "65세+ 목적통행의 48%가 '귀가' → 방문지 ≈ 통행 × 0.52로 환산"
+  - korean: 사고 연루
+    official_english: crash involvement
+    banned_variants:
+      - 과실
+    notes: Ehsani & Tefft의 2.5배는 사고 유발 오즈비를 연루 오즈비로 변환한 값(p.47)
+  - korean: 야간 (태양고도 정의)
+    plain_english: night = solar elevation beyond 96° for 80%+ of trip
+    notes: "주간 0~89°, 시민박명 90~96°, 야간 96° 초과(Molnar 2018). 이 정의로 6.7%, '일몰 이후 출발' 정의로는 54.5% — 정의를 빼면 7배 어긋남"
+    banned_variants:
+      - 정의 없는 야간 비중
+  - korean: call-days
+    notes: "Isaacman 2011의 계수 단위 — 총 횟수가 아니라 서로 다른 날 수로 계수. \"5% of total days\" = Days>2(서로 다른 3일)"
+  - korean: quasi-induced exposure
+    notes: Ehsani & Tefft 친숙도 분석이 전통적 대조군 없이 가정하는 노출 추정 방법(저자 명시) — 대조군이 있는 거리 분석과 섞어 말하지 말 것
+  - korean: eps (ε) 260m
+    notes: DBSCAN 반경 파라미터 설계값. 유일한 문헌 근거(Zheng 2009 200m · Montoliu 2013 200~300m)가 ⚠ 미확인 — 팩트체크 우선순위 1위. 확인 필요
+  - korean: risky_events_per_100_km
+    notes: "급제동 비교용 환산 단위 — '위험 트립 비율'로 보고한 고령자 문헌은 부재 확인, 문헌 비교 시 이 단위로 환산"
+  - korean: 근거 등급 기호(◎/○/△/▽/✕)
+    plain_english: evidence grading symbols
+    notes: "◎=코드·데이터 실물(재현 확인, 제일 강함) / ○=문헌(원문 링크 확보) / △=문헌(약칭만, 인용 전 확인 필요) / ▽=설계값(근거 없음을 인정) / ✕=공백(없습니다+로드맵으로 답변). 핵심 원칙: ◎·○로만 공격을 막고, ▽는 먼저 인정하고, △는 발표에서 쓰지 않는다"
+  - korean: 생성 → 검토 → 승인 파이프라인
+    plain_english: generate-review-approve pipeline
+    banned_variants:
+      - 루프
+    notes: 재시도는 JSON 구조 계약 위반 시에만 최대 3회, 판정 결과는 재시도 입력이 아님
+  - korean: 생활권 원(Safe Zone)
+    official_english: Safe Zone
+    notes: 개인 실측 P90 기반 — 하한 500m·상한 2km. 반경 기준이 아니라 개인 방문 분포가 크기를 정해 지역 차이를 자동 흡수
+  - korean: eps(거점 인식 눈금)
+    plain_english: DBSCAN epsilon
+    notes: 기준거리 260m(문헌 대역 200~300m의 중간, 설계값). 지역 3단 260/520/1,100m 설정이 있었으나 단일 eps 재판정 0건 차이로 판정에 무영향 — 운영값은 실데이터 k-거리로 재도출
+  - korean: 케이스-월
+    plain_english: One customer-scenario in one month (unit of judgment)
+    notes: "예: '이동 임계 초과 191 케이스-월, 케어 0건'."
+    official_english: case-month
+  - korean: 설계값
+    plain_english: design value
+    notes: "근거가 없음을 우리가 인정하는 값(▽) — 방어법은 '값이 아니라 순서·절차를 주장'. 해당: 가중치 30/30/20/20, eps 260, 합성 파라미터 절대값, 3단 eps 방향, 10명 균등 배분"
+  - korean: TAAS 유형분해
+    notes: 합성 생성 4단계의 마지막 — 가중치는 표시 전용(교체 후 180건 판정 diff 0)
+  - korean: rolling(갱신형)
+    official_english: rolling
+    plain_english: 매달 직전 2개월 데이터로 생활권 지도를 다시 만드는 방식
+    banned_variants:
+      - 고정(가입 첫 2개월 1회 형성)
+    notes: 원안(국내) 방식의 복원. 엔진 함수명 _rolling_hubs_by_month.
+  - korean: 케어 분리
+    plain_english: 생활권 지도는 매달 갱신하되 케어의 평소값·해제 기준은 가입 초기 기준선에 고정하는 설계
+    notes: 8/2 회의 결정. 감지가 무뎌지지 않게 하는 장치.
+  - korean: 명멸
+    plain_english: 생활권 지도가 월별로 생겼다 사라지며 흔들리는 현상
+    notes: 실측 85/2,160 드라이버-월(3.9%), 폴백 0. 무벌점·동일 잣대라 판정 불이익 없음. 지속성 보강은 파일럿 항목.
+  - korean: 폴백
+    plain_english: 군집 실패 시 직전 지도를 유지하는 안전장치
+    notes: rolling 실측에서 발생 0.
+  - korean: 3지형
+    plain_english: 세 가지 지역 유형에서의 판정 일치 검증 축 (케어 60/60 · 우대 54/60)
+    banned_variants:
+      - 3지형 우대 56/60 (구수치)
+    notes: 지형 구성 정의는 이 문서에 없음 — 확인 필요. 광역 저밀도가 그중 하나로 언급됨.
+  - korean: 광역안전형
+    plain_english: 페르소나 유형 — 3지형 갈림 6명 중 케어와 무관한 1명이 속한 유형
+    notes: 광역 저밀도에서 통합점수 72~82점(문턱 75점 근처), 우대 월수 8/12로 9개월 기준 1개월 미달 — 벌점이 아니라 문턱 효과.
+  - korean: 판정 입력 허용목록
+    official_english: decision_feature_contract
+    plain_english: 판정 엔진에 들어갈 수 있는 입력의 화이트리스트 — 유형·시나리오 라벨 미포함
+    notes: 라벨 유출 차단을 코드로 강제. 좌표 화면 미노출도 허용목록 DTO로.
+  - korean: 케어 월수 비례 감액
+    plain_english: "감액을 케어 지속 월수에 비례시키는 규칙: 13.0×월수÷12"
+    notes: 팀 권고안(미채택) — 8/3 회의에서 채택 여부 결정. 선언 파라미터라 즉시 재계산.
+  - korean: k-거리 실측
+    plain_english: "파일럿에서 eps 운영값을 재도출하는 방법: k=2, 다른 날 2번째 이웃 거리, 지역 풀링"
+    notes: 4~6개월차 1회 → 이후 연 1회.
+  - korean: 확정수치카드
+    plain_english: 8/2 확정된 모든 공식 수치의 단일 출처 카드
+    notes: 덱 숫자 갱신은 카드에서 복사.
+  - korean: 거점 (Core)
+    official_english: Core
+    plain_english: A cluster qualifying as a frequently-visited place
+    notes: Core_MASIL(p) ⇔ unique_days(N₂₆₀(p)) ≥ 3. 서로 다른 방문일 3일 이상일 때만 인정, 같은 날 재방문은 1일.
+  - korean: ε (eps) = 260m
+    official_english: epsilon (DBSCAN neighborhood radius)
+    plain_english: How close points must be to count as the same place (detection only)
+    banned_variants:
+      - 원 크기 파라미터로서의 260m
+    notes: 탐지 전용 — 원 크기에 들어가지 않음. 연구 관행 200~300m 중간값의 제안 시작값. 추후 k-거리 실측으로 재산정.
+  - korean: 상품 반경 공식
+    official_english: r_h = max(500m, min(P90_h, 2km))
+    plain_english: "Circle size per anchor: floor 500m, cap 2km, else measured P90"
+    notes: 500m = 보호 하한(측정이 고객에게 불리하게 작동하지 않게, 국내 원안의 상품 원칙) · 2km = 상한 가드레일. 260m는 미포함.
+  - korean: k-거리 (k-distance)
+    official_english: k-th nearest neighbor distance
+    plain_english: "Distance to a point's k-th nearest neighbor; standard way to set ε"
+    notes: "Ester et al. 1996 표준 방법. 우리 버전 k=2는 3일 규칙에서 자동 유도('다른 날 방문점 중 두 번째로 가까운 것까지의 거리'). 판정용이 아니라 파일럿 후 지역 단위 1회성 캘리브레이션. HDBSCAN core distance와 재는 양은 같으나 전체에서 한 번 재서 모든 고객에게 같은 상수로 사용."
+  - korean: rolling 방식 (생활권 형성)
+    official_english: rolling 2-month window
+    plain_english: Life-zone map rebuilt monthly from the previous 2 months of records
+    notes: 2026-08-02 회의 결정. 해당 월 데이터는 형성에서 제외. 케어의 평소값·해제 기준은 분리 고정 — 지도 갱신만으로 케어 자동 해제 안 됨.
+  - korean: 기준선 2개월 vs 케어의 직전 2개월
+    plain_english: "Two different 2-month windows: map formation vs care metric comparison"
+    banned_variants:
+      - 두 창을 같은 장치로 설명
+    notes: 형성 2개월 = 생활권을 만드는 관찰 창(매달 직전 2개월 갱신). 케어의 직전 2개월 = 지표 숫자 비교 창이며 평소값·해제 기준은 지도와 분리 고정.
+  - korean: 판정 등급 (우대/기본/케어/보류)
+    plain_english: Judgment tiers assigned per customer-month
+    notes: 케어는 점수 축과 별개로 작동(④에서 케어가 우대를 이김 — 점수 축은 기본 25·우대 5인데 판정은 케어 30). ② 실측에서 위험 유형은 우대선(75점 컷) 아래 머묾. 공식 영문 표기 문서에 없음(확인 필요).
+  - korean: 오탐 대조군 (③ 이동변화 안전유지형)
+    official_english: false-positive control group
+    plain_english: Safe drivers whose mobility changed (moving house, caregiving) — must NOT be flagged
+    banned_variants:
+      - "'기본' 판정으로 표기 (시안 오류)"
+    notes: 역편향 검증. 실측 우대 30 전원, 이동 임계 초과 191 케이스-월에도 케어 발동 0건. 순환논증을 끊는 핵심 카드.
+  - korean: 트립 vs 방문지
+    official_english: trip vs destination (unique place visit)
+    plain_english: "'Home→mart→home' = 2 trips, 1 destination"
+    banned_variants:
+      - 트립 수를 방문지 수로 직접 비교
+    notes: 국내 목적통행의 48%가 귀가 → 방문지 ≈ 통행 × 0.52로 환산. 문헌 대조 시 단위 주의.
+  - korean: 문헌 회랑
+    plain_english: The range literature gives; our design values are placed inside it
+    notes: "원칙: 문헌이 숫자를 주는 게 아니라 분포를 주고, 우리 값의 위치를 표로 제시. 자릿수 하나까지의 근거는 주장하지 않음."
+  - korean: 4단계 체인
+    plain_english: Human (literature-based design) → AI (persona structure) → deterministic engine (numbers) → statistics (risk decomposition)
+    notes: 요율에 닿는 기준을 AI가 정하지 않는다는 원칙. 각 단계에 통제 장치.
+  - korean: 캐시 고정 (프로필 캐시)
+    official_english: cached, committed profiles
+    plain_english: AI profiles generated once, then committed to the repo — never regenerated per run
+    notes: 매 실행 재생성이면 재현 불가. 검사 가능성 확보.
+  - korean: 시드 고정
+    official_english: fixed seed (sha256)
+    plain_english: Same input always yields the same synthetic data
+    notes: 사람×월 단위 시드. 재현성이 검증의 전제.
+  - korean: 파티션 108/36/36
+    official_english: dev 108 / validation 36 / holdout 36
+    plain_english: Scenario split proving rules were not fitted to the data
+    notes: "180 시나리오(60명 × 3환경: 도심·교외·광역)의 분할."
+  - korean: TAAS
+    official_english: TAAS (교통사고분석시스템)
+    plain_english: Korean traffic accident analysis system — source of risk-type composition ratios
+    notes: 구성비 44.6/42.4/13.0% (급제동/과속/급가속), 원천 CSV 2010–2024 시군구 전수, taas_risk_weights.py. 표시 전용 — 판정 미진입(교체 재판정 diff 0). 과속은 2021년부터 원천 미집계라 2010–2020 평균.
+  - korean: eTAS
+    official_english: eTAS (한국교통안전공단 운행기록분석시스템)
+    plain_english: "Korea's DTG-based risky-driving-behavior definition standard"
+    banned_variants:
+      - 합성 데이터를 eTAS 임계로 생성했다는 표현
+    notes: "정확한 문장: '유형 정의는 eTAS 표준, 합성 빈도는 LongROAD 앵커, 실서비스에서 eTAS 임계 적용'. 합성 엔진에 eTAS g값 임계 구현 없음."
+  - korean: 아키타입
+    official_english: archetype
+    plain_english: The type-level template that fixes risk magnitude as a control variable
+    notes: 위험 크기는 아키타입에 고정(통제변수) — AI가 바꿀 수 없음.
+  - korean: AI 프로필 요소 (bearing / band / change_month)
+    official_english: bearing / distance band / change_month
+    plain_english: "Direction, distance band, and change timing of a persona's places"
+    notes: AI가 만드는 생활 구조의 구성 요소. 장소는 전원 합성 라벨(실존 지명 금지 가드). 거리대는 유형 역할로 강제.
+  - korean: Simulated 정직 라벨
+    official_english: Simulated
+    plain_english: Label declaring results come from synthetic data, not reality
+    notes: 검증이 보이는 것은 예측력이 아니라 판정 로직의 일관성. 실제 사고·손해율 효과 미검증. 실데이터 확보 시 파라미터를 실측 분포로 교체(검증 로직 재사용).
+  - korean: 6개 페르소나 유형
+    plain_english: Six literature-derived elderly driver types, each testing one part of the system
+    notes: "① 안전 저주행·자기규제형(월 24) ② 생활권 내 위험행동형(월 13) ③ 이동변화 안전유지형(월 32, 오탐 대조군) ④ 이동·위험행동 동시변화형(월 32, 케어 대상) ⑤ 복수 생활권형(월 42) ⑥ 광역 이동·안정형(월 40). 문헌 3축(이동범위 축소·만성 위험행동·패턴 변화) 조합. 데이터생성_상세정리에는 ①이 '안정 저주행형', ⑥이 '광역 이동·안전형'으로 표기 — 명칭 통일 확인 필요."
+  - korean: 케어 갱신·해제 분리
+    plain_english: 감지는 직전 2개월 지표 비교, 평소값·해제 기준은 기준선 고정(사람 검토·복귀 시에만 해제)
+    notes: "\"지도는 현실을 따라가고, 위험 판정의 잣대는 흔들리지 않는다\""
+  - korean: 위험의 정상화
+    plain_english: "무장치 rolling에서 서서히 나빠진 상태가 '새로운 평소'로 흡수되는 실패(끓는 물의 개구리)"
+    notes: 케어 분리 원칙의 존재 이유
+  - korean: 케어(care_review)
+    official_english: care_review
+    plain_english: 월 신호 → 연간 판정 → 사람 검토. 자동 요율 반영 아님, 개입은 점검 권유·예방 지원
+    banned_variants:
+      - 벌점
+    notes: "해제 자동: care_open = fires or (care_open and sustained), engine.py:1187"
+  - korean: any 규칙
+    official_english: any
+    plain_english: _annual_state가 12개월 중 하나라도 care_review면 연간 care_review(한 달 발동 = 그 해 감액)
+    notes: rolling 실측에서 케어 30건 전원 1개월 발동 — 월수 비례 권고(미결)
+  - korean: masil_rate
+    official_english: masil_rate
+    plain_english: clip(korea_mileage + bonus − reduction, 0, 45) — 기존 마일리지 할인 위 오버레이, 할증 항 부재
+    banned_variants:
+      - 요율표
+      - 할증
+    notes: 보너스 최대 7%p(하한 1%p), 총 할인 캡 45%, 하한 0% = 기준 요율
+  - korean: k-거리 측정
+    plain_english: "점마다 '다른 날 방문 중 2번째로 가까운 이웃까지의 거리'를 재서 수천 명 분포의 P95를 eps 컷으로 쓰는 파일럿 절차"
+    notes: "거점 인정 규칙 '서로 다른 3일' → 다른 날 이웃 2개 필요. 개인별로 재지 않음(개인당 방문 100개 남짓). HDBSCAN 핵심거리와 같은 계산"
+  - korean: 보류(sparse)
+    official_english: sparse
+    plain_english: 데이터 부족 시 판정 보류 — 불이익 없음(6건 전건 변동 0)

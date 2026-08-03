@@ -1,0 +1,30 @@
+# 소스: seniorcareservice/final (승인 세트) · 수치 정본: 확정수치카드 @ e2d2e49 (2026-08-02 rolling)
+# 생성: 2026-08-04 자동 추출 + 카드 대조 — 사람 검토 전 DRAFT
+
+snapshot: gaip-final-v1-draft
+status: draft_pending_review
+numbers_anchor:
+  file: final/00_확정수치카드.md
+  commit: e2d2e49
+  date: 2026-08-02
+approved_sources:
+  - final/00_확정수치카드.md
+  - final/02_마스터답변안_전항목.md
+  - final/07_근거지도.md
+  - final/08_출처부록_주제별.md
+  - final/근거자료/브리핑_0803_이슈정리.md
+  - final/근거자료/부록B_해설_팀원용.md
+  - final/근거자료/부록D_해설_팀원용.md
+  - final/근거자료/데이터생성_상세정리.md
+  - final/근거자료/생활권_형성주기_이슈정리.md
+  - final/근거자료/안전운전자_매력도_정리.md
+  - final/근거자료/생활권반경_eps_정리.md
+deprecated_bulk:
+  - path: gaip-foursure/** (34p 마스터·EVIDENCE_BOOK·TECH_APPENDIX·deliverables HTML)
+    reason: rolling 이전 산출물 — 고정 기준선·구수치·eps150 시절
+  - path: seniorcareservice/archive/**
+    reason: 과거 시점 기록
+  - path: reports/** (구)
+    reason: 0801 정리로 archive 이동
+  - path: 발송본 3종(00_통합·09·10)
+    reason: 원문 보존본 — 수치 시점 배너로만 참조, 지식 소스 아님

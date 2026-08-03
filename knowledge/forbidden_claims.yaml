@@ -1,0 +1,389 @@
+# 소스: seniorcareservice/final (승인 세트) · 수치 정본: 확정수치카드 @ e2d2e49 (2026-08-02 rolling)
+# 생성: 2026-08-04 자동 추출 + 카드 대조 — 사람 검토 전 DRAFT
+
+forbidden:
+  - expression: 80,002건
+    reason: 오타 (취소선 표기)
+    replacement: 80,032건
+  - expression: 2M/12M
+    reason: 백만으로 읽힘 — 표기 금지
+    replacement: 2개월 기준선 + 12개월 평가 (총 14개월)
+  - expression: 고정 기준 120/54/6 (연간 판정)
+    reason: 구버전 고정 기준값 (취소선 표기)
+    replacement: 우대 118 / 기본 56 / 보류 6 · 케어 30 (rolling 확정, 8/2 재시뮬)
+  - expression: min_pts
+    reason: 기술 표기보다 문장 표현 우선
+    replacement: 서로 다른 3일 이상 방문
+  - expression: eps 150m
+    reason: 7/13 합성 비교실험의 당시 후보값 — 쓰지 말 것
+    replacement: 260m 단일 (채택 기준값)
+  - expression: "케어 '전원 5~7개월'"
+    reason: 인용 금지 (취소선 표기) — 지도가 새 목적지를 흡수해 조기 해제됨
+    replacement: 케어 월수 전원 1개월
+  - expression: 민감도 고정 기준 4/12
+    reason: 구버전 (취소선 표기)
+    replacement: ±5 이웃 19개 중앙 3건·최대 9건 (rolling 재실행 8/2)
+  - expression: "\"±5에서 0~6건\""
+    reason: 구버전 (취소선 표기)
+    replacement: ±5 이웃 19개 중앙 3건·최대 9건
+  - expression: 더 낮음 고정 114건
+    reason: 구버전 고정 기준값 (취소선 표기)
+    replacement: 더 낮음 113건 (rolling)
+  - expression: "\"5~7%p\" 단독 표기"
+    reason: 단독 표기 금지
+    replacement: 1~7%p 점수 비례 (75점=1, 100점=7)
+  - expression: "\"eTAS는 없는 명칭\""
+    reason: 이전 카드의 표기가 오류였음 — 정정. eTAS는 실재 명칭(한국교통안전공단 운행기록분석시스템)
+    replacement: eTAS = 위험운전행동 정의의 표준 (써머리 표기 유지)
+  - expression: "\"합성을 eTAS 임계로 생성했다\""
+    reason: 합성 엔진에 eTAS 임계 구현 없음
+    replacement: "\"유형 정의는 eTAS 표준, 합성 빈도는 LongROAD 0.35g 앵커, 실서비스에서 eTAS 임계 적용\""
+  - expression: "\"TEFFT\" 단독 표기"
+    reason: 표기 금지
+    replacement: Ehsani & Tefft 2021 (CHANCE 34(1))
+  - expression: "Candrive \"동일 연령대 3배\""
+    reason: 원문(Marshall et al. 2023)에 3배 없음 — 금지
+    replacement: "\"최대 5배\" (고위험 5.26배, 95% CI 2.81–9.84)"
+  - expression: "\"사고빈도\" (Candrive 맥락)"
+    reason: 원문은 주행거리 보정 위험
+    replacement: "\"사고 위험(거리 보정)\""
+  - expression: "\"CANDRIVE→CMT 교체\" 지시"
+    reason: 종전 지시 폐기
+    replacement: Candrive 유지 + 숫자 정정
+  - expression: "DRIVES \"사고 이전\""
+    reason: 표기 정정
+    replacement: "\"진단 이전\""
+  - expression: Nemotron 데이터셋을 썼다는 서술
+    reason: 데이터셋 사용 아님
+    replacement: 방법론을 따라 자체 정의
+  - expression: MCI 60%/치매 81% · 제동 2.28초/90% · 55.7% vs 27.5%
+    reason: 인용 금지 — 출처부록 ✕ 등급
+  - expression: "\"AI가 가중치를 골랐다\"로 읽히는 서술"
+    reason: AI는 초기 규칙 후보 생성까지, 값은 사람이 결정
+    replacement: AI는 초기 규칙 후보 생성, 값은 사람이 결정
+  - expression: "엔진값 260/520/1,100을 '지역 보정'으로 설명"
+    reason: 지역 보정이 아님
+    replacement: 합성 지리 축척(×2/×4.2) 정합용 — 실세계 260 단일과 등가
+  - expression: "'data' (단독 표기)"
+    reason: 실주행 데이터로 오인 소지 — 심사 지적 사항
+    replacement: 합성 시나리오(synthetic scenarios)
+  - expression: "\"실제 드라이빙 로그를 바탕으로 6개 운전자 범주 및 30명\""
+    reason: 1차 자료의 부정확한 서술 — 실제 로그의 경험적 분포를 직접 사용한 적 없음
+    replacement: 합성 데이터, 6유형 60명 로스터 × 3환경 = 180 시나리오 × 14개월
+  - expression: "\"위치데이터 6개월 삭제 의무\""
+    reason: 그런 조항은 없음 — 제23조는 목적 달성 시 즉시 파기 원칙, 6개월은 취급대장 보관 하한
+    replacement: "\"기준은 기간이 아니라 목적\" + \"어느 해석의 보존 한도에도 저희 구조가 부합\""
+  - expression: "\"도심 eps가 작고 농촌이 크다\" (방향 방어)"
+    reason: 검증된 바 없는 가정 — 합성 데이터는 그 값을 넣어 만들었으므로 순환이라 확인 불가; 반대(도심 주차난 산포)가 더 그럴듯할 수 있음
+    replacement: 방향은 주장하지 않음 — 실험 A(단일 eps 재판정 0/180 변화)로 논쟁이 결과를 바꾸지 않음을 제시
+  - expression: "\"밖이 위험하다\" / 위치 벌점 시사"
+    reason: 우리 결론이 아님 — 문헌도 상반(Ehsani vs Burdett)·리뷰도 불확실
+    replacement: "\"평소 대비 이동과 행동이 동시에 급변했는가\"; 위치 벌점 0"
+  - expression: 사고 심도 예측 시사
+    reason: 산식에 심도 항이 없음 — 심도는 예측하지 않음
+    replacement: "\"케어의 목적은 심도 예측이 아니라 '사람이 점검할 시점'의 감지\""
+  - expression: 합성 실측 수치로 오탐(우연 방문지 오인) 방어 주장
+    reason: 합성 데이터는 설계상 우연 방문지가 드묾 — 미탐 방어 실측 한정
+    replacement: 오탐 방어는 푸아송 확률 논리(임계 3일 시 8.0%)로만 주장
+  - expression: "\"위치정보법 때문에 (업계가) 위치를 안 쓴다\""
+    reason: 인과를 밝힌 문헌 미확인
+    replacement: KIRI리포트의 구조 선례(점수만 전송)로만 언급, 인과 미주장
+  - expression: "\"업계 UBI rating period는 3~6개월이다\" (단정)"
+    reason: 스니펫 수준 — 원문 미확인
+    replacement: "\"업계 요율 산정 관행으로 알려진 3~6개월\""
+  - expression: Lally 2010(66일)을 기준선 2개월의 근거로 인용
+    reason: 새 습관의 형성 기간 연구(n=96, 12주)이지 기존 패턴 관측 기간 근거가 아니며 범위 18~254일로 넓음
+    replacement: 시간 스케일 방향성 참고로만; 2개월의 근거는 거점 검출에 필요한 관측량
+  - expression: "\"3일 고정\""
+    reason: Isaacman 도출 방식과의 일치가 논거 — 고정 상수처럼 말하면 근거가 끊김
+    replacement: "\"관찰 창의 5% = 서로 다른 3일\""
+  - expression: 실험 A(단일 eps 재판정)와 실험 B(3지형 배치) 혼용 서술
+    reason: 서로 다른 실험 — 발표에서 섞어 말하지 않기로 명시
+    replacement: 실험 A = 우리 파라미터 변경(0/180), 실험 B = 고객 지형 변경(60/60·54/60)으로 분리 서술
+  - expression: 운전 연구 선례(UMTRI·DRIVES·Candrive)와 Isaacman 통신 데이터 계열 혼용
+    reason: "담당 질문이 다름 — 전자는 '왜 2개월', 후자는 '왜 3일'"
+    replacement: 두 계열을 분리해 각각의 질문에 대응
+  - expression: 감액 13%p를 확정 요율로 제시
+    reason: 요율 샌드박스의 손익 예시값 (source_status = illustrative_economics_sandbox_not_final_tariff)
+    replacement: "\"손익 예시값이며 운영상 개입은 벌점·할증이 아니라 사람 검토와 예방 지원\""
+  - expression: "LongROAD ML '집 15마일 이내 통행 비율'을 확정 근거로 인용"
+    reason: 저자가 preliminary로 규정
+    replacement: 개념 근거로만 인용
+  - expression: "\"월 점수는 위치정보가 아니므로 규제와 무관\""
+    reason: 고객별 월 점수는 위치정보가 아니어도 개인정보로 계속 규율됨
+    replacement: "\"위치정보가 아니라 개인정보 일반 체계로 관리\"까지만 주장"
+  - expression: "30~50대 조기 신호 문헌이 '없다'는 단정"
+    reason: 부재 증명 불가
+    replacement: "\"저희가 확인한 범위에서 30~50대 코호트에 대응하는 문헌은 찾지 못했다\""
+  - expression: 경로당 주 2.9회·복지관 주 1.5회를 전체 노인 통계로 제시
+    reason: 해당 시설을 생활 거점으로 삼는 이용자 기준; 복지관 수치는 단일 언론 인용으로 재확인 중
+    replacement: "\"경로당 이용자 기준 주 2.9회\" 등 이용자 기준 명시"
+  - expression: 실제 드라이빙 로그 기반 30명
+    reason: 1차 자료의 부정확한 표현으로 공식 정정됨 — 실물은 합성 데이터
+    replacement: 합성 데이터(synthetic scenarios) · 6유형 60명 로스터 × 3환경 = 180 시나리오 · 14개월
+  - expression: 루프 / multi-agent loop / Agent–Validator Loop
+    reason: 반복 탐색이 존재하지 않아 부정확 — 용어 철회 확정(9번)
+    replacement: multi-agent pipeline(생성→검토→승인 체인) 또는 agent-assisted design process
+  - expression: "'300만원' 통계"
+    reason: 원출처 미확인 — 덱에서 제거 확정(12번)
+    replacement: 인용하지 않음 (심도 배경은 ERSO 5배·TAAS 치명률 가중으로)
+  - expression: 업계 UBI 요율 산정 관행 3~6개월 (발표 인용)
+    reason: 원문 미확보, 2차 자료만 — 부록 A가 발표 인용 금지로 명시
+    replacement: 발표에서는 UMTRI 2주·DRIVES 1개월·Isaacman 60일·DHQ 3개월·Candrive 4개월 선례만
+  - expression: "MDPI 15(22):12278 방법 이식 주장"
+    reason: 대상이 인구 격자(집계 레벨)라 개인 생활권과 스케일 상이 · 발표 인용 전 원문 재확인 필요
+    replacement: "'지역별 임계값의 타당성' 근거로만 한정 인용"
+  - expression: 국내 도로 위계별 건수·심도 수치 인용
+    reason: 출처 미확인(13번 C)
+    replacement: "도시/농촌 대비(NHTSA 2021: 주행 32% vs 사망 40%, 1.74 대 1.19)까지만"
+  - expression: 뷜만 신뢰도를 적용했다
+    reason: Z = n/(n+k)를 수치로 추정한 적 없음 — 수위 과장(11번 ③)
+    replacement: 신뢰도 원리를 따른 보수적 근사(0/1 두 단), 파일럿 분산 실측으로 정식 추정 대체
+  - expression: 완전 지역 중립
+    reason: "우대 54/60 — 문턱 효과 존재. 문서가 '완전 중립이라고 말하지 않는다'로 명시(11번 ⑤)"
+    replacement: 위치 벌점 0(location_penalty 0.0) · 지역 중립성은 목적이 아니라 부수 효과
+  - expression: 생활권 밖 = 사고 심도 증가 (판정 근거로서의 인과 서술)
+    reason: 산식·입력 계약에 심도 항 없음 — 문제정의 장표에서 들어냄(12번)
+    replacement: 심도는 필요성 근거·표시 분해·감도 분석에만, 전부 판정 밖
+  - expression: 사고잦은곳을 판정 (−)요소로 반영
+    reason: 사고다발지 인근 거주자가 행동과 무관하게 감점 — 위치 중립·지역 공정성 실측 붕괴(13번 B)
+    replacement: 케어 리포트의 안전 안내 정보로 채택
+  - expression: 생활권 밖이 위험하다
+    reason: 위치에 벌점 없음(location_penalty = 0.0) — (부록 D, 범위 인접 참고)
+    replacement: 익숙함이 보호 요인이다
+  - expression: 밖 이벤트 ×λ 가중 · 밖 비중 절대수준 배점
+    reason: 부결 — 정의상 위치 벌점이며 농촌 거주자·정기 통원자의 구조적 불이익(11번 ⑤·부록 D)
+    replacement: 안/밖은 채점 구획(분리·고정 배점), 케어는 밖 비중의 변화량만
+  - expression: AI가 가중치 30/30/20/20을 선정
+    reason: 레거시 에이전트 격자는 비교 도구였고 결정자가 아님(9번 후속·부록 D)
+    replacement: "사람의 설계값(4축 1:1 매핑 선언값) + 민감도 969 실측으로 방어"
+  - expression: "DRIVES가 '사고 이전에 나타난다'"
+    reason: 그 연구의 결과 변수는 인지 상태이지 사고가 아님(부록 D)
+    replacement: 진단·자각 이전에
+  - expression: "Bayat: GPS만으로 AUC 0.96"
+    reason: 0.96은 연령·APOE 결합 수치(부록 D)
+    replacement: 주행 단독 0.82 / 연령·APOE 결합 0.96
+  - expression: HDBSCAN은 커버리지 72%로 기각
+    reason: 적정 설정에서는 동급 — 유리한 쪽으로 말하지 않기로 확정(10번 4·부록 D)
+    replacement: 채택 기준은 반경 근거의 출처와 설명가능성, HDBSCAN은 파일럿 승격 후보
+  - expression: DRIVES 초록의 기울기 수치 인용
+    reason: 인용 범위 제한(부록 D)
+    replacement: AUC와 정성 결론만 인용
+  - expression: "사고분포 유도식(80:20 × 2.5배)"
+    reason: 우리 문제정의와 자기모순 + 이중계산(부록 D)
+    replacement: "관측량 비례(35:15) ↔ 균등(25:25) 사이의 설계값으로 설명"
+  - expression: 파일럿 N 규모 숫자 제시
+    reason: "UBI 가입 고령 고객 모수 확인 전 미확정 — '현재 미확정이라 숫자를 말하지 않는다'(13번 A)"
+    replacement: 모수 확인 후 확정, 수집 필드가 도착지 이벤트뿐이라 부담은 통상 UBI보다 낮음
+  - expression: "\"MCI 60% / 치매 81%가 인지 저하를 자각 못 함\""
+    reason: "인용 사슬 추적 결과 원논문(Turró-Garriga 2016)의 실제 유병률은 39.5%, 81%는 '12개월 지속률 80.0%'의 오독(StatPearls 경유 확산)"
+    replacement: Cacciamani et al. (2021) — AD 치매 자각 결여 40~91% (개별 연구 범위, 통합추정 아님)
+  - expression: "\"제동 반응 2.28초 = 90% 지연\""
+    reason: "2.28초는 실재하나 원문에 '평균'도 '90%'도 없음. 같은 시험 다른 상황은 0.02초 차이 → 체리피킹 리스크. 시뮬레이터 n=17, SD·p값 없음"
+    replacement: Shin & Lee (2012) — 고령 1.70초 vs 청년 0.96초 (n=12+12, SD·p 있음)
+  - expression: "\"고령 55.7% vs 전체 운전자 27.5% = 2배\""
+    reason: 원자료(경찰청·도로교통공단) 직접 집계 시 전체도 55.6% — 대비를 주장하면 공공데이터로 반박당함
+    replacement: "\"공통 최대 요인\"으로 서술하거나, 고령 특이성은 치사율로"
+  - expression: "Intini et al. (2018), AAP 111:280–296 인용"
+    reason: "결론이 우리 논지와 반대 (\"친숙함이 위험요인으로 확인\")"
+    replacement: "Intini et al. (2019), Transp Res Part F 62:651–671"
+  - expression: "\"Charlton & Starkey, PRISMA 94개 연구\""
+    reason: 저자 오기 — Starkey는 저자가 아님
+    replacement: Harms, Burdett & Charlton (2021)
+  - expression: DRIVES(PMC12662389)의 기울기(−0.501 등)·트립·야간 빈도 수치
+    reason: 서술과 부호가 어긋나고 야간 171.4 > 주간 58.8로 라벨 뒤바뀜 의심 — 내부 모순
+    replacement: AUC(0.82/0.87)와 정성 결론만 사용
+  - expression: "\"GPS만으로 AUC 0.96\""
+    reason: Bayat의 0.96은 연령·APOE 결합 모델
+    replacement: "\"주행 단독 AUC 0.82, 연령·APOE 결합 0.96\""
+  - expression: "DRIVES·Bayat를 \"사고 이전에 나타난다\"로 인용"
+    reason: 결과 변수가 사고가 아니라 인지 상태
+    replacement: "\"진단·자각 이전에\""
+  - expression: arXiv 2603.00691 Fig.6(c)
+    reason: LongROAD 야간 비중을 30~50%로 표기해 원 brief 6.7%와 충돌
+    replacement: AAA LongROAD 브리프 원문 수치(6.7%, 태양고도 정의 명시)
+  - expression: "\"Progressive Snapshot 공식 6개월\""
+    reason: 2차 자료만 존재
+    replacement: "업계 관행 언급이 필요하면 \"관행상 알려진\" 수준으로만 (그것도 ⚠)"
+  - expression: 야간 비중을 정의 없이 인용
+    reason: 태양고도 정의(6.7%)와 일몰 정의(45~55%)가 7배 차이
+    replacement: 정의(태양고도 96° 초과 / 일몰 이후 출발)를 반드시 병기
+  - expression: 급제동 빈도를 g 임계 없이 인용
+    reason: 0.35g와 0.75g가 1,000배 차이
+    replacement: 임계값(g) 병기, 비교 시 risky_events_per_100_km로 환산
+  - expression: "국내 고령자 주행거리 \"통계에 따르면…\""
+    reason: 부재 확인 — 추정치를 통계처럼 말하지 말 것
+    replacement: "\"국내에는 연령별 주행거리 통계가 없음을 확인했다\" + 추정치임을 명시"
+  - expression: "Ehsani & Tefft의 2.5배를 \"과실\"로 지칭"
+    reason: "원문은 사고 유발 오즈비를 '사고 연루(crash involvement)' 오즈비로 변환(p.47)"
+    replacement: "\"사고 연루 2.5배\""
+  - expression: "\"고령일수록 야간 운전이 많다\""
+    reason: LongROAD 연령 기울기는 나이 들수록 감소(65-69세 7.5 → 75-79세 5.8), 80세+는 실측 부재
+    replacement: 연령 기울기 감소 사실대로 서술
+  - expression: ⚠ 등급 수치의 발표 인용 일체
+    reason: "⚠ 항목은 '없는 것'으로 취급 — 확인 전까지 그 수치는 존재하지 않는 것으로 보고 답변 구성"
+    replacement: 원문 확보 후 승급하거나 ◎·△ 근거로 대체
+  - expression: 루프
+    reason: "지적 수용으로 폐기한 용어 — '원하는 결과가 나올 때까지 반복' 오해 유발. 덱에 남아 있으면 항목 9 답변이 무의미"
+    replacement: 생성 → 검토 → 승인 파이프라인
+  - expression: data (합성 산출물 지칭)
+    reason: 부정확한 표현이었음을 문서가 인정 — 덱에서 제거 대상
+    replacement: 합성 시나리오
+  - expression: HDBSCAN 커버리지 90%→71.9%
+    reason: 2026-07-29 철회 — 71.9%는 대표 사례 1명의 값이며 같은 사람의 DBSCAN도 71.9%(인과 오귀속). 옛 슬라이드에 있으면 반드시 제거
+    replacement: HDBSCAN 9지표 실측 — 판정 성능 동급, 거점 수·노이즈만 차이
+  - expression: 업계 UBI는 3~6개월이 관행
+    reason: 원출처 미확보(등급 ✕) — 발표 인용 금지로 명시
+    replacement: "'연구 기준선(2주~1개월)보다 보수적'까지만 말하고 업계 비교는 생략"
+  - expression: KTDB 2013 트립당 14.0km
+    reason: 원문 링크 미확보(등급 ✕) — 발표에서 쓰지 않음
+    replacement: 사용하지 않음
+  - expression: "링크 없는 약칭 문헌 인용(△ 전반: 건보·경로당·복지관 앵커, Hirsch 2014, Ji 2023, KIRI, 신뢰도 원리 교과서 등)"
+    reason: "발표 원칙 3 — 출처를 못 대는 인용은 하나만 들켜도 나머지 근거의 신뢰를 함께 무너뜨림. '출처가 뭐냐'에 답 못 함"
+    replacement: ◎(코드·실측)와 ○(링크 확보 문헌)만 인용
+  - expression: 젊은 층에선 안 되는 것을 (실험으로) 확인했다
+    reason: 직접 실험 없음(등급 ✕) — 논증이지 실측 아님
+    replacement: 안 해봤고, 방법론적 예측입니다
+  - expression: 지역별 3단 eps 차등이 검증된 성과다 / 도심은 산포가 작다
+    reason: "종전 결론('이미 3층으로 차등')은 실제 구조와 반대였고(0729 전면 재작성), 방향(도심 소)은 검증된 바 없으며 반대 논리(도심 주차난 → 산포 증가)가 더 그럴듯함. 합성 데이터는 도심 산포를 가장 작게 설정해 방향 확인 불가"
+    replacement: 개인 P90 + 두 실측(단일 eps 재판정 0건 차이, 3지형 케어 60/60)으로 답변 무게 이동
+  - expression: 위치정보법 해석이 확정됐다 / 법적 문제 없다
+    reason: 법령 해석이 자체 해석이며 법무 검토를 받은 적 없음(등급 △) — 심사에 법률 전문가가 있으면 위험
+    replacement: 법무 검토는 파일럿 전 필수 절차로 잡혀 있습니다
+  - expression: 가중치 30이라는 값 자체의 근거 주장
+    reason: "값은 설계값(▽) — 회랑(35:15↔25:25)의 중간일 뿐"
+    replacement: 값이 아니라 순서를 주장 + 민감도 969 실측(±5 이웃 중앙 3·최대 9건, 현행 30이 지배 축의 최저점)
+  - expression: 합성 파라미터 절대값(월 방문 13~42회, 위험률 3%/72%)을 실측·문헌 근거처럼 제시
+    reason: 근거 없음 — 방향성만 문헌(▽, 문서가 인정)
+    replacement: "먼저 인정하고 '파일럿에서 실주행 경험분포로 대체'"
+  - expression: 합성 실측으로 예측력이 검증됐다
+    reason: 채점 엔진이 라벨을 못 볼 뿐 — 검증 대상은 예측력이 아니라 판정 로직의 일관성
+    replacement: 검증되는 것은 로직 일관성
+  - expression: 가입 시 1회 형성
+    reason: 8/2 회의에서 rolling(갱신형) 채택 — 고정 형성은 팀 합의 없이 넘어온 방식으로 폐기됨.
+    replacement: 매달 직전 2개월 방문으로 재군집(rolling, 해당 월 제외, 군집 실패 시 직전 지도 유지)
+  - expression: 케어 5~7개월 지속 / 케어는 5개월 이상 지속
+    reason: 고정 시절 수치. rolling 실측에서 케어 30건 전원 1개월 발동 — 문구 전면 금지(문서 4곳 이미 수정).
+    replacement: 케어 30건 전원 1개월 발동(실측 전형) — 월수 비례 감액 권고의 실증
+  - expression: 2개월이 최적값
+    reason: "최적화한 값이 아님 — §1에서 \"최적값\" 표현 명시 금지."
+    replacement: 합리적 균형값(두 달 포착 확률 76%, 1개월 32%, 3개월 94%는 반영 지연)
+  - expression: 모든 판정이 지역 무관 동일
+    reason: 우대는 54/60으로 지형 간 갈림 존재(케어만 60/60).
+    replacement: 케어는 60/60 전원 동일, 우대는 54/60 — 갈린 6명은 케어 겹침 5명 + 문턱 효과 1명
+  - expression: 강건성 실측은 백로그
+    reason: 완료됨 — 969개 조합 전수 실측(rolling) 존재.
+    replacement: "969개 전수 민감도 실측 완료: ±5 이웃 변화 중앙 3·최대 9건, 현행 30이 지배 축 최저점"
+  - expression: 전역 eps 폐기·지역별 차등 채택
+    reason: 채택 기준값은 260m 단일. 코드의 260/520/1,100은 지역 차등이 아니라 합성 지리 축척(×2/×4.2) 정합용.
+    replacement: 채택 기준값 260m 단일 — 합성 3환경 값은 축척 정합용으로 실세계 260 단일과 등가
+  - expression: 55.7%
+    reason: §10 금지 수치(맥락·출처는 이 문서에 미기재 — 확인 필요).
+  - expression: "Candrive \"3배\""
+    reason: 부정확 — 교체 근거가 §10에 명시됨.
+    replacement: 거리 보정 최대 5배 (Marshall 2023)
+  - expression: "구수치 일체: 120 · 54 · 56/60 · 114 · 5.5 · 최대 12건"
+    reason: 고정 기준 시절 수치 — rolling 확정으로 전부 교체됨(덱 갱신 승인 안건 §9-1).
+    replacement: 118 · 56 · 54/60 · 113 · 중앙 5.6(최대 7.0) · 중앙 3·최대 9건
+  - expression: 갈린 4명 = 전원 케어 발동자 (3지형 구답변)
+    reason: §3 구답변 금지 — 신 서사는 갈린 6명 = 케어 발동 5명 + 광역안전형 1명(문턱 효과).
+    replacement: 갈린 6명 = 케어 발동 5명 + 광역안전형 1명(문턱 근처 1개월 미달, 지역 페널티 아님)
+  - expression: "단일 260 재판정 \"0건\" 단독 인용"
+    reason: §5 명시 — 0/180은 고정 기준이고 rolling 재검증은 3/180(경계 사례)이므로 단서 없는 인용 금지.
+    replacement: "\"고정 기준 0/180 · rolling 재검증 3/180(경계 사례)\" — \"고정 기준\" 단서 필수"
+  - expression: 국가데이터처 55.7% 안전운전의무 불이행 (고령 근거로)
+    reason: 인용 금지 목록 — 전 연령도 55.6%라 고령 특이성이 없는 수치
+    replacement: DRIVES (Neurology 2025) + Bayat 2021
+  - expression: KIRI 리포트 인용
+    reason: 리포트 번호·연도 원문 미확인 — 인용 금지 상태
+    replacement: Langford et al. 2013 (저주행≠저위험)
+  - expression: "출처: ScienceDirect 2017/2021"
+    reason: ScienceDirect는 플랫폼이지 출처가 아님
+    replacement: "② Burdett, Starkey & Charlton (2017), Safety Science 98:1–8 / ⑤는 서지 확정 전 '이동패턴 연구의 규칙성 정의'로"
+  - expression: Hirsch et al. (2014) 인용 (원문 대조 완료 전)
+    reason: 출처부록 기준 원문 대조 미완 (팩트체크 목록) — 확인 필요
+    replacement: 확인됐으면 유지, 아니면 LongROAD 축소 이동범위(◎)
+  - expression: 야간 비중 수치를 정의 없이 인용
+    reason: 태양고도 정의(LongROAD 6.7%)와 일몰 이후 정의(Aschenbrenner 54.5%)가 7배 어긋남
+    replacement: 반드시 정의(태양고도/일몰)와 함께 인용
+  - expression: 급제동 건수를 g 임계 없이 인용
+    reason: 같은 코호트에서 0.35g면 5.3건, 0.75g면 0.005건 — 1,000배 차이
+    replacement: 반드시 g 임계와 함께 인용
+  - expression: CMT 3배를 고령 한정 근거로 사용
+    reason: 전 연령 데이터 — 고령 한정 근거와 역할 혼용 금지
+    replacement: 전 연령 데이터임을 병기하고 방향성 근거로만
+  - expression: "DRIVES를 '사고 이전' 예측으로 표현"
+    reason: 표기 규칙 위반 — 사고 예측이 아님
+    replacement: "\"진단·자각 이전\""
+  - expression: Nemotron 데이터셋을 사용했다
+    reason: 데이터셋 사용이 아니라 방법론 참고
+    replacement: "\"방법론을 따라 팀이 자체 정의\""
+  - expression: 합성 데이터를 eTAS 임계로 생성했다
+    reason: 합성 엔진에 eTAS 임계(g값) 구현 없음
+    replacement: "\"유형 정의는 eTAS 표준, 합성 빈도는 LongROAD 앵커, 실서비스에서 eTAS 임계 적용\""
+  - expression: 우리 확률값(빈도·위험률)이 경험적 분포다
+    reason: 경험적 분포가 아니라 설계값
+    replacement: 설계값임을 인정하고 문헌 분포에서의 위치로 방어
+  - expression: 76.2%는 실측 포착률이다
+    reason: "실측이 아니라 가정(월 2회·불규칙) 위의 내부 추정 — 장표에 '실측 포착률·최적값 아님' 정직 라벨"
+    replacement: "\"국내 통계에 앵커한 내부 추정, 실측 포착률은 파일럿에서 측정\""
+  - expression: 2개월이 유일한 최적값이다
+    reason: 합리적 범위 안의 값 (발송 답변서 5번 문장 그대로)
+    replacement: "\"유일한 최적값이 아니라 합리적 범위 안의 값\""
+  - expression: 260m(eps)가 생활권 원 크기에 들어간다 / eps를 키우면 생활권이 커진다
+    reason: 260m는 탐지 전용 — 원 공식은 max(500m, min(P90, 2km))로만 구성
+    replacement: "\"거점이 몇 개로 묶이는지만 달라지고 원 크기는 그대로\""
+  - expression: 260m는 논문에서 가져온 직접값이다
+    reason: Zheng 200m·Montoliu 200~300m를 참고한 제안 시작값이지 논문 직접값 아님
+    replacement: "\"연구 관행 200~300m의 중간값인 제안 시작값, 추후 k-거리 실측으로 재산정\""
+  - expression: Isaacman이 운전 데이터로 검증했다
+    reason: 통신 데이터 연구이지 운전 연구가 아님
+    replacement: "\"문제 구조가 같아 방법론으로 참고\""
+  - expression: "③ 이동변화 안전유지형·⑤ 복수 생활권형 판정을 '기본/기본'으로 표기"
+    reason: "실측과 다름 — 두 유형 모두 30명 전원 우대. ③을 기본으로 쓰면 '이사해도 불이익 없다'는 최강 실측을 스스로 지우는 것"
+    replacement: 기대 우대 / 판정 우대
+  - expression: 이 시뮬레이션이 예측력·실제 사고·손해율 효과를 검증했다
+    reason: 검증된 것은 판정 로직의 일관성뿐 — Simulated, 실제 사고·손해율 효과 미검증
+    replacement: "\"예측력이 아니라 판정 로직의 일관성\" + Simulated 정직 라벨"
+  - expression: Goulet-Langlois et al. 2017 문헌명 인용 (서지 확정 전)
+    reason: 서지 확정 필요 상태
+    replacement: "\"이동패턴 연구의 규칙성 정의\" (문헌명 없이)"
+  - expression: "'주행로그 AI가 만든 것 아니냐'에 부인으로 답하기"
+    reason: "Q&A 표준답 규칙 — 첫마디는 반드시 '네'로"
+    replacement: "\"네, 생성 과정에 AI가 있습니다 — 다만...\""
+  - expression: "생활권은 \"가입 시 1회\" 형성된다 (장표·구두 모두)"
+    reason: 8/2 회의에서 rolling 채택으로 폐기된 후보. 현행 실측도 전부 rolling 산출이라 사실과 불일치.
+    replacement: "\"매달 직전 2개월 재형성(rolling)\"으로 표기 통일"
+  - expression: 레거시(30명) 데모 화면을 결선에서 시연
+    reason: 결선 번들(60명×3환경)과 데이터가 다름 — 수치 불일치 노출 위험.
+    replacement: 결선 번들 기반 화면만 시연
+  - expression: "\"우리 시뮬레이션에 그런 사례가 없다\"를 안전의 근거로 사용"
+    reason: 순환 문제(§6) — 시나리오를 우리가 만들었으므로 부재가 안전을 증명하지 못함.
+    replacement: "\"데이터로는 답할 수 없어 산식으로 계산했다\"가 정확한 어법"
+  - expression: "13%p 감액을 \"벌점\"으로 지칭"
+    reason: 할증 항 부재가 상품 지위의 핵심 — 벌점 표현은 할증 인상을 줌.
+    replacement: "\"할인 축소\"로 지칭 (최악 = 기준 요율)"
+  - expression: "대조군을 \"30명\"으로 지칭"
+    reason: 실제 구성은 10명 × 3환경이라 인원 수로 말하면 과대 표현.
+    replacement: "\"10명 × 3환경 = 30 시나리오\""
+  - expression: "\"지역별로 eps를 차등했다\"를 성과로 내세우는 표현 (덱 포함)"
+    reason: eps는 판정 기준이 아니며, 차등의 방향(도심 작음)은 검증 안 된 가정 — 방향 질문을 자초.
+    replacement: "\"지역을 분류하지 않는다 + 개인 P90이 흡수한다\""
+  - expression: "\"이미 3층으로 차등돼 있습니다\" (종전 4번 답변)"
+    reason: 2026-07-29 전면 재작성 — 실제 구조와 반대로 서술돼 있었음(실측 4건이 근거).
+    replacement: "\"지역을 사람이 분류하지 않습니다 — 개인 P90이 흡수합니다\" (재작성본 0절)"
+  - expression: 260/520/1,100 숫자를 슬라이드에 크게 띄우기
+    reason: 3단 방향 질문(도심이 왜 작은가)을 자초함 — 방향은 방어하지 않기로 한 지점.
+    replacement: 필요 시 구두로만, 실험 A(판정 불변)로 우회
+  - expression: 실험 A와 실험 B를 섞어 말하기
+    reason: A는 우리 파라미터(eps 3개→1개), B는 고객 거주 지형 — 서로 다른 실험을 혼용하면 반박 빌미.
+    replacement: "A·B를 분리 서술: \"저희 설정을 바꿔서 / 고객 쪽을 바꿔서\""
+  - expression: "\"도심 eps가 작고 농촌이 크다\"는 방향의 방어"
+    reason: 검증된 바 없는 가정 — 도심은 주차난으로 산포가 오히려 클 수 있고, 합성 데이터는 우리가 넣은 값(도심 40/70/130m)이라 확인 불가.
+    replacement: "\"방향은 저희 가정이고 반대일 수 있습니다. 단일 eps 재판정으로 판정이 동일해 논쟁이 결과를 바꾸지 않습니다.\""
+  - expression: 합성 k-거리 리허설 수치(9/18/21m 등)를 eps 260의 근거로 인용
+    reason: 합성 데이터는 우리가 산포를 넣어 만든 것 — 우리가 넣은 값을 다시 읽는 순환.
+    replacement: "\"절차가 지역별 산포 차이를 잡아낸다는 확인이며, 실제 값은 파일럿에서 잰다\""
+  - expression: 감액 월수 비례가 이미 도입된 것처럼 서술
+    reason: 권고 상태이며 팀 결정 필요(미결) — 이슈 ①과 동일 안건.
+    replacement: "\"발생 월수에 비례시키는 방향으로 보고 있습니다\" (권고 어법)"
