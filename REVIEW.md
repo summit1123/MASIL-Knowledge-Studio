@@ -34,13 +34,10 @@
 4. `glossary.yaml` — 15초면 됨. 단, 아래 미결 1번 먼저
 5. `evidence/`·`key_numbers`는 조회용이라 훑기만
 
-## 검토 전 결정 필요 (미결 2건)
+## 결정 현황
 
-1. ~~"MASIL Zone" 공식화~~ — **확정(8/4)**: 공식 영어 MASIL Zone, 대시보드 EN 49곳 스윕 완료. 잔여: — glossary에 후보로 들어 있으나, 현 대시보드·덱 EN은 전부 "living zone". 공식화하면 대시보드 EN 스윕 필요(내가 함). 결정 전까지 glossary에 `pending` 표시해 둠
-2. ~~레포 public~~ — **private 전환 완료(8/4)**. (구) — 여기 내용물이 사실상 Q&A 전략 전체라 private 전환 후 푸시 권장:
-   ```
-   gh repo edit summit1123/MASIL-Knowledge-Studio --visibility private --accept-visibility-change-consequences
-   ```
+1. **MASIL Zone 확정(8/4)** — 공식 영어 = MASIL Zone(금지: Living Zone·Home Zone·routine zone). 대시보드 EN 49곳 스윕 완료. 잔여: 덱·답변서 EN 표기는 팀 장표 작업에서 동일 적용 필요
+2. **레포 private 전환 완료(8/4)** — 푸시 진행 중
 
 ## 다음 단계
 
