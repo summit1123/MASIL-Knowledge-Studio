@@ -1,7 +1,253 @@
-# 소스: seniorcareservice/final (승인 세트) · 수치 정본: 확정수치카드 @ e2d2e49 (2026-08-02 rolling)
-# 생성: 2026-08-04 자동 추출 + 카드 대조 — 사람 검토 전 DRAFT
+# 소스: seniorcareservice/final 승인 세트 + V20 결정 기록
+# 규칙: status=active가 우선. deprecated/historical_demo는 현재 답변에 사용하지 않음.
+
+meta:
+  effective_date: 2026-08-10
+  canon: sources/11_V20_결정_기록_0810.md
+  default_status_for_missing: legacy_reference
+  mcp_filter: status == active
+  conflict_rule: 같은 주제나 논리의 항목이 충돌하면 active가 이기며, 충돌이 해소되지 않으면 사람 검토로 보낸다.
 
 positions:
+  - id: product-two-axis-contract
+    topic: 상품 판정 — 점수 축과 Care review 축 분리
+    status: active
+    effective_date: 2026-08-09
+    approved_position_ko: "월 통합점수는 Favorable 또는 Standard를 판정하고, 데이터가 부족한 달은 Hold다. Care review는 등급이 아니라 같은 달에 별도로 열릴 수 있는 사람 검토 신호다. Favorable과 Care review는 동시에 성립할 수 있다."
+    claim_type: team_decision
+    must_include:
+      - two independent axes
+      - Care review는 등급이 아니라 검토 신호
+      - Favorable과 Care review 동시 성립 가능
+    must_not_say:
+      - 3단계 등급
+      - Favorable / Standard / Care를 상호 배타적인 상태로 표현
+      - Care tier
+    evidence_ref:
+      - sources/11_V20_결정_기록_0810.md#1-상품-판정-계약
+
+  - id: monthly-and-annual-score-contract
+    topic: 월 통합점수와 연간 점수
+    status: active
+    effective_date: 2026-08-09
+    approved_position_ko: "월 통합점수는 30/30/20/20 네 축의 가중평균이다. 연간 점수는 평가 12개월 월 통합점수의 단순 평균이며, 이 점수로 기본 할인율을 정하는 것이 V20 상품 계약이다. 다만 연간 점수 기반 요율 산식은 현재 데모 엔진에 아직 구현되지 않았다."
+    claim_type: team_decision
+    implementation_status: pending_next_version
+    must_include:
+      - 12개월 월 통합점수의 단순 평균
+      - 현재 데모 엔진 구현 대기
+    must_not_say:
+      - 연간 점수 산식이 이미 데모 요율에 적용됨
+    evidence_ref:
+      - sources/11_V20_결정_기록_0810.md#2-월간연간-계산
+
+  - id: favorable-additional-discount-qualification
+    topic: Favorable 추가 할인 자격
+    status: active
+    effective_date: 2026-08-09
+    approved_position_ko: "월 통합점수 75점 이상이면 그 달은 Favorable이다. 12개월 중 Favorable이 9개월 이상이면 연간 추가 할인 자격이 생긴다. 최종 추가 할인율 산식은 파일럿과 계리 검증 전까지 확정 요율로 말하지 않는다."
+    claim_type: team_decision
+    must_include:
+      - 월 75점 이상
+      - 12개월 중 9개월 이상
+      - 추가 할인 자격
+    must_not_say:
+      - Care review 때문에 Favorable 자격 또는 추가 할인이 중지됨
+      - 1~7%p가 최종 확정 요율임
+    evidence_ref:
+      - sources/11_V20_결정_기록_0810.md#2-월간연간-계산
+
+  - id: care-review-no-direct-price-effect
+    topic: Care review의 가격 영향
+    status: active
+    effective_date: 2026-08-09
+    approved_position_ko: "Care review는 사람 검토와 지원 리포트를 여는 신호다. Care review 자체로 할인율을 차감하거나 할증하지 않으며, Favorable 추가 할인을 중지하지도 않는다."
+    claim_type: team_decision
+    must_include:
+      - 가격 직접 영향 없음
+      - 사람 검토와 지원 리포트
+    must_not_say:
+      - Care 시 할인 13%p 축소
+      - Care 시 보너스 정지 또는 유예
+      - Care 때문에 보험료가 오른다
+      - Care tier
+    evidence_ref:
+      - sources/11_V20_결정_기록_0810.md#3-care-review-계약
+
+  - id: care-review-trigger-contract
+    topic: Care review 발동 조건과 의미
+    status: active
+    effective_date: 2026-08-09
+    approved_position_ko: "이번 달 생활권 밖 비중이 직전 2개월 평균보다 25%p 이상 늘고, 위험행동 비중도 같은 비교에서 20%p 이상 늘어야 Care review가 열린다. 같은 달 AND 조건이며, 절대적으로 위험한 수준이 아니라 개인의 변화 신호를 찾는다."
+    claim_type: team_decision
+    must_include:
+      - 이동 +25%p AND 위험행동 +20%p
+      - 같은 달
+      - 변화 신호
+    evidence_ref:
+      - sources/11_V20_결정_기록_0810.md#3-care-review-계약
+
+  - id: out-of-zone-risk-and-no-location-penalty
+    topic: 생활권 밖 위험과 위치 무감점 원칙
+    status: active
+    effective_date: 2026-08-09
+    approved_position_ko: "문제 정의에서는 익숙하지 않은 생활권 밖 환경에서 위험이 커질 수 있다고 말한다. 상품 판정에서는 생활권 밖이라는 위치만으로 감점하지 않고, 밖에서의 실제 안전행동과 같은 달의 변화 맥락을 함께 본다."
+    claim_type: team_decision
+    must_include:
+      - 생활권 밖은 위험 맥락
+      - 위치만으로 감점하지 않음
+      - 실제 안전행동을 함께 봄
+    must_not_say:
+      - 생활권 밖은 위험하지 않음
+      - out-of-zone 자체가 자동 벌점
+    evidence_ref:
+      - sources/11_V20_결정_기록_0810.md#3-care-review-계약
+
+  - id: historical-demo-13-point-reduction
+    topic: 과거 데모 13%p 기록
+    status: historical_demo
+    effective_date: 2026-08-09
+    approved_position_ko: "기존 데모의 13%p 할인 축소는 과거 요율 샌드박스 평균 12.987%p를 반올림한 예시값이다. 현재 상품 정책이나 확정 요율이 아니며, 기존 화면과 과거 비교 결과를 설명할 때만 사용한다."
+    claim_type: implementation_history
+    allowed_use:
+      - 기존 대시보드 캡처 설명
+      - 과거 시뮬레이션 결과 재현
+    must_not_say:
+      - 현재 Care review 정책
+      - 최종 요율
+    evidence_ref:
+      - sources/11_V20_결정_기록_0810.md#4-이전-데모-요율의-지위
+      - knowledge/history/decision_log.yaml#decision-2026-08-09-care-price-decoupling
+
+  - id: environment-consistency-59-of-60
+    topic: 환경 간 실질 판정 일치
+    status: active
+    effective_date: 2026-08-09
+    approved_position_ko: "V20의 두 축 계약으로 보면 60명 중 59명은 세 환경에서 실질 판정이 일치한다. 남은 1명은 통합점수 75점과 Favorable 9개월 기준 부근의 문턱 사례다. 이는 예측 정확도가 아니라 합성 시나리오의 규칙 일관성 결과다."
+    claim_type: simulation_result
+    must_include:
+      - 59/60
+      - 문턱 근처 1명
+      - 합성 시나리오의 규칙 일관성
+    must_not_say:
+      - 54/60을 최신 실질 일치율로 제시
+      - 대표 표본 또는 예측 정확도
+    evidence_ref:
+      - sources/11_V20_결정_기록_0810.md#5-시뮬레이션-해석-갱신
+
+  - id: business-targets-not-measurements
+    topic: 파일럿·가입·유지 목표값
+    status: active
+    effective_date: 2026-08-10
+    approved_position_ko: "500명 파일럿, 자발 가입률 15–20%, 유지율 +2%p는 실측이나 예측이 아니라 파일럿에서 검증할 목표값이다."
+    approved_position_en: "The 500-driver pilot, 15–20% voluntary enrollment, and +2 percentage-point retention uplift are targets to validate, not measurements or forecasts."
+    claim_type: target
+    must_include:
+      - 목표값
+      - 실측 아님
+    must_not_say:
+      - 성과
+      - 예측치
+      - 검증 완료
+    evidence_ref:
+      - sources/11_V20_결정_기록_0810.md#7-사업-숫자의-지위
+
+  - id: masil-zone-formation
+    topic: MASIL Zone 형성
+    status: active
+    effective_date: 2026-08-10
+    approved_position_ko: "MASIL Zone은 행정구역이나 고정 원이 아니라 반복 방문 기록이 만드는 개인 생활권이다. 서로 다른 3일 이상 방문한 점을 ε=260m 시작값으로 거점화하고, 거점별 반경은 max(500m, min(개인 P90, 2km))로 정한다. 지도는 해당 월을 제외한 직전 2개월 기록으로 매달 다시 만든다."
+    claim_type: team_decision
+    must_include:
+      - 3+ distinct visit days
+      - ε=260m는 시작값
+      - Core 500m · per-anchor P90 · 2km cap
+      - rolling 2-month formation
+    must_not_say:
+      - 행정구역
+      - 260m가 논문에서 직접 나온 확정값
+      - more than 3 visitings
+      - Safe Zone
+    evidence_ref:
+      - deck://appendix-b
+      - presentation-isaacman-2011
+      - presentation-zheng-2009
+      - presentation-montoliu-gatica-perez-2010
+
+  - id: simulation-validation-boundary
+    topic: 합성 시뮬레이션이 검증한 것과 못 한 것
+    status: active
+    effective_date: 2026-08-10
+    approved_position_ko: "60명 로스터를 3환경에 둔 180개 합성 시나리오와 80,032개 이벤트로 계산 재현성, 규칙 실행, Hold·예외 처리, 위치만으로 불이익을 주지 않는지를 시험했다. 실제 사고 예측력, 최종 요율, 손해율 개선, 고객 수용도는 검증하지 않았다."
+    claim_type: simulation_result
+    must_include:
+      - 60 people × 3 environments = 180 scenarios
+      - 80,032 synthetic events
+      - product logic validation
+      - not predictive validation
+    must_not_say:
+      - 180 drivers
+      - representative sample
+      - actual premium validated
+      - accident reduction proven
+    evidence_ref:
+      - deck://summary-2
+      - deck://appendix-d
+
+  - id: ai-role-and-human-gate
+    topic: AI 역할과 사람 결정
+    status: active
+    effective_date: 2026-08-10
+    approved_position_ko: "AI는 합성 이동 맥락 생성과 설명문 작성에 보조적으로 쓰인다. 월 점수와 Care review는 공개된 고정 규칙으로 계산하며, AI가 보험료나 최종 고객 조치를 결정하지 않는다. Care 리포트는 직원 검토와 승인 뒤에만 전달한다."
+    claim_type: team_decision
+    must_include:
+      - AI-assisted
+      - fixed rule-based scoring
+      - human review and staff approval
+    must_not_say:
+      - AI가 가중치 또는 보험료를 결정
+      - 리포트 자동 발송
+    evidence_ref:
+      - deck://summary-2
+      - deck://dashboard-customer-app
+
+  - id: privacy-minimum-collection
+    topic: 위치정보 최소수집
+    status: active
+    effective_date: 2026-08-10
+    approved_position_ko: "운영 입력은 도착지 이벤트와 날짜에 한정하고 경로·궤적은 쓰지 않는다. POI 이름은 마스킹하며, 판정에는 생활권 안팎과 월별 집계값만 전달하는 권한 분리 구조를 지향한다. 법적 적합성은 파일럿 전 별도 검토가 필요하다."
+    claim_type: team_decision
+    must_include:
+      - destination events, not routes
+      - POI masking
+      - minimum collection
+      - legal review before pilot
+    must_not_say:
+      - 법무 검토 완료
+      - 실시간 위치 공유
+    evidence_ref:
+      - deck://summary-2
+      - deck://dashboard-customer-app
+
+  - id: deck-literature-conflicts
+    topic: 최종 덱에 남은 문헌 인용 경계
+    status: active
+    effective_date: 2026-08-10
+    approved_position_ko: "Appendix A의 Sumagaysay 2026과 LexisNexis 2015는 V20 검토에서 해당 문장을 뒷받침하지 못해 방어 근거로 사용하지 않는다. Summary 1의 KCA 제동 수치는 시야 제한 돌발 상황의 2.28초 대 1.20초로만 말하며 일반 제동 반응으로 확대하지 않는다. 질문을 받으면 캡처가 지지하는 범위만 답하고, 핵심 논리는 직접 확인된 문헌과 팀 결정으로 설명한다."
+    claim_type: evidence_boundary
+    deck_conflict: true
+    must_include:
+      - 두 출처의 해당 주장 철회
+      - KCA 수치는 해당 실험 조건과 함께 설명
+      - 대체 근거가 지지하는 범위만 답변
+    must_not_say:
+      - Sumagaysay가 UBI의 고령 위험 오분류를 입증
+      - LexisNexis가 비UBI 가입자 45%를 입증
+      - 고령 운전자의 일반 제동 반응이 모든 상황에서 90% 느림
+    evidence_ref:
+      - deck://appendix-a
+      - artifact://v20/literature-cards
+
   - topic: 수치 우선순위 원칙
     approved_position_ko: 이 카드(2026-08-02 기준)가 장표·문서의 유일한 숫자 기준. 다른 문서와 숫자가 다르면 이 카드가 우선. 카드에 없는 숫자는 먼저 카드에 추가하고 출처를 적은 뒤 사용.
     claim_type: team_decision
@@ -99,6 +345,9 @@ positions:
       - scripts/weight_sensitivity.py
       - notebooks/weight_sensitivity.ipynb
   - topic: 요율 구조
+    status: deprecated
+    deprecated_by: care-review-no-direct-price-effect
+    deprecated_reason: V20에서 Care review와 가격을 분리함. 과거 데모 설명에만 사용.
     approved_position_ko: 우대 보너스 1~7%p 점수 비례(75점=1, 100점=7). 케어 시 보너스 정지 + 할인 13%p 축소. 할인 상한 45% · 할증 경로 없음 · 하한 = 기준 요율. 케어 시 전보다 낼 수 있음은 정직하게 표기. 13%p 축소는 월수 비례로 개선 방침.
     claim_type: team_decision
     must_include:
@@ -165,6 +414,9 @@ positions:
     source: "sources/부록B_해설_팀원용.md#k-거리 · sources/브리핑_0803_이슈정리.md#§5"
     claim_type: future_plan
   - topic: 케어 할인 축소 개선
+    status: deprecated
+    deprecated_by: care-review-no-direct-price-effect
+    deprecated_reason: 월수 비례 감액안은 과거 설계 검토 이력이며 현행 정책이 아님.
     approved_position_ko: 케어 시 할인 13%p 축소는 월수 비례로 개선 방침.
     detail_ko: "현 규칙: 평가 12개월 중 케어 월이 1개만 있어도 그 해 할인 13%p 축소(연간 고정). 문제: '11개월 우수 + 1개월 급변' 고객이 '12개월 내내 애매' 고객보다 13.0%p 불리(놓친 보너스 포함 17.6%p)한 역전. rolling 실측에서 케어 30건 전원이 1개월 발동이라 이 역전이 실측의 전형이 됨(k≥2 완화 시 감액 전건 소멸: 동시변화형 평균 할인 7.93%→19.57%). 권고: 감액을 발생 월수 비례로 — 13.0 × 발생월수 ÷ 12, 1개월 시 1.08%p. 선언 파라미터라 손익 즉시 재계산. 채택 여부는 팀 결정 대기."
     source: "sources/안전운전자_매력도_정리.md#§6 · sources/02_마스터답변안_전항목.md#⑥ 정직 고지"
@@ -257,6 +509,8 @@ positions:
       - rule_review.json
       - pytest 254·JS 22(판정 계약 27)
   - topic: 4. Safe Zone — 지역 유형별 차등
+    status: deprecated
+    deprecated_reason: Safe Zone 명칭 폐기. 같은 P90·위치 무감점 논리는 MASIL Zone 활성 스탠스로 사용.
     approved_position_ko: "저희는 지역을 사람이 분류하지 않습니다. 판정 경계는 그 사람의 실제 방문 분포(P90)가 정하고, 지역 특성은 우리가 주입하는 것이 아니라 개인 실측이 자동으로 흡수합니다. 판정이 보는 것은 도착지 하나(원장에 출발점·경유 경로 컬럼이 존재하지 않음)이며, 적용은 도착지 존 단위라 '20km 중 10km 익숙' 문제는 구조적으로 발생하지 않습니다. 경로를 받지 않는 것은 능력의 한계가 아니라 최소수집 거버넌스 설계입니다."
     claim_type: team_decision
     must_include:
@@ -287,6 +541,9 @@ positions:
       - Zheng 2009
       - Montoliu 2013
   - topic: 5. 안전 운전자 상품 매력도 — 할증 없음
+    status: deprecated
+    deprecated_by: care-review-no-direct-price-effect
+    deprecated_reason: 단발 운행·AND 게이트 설명은 유효하지만 Care-가격 결합 결론은 V20과 충돌함.
     approved_position_ko: "저희는 요율표가 아니라 기존 마일리지 할인 위에 얹히는 할인 자격 점수(오버레이)라 할증 경로가 코드에 존재하지 않고(180 시나리오 전건 candidate_surcharge_rate_pct = 0, 하한 0% = 기준 요율), 단발 운행은 월 집계·AND 게이트·사람 검토의 3중 구조에서 판정에 진입조차 못한다. 실측 180건 중 150건이 기존 마일리지 특약과 같거나 낮은 보험료, 그중 113건은 더 낮다. 정직 고지: 케어 확정 시 보너스 정지 + 할인 13%p 축소로 전보다 내는 돈이 늘 수 있다."
     claim_type: team_decision
     must_include:
@@ -309,6 +566,9 @@ positions:
     evidence_ref:
       - 180 시나리오 실측
   - topic: 5c. 연간 감액 규칙의 결함과 권고 (정직 고지)
+    status: deprecated
+    deprecated_by: care-review-no-direct-price-effect
+    deprecated_reason: 과거 데모 any 규칙의 감사 기록. 현재 Care review는 가격에 직접 영향 없음.
     approved_position_ko: "현 규칙은 케어 월 1개만 있어도 그 해 감액 13%p(_annual_state). rolling 재생성 실측의 케어 월수 분포는 0개월 150건/1개월 30건이라 k≥2 보수화만으로도 감액이 전건 소멸해 결과가 달라지며, '1개월 발동' 고객이 실측의 전형. 11개월 우수 + 1개월 급변 고객이 12개월 내내 애매한 고객보다 13.0%p 불리(보너스 포함 17.6%p)해지는 역전이 실측 케어 30건 전건에 해당. 권고: 감지는 유지하되 감액을 발생 월수에 비례(13.0 × 발생월수 ÷ 12, 1개월 시 1.08%p). 선언 파라미터라 손익까지 즉시 재계산."
     claim_type: team_decision
     must_include:
@@ -344,32 +604,22 @@ positions:
       - "engine.py:564 home_dx_m/home_dy_m"
       - engine.py _rolling_hubs_by_month
       - KIRI리포트 2024.7
-  - topic: 7. 베이스라인 2개월의 근거
-    approved_position_ko: "2개월은 '월 2회급 가장 뜸한 생활 거점까지 서로 다른 3일 문턱을 넘길 확률이 4분의 3을 넘어서는 최소 관찰 기간'이며, 방문 일수 기준을 확립한 통신 위치데이터 연구(Isaacman 2011)의 관찰 창 60일과 정확히 같고, 연구 기준선(2주~1개월)보다 보수적이면서 업계 요율 산정 관행으로 알려진 3~6개월(⚠ 원문 미확인 — 발표 인용 금지)보다 신속한 중간값이다. 제안하신 역산은 취지 수용 — 국내 고령 운전자의 연령별 연평균 주행거리 공식 통계가 공개 웹에 부재해, 같은 역산을 거리 대신 방문 빈도(푸아송, 독립·정상성 가정)로 수행했다."
+  - id: two-month-baseline-rationale
+    topic: 초기 2개월 기준선의 근거와 한계
+    status: active
+    effective_date: 2026-08-10
+    approved_position_ko: "초기 2개월은 반복 방문을 관찰하면서도 적용을 지나치게 늦추지 않기 위한 팀의 설계값이다. Isaacman 2011의 60일 관찰 창과 서로 다른 방문일 개념을 보조 근거로 사용하며, 최종 기간은 실제 파일럿 데이터로 재보정한다."
     claim_type: team_decision
     must_include:
-      - "푸아송 역산: λ=2/월 거점이 3일 넘길 확률 1개월 32.3% / 2개월 76.2% / 3개월 93.8%; 병의원 λ=3.75는 72.3/98.0/99.9%"
-      - "창과 임계는 한 쌍: 2개월 창에서 우연 방문지(λ=1) 오인 확률 임계 2일 26.4% → 3일 8.0% → 4일 1.9%; 임계 4일이면 진짜 거점 76.2%→56.7% 급락"
-      - "λ 앵커: 65세+ 월평균 입내원 3.75일(건보공단 2022), 경로당 이용자 주 2.9회(2023 노인실태조사), 고령운전자 최빈 운전 주 3~5회 36.7%(소비자원 2024, n=300)"
-      - "Isaacman 일치는 관찰 창·계수 단위(call-days)·임계값 세 축까지 — 보조 조건(14일 초과 간격·회귀 확률 20%)은 우리의 '2개월 창 전체 관측' 요건이 대신"
-      - "두 계열 구분: 운전 연구(UMTRI 2주·DRIVES 1개월·Candrive 4개월)는 '왜 2개월', Isaacman은 '왜 3일'"
-      - "구현: engine.py:38 BASELINE_MONTHS, 기준선 월은 BASELINE_OBSERVATION(불이익 없음), clustering.py:237 distinct_day_count >= 3"
+      - 팀 설계값
+      - Isaacman 2011의 60일 관찰 창은 보조 근거
+      - 파일럿에서 재보정
     must_not_say:
-      - "'3일 고정'(반드시 '관찰 창의 5%'로)"
-      - 운전 연구와 Isaacman 계열 혼용
-      - "업계 3~6개월 단정(원문 미확인 — '관행상 알려진' 수준으로만)"
-      - Lally 66일을 기준선 근거로(새 습관 형성 연구, 범위 18~254일 — 시간 스케일 참고만)
-      - 경로당·복지관 수치를 전체 노인 통계로(해당 시설 이용자 기준)
-      - 오탐 방어를 실측으로(합성 데이터는 우연 방문지가 드묾 — ③ 확률 논리로만)
+      - Isaacman이 MASIL의 2개월을 직접 검증했다고 표현
+      - 최종 확정된 산업 표준이라고 표현
     evidence_ref:
-      - Isaacman et al. Pervasive 2011
-      - 건보공단 2022 주요통계
-      - 2023 노인실태조사
-      - 한국소비자원 2024
-      - UMTRI PubMed 29584495
-      - DRIVES PMC9535782
-      - DHQ PMC7317610
-      - Candrive PubMed 23541299
+      - presentation-isaacman-2011
+      - deck://appendix-b
   - topic: 7b. 기준선 민감도 실측 — 백로그 (정직 고지)
     approved_position_ko: "기준선 1/2/3개월 민감도(180건 재판정)는 아직 돌리지 않은 개발 백로그다. 파라미터라 엔진에서 즉시 가능하고 반나절이면 표로 제출할 수 있다. 파라미터 철학: 정할 수 없는 동안은 문헌과 원리로 시작하고, 잴 수 있게 되면 잰다 — eps는 파일럿 지역별 k-거리 그래프로, 존 반경은 P90 실측으로, 기준선 기간은 실데이터 방문 빈도 분포로 재보정."
     claim_type: future_plan
@@ -723,7 +973,7 @@ positions:
       - gaip_simulation_bundle.json
       - engine.py
   - topic: 팩트체크 우선순위 (발표 전 확보 순서)
-    approved_position_ko: "1순위 Zheng 2009·Montoliu 2013(eps 260m의 유일한 문헌 근거 — 없으면 4번 답변이 '설계값'만 남는다), 2순위 KIRI 보험연구원 리포트 번호·연도(국내 UBI 구조의 유일한 선례), 3순위 Hirsch 2014/Ji 2023/Goulet-Langlois 2017(페르소나 ③⑤⑥ 근거 등급 △→○), 4순위 노인복지관 주 1.5회 원보고서 표(7번 λ 앵커 보강), 5순위 업계 UBI rating period 3~6개월(없으면 '관행상 알려진'으로만), 6순위 MDPI 15(22):12278 URL."
+    approved_position_ko: "V20 갱신 뒤 우선순위는 1) 아직 원문 정리가 끝나지 않은 Burdett·Harms 상충 서지, 2) Ji et al. 2023의 정확한 서지와 사용 범위, 3) KIRI 보험연구원 리포트 번호·연도, 4) 노인복지관 주 1.5회 원보고서 표, 5) MDPI 15(22):12278 URL이다. Zheng·Montoliu·Isaacman은 확인된 범위와 한계를 붙여 사용한다."
     claim_type: future_plan
     evidence_ref:
       - final/08_출처부록_주제별.md 10장
@@ -799,6 +1049,9 @@ positions:
     must_not_say:
       - 절대값이 문헌·실측 근거를 가진 것처럼 말하기
   - topic: Safe Zone 지역 차등 — 2026-07-29 전면 재작성된 방어선
+    status: deprecated
+    deprecated_by: out-of-zone-risk-and-no-location-penalty
+    deprecated_reason: Safe Zone 명칭 폐기 및 59/60 해석 갱신. P90·위치 무감점 원칙은 새 활성 항목에서 유지.
     approved_position_ko: "지역을 사람이 분류하지 않는다 → 판정이 보는 것은 도착지 하나뿐(출발점·경로 컬럼이 원장에 없음) → 원 크기는 개인 방문 분포(P90)가 정한다 → 지역 차이를 자동 흡수 → 실측: 설정을 바꿔도(단일 eps) 판정 0건 변화, 고객 지형을 바꿔도(3환경) 케어 60/60 유지·우대 54/60 → 운영값은 k-거리로 재고, 지역을 나눌지까지 측정이 정한다. 답변의 무게를 eps에서 개인 P90 + 두 실측으로 옮긴다."
     claim_type: simulation_result
     evidence_ref:
@@ -834,6 +1087,9 @@ positions:
     must_not_say:
       - 구현된 것처럼 말하기
   - topic: 안전 운전자 매력 — 할증 경로 부재 + AND 게이트
+    status: deprecated
+    deprecated_by: care-review-no-direct-price-effect
+    deprecated_reason: 과거 데모의 연간 감액 전제를 포함함.
     approved_position_ko: "할증 경로가 코드에 존재하지 않는다(오버레이라서) → 단발 운행은 월 집계에서 임계의 1/8 수준 → 이동·행동 동시 급변(AND)이라야 발동 → 그 위에 사람 검토. 다만 '케어 월 1개만 있어도 연간 감액'은 사실이므로 먼저 인정하는 구조를 유지할 것."
     claim_type: team_decision
     evidence_ref:
@@ -872,7 +1128,6 @@ positions:
       - 역산 4단계 순서로 서술
       - "'연구 기준선(2주~1개월)보다 보수적'까지만"
     must_not_say:
-      - 업계 UBI 3~6개월 관행 인용
       - KTDB 2013 트립당 14.0km 인용
   - topic: 페르소나는 결과 생성기가 아니라 테스트 집합
     approved_position_ko: 맞다 — 파라미터 기반 합성이고 결과는 설계의 산물이다 → 그러나 페르소나는 결과 생성기가 아니라 테스트 집합이다 → 각 유형은 사전 선언된 가설과 기대 결과를 갖는다 → 채점 엔진은 유형 라벨을 보지 못한다 → 실패해야 할 케이스(③)가 포함돼 있고 실제로 실패했다 → ∴ 검증되는 것은 예측력이 아니라 로직 일관성.
@@ -1004,6 +1259,9 @@ positions:
       - 케어는 5개월 이상 지속
       - 케어 5~7개월 지속
   - topic: 케어 월수 비례 감액 권고안
+    status: deprecated
+    deprecated_by: care-review-no-direct-price-effect
+    deprecated_reason: V20에서 Care review와 가격을 분리해 권고안 자체가 종료됨.
     approved_position_ko: 감액 월수 비례(13.0×월수÷12)는 팀이 이미 권고하던 안이며, rolling 실측(전원 1개월 발동)이 그 실증 사례. 선언 파라미터라 즉시 재계산 가능. 채택 여부(파일럿 항목으로 둘지)는 오늘(8/3) 회의 결정 대상.
     claim_type: future_plan
     evidence_ref:
@@ -1012,6 +1270,9 @@ positions:
       - 권고안이며 아직 채택 미결
       - 선언 파라미터 즉시 재계산
   - topic: 3지형 우대 갈림 — 신 서사 (구답변 금지)
+    status: deprecated
+    deprecated_by: environment-consistency-59-of-60
+    deprecated_reason: 옛 Care-보너스 결합을 제거한 V20 해석에서는 실질 일치가 59/60임.
     approved_position_ko: 갈린 6명 = 케어 발동 5명 + 광역안전형 1명. 광역안전형 1명은 케어와 무관 — 광역 저밀도에서 통합점수가 문턱(75점) 근처(72~82점)라 우대 월수 8/12로 9개월 기준 1개월 미달. 벌점이 아니라 문턱 효과.
     claim_type: simulation_result
     evidence_ref:
@@ -1417,6 +1678,9 @@ positions:
     evidence_ref:
       - 생활권_형성주기_이슈정리.md 2~3절
   - topic: 상품 지위 — 할증 경로가 구조상 없다
+    status: deprecated
+    deprecated_by: monthly-and-annual-score-contract
+    deprecated_reason: 과거 데모의 bonus-reduction 요율 산식을 현행 상품 구조로 설명함.
     approved_position_ko: 요율표가 아니라 기존 마일리지 할인 위에 얹히는 할인 자격 점수다. masil_rate = clip(korea_mileage + bonus − reduction, 0, 45). 할증은 값이 0인 게 아니라 항 자체가 없고, 하한 0% = 기준 요율. 보너스는 점수 비례 최대 7%p(하한 1%p), 총 할인 캡 45%. 180 시나리오 전건 candidate_surcharge_rate_pct = 0. 최악의 경우가 할증이 아니라 할인 축소다.
     claim_type: team_decision
     must_include:
@@ -1451,6 +1715,9 @@ positions:
     evidence_ref:
       - 안전운전자_매력도_정리.md 3절
   - topic: 감액 13%p의 지위 — 샌드박스 예시값
+    status: historical_demo
+    superseded_by: historical-demo-13-point-reduction
+    deprecated_reason: 13%p는 현재 정책이 아니라 기존 데모 설명용 이력임.
     approved_position_ko: 감액 13%p는 요율 샌드박스의 손익 예시값이다(source_status = illustrative_economics_sandbox_not_final_tariff). 자동 요율 반영이 아니라 사람 검토(care_review)이며, 운영상 개입은 벌점이 아니라 점검 권유와 예방 지원. 해제는 신청이 필요 없다 — 지표가 정상으로 돌아온 그 달에 닫힌다(care_open = fires or (care_open and sustained)).
     claim_type: team_decision
     must_include:
@@ -1471,6 +1738,9 @@ positions:
     evidence_ref:
       - 안전운전자_매력도_정리.md 5절 (180 시나리오 번들)
   - topic: 연간 케어 any 규칙 — 실측 결과 (정직 고지)
+    status: historical_demo
+    superseded_by: care-review-no-direct-price-effect
+    deprecated_reason: 과거 엔진의 가격 결합 동작을 재현하기 위한 이력임.
     approved_position_ko: "현행 규칙: _annual_state는 평가 12개월 중 하나라도 care_review면 연간 care_review(한 달 발동으로 그 해 감액). rolling 실측에서 케어 발동 월수 분포는 0개월 150건 / 1개월 30건 / 2개월 이상 0건 — 케어 30건 전원이 1개월 발동(지도가 새 목적지를 흡수해 유지 조건 조기 해제). k≥2로 보수화하면 연간 케어 대상 0건, 동시변화형 평균 할인율 7.93%→19.57%로 감액 전건 소멸. 구 고정 기준에서는 전원 5~7개월이라 k≥1~5 동일이었다. any 유지 여부는 이제 실측이 직접 답하는 질문이 됐다. 산식 예시(기존 할인 25% 가정): 11개월 우수+1개월 급변 고객 12.0% vs 12개월 애매 고객 25.0% = 13.0%p 역전(우대 보너스 포함 17.6%p)."
     claim_type: simulation_result
     must_include:
@@ -1483,6 +1753,9 @@ positions:
       - 안전운전자_매력도_정리.md 6절
       - 산식_구조이슈_3건_검토.md 이슈 ①
   - topic: 권고 — 감액을 발생 월수에 비례 (팀 결정 필요, 미결)
+    status: deprecated
+    deprecated_by: care-review-no-direct-price-effect
+    deprecated_reason: V20에서 Care review와 가격을 분리해 미결 안건이 종료됨.
     approved_position_ko: "권고: 감액을 발생 월수에 비례시킨다(13.0 × 발생월수 ÷ 12; 1개월 발동 시 감액 1.08%p). 감지가 이진인 것은 정당하나 요율 반영까지 이진·연간 고정일 이유는 없다. 선언 파라미터라 손익까지 즉시 재계산된다. 도입 여부는 팀 결정 필요(이슈 ①과 동일 안건) — 아직 미결정."
     claim_type: future_plan
     must_include:

@@ -1,14 +1,161 @@
-# 소스: sources/ (승인 원문 11종) · 수치 정본: 확정수치카드 @ e2d2e49 (2026-08-02 rolling)
-# 2026-08-04 보강 — 원문 앵커·상태 정규화 + 교차검사 57건 중 기계 적용분 반영
-# ⚠ 사용 규칙 (중요) — 이 파일은 '답변 범위'가 아니라 '기출 아카이브'다
-#  · 여기 53장은 전부 실제로 받은 질문(7/24 심사 13건 · 1차/현장 피드백 · 8/3 브리핑)이다.
+# 소스: 최종 덱 Summary·Appendix + 마스터 Q&A V20
+# status=active 카드만 MCP 기본 검색. status가 없으면 legacy_reference.
+# ⚠ 사용 규칙 (중요) — legacy 카드는 '답변 범위'가 아니라 '기출 아카이브'다
+#  · 기존 53장은 실제로 받은 질문의 과거 답변이며, active 카드와 충돌하면 사용하지 않는다.
 #  · 답변 생성의 1순위 소스는 official_positions.yaml(주제 단위라 조합 가능)이며,
 #    카드는 문장 완성도가 필요할 때 참고하는 '이미 다듬어진 표현' 캐시다.
 #  · 질문이 카드와 정확히 일치하지 않으면 카드를 억지로 끼워 맞추지 말고
-#    positions 여러 개를 조합해 답하라. 카드에 없다는 이유로 거부하지 마라.
+#    active positions 여러 개를 조합해 답하라. 카드에 없다는 이유로 거부하지 마라.
 #  · 거부는 '카드 없음'이 아니라 '근거(positions·evidence) 없음'일 때만.
 
+meta:
+  effective_date: 2026-08-10
+  default_status_for_missing: legacy_reference
+  mcp_filter: status == active
+  answer_style: 짧고 쉬운 문장. 첫 문장에 결론. 덱 용어와 동일한 영어 사용.
+
 cards:
+  - id: qa-product-two-axes
+    status: active
+    question_ko: Favorable, Standard, Care는 세 등급인가요?
+    question_en: Are Favorable, Standard, and Care three pricing tiers?
+    topic: 상품-두축
+    direct_answer_ko: "아닙니다. 월 통합점수는 Favorable 또는 Standard를 정하고, 데이터가 부족하면 Hold입니다. Care review는 별도의 사람 검토 신호입니다. 그래서 Favorable과 Care review가 같은 달에 함께 나올 수 있습니다."
+    spoken_answer_en: "No. The monthly score gives Favorable or Standard. If data is insufficient, it is Hold. Care review is a separate human-review signal. A month can be both Favorable and under Care review."
+    source: sources/11_V20_결정_기록_0810.md#1-상품-판정-계약
+
+  - id: qa-care-price
+    status: active
+    question_ko: Care review가 열리면 보험료가 오르나요?
+    question_en: Does a Care review increase the premium?
+    topic: 케어-가격
+    direct_answer_ko: "아닙니다. Care review 자체는 할인율을 깎거나 할증하지 않습니다. 사람 검토와 지원 리포트를 여는 신호일 뿐입니다."
+    spoken_answer_en: "No. A Care review does not reduce the discount or add a surcharge. It opens a human review and a support report."
+    followups:
+      - q: 대시보드에는 13%p 차이가 보이는데요?
+        a: 그 화면은 Care와 가격을 연결했던 이전 데모다. 13%p는 과거 샌드박스 예시값이며 현재 상품 정책이 아니다.
+    source: sources/11_V20_결정_기록_0810.md#3-care-review-계약
+
+  - id: qa-annual-discount
+    status: active
+    question_ko: 그러면 연간 할인율은 어떻게 정하나요?
+    question_en: Then how is the annual discount determined?
+    topic: 연간-할인
+    direct_answer_ko: "12개월 월 통합점수를 평균해 연간 점수를 만듭니다. 그 점수로 기본 할인율을 정하는 것이 V20 계약입니다. Favorable이 9개월 이상이면 추가 할인 자격이 생깁니다. 최종 요율 산식은 아직 파일럿과 계리 검증 대상입니다."
+    spoken_answer_en: "We average the 12 monthly scores into one annual score. That score sets the base discount. Nine or more Favorable months qualify for an additional discount. The final tariff formula still needs pilot and actuarial validation."
+    source: sources/11_V20_결정_기록_0810.md#2-월간연간-계산
+
+  - id: qa-care-trigger
+    status: active
+    question_ko: Care review는 정확히 언제 열리나요?
+    question_en: What exactly triggers a Care review?
+    topic: 케어-발동
+    direct_answer_ko: "같은 달에 두 변화가 함께 커져야 합니다. 생활권 밖 비중은 직전 두 달 평균보다 25%p 이상, 위험행동 비중은 20%p 이상 늘어야 합니다. 한쪽만 변하면 열리지 않습니다."
+    spoken_answer_en: "Two changes must happen in the same month. Out-of-zone travel must rise by 25 percentage points, and risky behavior by 20 points, versus the previous two months. One change alone is not enough."
+    source: sources/11_V20_결정_기록_0810.md#3-care-review-계약
+
+  - id: qa-out-of-zone
+    status: active
+    question_ko: 생활권 밖이 위험하다면서 왜 위치만으로 감점하지 않나요?
+    question_en: If unfamiliar areas are riskier, why is there no location-only penalty?
+    topic: 생활권밖-위험
+    direct_answer_ko: "생활권 밖은 위험의 맥락이지 벌점이 아닙니다. 낯선 환경에서 위험이 커질 수 있지만, 개인이 실제로 안전하게 운전하면 감점하지 않습니다. 그래서 밖에서의 안전행동과 패턴 변화를 함께 봅니다."
+    spoken_answer_en: "Out-of-zone travel is context, not a penalty. Unfamiliar roads can raise risk, but safe driving is not punished. We look at behavior outside the zone and changes from the person's normal pattern."
+    source: sources/11_V20_결정_기록_0810.md#3-care-review-계약
+
+  - id: qa-zone-formation
+    status: active
+    question_ko: MASIL Zone은 어떻게 만드나요?
+    question_en: How is a MASIL Zone formed?
+    topic: 생활권-형성
+    direct_answer_ko: "서로 다른 3일 이상 반복 방문한 지점을 거점으로 묶습니다. ε=260m는 거점 탐지의 시작값입니다. 실제 생활권 반경은 거점별 500m 최소 반경과 개인 P90, 2km 상한으로 정합니다. 지도는 직전 두 달 기록으로 매달 다시 만듭니다."
+    spoken_answer_en: "We form anchors from places visited on at least three different days. The 260-meter value is a starting point for anchor detection. The zone radius uses a 500-meter core, each person's P90, and a 2-kilometer cap. We rebuild the map monthly from the previous two months."
+    source: deck://appendix-b
+
+  - id: qa-why-two-months
+    status: active
+    question_ko: 왜 기준선이 두 달인가요?
+    question_en: Why is the baseline two months?
+    topic: 기준선-2개월
+    direct_answer_ko: "월 두 번 가는 뜸한 거점은 한 달 관찰로 잡힐 확률이 32%지만, 두 달이면 76%입니다. 세 달은 94%지만 반영이 한 달 늦습니다. Isaacman 2011도 중요 장소 식별에 60일과 서로 다른 3일을 사용했습니다. 파일럿에서 다시 재보정합니다."
+    spoken_answer_en: "For a place visited twice a month, the capture rate is about 32% after one month and 76% after two. Three months reaches 94% but delays action by one month. Isaacman also used a 60-day window and distinct visit days. We will recalibrate this in the pilot."
+    source: deck://appendix-b
+
+  - id: qa-synthetic-validation
+    status: active
+    question_ko: 합성 데이터로 무엇을 검증했다고 할 수 있나요?
+    question_en: What can synthetic data actually validate?
+    topic: 합성-검증범위
+    direct_answer_ko: "예측력을 검증한 것이 아닙니다. 180개 시나리오에서 같은 입력이면 같은 결과가 나오는지, 규칙과 예외 처리가 의도대로 작동하는지 확인했습니다. 실제 요율과 사고 감소 효과는 파일럿에서 검증해야 합니다."
+    spoken_answer_en: "It does not validate prediction accuracy. Across 180 scenarios, we tested reproducibility, rule execution, and exception handling. Real premiums and accident reduction still require a pilot."
+    followups:
+      - q: 환경이 바뀌어도 결과가 같았나요?
+        a: V20의 두 축 계약으로 보면 60명 중 59명이 실질적으로 일치했고, 남은 1명은 75점·9개월 문턱 사례다.
+    source: deck://appendix-d
+
+  - id: qa-ai-role
+    status: active
+    question_ko: AI가 보험료를 정하나요?
+    question_en: Does AI set the premium?
+    topic: AI-역할
+    direct_answer_ko: "아닙니다. AI는 합성 이동 맥락과 설명문 작성을 돕습니다. 점수와 Care review는 고정 규칙으로 계산합니다. 보험료와 고객 조치는 사람이 검토합니다."
+    spoken_answer_en: "No. AI helps create synthetic mobility contexts and draft explanations. Fixed rules calculate the score and Care signal. People review the premium and customer action."
+    source: deck://summary-2
+
+  - id: qa-business-targets
+    status: active
+    question_ko: 500명, 가입률 15–20%, 유지율 +2%p는 실측인가요?
+    question_en: Are the 500 drivers, 15–20% enrollment, and +2-point retention measured results?
+    topic: 사업-목표
+    direct_answer_ko: "아닙니다. 세 숫자는 모두 파일럿에서 검증할 목표입니다. 성과나 예측치가 아닙니다."
+    spoken_answer_en: "No. All three numbers are targets for the pilot. They are not measured results or forecasts."
+    source: sources/11_V20_결정_기록_0810.md#7-사업-숫자의-지위
+
+  - id: qa-kca-braking-condition
+    status: active
+    question_ko: 제동 반응 2.28초와 90% 차이는 모든 상황에 해당하나요?
+    question_en: Is the 2.28-second braking result true in every situation?
+    topic: 문헌-KCA-제동반응
+    direct_answer_ko: "아닙니다. 시야가 제한된 돌발 상황에서 2.28초와 1.20초가 관찰된 조건부 결과입니다. 같은 시험의 교차로 우회전 조건에서는 차이가 0.02초였습니다. 따라서 일반 제동 능력 전체로 확대하지 않습니다."
+    spoken_answer_en: "No. It was a specific limited-visibility emergency condition: 2.28 seconds versus 1.20. In another condition in the same test, the gap was only 0.02 seconds. We do not generalize it to all braking situations."
+    source: presentation-kca-2024-elderly-drivers
+
+  - id: qa-literature-evidence
+    status: active
+    question_ko: 문헌 근거를 바로 보여줄 수 있나요?
+    question_en: Can you show the exact source behind that claim?
+    topic: 문헌-인용
+    direct_answer_ko: "가능합니다. V20 문헌 카드에 허용 주장, 원문 캡처, 덱 사용 위치, 단서를 연결합니다. 캡처가 없거나 문장 범위가 맞지 않으면 그 문헌으로 답하지 않습니다."
+    spoken_answer_en: "Yes. Each approved literature card links the allowed claim, the original excerpt, and the exact place where it is used in the deck. If that link is missing, we do not use the source."
+    source: artifact://v20/literature-cards
+
+  - id: qa-dashboard-comparison
+    status: active
+    question_ko: 두 사람의 거리가 비슷한데 왜 결과가 다른가요?
+    question_en: Why are the results different when their annual distances are similar?
+    topic: 대시보드-비교
+    direct_answer_ko: "거리가 아니라 행동과 변화가 달랐기 때문입니다. Edward는 연간 2,473.6km, Frank는 2,510.1km로 비슷하지만 위험 이벤트는 209건과 10건입니다. 연간 점수도 81.6점과 98.4점입니다. 화면의 최종 할인율은 이전 데모 값이므로 현재 V20 요율 계약의 근거로 쓰지 않습니다."
+    spoken_answer_en: "Their mileage is similar, but their behavior is different. Edward has 209 risky events and an annual score of 81.6. Frank has 10 risky events and a score of 98.4. The final rates shown on this old dashboard are legacy demo values, not the current V20 pricing rule."
+    source: deck://dashboard-appendix
+
+  - id: qa-why-senior-drivers
+    status: active
+    question_ko: 왜 고령 운전자만 대상으로 시작하나요?
+    question_en: Why start with older drivers?
+    topic: 문제정의-고령운전자
+    direct_answer_ko: "문제는 나이 자체가 아니라 변화 속도와 현재 제도의 간격입니다. 면허 갱신은 길고, 마일리지 보험은 거리만 봅니다. MASIL은 평소 운전에서 개인의 변화와 안전행동을 함께 보고, 이동권을 제한하기 전에 지원을 연결합니다."
+    spoken_answer_en: "The issue is not age alone. It is the gap between personal change and current systems. License reviews are infrequent, and mileage insurance only sees distance. MASIL uses normal driving to recognize change and connect support before restricting mobility."
+    source: deck://summary-1
+
+  - id: qa-social-value
+    status: active
+    question_ko: 이 상품의 사회적 가치는 무엇인가요?
+    question_en: What is the social value of this product?
+    topic: 사회적가치
+    direct_answer_ko: "규제나 면허 제한보다 먼저 자발적인 안전 지원을 제공합니다. 안전하게 운전하는 고령자는 인정하고, 변화가 큰 달에는 사람 검토와 예방 지원을 연결합니다. 실시간 위치를 가족과 공유하는 구조는 아닙니다."
+    spoken_answer_en: "It offers voluntary safety support before restriction. It recognizes safe older drivers and connects human review when their pattern changes. It does not share real-time location with the family."
+    source: deck://summary-2
+
   - question_ko: (3지형에서 우대 판정이 갈린 이유는? — 질문 문구는 문서에 없음, §3 표준답)
     topic: 3지형-우대갈림
     source: "sources/브리핑_0803_이슈정리.md#§3-3지형-우대-갈림(서사-변경) · sources/생활권반경_eps_정리.md#§4-실험B · sources/부록D_해설_팀원용.md#§0-시안수정-7번"
@@ -428,13 +575,11 @@ cards:
   - question_ko: "[#7] 생활권 학습 기준선을 왜 하필 2개월로 잡았는가. 근거가 선언적으로 보인다. (제안: 1년 단위 평균 운행거리 통계를 찾아 역산하면 근거가 될 것)"
     topic: 기준선-2개월
     source: "sources/02_마스터답변안_전항목.md#§7(베이스라인 기간 2개월 설정 근거) · sources/07_근거지도.md#§7 · sources/부록B_해설_팀원용.md#2부(왜 2개월인가 4단계) · sources/08_출처부록_주제별.md#5장(기준선 관찰 기간 선례)"
-    direct_answer_ko: "2개월은 '월 2회급 가장 뜸한 생활 거점까지 서로 다른 3일 문턱을 넘길 확률이 4분의 3을 넘어서는 최소 관찰 기간'이며, 방문 일수 기준을 확립한 통신 위치데이터 연구(Isaacman 2011)의 관찰 창 60일과 정확히 같으며, 연구 기준선(2주~1개월)보다 보수적이면서 업계 요율 산정 관행으로 알려진 3~6개월(⚠ 원문 미확인 — 발표 인용 금지)보다 신속한 중간값이다. 역산은 거리 통계 부재(국내 고령자 연령별 연평균 주행거리 공식 통계 없음)로 거리 대신 방문 빈도로 수행 — 방문일을 푸아송으로 두면 월 2회급 거점(λ=2/월)의 '서로 다른 3일' 성립 확률이 1개월 32.3% → 2개월 76.2% → 3개월 93.8%로, 1개월은 진짜 거점 셋 중 둘을 놓치고 3개월은 +17.6%p를 얻는 대신 개입이 한 달 늦다. 창과 임계는 한 쌍이다 — 2개월 창에서 우연 방문지(λ=1) 오인율이 임계 2일 26.4% → 3일 8.0%로 꺾이고, 임계를 4일로 올리면 월 2회급 진짜 거점 검출이 56.7%로 급락해 3일이 오인·누락을 동시에 억제하는 최소 정수다. 다만 기준선 1·2·3개월 민감도 실측은 미실시 백로그(파라미터라 반나절이면 180건 재판정 표 제출 가능)임을 정직하게 밝힌다."
-    spoken_answer_ko: "두 가지로 답하겠습니다. 먼저 제안 주신 역산 — 방향에 동의합니다. 다만 국내 고령 운전자의 연령별 연평균 주행거리는 공개된 공식 통계가 없어서, 저희는 같은 역산을 거리 대신 방문 빈도로 했습니다. 방문일을 푸아송으로 두면, 월 2회밖에 가지 않는 가장 뜸한 생활 거점이 '서로 다른 3일' 문턱을 넘을 확률이 1개월에서는 32%, 2개월에서 76%, 3개월에서 94%입니다. 1개월은 진짜 거점 셋 중 둘을 놓치고, 3개월은 18%포인트를 더 얻는 대신 개입이 한 달 늦습니다. 빈도 가정은 건강보험 통계 월 3.75일 내원, 노인실태조사 경로당 이용자 주 2.9회, 소비자원 조사 주 3에서 5회 운전으로 앵커했습니다. 둘째, 선례입니다. 통신 데이터로 중요 장소를 식별한 Isaacman 2011이 60일 관찰에서 '전체 일수의 5퍼센트, 즉 서로 다른 3일'을 같은 목적으로 썼습니다 — 관찰 창도, 임계값도, 방문 횟수가 아니라 방문한 날 수로 센다는 논리까지 저희와 같습니다. 자연주행 연구 기준선인 2주에서 1개월보다는 보수적이고, 업계 요율 산정 관행으로 알려진 3에서 6개월보다는 신속한 중간값입니다. 다만 기준선 1·2·3개월 민감도 실측은 아직 돌리지 않았습니다. 파라미터라 반나절이면 180건 재판정 표로 제출할 수 있고, 파일럿에서는 실데이터 방문 빈도 분포로 다시 잽니다."
+    direct_answer_ko: "2개월은 월 2회급의 뜸한 생활 거점도 서로 다른 3일 문턱을 넘길 확률이 4분의 3을 넘어서는 최소 관찰 기간이다. 방문일을 푸아송으로 두면 성립 확률이 1개월 32.3% → 2개월 76.2% → 3개월 93.8%다. 1개월의 누락을 크게 줄이면서 3개월보다 한 달 빠르다. Isaacman 2011도 중요 장소 식별에 60일 관찰과 서로 다른 3일을 사용했다. 기준선 1·2·3개월 민감도는 파일럿에서 실데이터로 다시 검증한다."
+    spoken_answer_ko: "방문 빈도로 역산했습니다. 월 2회 가는 뜸한 거점은 한 달 관찰로 잡힐 확률이 32%지만, 두 달이면 76%입니다. 세 달은 94%지만 반영이 한 달 늦습니다. Isaacman 2011도 중요 장소를 찾을 때 60일과 서로 다른 3일을 사용했습니다. 그래서 두 달을 시작값으로 두고 파일럿에서 다시 재겠습니다."
     followups:
       - q: 1개월로 줄여도 크게 안 달라지지 않나?
         a: "병의원처럼 잦은 거점은 1개월에도 72% 성립하지만, 월 2회급 뜸한 거점은 32%까지 떨어집니다. 그 거점이 빠지면 그 사람의 생활권 지도 자체가 좁게 잡혀 '밖 비중'이 실제보다 부풀려집니다 — 관측의 질 문제이지 위치 벌점 문제가 아닙니다."
-      - q: 업계 관행이 3~6개월인데 왜 굳이 빨리 가나?
-        a: 요율 산정 관행은 보험료를 확정하기 위한 기간이고, 저희 2개월은 요율이 아니라 채점 구획을 그리는 학습 기간입니다. 목적이 달라 더 짧게 가도 되고, 실제 우대 판정은 12개월 중 9개월 충족을 요구해 관행보다 오히려 긴 관찰 위에서 확정됩니다.
       - q: Isaacman은 운전 연구가 아니지 않나?
         a: "맞습니다, 휴대폰 통신 위치데이터 연구입니다. 저희가 이 논문에서 가져온 것은 고령자 운전 행태가 아니라 \"위치 점에서 반복 방문지를 어떻게 식별하는가\"라는 방법론입니다 — 데이터가 통신이든 차량이든 같은 문제이고, 관찰 창 60일과 \"전체 일수의 5% = 서로 다른 3일\"이라는 도출이 저희와 일치합니다. 기준선 기간의 운전 연구 선례는 따로 있습니다 — UMTRI 2주, DRIVES 첫 1개월, Candrive 4개월 재평가 주기이고 저희 2개월은 그 사이입니다."
       - q: 습관이 2개월에 자리 잡는다는 근거는?
@@ -442,7 +587,6 @@ cards:
     do_not_say:
       - "'3일 고정'('관찰 창의 5%'로 말할 것)"
       - 운전 연구 계열과 Isaacman 통신 데이터 계열 혼용
-      - "업계 3~6개월 단정(원문 미확인 — '관행상 알려진'으로만)"
       - Lally 66일을 기준선 근거로
       - 경로당·복지관 수치를 전체 노인 통계처럼
       - 합성 실측으로 오탐 방어 주장(확률 논리로만)
@@ -457,15 +601,14 @@ cards:
       - Candrive PubMed 23541299
       - Lally et al. 2010
     flags:
-      - "근거지도 §7: 업계 UBI 3~6개월 관행·KTDB 트립당 14.0km는 원출처 미확보(✕) — 발표 인용 금지, '연구 기준선보다 보수적'까지만"
+      - "근거지도 §7: KTDB 트립당 14.0km는 원출처 미확보(✕) — 발표 인용 금지"
       - 빈도 앵커(건보 3.75일·경로당 2.9회·복지관 1.5회)는 링크 미확보(△)이며 복지관 수치는 단일 언론 인용 — 원보고서 재확인 중
   - question_ko: 베이스라인 2개월의 근거는
     topic: 기준선-2개월
     source: "sources/02_마스터답변안_전항목.md#7-베이스라인-기간2개월-설정-근거 · sources/07_근거지도.md#7-베이스라인-2개월의-근거"
     direct_answer_ko: "역산 4단계로 답한다: ① 거점 인정 = 서로 다른 3일 이상 방문(Isaacman 2011: 60일 관찰의 5% = 3일, 총 횟수가 아니라 call-days로 세는 단위까지 동일) ② 가장 뜸한 생활 거점 빈도는 월 2회 수준(앵커: 건보 65세+ 월평균 입내원 3.75일·경로당 이용자 주 2.9회·복지관 이용자 주 1.5회) ③ 관찰 창 1개월이면 방문 2일로 3일 미달 → 거점 탈락(푸아송 포착 확률 32.3% — 3곳 중 2곳 누락) ④ 2개월이면 4일로 충족(76.2%; 3개월은 93.8%지만 개입 1개월 지연). ∴ 2개월 = 저빈도 생활 거점을 놓치지 않는 최소 창. 창과 임계는 한 쌍 — 2개월 창에서 우연 방문지 오인율이 임계 2일 26.4% → 3일 8.0% → 4일 1.9%이고, 임계를 4일로 올리면 진짜 거점 포착이 56.7%로 급락하므로 3일이 오인·누락을 동시에 억제하는 최소 정수다. 보조 확인: 2개월이면 운전 26~43회로 표본 충분(소비자원 2024, n=300). 선례 스펙트럼에서 우리 위치: UMTRI 2주·DRIVES 1개월(운전 연구 기준선)보다 보수적, Candrive 재평가 4개월 이내 — 운전 연구 계열(왜 2개월)과 Isaacman 통신 계열(왜 3일)은 담당 질문이 다르므로 섞지 않는다. 우리 데이터 실측: 369개 목적지 그룹 중 3일 미만 6개(1.6%), 진짜 거점 탈락 0. 기준선 1/2/3개월 민감도 재판정은 아직 안 돌린 백로그(반나절이면 표 제출 가능)이며, 파일럿에서 실데이터 방문 빈도 분포로 재보정한다."
-    spoken_answer_ko: "두 가지로 답하겠습니다. 먼저 제안 주신 역산 — 방향에 동의합니다. 다만 국내 고령 운전자의 연령별 연평균 주행거리는 공개된 공식 통계가 없어서, 저희는 같은 역산을 거리 대신 방문 빈도로 했습니다. 방문일을 푸아송으로 두면, 월 2회밖에 가지 않는 가장 뜸한 생활 거점이 '서로 다른 3일' 문턱을 넘을 확률이 1개월에서는 32%, 2개월에서 76%, 3개월에서 94%입니다. 1개월은 진짜 거점 셋 중 둘을 놓치고, 3개월은 18%포인트를 더 얻는 대신 개입이 한 달 늦습니다. 빈도 가정은 건강보험 통계 월 3.75일 내원, 노인실태조사 경로당 이용자 주 2.9회, 소비자원 조사 주 3에서 5회 운전으로 앵커했습니다. 둘째, 선례입니다. 통신 데이터로 중요 장소를 식별한 Isaacman 2011이 60일 관찰에서 '전체 일수의 5퍼센트, 즉 서로 다른 3일'을 같은 목적으로 썼습니다 — 관찰 창도, 임계값도, 방문 횟수가 아니라 방문한 날 수로 센다는 논리까지 저희와 같습니다. 자연주행 연구 기준선인 2주에서 1개월보다는 보수적이고, 업계 요율 산정 관행으로 알려진 3에서 6개월보다는 신속한 중간값입니다. 다만 기준선 1·2·3개월 민감도 실측은 아직 돌리지 않았습니다. 파라미터라 반나절이면 180건 재판정 표로 제출할 수 있고, 파일럿에서는 실데이터 방문 빈도 분포로 다시 잽니다."
+    spoken_answer_ko: "방문 빈도로 역산했습니다. 월 2회 가는 뜸한 거점은 한 달 관찰로 잡힐 확률이 32%지만, 두 달이면 76%입니다. 세 달은 94%지만 반영이 한 달 늦습니다. Isaacman 2011도 중요 장소를 찾을 때 60일과 서로 다른 3일을 사용했습니다. 그래서 두 달을 시작값으로 두고 파일럿에서 다시 재겠습니다."
     do_not_say:
-      - 업계 UBI 3~6개월 관행 인용(원출처 미확보 — 발표 인용 금지)
       - KTDB 2013 트립당 14.0km(원문 링크 미확보)
       - "'2개월이 최적값'('합리적 균형값'으로 — 브리핑_0803 §1·§10 금지 표현)"
       - "'3일 고정'('관찰 창의 5%'로 말할 것)"
@@ -482,11 +625,8 @@ cards:
     followups:
       - q: 왜 3일이 임계인가
         a: "Isaacman 2011(60일의 5%=3일, call-days 단위 동일) + 푸아송 계산: 2일=오인 26%, 3일=8%, 4일=진짜 거점 절반 누락."
-      - q: 업계 관행과 비교하면?
-        a: "업계 비교는 생략한다 — '연구 기준선(2주~1개월)보다 보수적'까지만 말한다."
     flags:
       - λ 빈도 앵커(건보 3.75일·경로당 주 2.9회·복지관 주 1.5회)는 근거지도 기준 링크 미확보(△), 복지관 주 1.5회는 단일 언론 인용으로 원보고서 표 재확인 중
-      - "spoken 답변 말미의 '업계 요율 산정 관행 3~6개월'은 원출처 미확보(✕) — 근거지도는 발표 인용 금지, 마스터는 '관행상 알려진' 수준으로만 허용. 두 지침 간 수위 차이 있음"
     duplicate_of: "[#7] 생활권 학습 기준선을 왜 하필 2개월로 잡았는"
   - question_ko: 왜 2개월 창?
     topic: 기준선-2개월
@@ -496,7 +636,6 @@ cards:
     do_not_say:
       - 최적값
       - 2개월이 최적값
-      - 업계 UBI 3~6개월 관행 인용(원출처 미확보 — 발표 인용 금지)
     evidence_ref:
       - 포착 확률 계산(76%/32%/94% — 정밀값 76.2%, 부록B 표)
       - Isaacman et al. 2011

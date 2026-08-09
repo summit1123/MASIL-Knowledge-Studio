@@ -1,7 +1,178 @@
-# 문헌·근거 원장 · 소스: sources/ (승인 원문 11종)
-# status: verified=원문 대조 확인 / unverified=팩트체크 미결(발표 인용 주의) / banned=인용 금지 / internal=우리 실측·코드
+# 문헌·근거 원장 · presentation_entries만 MCP 기본 검색
+# entries는 2026-08-04 legacy 원장으로 보존하며 기본 검색에서 제외
 # 동일 출처 다중 등재는 대표키로 병합, 지위가 갈렸던 건은 보수적 채택 + status_conflict에 이력 기록
-# 2026-08-04 정규화
+# V20 문헌 카드의 캡처·허용 주장·덱 위치를 우선
+
+meta:
+  effective_date: 2026-08-10
+  default_collection: presentation_entries
+  legacy_collection: entries
+  capture_source_url: https://claude.ai/code/artifact/9dea93fd-3645-48c6-8166-3e4cdcad5abc
+  capture_assets: reviewed_in_v20_pending_local_export
+
+presentation_entries:
+  - key: presentation-ehsani-tefft-2021
+    canonical_key: ehsani-tefft-2021
+    source: Ehsani & Tefft 2021, CHANCE 34(1)
+    citation_tier: stage_citable
+    usage_scope: summary_1_appendix_a
+    allowed_claim: 익숙하지 않은 도로에서 사고 연루 가능성이 2.5배 높았다
+    caveat: 고령자만의 효과로 일반화하지 않고 crash involvement로 표현
+    deck_location: Summary 1 · Appendix A
+    capture_available: true
+    url: https://doi.org/10.1080/09332480.2021.1885934
+
+  - key: presentation-mcgwin-brown-1999
+    source: McGwin & Brown 1999
+    citation_tier: stage_citable
+    usage_scope: summary_1
+    allowed_claim: 고령 운전자 사고가 교차로와 양보 상황에 집중되는 경향
+    caveat: 부주의 전체로 일반화하지 않고 situational judgment 맥락으로 사용
+    deck_location: Summary 1
+    capture_available: true
+    url: https://doi.org/10.1016/S0001-4575(98)00061-X
+
+  - key: presentation-cicchino-mccartt-2015
+    source: Cicchino & McCartt 2015
+    citation_tier: stage_citable
+    usage_scope: appendix_a
+    allowed_claim: 고령 운전자의 inadequate surveillance 오류 중 looking but not seeing이 71%, 중년은 40%
+    caveat: 전체 사고 원인의 71%라고 말하지 않음
+    deck_location: Appendix A
+    capture_available: true
+    url: https://doi.org/10.1016/j.aap.2015.04.015
+
+  - key: presentation-chen-2025-neurology
+    source: Chen et al. 2025, Neurology 105(12)
+    citation_tier: stage_citable
+    usage_scope: appendix_a
+    allowed_claim: 인지 변화가 일상 운전·이동 패턴 변화로 먼저 나타날 수 있음
+    caveat: MASIL이 인지장애를 진단한다고 말하지 않음
+    deck_location: Appendix A
+    capture_available: true
+    url: https://doi.org/10.1212/WNL.0000000000214440
+
+  - key: presentation-vivoda-2021
+    source: Vivoda et al. 2021
+    citation_tier: stage_citable
+    usage_scope: appendix_a
+    allowed_claim: 초기 자기조절 행동으로 야간 운전 회피 58.8%와 낯선 지역 회피가 관찰됨
+    caveat: 전체 고령자가 모두 회피한다고 일반화하지 않음
+    deck_location: Appendix A
+    capture_available: true
+    url: https://doi.org/10.1093/geroni/igab046.1019
+
+  - key: presentation-isaacman-2011
+    canonical_key: isaacman-2011
+    source: Isaacman et al. 2011
+    citation_tier: stage_citable
+    usage_scope: appendix_b
+    allowed_claim: 60일 관찰과 전체 일수의 5%에 해당하는 서로 다른 방문일로 중요 장소를 식별
+    caveat: 운전 연구가 아니라 반복 방문지 식별 방법론
+    deck_location: Appendix B
+    capture_available: true
+    url: https://doi.org/10.1007/978-3-642-21726-5_9
+
+  - key: presentation-zheng-2009
+    source: Zheng et al. 2009
+    citation_tier: stage_citable
+    usage_scope: appendix_b_footnote
+    allowed_claim: stay-point 식별에 200m 거리 기준을 사용한 선례
+    caveat: MASIL의 260m를 논문에서 직접 가져왔다고 말하지 않음
+    deck_location: Appendix B footnote
+    capture_available: true
+    url: https://doi.org/10.1145/1526709.1526816
+
+  - key: presentation-montoliu-gatica-perez-2010
+    source: Montoliu & Gatica-Perez 2010
+    citation_tier: stage_citable
+    usage_scope: appendix_b_footnote
+    allowed_claim: 장소 군집화에 250m와 200–300m 범위가 사용된 선례
+    caveat: MASIL의 260m를 논문 직접값으로 표현하지 않음
+    deck_location: Appendix B footnote
+    capture_available: true
+    url: https://doi.org/10.1145/1899475.1899487
+
+  - key: presentation-kca-2024-elderly-drivers
+    source: Korea Consumer Agency 2024 elderly-driver safety inspection
+    citation_tier: stage_citable
+    usage_scope: summary_1
+    allowed_claim: 시야가 제한된 돌발 상황에서 고령 2.28초와 비고령 1.20초가 관찰됨
+    caveat: 조건 없는 일반 제동 반응 또는 모든 상황에서 90% 느리다고 일반화하지 않음. 같은 시험의 교차로 우회전 조건 차이는 0.02초였음
+    deck_location: Summary 1
+    capture_available: true
+    url: https://www.kca.go.kr/smartconsumer/board/download.do?fno=10046786&bid=00000146&did=1003858738&menukey=7301
+
+  - key: presentation-erso-older-driver-risk
+    source: European Road Safety Observatory, older drivers
+    citation_tier: stage_citable
+    usage_scope: appendix_a
+    allowed_claim: 75세 이상 운전자의 fatality risk가 동일 노출에서 약 5배
+    caveat: 사고 빈도와 신체 취약성에 따른 심도를 구분
+    deck_location: Appendix A
+    capture_available: true
+    url: https://road-safety.transport.ec.europa.eu/eu-road-safety-policy/priorities/safe-road-use/elderly-drivers/older-drivers-risky-or-risk/high-fatality-rate-more-crashes-or-more-severe-injuries_en
+
+  - key: presentation-candrive-marshall-2023
+    canonical_key: candrive-marshall-2023
+    source: Marshall et al. 2023, Candrive
+    citation_tier: qa_only
+    usage_scope: exposure_adjustment_question
+    allowed_claim: 거리 보정 at-fault 사고 위험이 저위험군 대비 고위험군 5.26배
+    caveat: 발표에서 선제 인용하지 않고 3배 또는 사고빈도로 표현하지 않음
+    deck_location: References only
+    capture_available: true
+    url: https://doi.org/10.1093/gerona/glad044
+
+  - key: presentation-longroad-self-regulation
+    source: AAA Foundation LongROAD
+    citation_tier: stage_citable
+    usage_scope: appendix_d_persona_reference
+    allowed_claim: 고령 운전자의 자기조절과 활동공간 변화에 대한 페르소나 방향성 근거
+    caveat: 합성 페르소나의 절대 파라미터를 입증하지 않음
+    deck_location: Appendix D · References
+    capture_available: true
+    url: https://aaafoundation.org/research/the-role-of-driving-comfort-in-self-regulation-among-a-large-cohort-of-older-drivers-aaa-longroad-study/
+
+  - key: presentation-harms-2021
+    source: Harms, Burdett & Charlton 2021
+    citation_tier: listed_only
+    usage_scope: references_only
+    allowed_claim: route familiarity literature의 상반 결과와 한계를 확인하는 배경
+    caveat: 선제 인용 금지. 사고율 메타분석으로 설명하지 않음
+    deck_location: References
+    capture_available: true
+    url: https://doi.org/10.1016/j.trip.2021.100331
+
+  - key: presentation-ji-2023
+    source: Ji et al. 2023, Transactions in GIS
+    citation_tier: listed_only
+    usage_scope: references_only
+    allowed_claim: 개인 차량 이동 규칙성 연구의 배경
+    caveat: 안전 예측 또는 MASIL 판정 타당성 근거로 사용하지 않음
+    deck_location: References
+    capture_available: true
+    url: https://doi.org/10.1111/tgis.13043
+
+  - key: presentation-sumagaysay-2026
+    source: Sumagaysay 2026, KVPR
+    citation_tier: banned
+    usage_scope: deck_conflict
+    prohibited_claim: 마일리지·UBI가 고령자 특이 위험을 놓친다는 Appendix A 문장
+    reason: V20 원문 캡처가 해당 주장을 뒷받침하지 않음
+    deck_location: Appendix A · References
+    capture_available: true
+    url: https://www.kvpr.org/government-politics/2026-07-14/proposal-would-allow-drivers-to-trade-personal-data-for-potentially-lower-insurance-rates
+
+  - key: presentation-lexisnexis-2015
+    source: LexisNexis Risk Solutions 2015
+    citation_tier: banned
+    usage_scope: deck_conflict
+    prohibited_claim: 비UBI 가입자 45%가 할인 매력이 부족하다고 답했다는 Appendix A 문장
+    reason: fleet telematics 맥락이며 V20 원문 캡처가 해당 주장을 뒷받침하지 않음
+    deck_location: Appendix A · References
+    capture_available: true
+    url: https://risk.lexisnexis.com/about-us/press-room/press-release/08-25-2015-insurance-growth
 
 entries:
   - source: "'300만원' 통계"
@@ -184,27 +355,6 @@ entries:
       - KIRI 보험연구원 — 마일리지 UBI 오분류
       - KIRI (리포트)
     status_conflict: "병합 전 지위 상충: banned vs verified → 보수적으로 banned 유지"
-  - source: 업계 UBI rating period 관행 3~6개월
-    status: banned
-    status_reason: "근거지도 항목 7 '✕ 발표 인용 금지 — 원출처 미확보'. '연구 기준선(2주~1개월)보다 보수적'까지만 말하고 업계 비교는 생략"
-    topics:
-      - 기준선 선례 스펙트럼 상단
-      - 기준선 관찰기간 선례
-      - UBI 업계 관행
-      - 기준선(관찰 창)
-      - 업계 관행
-    flags:
-      - "발표 시 수치 인용 금지 — '관행상 알려진' 수준으로만"
-      - Progressive Snapshot 6개월은 별도로 ✕ 인용 금지(2차 자료만)
-      - 팩트체크 우선순위 5위
-      - "문서 간 등급 상이: 출처부록 5장은 ⚠('관행상 알려진' 수준 언급만 허용, 수치 인용 금지) — registry 앞부분 동일 취지 항목들은 unverified로 등재돼 있어 조정 필요"
-      - sources/ 전체에 URL 없음
-    key: 업계-ubi-3-6개월-관행
-    aliases:
-      - 업계 UBI rating period 관행 3~6개월
-      - 업계 UBI 요율 산정 관행 3~6개월
-      - 업계 UBI 3~6개월 관행
-    status_conflict: "병합 전 지위 상충: unverified(출처부록 5장 ⚠(팩트체크 필요 — 원문 미확보, 스니펫 수준) · 10장 5순위) vs banned(근거지도 항목 7 '✕ 발표 인용 금지 — 원출처 미확보'. '연구 기준선(2주~1개월)보다 보수적'까지만 ) → 보수적으로 banned 채택"
   - source: 합성 데이터 k-거리 리허설 (도심 9/18/21m, 교외 16/31/37m, 광역 30/59/71m — 중앙값/P90/P95)
     citation_full: 합성 데이터 k-거리 리허설 — 도심 9/18/21m · 교외 16/31/37m · 광역 30/59/71m (중앙값/P90/P95)
     status: banned

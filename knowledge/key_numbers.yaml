@@ -1,7 +1,185 @@
-# 소스: seniorcareservice/final (승인 세트) · 수치 정본: 확정수치카드 @ e2d2e49 (2026-08-02 rolling)
-# 생성: 2026-08-04 자동 추출 + 카드 대조 — 사람 검토 전 DRAFT
+# 소스: seniorcareservice/final 승인 세트 + V20 결정 기록
+# 규칙: status=active가 현재 답변용. historical_demo/deprecated는 과거 결과 설명 전용.
+
+meta:
+  effective_date: 2026-08-10
+  canon: sources/11_V20_결정_기록_0810.md
+  simulation_anchor: sources/00_확정수치카드.md
+  default_status_for_missing: legacy_reference
+  mcp_filter: status == active
 
 numbers:
+  - id: monthly-favorable-threshold
+    name: 월 Favorable 기준
+    value: 통합점수 75점 이상
+    status: active
+    claim_type: team_decision
+    context: Care review와 독립된 월 점수 판정
+    source: sources/11_V20_결정_기록_0810.md#2-월간연간-계산
+
+  - id: annual-score-formula
+    name: 연간 점수 산식
+    value: 평가 12개월 월 통합점수의 단순 평균
+    status: active
+    claim_type: team_decision
+    implementation_status: pending_next_version
+    context: 기본 할인율을 정하는 V20 계약. 현재 데모 요율 엔진에는 미구현
+    source: sources/11_V20_결정_기록_0810.md#2-월간연간-계산
+
+  - id: number-favorable-additional-discount-qualification
+    name: Favorable 추가 할인 자격
+    value: 12개월 중 Favorable 9개월 이상
+    status: active
+    claim_type: team_decision
+    context: 추가 할인율의 최종 산식은 파일럿·계리 검증 대상
+    source: sources/11_V20_결정_기록_0810.md#2-월간연간-계산
+
+  - id: care-review-price-effect
+    name: Care review의 직접 가격 영향
+    value: 0
+    unit: percentage-point
+    status: active
+    claim_type: team_decision
+    context: 할인 차감·할증·Favorable 추가 할인 중지 없음. 검토와 지원 리포트만 연다.
+    source: sources/11_V20_결정_기록_0810.md#3-care-review-계약
+
+  - id: annual-score-favorable-summary
+    name: 연간 점수 — Favorable 사례
+    value: 평균 92.8 · 범위 77.8–100
+    status: active
+    claim_type: simulation_result
+    context: 합성 시나리오 요약. 실제 고객 분포·실요율 근거 아님
+    source: sources/11_V20_결정_기록_0810.md#6-연간-점수-요약
+
+  - id: annual-score-standard-summary
+    name: 연간 점수 — Standard 사례
+    value: 평균 65.6 · 범위 57.5–76.5
+    status: active
+    claim_type: simulation_result
+    context: 합성 시나리오 요약. 실제 고객 분포·실요율 근거 아님
+    source: sources/11_V20_결정_기록_0810.md#6-연간-점수-요약
+
+  - id: annual-score-care-review-summary
+    name: 연간 점수 — Care review가 열린 사례
+    value: 평균 82.6 · 범위 78.1–88.3
+    status: active
+    claim_type: simulation_result
+    context: Care review는 가격 등급이 아니라 변화 신호임을 보여주는 합성 요약
+    source: sources/11_V20_결정_기록_0810.md#6-연간-점수-요약
+
+  - id: environment-consistency
+    name: 환경 간 실질 판정 일치
+    value: 59/60
+    status: active
+    claim_type: simulation_result
+    context: 남은 1명은 75점·9개월 문턱 사례. 예측 정확도가 아니라 규칙 일관성
+    source: sources/11_V20_결정_기록_0810.md#5-시뮬레이션-해석-갱신
+
+  - id: pilot-driver-target
+    name: 파일럿 운전자 목표
+    value: 500명
+    status: active
+    claim_type: target
+    context: 실측·예측 아님. 파일럿 설계 목표
+    source: sources/11_V20_결정_기록_0810.md#7-사업-숫자의-지위
+
+  - id: voluntary-enrollment-target
+    name: 자발 가입률 목표
+    value: 15–20%
+    status: active
+    claim_type: target
+    context: 실측·예측 아님. 파일럿에서 검증할 목표
+    source: sources/11_V20_결정_기록_0810.md#7-사업-숫자의-지위
+
+  - id: retention-uplift-target
+    name: 유지율 개선 목표
+    value: +2%p
+    status: active
+    claim_type: target
+    context: 실측·예측 아님. 파일럿에서 검증할 목표
+    source: sources/11_V20_결정_기록_0810.md#7-사업-숫자의-지위
+
+  - id: legacy-demo-care-reduction
+    name: 과거 데모 Care 할인 축소
+    value: 13%p
+    origin: 요율 샌드박스 평균 12.987%p의 반올림
+    status: historical_demo
+    claim_type: implementation_history
+    context: 현재 상품 정책·확정 요율 아님. 과거 화면과 비교 결과 설명 전용
+    source: knowledge/history/decision_log.yaml#decision-2026-08-09-care-price-decoupling
+
+  - id: simulation-scale
+    name: 합성 시뮬레이션 규모
+    value: 60명 로스터 × 3환경 = 180 시나리오
+    status: active
+    claim_type: simulation_result
+    context: 6유형 × 10명. 180명 또는 180 drivers라고 말하지 않음
+    source: deck://summary-2
+
+  - id: synthetic-event-count
+    name: 합성 방문·주행 이벤트
+    value: 80,032건
+    status: active
+    claim_type: simulation_result
+    context: 2개월 기준선 + 12개월 평가
+    source: deck://summary-2
+
+  - id: score-weights
+    name: 월 통합점수 가중치
+    value: 30 / 30 / 20 / 20
+    status: active
+    claim_type: candidate_parameter
+    context: 주행거리 / 생활권 안 안전 / 생활권 밖 안전 / 패턴 변화. 최종값이 아닌 안정 후보
+    source: deck://appendix-c
+
+  - id: sensitivity-combinations
+    name: 가중치 민감도 조합
+    value: 969개
+    status: active
+    claim_type: simulation_result
+    context: 합성 시나리오 재판정. 최종 최적 가중치 입증 아님
+    source: deck://appendix-c
+
+  - id: anchor-distinct-days
+    name: 거점 반복 방문 조건
+    value: 서로 다른 3일 이상
+    status: active
+    claim_type: team_decision
+    context: 같은 날 여러 방문은 하루로 계산
+    source: deck://appendix-b
+
+  - id: anchor-epsilon-start
+    name: 거점 탐지 ε 시작값
+    value: 260m
+    status: active
+    claim_type: candidate_parameter
+    context: 논문 직접값이 아니라 Zheng 200m와 Montoliu 250m/200–300m를 참고한 시작값
+    source: deck://appendix-b
+
+  - id: zone-radius-rule
+    name: 거점별 MASIL Zone 반경
+    value: max(500m, min(개인 P90, 2km))
+    status: active
+    claim_type: team_decision
+    context: ε은 거점 탐지용이고, 500m/P90/2km가 존 반경을 정함
+    source: deck://appendix-b
+
+  - id: care-trigger-thresholds
+    name: Care review 동시 변화 임계
+    value: 생활권 밖 +25%p AND 위험행동 +20%p
+    status: active
+    claim_type: team_decision
+    context: 이번 달을 직전 2개월 평균과 비교. 위치만으로 발동하지 않음
+    source: sources/11_V20_결정_기록_0810.md#3-care-review-계약
+
+  - id: dashboard-comparison
+    name: Dashboard Appendix 비교 사례
+    value: Edward 2,473.6km · 209 events · 81.6 points / Frank 2,510.1km · 10 events · 98.4 points
+    status: active
+    claim_type: simulation_result
+    context: 비슷한 거리에서 행동 차이를 보여주는 합성 비교. 화면의 최종 할인율은 historical_demo
+    source: deck://dashboard-appendix
+
   - name: 인물/시나리오
     value: 60명 × 3환경 = 180 시나리오
     context: "6유형 × 10명. '60 Drivers'와 '180 Scenarios' 병기 가능"
@@ -194,8 +372,8 @@ numbers:
     value: 65세+ 월평균 입내원 3.75일(건보공단 2022), 경로당 이용자 주 2.9회(2023 노인실태조사), 최빈 운전 주 3~5회 36.7%(소비자원 2024, n=300) → 2개월 운전 26~43회
     context: 복지관 주 1.5회는 재확인 중(단일 언론 인용)
   - name: 기준선 스펙트럼
-    value: UMTRI 2주(n=108) / DRIVES 1개월(n=161) / Isaacman 60일 / DHQ 3개월 / Candrive 4개월(n=928) / 업계 3~6개월(⚠ 원문 미확인)
-    context: 우리 2개월 = 연구보다 보수적, 업계보다 신속
+    value: UMTRI 2주(n=108) / DRIVES 1개월(n=161) / Isaacman 60일 / DHQ 3개월 / Candrive 4개월(n=928)
+    context: 2개월은 Isaacman 60일 선례와 방문 빈도 역산으로 설명
   - name: 기준선 성립 실측
     value: 목적지 그룹 369개 중 3일 미만 탈락 6개(1.6%), 진짜 생활거점 탈락 0
     context: 미탐 방어 실측 한정 — 오탐 방어는 확률 논리로만
