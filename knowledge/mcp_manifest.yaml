@@ -9,19 +9,32 @@ external_sources:
     sha256: 56dba11941b1f2491f469c3c37d2555326a36c95aa7c0d977da2d70fb83cd35b
     pages: 9
     reviewed: 2026-08-10
-  team_canon:
+  master_qa_archive:
     uri: https://claude.ai/code/artifact/9dea93fd-3645-48c6-8166-3e4cdcad5abc
-    note: 팀 최신 확정 설명 기록 — 최종 제출 덱과 충돌하면 덱이 우선
+    layer: history
+    default_retrieval: false
+    note: 과거 Master Q&A 아카이브 — 세 등급 공개 계약과 충돌하는 옛 답변이 있어 현재 정본으로 사용하지 않음
     reviewed: 2026-08-10
 
+canonical_sources:
+  deck_claims:
+    file: knowledge/claims/deck_claims.yaml
+    priority: 1
+  team_positions:
+    file: knowledge/official_positions.yaml
+    filter: status == active
+    priority: 2
+
 include:
-  - file: knowledge/snapshot.yaml
   - file: knowledge/claims/deck_claims.yaml
     layer: core
   - file: knowledge/official_positions.yaml
     filter: status == active
+  - file: knowledge/snapshot.yaml
   - file: knowledge/qa/cards.yaml
     filter: status == active
+    role: answer_example
+    canonical_for_facts: false
   - file: knowledge/key_numbers.yaml
     filter: status == active
   - file: knowledge/glossary.yaml
@@ -45,6 +58,8 @@ allow_on_explicit_request:
   - legacy_reference entries needed only when a question cites a superseded capture
 
 retrieval_rules:
+  - 검색 우선순위는 deck_claims → active official_positions → glossary·forbidden boundaries → presentation evidence → cards 표현 예시 순서다.
+  - cards의 active 항목은 질문 시나리오와 표현 예시이며 사실 정본으로 사용하지 않는다.
   - 먼저 현재 장표 또는 질문과 직접 연결된 활성 항목만 반환한다.
   - 최종 제출 덱(9장)이 1순위 근거다. 다른 소스와 충돌하면 덱-우선 교정 문안을 따른다.
   - layer가 deep인 항목(내부 계산·두 축·민감도 상세)은 추궁성 후속 질문에서만 사용한다.

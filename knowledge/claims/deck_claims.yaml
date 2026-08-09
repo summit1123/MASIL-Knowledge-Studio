@@ -9,6 +9,11 @@
 meta:
   source_pdf: "/Users/gimdonghyeon/Downloads/GAIP2026_SouthKorea_GCU-KNOU-EWHA_FourSure (1).pdf"
   page_count: 9
+  claim_counts:
+    total: 64
+    as_printed: 51
+    as_printed_needs_context: 6
+    printed_correction_planned: 7
   extraction_method: pdftotext -layout (page by page)
   effective_date: 2026-08-10
   priority_note: 지식 충돌 시 최종 제출 덱이 최상위 정본이다 (deck-first)

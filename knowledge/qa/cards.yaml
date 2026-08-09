@@ -13,12 +13,20 @@ meta:
   effective_date: 2026-08-10
   default_status_for_missing: legacy_reference
   mcp_filter: status == active
+  default_role: answer_example
+  default_canonical_for_facts: false
+  p0_expected_count: 15
+  p0_definition: 결선 8분 Q&A에서 반드시 대비할 질문 시나리오. 고정 사실은 deck_claims와 official_positions에서 가져온다.
   answer_style: 짧고 쉬운 문장. 첫 문장에 결론. 덱 용어와 동일한 영어 사용.
 
 cards:
   - id: qa-monthly-three-grades
     status: active
     layer: core
+    priority: P0
+    scenario_id: P0-05
+    role: answer_example
+    canonical_for_facts: false
     question_ko: Favorable, Standard, Care는 세 등급인가요?
     question_en: Are Favorable, Standard, and Care three grades?
     topic: 상품-월별등급
@@ -65,6 +73,10 @@ cards:
   - id: qa-out-of-zone
     status: active
     layer: core
+    priority: P0
+    scenario_id: P0-04
+    role: answer_example
+    canonical_for_facts: false
     question_ko: 생활권 밖이 위험하다면서 왜 위치만으로 감점하지 않나요?
     question_en: If unfamiliar areas are riskier, why is there no location-only penalty?
     topic: 생활권밖-위험
@@ -95,6 +107,10 @@ cards:
   - id: qa-synthetic-validation
     status: active
     layer: core
+    priority: P0
+    scenario_id: P0-12
+    role: answer_example
+    canonical_for_facts: false
     question_ko: 합성 데이터로 무엇을 검증했다고 할 수 있나요?
     question_en: What can synthetic data actually validate?
     topic: 합성-검증범위
@@ -108,6 +124,10 @@ cards:
   - id: qa-ai-role
     status: active
     layer: core
+    priority: P0
+    scenario_id: P0-09
+    role: answer_example
+    canonical_for_facts: false
     question_ko: AI가 보험료를 정하나요?
     question_en: Does AI set the premium?
     topic: AI-역할
@@ -165,6 +185,10 @@ cards:
   - id: qa-why-senior-drivers
     status: active
     layer: core
+    priority: P0
+    scenario_id: P0-02
+    role: answer_example
+    canonical_for_facts: false
     question_ko: 왜 고령 운전자만 대상으로 시작하나요?
     question_en: Why start with older drivers?
     topic: 문제정의-고령운전자
@@ -185,6 +209,10 @@ cards:
   - id: qa-masil-30-seconds
     status: active
     layer: core
+    priority: P0
+    scenario_id: P0-01
+    role: answer_example
+    canonical_for_facts: false
     question_ko: MASIL을 30초로 설명하면?
     question_en: What is MASIL in 30 seconds?
     topic: 상품-소개
@@ -195,6 +223,10 @@ cards:
   - id: qa-zone-vs-geofence
     status: active
     layer: core
+    priority: P0
+    scenario_id: P0-03
+    role: answer_example
+    canonical_for_facts: false
     question_ko: MASIL Zone은 고정 지오펜스와 무엇이 다른가요?
     question_en: How is a MASIL Zone different from a fixed geofence?
     topic: 생활권-지오펜스
@@ -205,6 +237,10 @@ cards:
   - id: qa-grade-care-discount-relation
     status: active
     layer: core
+    priority: P0
+    scenario_id: P0-06
+    role: answer_example
+    canonical_for_facts: false
     question_ko: 월별 등급, Care 지원, 연간 할인은 어떤 관계인가요?
     question_en: How do the monthly grade, Care support, and annual discount relate?
     topic: 등급-지원-할인관계
@@ -215,6 +251,10 @@ cards:
   - id: qa-dashboard-13-point
     status: active
     layer: core
+    priority: P0
+    scenario_id: P0-07
+    role: answer_example
+    canonical_for_facts: false
     question_ko: 대시보드에는 왜 13%p 차이가 보이나요?
     question_en: Why does the dashboard show a 13-point difference?
     topic: 대시보드-13포인트
@@ -229,6 +269,10 @@ cards:
   - id: qa-vs-mileage-ubi
     status: active
     layer: core
+    priority: P0
+    scenario_id: P0-08
+    role: answer_example
+    canonical_for_facts: false
     question_ko: 마일리지 보험이나 일반 UBI와 무엇이 다른가요?
     question_en: How is this different from mileage insurance or ordinary UBI?
     topic: 차별점-UBI
@@ -239,6 +283,10 @@ cards:
   - id: qa-why-parameters
     status: active
     layer: core
+    priority: P0
+    scenario_id: P0-10
+    role: answer_example
+    canonical_for_facts: false
     question_ko: 왜 260m, 3일, 2개월인가요?
     question_en: Why 260 meters, three distinct days, and two months?
     topic: 파라미터-근거
@@ -252,6 +300,10 @@ cards:
   - id: qa-weights-969
     status: active
     layer: core
+    priority: P0
+    scenario_id: P0-11
+    role: answer_example
+    canonical_for_facts: false
     question_ko: 왜 이 가중치이고, 969개 테스트는 무엇을 증명했나요?
     question_en: Why these four weights, and what did the 969 tests prove?
     topic: 가중치-검증
@@ -265,6 +317,10 @@ cards:
   - id: qa-medical-screening-age
     status: active
     layer: core
+    priority: P0
+    scenario_id: P0-13
+    role: answer_example
+    canonical_for_facts: false
     question_ko: 이것은 의료 스크리닝이나 연령차별 아닌가요?
     question_en: Is this medical screening or age discrimination?
     topic: 윤리-연령차별
@@ -275,6 +331,10 @@ cards:
   - id: qa-location-privacy
     status: active
     layer: core
+    priority: P0
+    scenario_id: P0-14
+    role: answer_example
+    canonical_for_facts: false
     question_ko: 위치 프라이버시와 동의는 어떻게 보호하나요?
     question_en: How do you protect location privacy and obtain consent?
     topic: 프라이버시-동의
@@ -285,6 +345,10 @@ cards:
   - id: qa-insurer-adoption-pilot
     status: active
     layer: core
+    priority: P0
+    scenario_id: P0-15
+    role: answer_example
+    canonical_for_facts: false
     question_ko: 보험사가 왜 도입하고, 파일럿은 무엇을 검증하나요?
     question_en: Why would an insurer adopt this, and what will the real-world pilot test?
     topic: 도입-파일럿

@@ -39,6 +39,8 @@ approved_sources:
   - sources/생활권반경_eps_정리.md
 decision_log:
   file: knowledge/history/decision_log.yaml
+  layer: history
+  default_retrieval: false
   latest:
     - 2026-08-09 두 축 판정 계약
     - 2026-08-09 Care review와 가격 분리
