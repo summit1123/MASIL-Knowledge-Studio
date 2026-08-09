@@ -12,6 +12,7 @@ MKS의 기본 검색 범위는 최종 덱의 Summary·Appendix와 거기서 바�
 |---|---|---|
 | `knowledge/mcp_manifest.yaml` | 포함·제외 규칙 | 항상 |
 | `knowledge/snapshot.yaml` | 현재 버전·정본·구현 차이 | 항상 |
+| `knowledge/claims/deck_claims.yaml` | 최종 덱 9장 인쇄 사실·주의 표기 — 충돌 시 덱-우선 최상위 | 항상 |
 | `knowledge/official_positions.yaml` | V20 공식 스탠스 | `status: active`만 |
 | `knowledge/qa/cards.yaml` | 최종 덱 직접 Q&A | `status: active`만 |
 | `knowledge/key_numbers.yaml` | 발표 수치와 지위 | `status: active`만 |

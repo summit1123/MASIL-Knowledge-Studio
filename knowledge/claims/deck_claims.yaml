@@ -1,0 +1,441 @@
+# deck_claims.yaml — 최종 제출 덱(9장) 장표별 인쇄 사실 원장
+# 원칙: 덱-우선(deck-first). 공개 답변은 여기 인쇄된 문안과 충돌하면 안 된다.
+# status:
+#   as_printed                 — 인쇄된 그대로 말해도 됨
+#   as_printed_needs_context   — 인쇄는 유지하되 구두 보완이 필요함
+#   printed_correction_planned — 8/18 수정본에서 정정·제거 예정
+# evidence_ref: knowledge/evidence/registry.yaml 의 presentation_entries key
+
+meta:
+  source_pdf: "/Users/gimdonghyeon/Downloads/GAIP2026_SouthKorea_GCU-KNOU-EWHA_FourSure (1).pdf"
+  page_count: 9
+  extraction_method: pdftotext -layout (page by page)
+  effective_date: 2026-08-10
+  priority_note: 지식 충돌 시 최종 제출 덱이 최상위 정본이다 (deck-first)
+
+pages:
+  - page: 1
+    title: "SUMMARY 1 — AI-Based Senior Auto Insurance Innovation · Senior MASIL Zone Mileage Rider"
+    claims:
+      - id: p1-rider-tagline
+        text_en: "Senior MASIL Zone Mileage Rider — Not just how little they drive, but how safely they drive in familiar zones."
+        kind: label
+        status: as_printed
+        note_ko: 상품 한 줄 정의. 마일리지 특약에 MASIL Zone 안정성·존 밖 안전·패턴 변화를 반영한다는 프레임.
+
+      - id: p1-senior-accidents-up
+        text_en: "Overall traffic accidents 1.3% down, senior driver accidents 8.3% up (Korea Road Traffic Authority, n.d.)"
+        kind: statistic
+        status: as_printed
+        note_ko: 전체 사고 감소 대비 고령 운전자 사고 증가. 출처는 도로교통공단 TAAS.
+
+      - id: p1-braking-228
+        text_en: "Braking reaction time: 2.28s (+90% vs. non-elderly) (KCA, 2024)"
+        kind: statistic
+        status: as_printed_needs_context
+        note_ko: 시야가 제한된 돌발 상황 조건의 수치(고령 2.28초 vs 비고령 1.20초). 모든 상황에서 무조건 90% 느리다고 일반화하지 않는다. 같은 시험의 교차로 우회전 조건 차이는 0.02초.
+        evidence_ref: presentation-kca-2024-elderly-drivers
+
+      - id: p1-intersection-judgment
+        text_en: "Accidents cluster at intersections/yielding — judgment risk, not attention (McGwin et al., 1999)"
+        kind: citation
+        status: as_printed
+        note_ko: 부주의가 아니라 상황 판단 위험이라는 프레임의 근거.
+        evidence_ref: presentation-mcgwin-brown-1999
+
+      - id: p1-firsttime-25x
+        text_en: "First-time routes have 2.5x higher crash risk (Ehsani & Tefft, 2021) — burden of unfamiliarity affects elderly drivers more severely"
+        kind: statistic
+        status: as_printed
+        note_ko: crash involvement 표현 유지. 고령자만의 효과로 일반화하지 않는다.
+        evidence_ref: presentation-ehsani-tefft-2021
+
+      - id: p1-three-tiers
+        text_en: "Favorable · Standard · Care Tier"
+        kind: label
+        status: as_printed
+        note_ko: 공개 상품 계약 — 월별 결과는 세 등급으로 설명한다. Hold는 네 번째 위험 등급이 아니라 데이터 부족 시 판정을 보류하는 데이터 상태(불이익 없음). Care는 검토·지원으로 이어지며 자동 할증·차감을 만들지 않는다.
+
+      - id: p1-four-factors
+        text_en: "4 Weighted Factors: Mileage Score ex. 30% · IN-Zone Safety ex. 30% · Out-Zone Safety ex. 20% · Pattern Change ex. 20% (see Appendix C)"
+        kind: design
+        status: as_printed
+        note_ko: "'ex.' 표기 그대로 예시 시작값이다. 확정 가중치가 아니라 검증된 안정 후보(Appendix C)."
+
+      - id: p1-masil-zone-def
+        text_en: "What is a MASIL-Zone? A personalized activity zone, built from repeatedly visited locations. Auto-calibrated using more than 3 visitings filtering & each individual's P90 visit distribution (2-month baseline). Core Zone · Buffer Zone · Outer Zone"
+        kind: design
+        status: printed_correction_planned
+        note_ko: "'more than 3 visitings'는 오타 — 정확한 규칙은 '3+ distinct visit days'(서로 다른 방문일 3일 이상). 8/18 수정 예정. 구두에서는 distinct visit days로 말한다."
+
+      - id: p1-current-limitations
+        text_en: "Regulation cannot keep up, and current products cannot distinguish the risk"
+        kind: label
+        status: as_printed
+        note_ko: 규제·기존 상품 한계 요약. 문제 정의의 마무리 문장.
+
+  - page: 2
+    title: "SUMMARY 2 — Senior Driver MASIL Zone Rider: pipeline · principles · validation scale · roadmap"
+    claims:
+      - id: p2-pipeline
+        text_en: "GPS Synthetic Data (generate driving logs using synthetic driver profiles) - DBSCAN + P90 (auto-generate Masil zones: Core·Buffer·Outer) - Simulation Execution: rule-based grading (Favorable / Standard / Care) without AI - AI Report: provide Reason Codes, explainable results"
+        kind: design
+        status: as_printed
+        note_ko: 판정은 규칙 기반이고 AI는 설명 리포트(Reason Codes)만 담당한다. 덱에 인쇄된 핵심 아키텍처 문장.
+
+      - id: p2-ai-principle
+        text_en: "Core Principle — AI does not determine the premium. Minimum collection · POI masking · Right separation"
+        kind: design
+        status: as_printed
+        note_ko: AI가 하는 것/안 하는 것 질문의 1차 답변. 프라이버시 3원칙 포함.
+
+      - id: p2-mobility-86
+        text_en: "86% — Senior drivers' hope to preserve their mobility rights"
+        kind: statistic
+        status: printed_correction_planned
+        note_ko: 덱에 출처 미표기. 8/18 수정본에서 출처 표기 또는 문구 조정 예정. 그 전까지 무대에서 무출처 단정으로 사용하지 않는다.
+
+      - id: p2-validation-scale
+        text_en: "Validation Scale — 60 Drivers (6 driver types x 10 drivers x 3 regions: urban, suburban, regional) · 180 Scenarios · 80,032 Logs"
+        kind: statistic
+        status: as_printed
+        note_ko: 합성 시뮬레이션 검증 규모. 숫자 그대로 인용 가능.
+
+      - id: p2-2m-12m
+        text_en: "2M Baseline & 12M Evaluation"
+        kind: label
+        status: as_printed_needs_context
+        note_ko: 2M=2개월 기준선, 12M=12개월 평가라는 뜻. 구두에서 months임을 명시해 2 million 등으로 오독되지 않게 한다.
+
+      - id: p2-roadmap-targets
+        text_en: "Pilot 0-6M: validate with a real-world driving cohort (Synthetic to Real Data), Target: 500 drivers / Scale up 6-18M: limited commercial launch, expected voluntary enrollment 15-20% / Roll out 18+M: expand to general drivers (ages 30-50), expected retention increase +2%p"
+        kind: statistic
+        status: as_printed_needs_context
+        note_ko: 500명·15-20%·+2%p는 전부 목표(target)이며 실측이 아니다. 0.5% 반전 문안과 함께 목표로만 말한다.
+
+      - id: p2-mobility-rights
+        text_en: "Guaranteeing Mobility Rights: No regulation but support — guaranteeing mobility that goes beyond discounts, built on trust and care, so drivers voluntarily choose and sustain it"
+        kind: label
+        status: as_printed
+        note_ko: 규제가 아닌 지원이라는 사회적 포지셔닝 문장.
+
+  - page: 3
+    title: "Appendix - Dashboard — Edward Clark vs Frank Wilson contrast table"
+    claims:
+      - id: p3-dashboard-label
+        text_en: "Actual Dashboard Interface - Edward Clark (b. 1953)"
+        kind: label
+        status: as_printed
+        note_ko: 이 화면이 최종 대시보드다. old/legacy/과거 데모로 지칭하지 않는다.
+
+      - id: p3-same-conditions
+        text_en: "Same conditions, Different behavior — Same vehicle class (base premium $604) · same existing tariff. Under the existing mileage scheme both would pay the same premium"
+        kind: design
+        status: as_printed
+        note_ko: 대조의 전제 — 기존 마일리지 체계에서는 두 사람이 같은 보험료를 낸다.
+
+      - id: p3-annual-verdicts
+        text_en: "Annual verdict — Edward Clark: Care review / Frank Wilson: Favorable. Type — Mobility + risk co-change / Wide-area, safe"
+        kind: statistic
+        status: as_printed
+        note_ko: Care review는 직원 검토·지원 신호이지 자동 할증이 아니다. 위치·거리가 아닌 행동 변화가 판정을 갈랐다.
+
+      - id: p3-distance-outzone
+        text_en: "Annual distance 2,473.6 km vs 2,510.1 km · Out-of-zone share 7.3% vs 11.1%"
+        kind: statistic
+        status: as_printed
+        note_ko: 존 밖 비중이 더 큰 Frank가 Favorable — 위치만으로 감점하지 않는다는 근거로 사용.
+
+      - id: p3-risky-events
+        text_en: "Risky events · 12M evaluation: 209 vs 10"
+        kind: statistic
+        status: as_printed
+        note_ko: 판정을 가른 핵심 변수(위험행동). 그대로 인용 가능.
+
+      - id: p3-safety-scores
+        text_en: "In-zone safety score 77.3 vs 97.7 · Out-of-zone safety score 47.9 vs 95.8 · Annual average score 81.6 pts vs 98.4 pts"
+        kind: statistic
+        status: as_printed
+        note_ko: 대조표 점수 3종. 인쇄값 그대로 말한다.
+
+      - id: p3-tariff-13-point
+        text_en: "Existing mileage: 16% · $508 (both). MASIL proposal: 3% · $586 (Edward) vs 22.6% · $468 (Frank)"
+        kind: statistic
+        status: as_printed_needs_context
+        note_ko: "13%p 공식 문안 — '13%p 차이는 이 사례의 연간 시뮬레이션 결과입니다. 한 달 Care를 받았다고 자동으로 13%p가 깎이는 규칙이 아닙니다. Care는 검토와 지원을 열고, 연간 할인율은 연간 주행 기록으로 별도 계산합니다.' 확정 요율·고정 차감 정책으로 제시하지 않는다."
+
+      - id: p3-measured-contrast
+        text_en: "Measured contrast: among the 180 scenarios, the opposite-decision case in the same vehicle class (and the same existing tariff when available) with the closest annual distance. What split the tariff was behavior (co-occurring risky-behavior change), not distance or location."
+        kind: design
+        status: as_printed
+        note_ko: 대조 사례 선정 기준과 결론 문장. 거리·위치가 아닌 행동이 갈랐다는 공개 문안.
+
+  - page: 4
+    title: "Appendix - Dashboard — Staff review report & customer app preview"
+    claims:
+      - id: p4-staff-review
+        text_en: "Staff review report · 2026-07 — Approve"
+        kind: label
+        status: as_printed
+        note_ko: Care review가 직원 검토로 이어지는 실제 화면. 사람이 최종 승인한다는 점을 보여준다.
+
+      - id: p4-app-preview
+        text_en: "Customer's own app preview"
+        kind: label
+        status: as_printed
+        note_ko: 고객 본인이 자기 결과·이유를 앱에서 확인한다는 화면. 투명성·설명가능성 근거.
+
+  - page: 5
+    title: "Appendix - A — Why Senior Drivers? / What's the Current Situation?"
+    claims:
+      - id: p5-oecd-2030
+        text_en: "1 in 4 OECD drivers will be 65+ by 2030 (OECD, 2001)"
+        kind: citation
+        status: as_printed_needs_context
+        note_ko: 원문 통계는 drivers가 아니라 persons(인구) 기준. 구두로 말할 때는 persons로 보정한다.
+
+      - id: p5-eu-road-deaths
+        text_en: "Aged 65+ make up 21% of population but 31% of road deaths (EU Commission, 2025)"
+        kind: statistic
+        status: as_printed
+        note_ko: 인구 비중 대비 사망 비중. 인쇄값 그대로.
+
+      - id: p5-erso-5x-fatality
+        text_en: "Drivers 75+: 5x higher fatality risk at equal exposure (ERSO, n.d.)"
+        kind: statistic
+        status: as_printed
+        note_ko: fatality(심도) 기준이다. 사고 빈도와 신체 취약성에 따른 심도를 구분해 말한다.
+        evidence_ref: presentation-erso-older-driver-risk
+
+      - id: p5-chen-cognitive-first
+        text_en: "Cognitive decline shows up first in driving/mobility patterns — before any accident (Chen et al., 2025, Neurology)"
+        kind: citation
+        status: as_printed
+        note_ko: 패턴 변화 감지의 의학적 근거. MASIL이 인지장애를 진단한다고 말하지 않는다.
+        evidence_ref: presentation-chen-2025-neurology
+
+      - id: p5-cicchino-71
+        text_en: "71% of older drivers' inadequate surveillance errors came from looking but not seeing, rather than failing to look (vs. 40% for middle-aged drivers) (Cicchino & McCartt, 2015)"
+        kind: statistic
+        status: as_printed
+        note_ko: inadequate surveillance 오류 중의 비율이다. 전체 사고 원인의 71%로 말하지 않는다.
+        evidence_ref: presentation-cicchino-mccartt-2015
+
+      - id: p5-ehsani-25x
+        text_en: "Under same road conditions, first-time travelers have 2.5x likelihood of accident involvement (Ehsani & Tefft, 2021)"
+        kind: statistic
+        status: as_printed
+        note_ko: p.1과 동일 근거의 재등장. crash involvement 표현 유지.
+        evidence_ref: presentation-ehsani-tefft-2021
+
+      - id: p5-iihs-intersection-43
+        text_en: "Multi-vehicle fatal intersection crashes: 43% for drivers 80+ vs. 24% for ages 16-59 (IIHS, 2024)"
+        kind: statistic
+        status: as_printed
+        note_ko: 교차로 다중차량 치명 사고 비중. 인쇄값 그대로.
+
+      - id: p5-vivoda-self-regulation
+        text_en: "Seniors self-regulate as ability declines — avoiding night driving (58.8%) & unfamiliar areas (11%) (Vivoda et al., 2021)"
+        kind: statistic
+        status: as_printed
+        note_ko: 초기 자기조절 행동 관찰치. 전체 고령자가 모두 회피한다고 일반화하지 않는다.
+        evidence_ref: presentation-vivoda-2021
+
+      - id: p5-license-renewal
+        text_en: "Protracted Driver's License Renewal Cycles — renewal cycles fail to keep pace with elderly drivers' frequent cognitive changes (Budget Direct Insurance, 2026; KOTRA, 2018)"
+        kind: citation
+        status: as_printed
+        note_ko: 규제 공백 프레임의 근거.
+
+      - id: p5-conditional-licensing
+        text_en: "The Conditional Licensing Dilemma — backlash over age discrimination stalls policy, while blanket restrictions risk isolation and depression (Chihuri et al., 2016)"
+        kind: citation
+        status: as_printed
+        note_ko: 연령차별 질문(P0-13) 대응의 출발점 — 일괄 제한의 부작용 근거.
+
+      - id: p5-sumagaysay-ubi-gap
+        text_en: "Mileage metrics misclassify low-frequency, high-severity seniors as low-risk, while behavior (UBI) metrics fail to capture physical and cognitive decline (Sumagaysay, 2026)"
+        kind: citation
+        status: printed_correction_planned
+        note_ko: 출처 캡처가 이 주장을 뒷받침하지 않아 8/18 수정본에서 제거 예정. 무대에서 이 출처로 방어하지 않는다. 기존 상품 한계는 다른 근거로 설명.
+        evidence_ref: presentation-sumagaysay-2026
+
+      - id: p5-enrollment-045
+        text_en: "Elderly safety-education discount rider: 0.5% enrollment rate, 45% of non-UBI subscribers say discounts aren't attractive enough (LexisNexis Risk Solutions, 2015; iNews24, 2024)"
+        kind: statistic
+        status: printed_correction_planned
+        note_ko: "45%(LexisNexis)는 fleet telematics 맥락이라 8/18 제거 예정 — 방어 금지. 0.5%(iNews24)는 유지하며 반전 문안으로 사용: '0.5%는 교육 이수를 먼저 요구한 특약의 가입률 — 우리는 선행 비용을 제거했다.'"
+        evidence_ref: presentation-lexisnexis-2015
+
+      - id: p5-masil-solution-row
+        text_en: "MASIL Rider — how we solve this: 2-month baseline pattern-change detection · mobility protection with safe-driving encouragement · senior-specific benefits + risk segmentation · preventive care delivery (calls, texts, family alerts)"
+        kind: design
+        status: as_printed
+        note_ko: 해결책 4열 요약. Care 대상에게는 예방적 아웃리치가 간다는 문안 포함.
+
+  - page: 6
+    title: "Appendix - B — How is MASIL Zone formed?"
+    claims:
+      - id: p6-zone-formation-steps
+        text_en: "Visit Events (1 visit record = 1 point with a date) - Repeated Anchors (3+ distinct visit days within epsilon=260m, x=noise) - Core Zone 500m (uniform minimum radius) - Per-Anchor P90 Buffer (final radii combined into the personal MASIL Zone, x=Outer)"
+        kind: design
+        status: as_printed
+        note_ko: 존 형성 4단계. 반복 방문 앵커 + 개인별 반경이라는 구조를 그대로 설명.
+
+      - id: p6-distinct-day-variant
+        text_en: "MASIL distinct-day Variant: Core_MASIL(p) holds iff the number of distinct dates among neighbors within epsilon is >= 3 (DBSCAN + min_distinct_days = 3). Repeated events on the same day count as 1 day toward core support"
+        kind: design
+        status: as_printed
+        note_ko: 같은 날 여러 기록은 1일로 계산. 앵커 판정의 핵심 규칙.
+
+      - id: p6-radius-formula
+        text_en: "Zone radius after clustering: r_h = max(500m, min(r90_h, 2km)) — epsilon is for anchor detection · 500m / P90 / 2km define the zone radius"
+        kind: design
+        status: as_printed
+        note_ko: 앵커 탐지(260m)와 존 반경(500m/P90/2km)의 역할 분리를 명확히 말한다.
+
+      - id: p6-epsilon-footnote
+        text_en: "epsilon=260m is MASIL's proposed starting value, referencing Zheng's 200m (stay-point) and Montoliu's 250m / 200-300m (DBSCAN Dmax) — not a value taken directly from any paper. The operational value is recalibrated using the distance distribution of distinct-day neighbors and cluster stability"
+        kind: citation
+        status: as_printed
+        note_ko: 260m는 논문 직접값이 아니라 제안 시작값. 파일럿에서 재보정한다는 문안이 덱에 인쇄돼 있다.
+        evidence_ref: [presentation-zheng-2009, presentation-montoliu-gatica-perez-2010]
+
+      - id: p6-isaacman-2month
+        text_en: "Isaacman et al. (2011): repetition across multiple days explains a place's importance better than records concentrated in a single day. 60-day observation criterion — multiple records on the same day = 1 day · 3+ distinct days required"
+        kind: citation
+        status: as_printed
+        note_ko: 2개월 기준선과 distinct-day 규칙의 문헌 근거.
+        evidence_ref: presentation-isaacman-2011
+
+      - id: p6-outer-neutral
+        text_en: "Outer Zone represents neutral mobility context · 260m and the 2-month baseline are operational starting values (separate from care detection's preceding 2 months)"
+        kind: design
+        status: as_printed
+        note_ko: 생활권 밖은 중립적 이동 맥락 — 위치만으로 감점하지 않는다는 공개 계약과 직결.
+
+      - id: p6-hdbscan-gate
+        text_en: "DBSCAN distinct-day = operational baseline (explainable by distance and repeat days). HDBSCAN = density-adaptive challenger. Swap gate: triggered when a fixed epsilon repeatedly fails in specific environments; must improve stability on the same visit events without noise or over-segmentation"
+        kind: design
+        status: as_printed
+        note_ko: 왜 DBSCAN이 기본인지(설명가능성 우선)와 교체 조건. 추궁 시 사용.
+
+  - page: 7
+    title: "Appendix - C — How were the weights in the MASIL scoring formula determined?"
+    claims:
+      - id: p7-weights-candidate
+        text_en: "Current weights are not the final values, but a validated stable candidate. Initial weights were set based on the risk exposure structure and validated through sensitivity analysis. (Example: Mileage 30%, In-zone safe driving 30%, Outside-zone safe driving 20%, Driving pattern change 20%)"
+        kind: design
+        status: as_printed
+        note_ko: 30/30/20/20은 확정값이 아닌 검증된 안정 후보. 이 문장이 덱의 공식 지위다.
+
+      - id: p7-explainable-by-design
+        text_en: "Weights are human-defined for explainability, while risk scoring is performed by fixed rules. Loss ratio data is not yet available; therefore, the current weights are initial values designed for future recalibration"
+        kind: design
+        status: as_printed
+        note_ko: 손해율 데이터 부재를 덱이 스스로 명시 — 합성 데이터 한계 질문의 1차 방어선.
+
+      - id: p7-weight-principle
+        text_en: "Weights reflect data reliability. In-zone (30%): more observations, higher confidence. Out-zone (20%): fewer observations, supporting factor. 30:30:20:20 is a practical starting point, not a fixed rule"
+        kind: design
+        status: as_printed
+        note_ko: 관측량-신뢰도 원칙. 왜 이 가중치냐(P0-11)의 핵심 답변.
+
+      - id: p7-sensitivity-969
+        text_en: "Validation: sensitivity analysis — 969 weight combinations x 180 simulated drivers. Classification was driven mainly by Mileage and In-zone safe driving. The selected 30% weights lie in the most stable region before rapid classification changes"
+        kind: statistic
+        status: as_printed
+        note_ko: 969 조합 민감도 분석의 결론. 상세 수치는 deep 레이어 — 추궁 시에만 꺼낸다.
+
+  - page: 8
+    title: "Appendix - D — How is the synthetic simulation structured, and what does it validate?"
+    claims:
+      - id: p8-simulation-map
+        text_en: "Four stages with separated owners: (1) define validation cases (People), (2) build personas/movement (Nemotron + AI), (3) 14-month deployment (Simulation), (4) validate product logic (Product Rules). Separating hypothesis, persona, driving, and judgment roles keeps expected results from contaminating the judgment"
+        kind: design
+        status: as_printed
+        note_ko: 기대 결과가 판정을 오염시키지 않게 역할을 분리했다는 통제 원칙.
+
+      - id: p8-14month-structure
+        text_en: "14-month scenario deployment: pattern observation 2 months + change·evaluation 12 months. 2 months is the simulation's baseline observation period"
+        kind: design
+        status: as_printed
+        note_ko: p.2의 2M/12M 표기가 여기서 개월로 풀려 있다.
+
+      - id: p8-scale-repeat
+        text_en: "60 people (6 types x 10 people) · 180 scenarios · 3 regions (urban, suburban, regional) · 80,032 events synthetic visit·trips"
+        kind: statistic
+        status: as_printed
+        note_ko: p.2 검증 규모의 재등장. 숫자 동일.
+
+      - id: p8-persona-table
+        text_en: "Six persona types with hypothesis, Expected and Result columns: Self-Regulating (Favorable/Favorable), Risky-Within-Life-Zone (Standard/Standard), Route-Changing Safety-Maintaining (Standard/Standard), Movement/Risk Co-Changing (Care/Care), Multiple MASIL Zone (Standard/Standard), Wide-Area/Stable (Favorable/Favorable)"
+        kind: statistic
+        status: as_printed
+        note_ko: 6개 페르소나 가설-결과 표. 가설 검증 구조(역가설 포함)를 보여주는 핵심 표.
+
+      - id: p8-persona-row2-result
+        text_en: "Row 2 — Risky-Within-Life-Zone Type: Expected Standard · Result Standard (close-to-home effect counter-hypothesis)"
+        kind: statistic
+        status: as_printed_needs_context
+        note_ko: 인쇄된 Result가 실측 시뮬레이션 결과와 불일치. 이 행의 결과를 방어하기 전에 실측 기준으로 확인하고, 질문이 오면 실제 결과 기준으로 설명한다.
+
+      - id: p8-sciencedirect-refs
+        text_en: "Reference literature column cites 'close-to-home effect, ScienceDirect 2017' and 'ScienceDirect, 2021'"
+        kind: citation
+        status: printed_correction_planned
+        note_ko: ScienceDirect는 플랫폼명이지 저자가 아니다. 8/18 수정본에서 실제 저자·논문 표기로 정정 예정. 무대에서 ScienceDirect를 출처명으로 말하지 않는다.
+
+      - id: p8-557-national
+        text_en: "National data: ~55.7% of elderly driver traffic accidents correspond to 'failure to maintain safe driving'"
+        kind: statistic
+        status: as_printed
+        note_ko: Movement/Risk Co-Changing 페르소나의 참고 문헌 칸에 인쇄된 국내 통계.
+
+      - id: p8-validated-scope
+        text_en: "What Was Validated: computation reproducibility, product rule execution, exception/hold processing, prevention of location-only disadvantage. What Was NOT Validated: finalized optimal formula, actual premium/discount rate, accident/loss-ratio improvement, actual customer acceptance"
+        kind: design
+        status: as_printed
+        note_ko: 합성 데이터가 검증한 것/못 한 것(P0-12)의 공식 문안. 규칙 일관성은 검증, 실제 손해율은 미검증.
+
+      - id: p8-synthetic-disclaimer
+        text_en: "The synthetic results validate product logic — they are not the final basis for the formula or premium. Product standards finalized after pilot/actuarial review"
+        kind: design
+        status: as_printed
+        note_ko: 시뮬레이션 지위의 최종 문장. 파일럿·계리 검토 후 확정.
+
+  - page: 9
+    title: "References & Sources"
+    claims:
+      - id: p9-references-main
+        text_en: "Full reference list: Budget Direct 2026, Chen 2025, Chihuri 2016, Cicchino & McCartt 2015, Ehsani & Tefft 2021, EU Commission 2025, ERSO n.d., iNews24 2024, IIHS 2026, Isaacman 2011, Joyce 2024, KCA 2024, KNPA/KoROAD 2026, KoROAD n.d., KOTRA 2018, LexisNexis 2015, Marshall 2023 (Candrive), McGwin & Brown 1999, Montoliu & Gatica-Perez 2010, OECD 2001, Sumagaysay 2026, Vivoda 2021, Zheng 2009"
+        kind: citation
+        status: as_printed
+        note_ko: 본문 참고문헌. 등재만으로 선제 인용 자격이 생기지 않는다 — 인용 가능 범위는 evidence/registry.yaml의 citation_tier를 따른다.
+
+      - id: p9-sumagaysay-listed
+        text_en: "Sumagaysay, L. (2026, July 14). Proposal would allow drivers to trade personal data for potentially lower insurance rates. KVPR"
+        kind: citation
+        status: printed_correction_planned
+        note_ko: Appendix A 해당 주장과 함께 8/18 제거 예정. 방어 금지.
+        evidence_ref: presentation-sumagaysay-2026
+
+      - id: p9-lexisnexis-listed
+        text_en: "LexisNexis Risk Solutions. (2015, August 25). LexisNexis annual commercial vehicle telematics study"
+        kind: citation
+        status: printed_correction_planned
+        note_ko: fleet telematics 맥락 — 45% 주장과 함께 8/18 제거 예정. 방어 금지.
+        evidence_ref: presentation-lexisnexis-2015
+
+      - id: p9-persona-references
+        text_en: "Persona reference literature: AAA LongROAD, Charlton & Starkey 2013, Cheon & Lim 2024 (KIRI), Harms 2021, Hirsch 2014, Ji 2023, Statistics Korea 2025"
+        kind: citation
+        status: as_printed
+        note_ko: 페르소나 방향성 근거. 합성 페르소나의 절대 파라미터를 입증하는 것은 아니다.
+        evidence_ref: presentation-longroad-self-regulation
+
+      - id: p9-generative-ai
+        text_en: "Generative AI: NVIDIA Nemotron-Personas Korean (ko_KR) dataset, built on Gemma 4 (base), methodology referenced for persona design. OpenAI LLM used for report generation and persona context generation. OpenAI gpt-image-2 used for slide images"
+        kind: label
+        status: as_printed
+        note_ko: AI 사용 고지. 페르소나 생성과 슬라이드 이미지에 어떤 모델을 썼는지 인쇄돼 있다.

@@ -1,4 +1,4 @@
-# 소스: 최종 덱·V20·최종 용어 단어장
+# 소스: 최종 제출 덱·최종 용어 단어장
 # status=active 용어만 MCP 기본 검색. status가 없으면 legacy_reference.
 
 meta:
@@ -15,8 +15,17 @@ terms:
     notes: 행정구역이나 고정 반경이 아님. 한국어 '마실 나가다'의 일상적 외출 의미를 담은 이름
     banned_variants: [Safe Zone, Living Zone, Home Zone, routine zone]
 
+  - id: monthly-tiers
+    status: active
+    layer: core
+    korean: 월별 세 등급
+    official_english: Favorable · Standard · Care Tier
+    plain_english: the three monthly result tiers shown to customers
+    notes: "덱 인쇄 표현 — 월별 결과는 세 등급(three monthly tiers)으로 설명. Hold는 네 번째 위험 등급이 아니라 데이터 부족 시 판정을 보류하는 데이터 상태(불이익 없음). 연간 할인율 계산은 월별 등급 표시와 구분 — 연간 통합 기록이 기본 할인율을 만들고, Favorable 월 수(9/12)가 추가 우대의 근거"
+
   - id: favorable
     status: active
+    layer: core
     korean: 우대
     official_english: Favorable
     plain_english: a month with an integrated score of 75 or higher
@@ -33,20 +42,24 @@ terms:
     korean: 보류
     official_english: Hold
     plain_english: a no-penalty hold when there is not enough data
+    notes: 네 번째 위험 등급이 아니라 데이터 상태 — 데이터 부족 시 판정을 보류하며 불이익 없음
 
   - id: care-review
     status: active
+    layer: core
     korean: 케어 검토
     official_english: Care review
-    plain_english: a separate monthly signal for human review and support
-    notes: 등급이나 가격 축이 아님. Favorable과 동시에 성립 가능
-    banned_variants: [Care tier, Care grade, pricing tier]
+    plain_english: staff review and a support offer for a Care month
+    notes: "공개 계약: 월별 결과는 Favorable·Standard·Care 세 등급이며 Care는 도움이 필요할 수 있는 달을 표시. 직원 검토와 지원 제안으로 이어지고, Care 자체가 자동 할증·자동 차감을 발생시키지 않음. 연간 할인율은 연간 주행 기록으로 별도 계산"
+    banned_variants: [pricing tier]
 
   - id: two-independent-axes
     status: active
+    layer: deep
     korean: 두 축
     official_english: two independent axes
-    plain_english: the score result and the Care review signal are separate
+    plain_english: internal calculation view — the score result and the Care signal are computed separately
+    notes: "기술 레이어(추궁 시만): 내부 계산에서는 점수 판정과 Care 신호가 별도로 계산되며, Favorable과 Care가 같은 달에 함께 나타날 수 있음. 공개 설명은 월별 세 등급"
 
   - id: monthly-integrated-score
     status: active
@@ -144,8 +157,8 @@ terms:
     korean: 운전 행동
     official_english: driving behavior
     plain_english: how the person drives
-    notes: 미국식 철자 behavior로 통일
-    banned_variants: [behaviour]
+    notes: 출력은 미국식 철자 behavior로 통일. behaviour는 금지어가 아니라 검색 별칭으로 인식
+    search_aliases: [behaviour]
 
   - id: mileage-rider
     status: active

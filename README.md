@@ -4,6 +4,7 @@
 
 - `knowledge/` — 승인 스냅샷 (상품 계약은 V20, 시뮬레이션 수치는 확정수치카드)
 - `knowledge/mcp_manifest.yaml` — 최종 덱·직접 Q&A만 넣는 기본 검색 범위
+- `knowledge/claims/deck_claims.yaml` — 최종 제출 덱(9장)의 장표별 인쇄 사실 원장. 지식 충돌 시 덱-우선(deck-first)이 최상위다.
 - `knowledge/history/decision_log.yaml` — 바뀐 규칙의 이전·이후와 변경 이유
 - `sources/11_V20_결정_기록_0810.md` — 2026-08-10 현재 상품·문헌·사업 결정 정본
 

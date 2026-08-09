@@ -1,4 +1,4 @@
-# 소스: 최종 덱·V20 충돌 방지 규칙
+# 소스: 최종 제출 덱 충돌 방지 규칙
 # status=active만 MCP 기본 적용. status가 없으면 legacy_reference.
 
 meta:
@@ -7,23 +7,17 @@ meta:
   mcp_filter: status == active
 
 forbidden:
-  - id: no-three-tier-framing
-    status: active
-    expression: Favorable / Standard / Care를 하나의 3-tier 또는 3단계 등급으로 설명
-    reason: V20은 월 점수 축과 Care review 축을 분리함
-    replacement: Favorable 또는 Standard(+Hold)와 별도의 Care review 신호
-
   - id: no-care-price-effect
     status: active
-    expression: Care review 때문에 할인 축소·할증·추가 할인 중지
-    reason: V20에서 Care review는 가격이 아니라 사람 검토·지원 신호
-    replacement: Care review 자체의 직접 가격 영향은 없음
+    expression: "'Care 자체가 자동 할증·자동 차감을 만든다'는 표현"
+    reason: Care는 도움이 필요할 수 있는 달의 표시 — 직원 검토와 지원 제안으로 이어지며 자동 가격 효과 없음
+    replacement: "Care 자체는 자동 할증·자동 차감을 발생시키지 않음. 연간 할인율은 연간 통합 기록으로 별도 계산 (사례의 연간 시뮬레이션 결과 언급은 허용)"
 
   - id: no-current-13-point-policy
     status: active
-    expression: 13%p를 현재 Care review 정책 또는 확정 요율로 제시
-    reason: 과거 데모 샌드박스의 12.987%p 반올림 값
-    replacement: 현재 답변에서는 사용하지 않음. 구 화면 질문에만 historical_demo라고 설명
+    expression: "13%p를 확정 요율·고정 차감 정책으로 제시하거나 '한 달 케어 = 13%p 차감' 인과로 설명"
+    reason: 13%p는 덱 p.3 Edward 사례의 연간 시뮬레이션 결과 — 한 달 Care에 대한 자동 차감 규칙이 아님
+    replacement: "KO: \"13%p 차이는 이 사례의 연간 시뮬레이션 결과입니다. 한 달 Care를 받았다고 자동으로 13%p가 깎이는 규칙이 아닙니다. Care는 검토와 지원을 열고, 연간 할인율은 연간 주행 기록으로 별도 계산합니다.\" / EN: \"The 13-point difference is the simulated annual proposal for this case. It is not an automatic penalty for one month of Care. Care triggers review and support. The annual discount is calculated separately from the annual driving record.\""
 
   - id: no-location-only-penalty
     status: active
@@ -33,8 +27,8 @@ forbidden:
 
   - id: no-54-of-60-current
     status: active
-    expression: 54/60을 V20의 최신 환경 간 실질 일치로 제시
-    reason: 두 축 계약으로 재해석한 최신값은 59/60
+    expression: 54/60을 최신 환경 간 실질 일치로 제시
+    reason: 내부 계산(deep 레이어) 기준으로 재집계한 최신값은 59/60
     replacement: 59/60, 남은 1명은 문턱 사례
 
   - id: no-target-as-measurement
@@ -52,7 +46,7 @@ forbidden:
   - id: no-deck-unsupported-literature
     status: active
     expression: Sumagaysay 또는 LexisNexis를 Appendix A의 해당 주장 근거로 방어
-    reason: V20 문헌 검토에서 해당 문장을 뒷받침하지 못함
+    reason: 최종 문헌 검토에서 해당 문장을 뒷받침하지 못함
     replacement: 근거 한계를 인정하고 확인된 문헌이 지지하는 범위만 답변
 
   - id: no-unconditional-kca-braking-generalization
@@ -60,6 +54,24 @@ forbidden:
     expression: 고령 운전자의 일반 제동 반응이 2.28초이며 모든 상황에서 비고령자보다 90% 느리다고 설명
     reason: 2.28초 대 1.20초는 시야 제한 돌발 상황의 비교값이며 같은 시험의 다른 조건에는 일반화할 수 없음
     replacement: 시야가 제한된 돌발 상황에서 2.28초 대 1.20초가 관찰됐다고 조건을 함께 말함
+
+  - id: no-legacy-label-for-final-artifacts
+    status: active
+    expression: 최종 제출 덱 또는 최종 대시보드를 old·legacy·과거 데모로 지칭
+    reason: 결선 제출 산출물 — legacy 지칭은 산출물 신뢰를 스스로 훼손 (레거시는 30명 구데모 등 실제 과거 산출물에만 해당)
+    replacement: 최종 덱·최종 대시보드로 지칭
+
+  - id: no-internal-version-names-public
+    status: active
+    expression: "내부 버전명(V20, V20 계약, pending next version 등)을 공개 답변·position·카드·용어 본문에 사용"
+    reason: 내부 관리 명칭 — active 레이어에서 제거 (history 레이어와 파일명은 유지)
+    replacement: 버전명 없이 최종 덱 기준으로 서술
+
+  - id: no-hold-as-risk-tier
+    status: active
+    expression: Hold(보류)를 네 번째 등급 또는 위험 등급으로 설명
+    reason: Hold는 데이터 부족 시 판정을 보류하는 데이터 상태 — 불이익 없음
+    replacement: 월별 등급은 Favorable·Standard·Care 세 가지, Hold는 no-penalty 데이터 상태
 
   - expression: 80,002건
     reason: 오타 (취소선 표기)

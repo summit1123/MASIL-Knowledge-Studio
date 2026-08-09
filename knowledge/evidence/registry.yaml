@@ -1,7 +1,7 @@
 # 문헌·근거 원장 · presentation_entries만 MCP 기본 검색
 # entries는 2026-08-04 legacy 원장으로 보존하며 기본 검색에서 제외
 # 동일 출처 다중 등재는 대표키로 병합, 지위가 갈렸던 건은 보수적 채택 + status_conflict에 이력 기록
-# V20 문헌 카드의 캡처·허용 주장·덱 위치를 우선
+# 문헌 카드의 캡처·허용 주장·덱 위치를 우선
 
 meta:
   effective_date: 2026-08-10
@@ -159,7 +159,7 @@ presentation_entries:
     citation_tier: banned
     usage_scope: deck_conflict
     prohibited_claim: 마일리지·UBI가 고령자 특이 위험을 놓친다는 Appendix A 문장
-    reason: V20 원문 캡처가 해당 주장을 뒷받침하지 않음
+    reason: 원문 캡처가 해당 주장을 뒷받침하지 않음
     deck_location: Appendix A · References
     capture_available: true
     url: https://www.kvpr.org/government-politics/2026-07-14/proposal-would-allow-drivers-to-trade-personal-data-for-potentially-lower-insurance-rates
@@ -169,7 +169,7 @@ presentation_entries:
     citation_tier: banned
     usage_scope: deck_conflict
     prohibited_claim: 비UBI 가입자 45%가 할인 매력이 부족하다고 답했다는 Appendix A 문장
-    reason: fleet telematics 맥락이며 V20 원문 캡처가 해당 주장을 뒷받침하지 않음
+    reason: fleet telematics 맥락이며 원문 캡처가 해당 주장을 뒷받침하지 않음
     deck_location: Appendix A · References
     capture_available: true
     url: https://risk.lexisnexis.com/about-us/press-room/press-release/08-25-2015-insurance-growth

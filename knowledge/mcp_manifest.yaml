@@ -1,6 +1,6 @@
 # MCP 기본 검색 범위. legacy_reference와 history는 명시 요청이 있을 때만 연다.
 
-version: 2026-08-10-v20
+version: 2026-08-10-deck-canon
 default_mode: presentation_active
 
 external_sources:
@@ -9,13 +9,15 @@ external_sources:
     sha256: 56dba11941b1f2491f469c3c37d2555326a36c95aa7c0d977da2d70fb83cd35b
     pages: 9
     reviewed: 2026-08-10
-  v20:
+  team_canon:
     uri: https://claude.ai/code/artifact/9dea93fd-3645-48c6-8166-3e4cdcad5abc
-    version: 20
+    note: 팀 최신 확정 설명 기록 — 최종 제출 덱과 충돌하면 덱이 우선
     reviewed: 2026-08-10
 
 include:
   - file: knowledge/snapshot.yaml
+  - file: knowledge/claims/deck_claims.yaml
+    layer: core
   - file: knowledge/official_positions.yaml
     filter: status == active
   - file: knowledge/qa/cards.yaml
@@ -35,15 +37,17 @@ exclude_by_default:
   - entries with status in [legacy_reference, deprecated, historical_demo]
   - evidence with citation_tier in [listed_only, internal, banned]
   - sources/**
-  - presentation script drafts not yet aligned with V20
+  - 팀 최신 확정 설명과 아직 정합하지 않은 발표 대본 초안
 
 allow_on_explicit_request:
   - knowledge/history/decision_log.yaml
   - sources/11_V20_결정_기록_0810.md
-  - legacy_reference entries needed to explain an old dashboard capture
+  - legacy_reference entries needed only when a question cites a superseded capture
 
 retrieval_rules:
   - 먼저 현재 장표 또는 질문과 직접 연결된 활성 항목만 반환한다.
+  - 최종 제출 덱(9장)이 1순위 근거다. 다른 소스와 충돌하면 덱-우선 교정 문안을 따른다.
+  - layer가 deep인 항목(내부 계산·두 축·민감도 상세)은 추궁성 후속 질문에서만 사용한다.
   - 현재 답변에 historical_demo를 섞지 않는다.
-  - 덱에 남아 있지만 V20에서 철회된 문헌은 deck_conflict로 알리고 그 주장을 방어하지 않는다.
+  - 덱에 남아 있으나 팀이 철회한 문헌 수치는 deck_conflict로 알리고 그 주장을 방어하지 않는다.
   - 활성 근거가 없으면 legacy에서 문장을 끌어오지 말고 근거 부족으로 답한다.

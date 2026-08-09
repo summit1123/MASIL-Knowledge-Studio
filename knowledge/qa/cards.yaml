@@ -1,4 +1,5 @@
-# 소스: 최종 덱 Summary·Appendix + 마스터 Q&A V20
+# 소스: 최종 덱 Summary·Appendix + 마스터 Q&A(과거 결정 기록은 sources/11_V20_결정_기록_0810.md — 파일명만 유지, 내부 버전명은 답변 본문에 쓰지 않는다)
+# layer: core = 무대에서 먼저 말하는 덱 사실·P0 답변 / deep = 추궁 시만 여는 내부 계산·문헌 상세 / history = 과거 결정(기본 검색 제외)
 # status=active 카드만 MCP 기본 검색. status가 없으면 legacy_reference.
 # ⚠ 사용 규칙 (중요) — legacy 카드는 '답변 범위'가 아니라 '기출 아카이브'다
 #  · 기존 53장은 실제로 받은 질문의 과거 답변이며, active 카드와 충돌하면 사용하지 않는다.
@@ -15,47 +16,55 @@ meta:
   answer_style: 짧고 쉬운 문장. 첫 문장에 결론. 덱 용어와 동일한 영어 사용.
 
 cards:
-  - id: qa-product-two-axes
+  - id: qa-monthly-three-grades
     status: active
+    layer: core
     question_ko: Favorable, Standard, Care는 세 등급인가요?
-    question_en: Are Favorable, Standard, and Care three pricing tiers?
-    topic: 상품-두축
-    direct_answer_ko: "아닙니다. 월 통합점수는 Favorable 또는 Standard를 정하고, 데이터가 부족하면 Hold입니다. Care review는 별도의 사람 검토 신호입니다. 그래서 Favorable과 Care review가 같은 달에 함께 나올 수 있습니다."
-    spoken_answer_en: "No. The monthly score gives Favorable or Standard. If data is insufficient, it is Hold. Care review is a separate human-review signal. A month can be both Favorable and under Care review."
-    source: sources/11_V20_결정_기록_0810.md#1-상품-판정-계약
+    question_en: Are Favorable, Standard, and Care three grades?
+    topic: 상품-월별등급
+    direct_answer_ko: "네. 월별 결과는 Favorable, Standard, Care의 세 등급으로 안내합니다. 데이터가 부족한 달은 Hold로 표시하는데, 이는 네 번째 위험 등급이 아니라 판정을 보류하는 데이터 상태이며 불이익이 없습니다. Care는 도움이 필요할 수 있는 달을 표시하고, 직원 검토와 지원 제안으로 이어집니다. Care 자체가 자동 할증이나 자동 차감을 만들지는 않습니다."
+    spoken_answer_en: "Yes. We present three monthly grades: Favorable, Standard, and Care. Hold is not a fourth grade. It is a data status for months with insufficient data. It carries no disadvantage. Care marks a month where help may be needed. It leads to staff review and support offers. Care itself does not create an automatic surcharge or deduction."
+    source: deck://summary-1
+    followups:
+      - q: 내부 계산도 세 등급 하나로 처리하나요? (기술 추궁 시 — deep)
+        a: 내부 계산에서는 점수 판정과 Care 신호가 별도로 계산되어, Favorable과 Care 검토가 같은 달에 함께 나타날 수 있습니다. 공개 설명은 월별 세 등급입니다.
 
   - id: qa-care-price
     status: active
+    layer: core
     question_ko: Care review가 열리면 보험료가 오르나요?
     question_en: Does a Care review increase the premium?
     topic: 케어-가격
-    direct_answer_ko: "아닙니다. Care review 자체는 할인율을 깎거나 할증하지 않습니다. 사람 검토와 지원 리포트를 여는 신호일 뿐입니다."
-    spoken_answer_en: "No. A Care review does not reduce the discount or add a surcharge. It opens a human review and a support report."
+    direct_answer_ko: "아닙니다. Care 자체는 자동 할증이나 자동 차감을 만들지 않습니다. 사람 검토와 지원 리포트를 여는 신호입니다. 연간 할인율은 연간 주행 기록으로 별도 계산합니다."
+    spoken_answer_en: "No. Care itself does not create an automatic surcharge or automatic deduction. It opens a human review and a support report. The annual discount is calculated separately from the annual driving record."
     followups:
       - q: 대시보드에는 13%p 차이가 보이는데요?
-        a: 그 화면은 Care와 가격을 연결했던 이전 데모다. 13%p는 과거 샌드박스 예시값이며 현재 상품 정책이 아니다.
+        a: 13%p 차이는 이 사례의 연간 시뮬레이션 결과입니다. 한 달 Care를 받았다고 자동으로 13%p가 깎이는 규칙이 아닙니다. Care는 검토와 지원을 열고, 연간 할인율은 연간 주행 기록으로 별도 계산합니다.
     source: sources/11_V20_결정_기록_0810.md#3-care-review-계약
 
   - id: qa-annual-discount
     status: active
+    layer: core
     question_ko: 그러면 연간 할인율은 어떻게 정하나요?
     question_en: Then how is the annual discount determined?
     topic: 연간-할인
-    direct_answer_ko: "12개월 월 통합점수를 평균해 연간 점수를 만듭니다. 그 점수로 기본 할인율을 정하는 것이 V20 계약입니다. Favorable이 9개월 이상이면 추가 할인 자격이 생깁니다. 최종 요율 산식은 아직 파일럿과 계리 검증 대상입니다."
+    direct_answer_ko: "연간 할인율 계산은 월별 등급 표시와 구분됩니다. 12개월 통합 주행 기록으로 연간 점수를 만들고, 그 점수가 기본 할인율을 정합니다. Favorable이 9개월 이상이면 추가 우대 자격이 생깁니다. 최종 요율 산식은 아직 파일럿과 계리 검증 대상입니다."
     spoken_answer_en: "We average the 12 monthly scores into one annual score. That score sets the base discount. Nine or more Favorable months qualify for an additional discount. The final tariff formula still needs pilot and actuarial validation."
     source: sources/11_V20_결정_기록_0810.md#2-월간연간-계산
 
   - id: qa-care-trigger
     status: active
+    layer: deep
     question_ko: Care review는 정확히 언제 열리나요?
     question_en: What exactly triggers a Care review?
     topic: 케어-발동
     direct_answer_ko: "같은 달에 두 변화가 함께 커져야 합니다. 생활권 밖 비중은 직전 두 달 평균보다 25%p 이상, 위험행동 비중은 20%p 이상 늘어야 합니다. 한쪽만 변하면 열리지 않습니다."
-    spoken_answer_en: "Two changes must happen in the same month. Out-of-zone travel must rise by 25 percentage points, and risky behavior by 20 points, versus the previous two months. One change alone is not enough."
+    spoken_answer_en: "Two changes must rise together in the same month. Out-of-zone travel must rise by 25 percentage points. Risky behavior must rise by 20 points. We compare with the previous two months' average. One change alone does not open a review."
     source: sources/11_V20_결정_기록_0810.md#3-care-review-계약
 
   - id: qa-out-of-zone
     status: active
+    layer: core
     question_ko: 생활권 밖이 위험하다면서 왜 위치만으로 감점하지 않나요?
     question_en: If unfamiliar areas are riskier, why is there no location-only penalty?
     topic: 생활권밖-위험
@@ -65,6 +74,7 @@ cards:
 
   - id: qa-zone-formation
     status: active
+    layer: core
     question_ko: MASIL Zone은 어떻게 만드나요?
     question_en: How is a MASIL Zone formed?
     topic: 생활권-형성
@@ -74,27 +84,30 @@ cards:
 
   - id: qa-why-two-months
     status: active
+    layer: deep
     question_ko: 왜 기준선이 두 달인가요?
     question_en: Why is the baseline two months?
     topic: 기준선-2개월
     direct_answer_ko: "월 두 번 가는 뜸한 거점은 한 달 관찰로 잡힐 확률이 32%지만, 두 달이면 76%입니다. 세 달은 94%지만 반영이 한 달 늦습니다. Isaacman 2011도 중요 장소 식별에 60일과 서로 다른 3일을 사용했습니다. 파일럿에서 다시 재보정합니다."
-    spoken_answer_en: "For a place visited twice a month, the capture rate is about 32% after one month and 76% after two. Three months reaches 94% but delays action by one month. Isaacman also used a 60-day window and distinct visit days. We will recalibrate this in the pilot."
+    spoken_answer_en: "Take a place visited twice a month. One month of data captures it about 32% of the time. Two months captures about 76%. Three months reaches 94% but delays action by one month. Isaacman also used a 60-day window and distinct visit days. We will recalibrate this in the pilot."
     source: deck://appendix-b
 
   - id: qa-synthetic-validation
     status: active
+    layer: core
     question_ko: 합성 데이터로 무엇을 검증했다고 할 수 있나요?
     question_en: What can synthetic data actually validate?
     topic: 합성-검증범위
     direct_answer_ko: "예측력을 검증한 것이 아닙니다. 180개 시나리오에서 같은 입력이면 같은 결과가 나오는지, 규칙과 예외 처리가 의도대로 작동하는지 확인했습니다. 실제 요율과 사고 감소 효과는 파일럿에서 검증해야 합니다."
     spoken_answer_en: "It does not validate prediction accuracy. Across 180 scenarios, we tested reproducibility, rule execution, and exception handling. Real premiums and accident reduction still require a pilot."
     followups:
-      - q: 환경이 바뀌어도 결과가 같았나요?
-        a: V20의 두 축 계약으로 보면 60명 중 59명이 실질적으로 일치했고, 남은 1명은 75점·9개월 문턱 사례다.
+      - q: 환경이 바뀌어도 결과가 같았나요? (검증 추궁 시 — deep)
+        a: 내부 두 축 계산 기준으로 60명 중 59명이 실질적으로 일치했고, 남은 1명은 75점·9개월 문턱 사례다.
     source: deck://appendix-d
 
   - id: qa-ai-role
     status: active
+    layer: core
     question_ko: AI가 보험료를 정하나요?
     question_en: Does AI set the premium?
     topic: AI-역할
@@ -104,15 +117,20 @@ cards:
 
   - id: qa-business-targets
     status: active
+    layer: core
     question_ko: 500명, 가입률 15–20%, 유지율 +2%p는 실측인가요?
     question_en: Are the 500 drivers, 15–20% enrollment, and +2-point retention measured results?
     topic: 사업-목표
     direct_answer_ko: "아닙니다. 세 숫자는 모두 파일럿에서 검증할 목표입니다. 성과나 예측치가 아닙니다."
     spoken_answer_en: "No. All three numbers are targets for the pilot. They are not measured results or forecasts."
+    followups:
+      - q: 가입률 15–20% 목표가 너무 높지 않나요?
+        a: "비교 기준인 0.5%는 교육 이수를 먼저 요구한 특약의 가입률입니다. 우리는 그 선행 비용을 제거했습니다. 실제 가입률은 파일럿에서 검증합니다."
     source: sources/11_V20_결정_기록_0810.md#7-사업-숫자의-지위
 
   - id: qa-kca-braking-condition
     status: active
+    layer: deep
     question_ko: 제동 반응 2.28초와 90% 차이는 모든 상황에 해당하나요?
     question_en: Is the 2.28-second braking result true in every situation?
     topic: 문헌-KCA-제동반응
@@ -122,24 +140,31 @@ cards:
 
   - id: qa-literature-evidence
     status: active
+    layer: core
     question_ko: 문헌 근거를 바로 보여줄 수 있나요?
     question_en: Can you show the exact source behind that claim?
     topic: 문헌-인용
-    direct_answer_ko: "가능합니다. V20 문헌 카드에 허용 주장, 원문 캡처, 덱 사용 위치, 단서를 연결합니다. 캡처가 없거나 문장 범위가 맞지 않으면 그 문헌으로 답하지 않습니다."
-    spoken_answer_en: "Yes. Each approved literature card links the allowed claim, the original excerpt, and the exact place where it is used in the deck. If that link is missing, we do not use the source."
-    source: artifact://v20/literature-cards
+    direct_answer_ko: "가능합니다. 승인된 문헌 카드에 허용 주장, 원문 캡처, 덱 사용 위치, 단서를 연결합니다. 캡처가 없거나 문장 범위가 맞지 않으면 그 문헌으로 답하지 않습니다."
+    spoken_answer_en: "Yes. Each approved literature card links the allowed claim and the original excerpt. It also shows where the deck uses it. If that link is missing, we do not use the source."
+    source: sources/08_출처부록_주제별.md
 
   - id: qa-dashboard-comparison
     status: active
+    layer: core
     question_ko: 두 사람의 거리가 비슷한데 왜 결과가 다른가요?
     question_en: Why are the results different when their annual distances are similar?
     topic: 대시보드-비교
-    direct_answer_ko: "거리가 아니라 행동과 변화가 달랐기 때문입니다. Edward는 연간 2,473.6km, Frank는 2,510.1km로 비슷하지만 위험 이벤트는 209건과 10건입니다. 연간 점수도 81.6점과 98.4점입니다. 화면의 최종 할인율은 이전 데모 값이므로 현재 V20 요율 계약의 근거로 쓰지 않습니다."
-    spoken_answer_en: "Their mileage is similar, but their behavior is different. Edward has 209 risky events and an annual score of 81.6. Frank has 10 risky events and a score of 98.4. The final rates shown on this old dashboard are legacy demo values, not the current V20 pricing rule."
+    direct_answer_ko: "거리가 아니라 행동과 변화가 달랐기 때문입니다. Edward는 연간 2,473.6km, Frank는 2,510.1km로 비슷하지만 위험 이벤트는 209건과 10건입니다. 연간 점수도 81.6점과 98.4점입니다. 화면의 13%p 차이는 이 사례의 연간 시뮬레이션 결과입니다. 한 달 Care를 받았다고 자동으로 13%p가 깎이는 규칙이 아닙니다. Care는 검토와 지원을 열고, 연간 할인율은 연간 주행 기록으로 별도 계산합니다."
+    spoken_answer_en: "Their mileage is similar, but their behavior is different. Edward has 209 risky events and an annual score of 81.6. Frank has 10 risky events and a score of 98.4. The rate difference on screen is the simulated annual proposal for this case. It is not an automatic penalty for one month of Care. Care triggers review and support. The annual discount is calculated separately from the annual driving record."
+    do_not_say:
+      - 최종 대시보드·최종 덱을 old/legacy/이전 데모로 지칭
+      - 13%p를 확정 요율·고정 차감 정책으로 제시
+      - "'한 달 케어 = 13%p 차감' 인과"
     source: deck://dashboard-appendix
 
   - id: qa-why-senior-drivers
     status: active
+    layer: core
     question_ko: 왜 고령 운전자만 대상으로 시작하나요?
     question_en: Why start with older drivers?
     topic: 문제정의-고령운전자
@@ -149,11 +174,125 @@ cards:
 
   - id: qa-social-value
     status: active
+    layer: core
     question_ko: 이 상품의 사회적 가치는 무엇인가요?
     question_en: What is the social value of this product?
     topic: 사회적가치
     direct_answer_ko: "규제나 면허 제한보다 먼저 자발적인 안전 지원을 제공합니다. 안전하게 운전하는 고령자는 인정하고, 변화가 큰 달에는 사람 검토와 예방 지원을 연결합니다. 실시간 위치를 가족과 공유하는 구조는 아닙니다."
     spoken_answer_en: "It offers voluntary safety support before restriction. It recognizes safe older drivers and connects human review when their pattern changes. It does not share real-time location with the family."
+    source: deck://summary-2
+
+  - id: qa-masil-30-seconds
+    status: active
+    layer: core
+    question_ko: MASIL을 30초로 설명하면?
+    question_en: What is MASIL in 30 seconds?
+    topic: 상품-소개
+    direct_answer_ko: "MASIL은 고령 운전자를 위한 주행거리 특약 제안입니다. 거리만 보지 않고, 익숙한 생활권 안팎의 안전 운전과 평소 패턴의 변화를 함께 봅니다. 월별 결과는 Favorable, Standard, Care 세 등급으로 안내하고, Care는 직원 검토와 지원 제안으로 이어집니다. 안전한 운전은 할인으로 인정하고, 도움이 필요할 수 있는 변화는 지원으로 연결합니다."
+    spoken_answer_en: "MASIL is a mileage-based rider proposal for senior drivers. We look beyond distance. We see safe driving in and out of each person's familiar zone. We also watch for changes from their normal pattern. Each month shows one of three grades: Favorable, Standard, or Care. Care opens staff review and support. Safe driving earns recognition; big changes bring support, not punishment."
+    source: deck://summary-1
+
+  - id: qa-zone-vs-geofence
+    status: active
+    layer: core
+    question_ko: MASIL Zone은 고정 지오펜스와 무엇이 다른가요?
+    question_en: How is a MASIL Zone different from a fixed geofence?
+    topic: 생활권-지오펜스
+    direct_answer_ko: "고정 지오펜스는 모두에게 같은 경계를 긋지만, MASIL Zone은 각자의 실제 방문 기록으로 만들어지는 개인별 생활권입니다. 서로 다른 3일 이상 반복 방문한 거점을 중심으로 만들고, 반경도 개인 방문 분포로 정합니다. 지도는 직전 두 달 기록으로 매달 다시 만들어 이사 같은 생활 변화를 따라갑니다. 생활권 밖 주행은 벌점이 아니라 맥락으로만 봅니다."
+    spoken_answer_en: "A fixed geofence draws the same line for everyone. A MASIL Zone is personal. It is built from each person's real visit records. Anchors need visits on three or more distinct days. The radius comes from the person's own visit pattern. The map is rebuilt monthly from the last two months. So it follows life changes such as moving. Driving outside the zone is context, never a penalty."
+    source: deck://appendix-b
+
+  - id: qa-grade-care-discount-relation
+    status: active
+    layer: core
+    question_ko: 월별 등급, Care 지원, 연간 할인은 어떤 관계인가요?
+    question_en: How do the monthly grade, Care support, and annual discount relate?
+    topic: 등급-지원-할인관계
+    direct_answer_ko: "세 가지는 역할이 다릅니다. 월별 등급(Favorable, Standard, Care)은 그 달의 상태를 보여줍니다. Care는 도움이 필요할 수 있는 달을 표시하고 직원 검토와 지원 제안으로 이어지며, 그 자체로 자동 할증이나 자동 차감을 만들지 않습니다. 연간 할인율은 별도입니다. 연간 통합 주행 기록이 기본 할인율을 만들고, Favorable 월 수(예: 9/12)가 추가 우대의 근거가 됩니다."
+    spoken_answer_en: "They play different roles. The monthly grade shows how that month went. Care marks a month where help may be needed. It opens staff review and support offers. Care itself does not create an automatic surcharge or deduction. The annual discount is separate. The full-year driving record sets the base discount. The count of Favorable months supports extra benefits."
+    source: deck://summary-1
+
+  - id: qa-dashboard-13-point
+    status: active
+    layer: core
+    question_ko: 대시보드에는 왜 13%p 차이가 보이나요?
+    question_en: Why does the dashboard show a 13-point difference?
+    topic: 대시보드-13포인트
+    direct_answer_ko: "13%p 차이는 이 사례의 연간 시뮬레이션 결과입니다. 한 달 Care를 받았다고 자동으로 13%p가 깎이는 규칙이 아닙니다. Care는 검토와 지원을 열고, 연간 할인율은 연간 주행 기록으로 별도 계산합니다."
+    spoken_answer_en: "The 13-point difference is the simulated annual proposal for this case. It is not an automatic penalty for one month of Care. Care triggers review and support. The annual discount is calculated separately from the annual driving record."
+    do_not_say:
+      - 최종 대시보드·최종 덱을 old/legacy/이전 데모로 지칭
+      - 13%p를 확정 요율·고정 차감 정책으로 제시
+      - "'한 달 케어 = 13%p 차감' 인과"
+    source: deck://dashboard-appendix
+
+  - id: qa-vs-mileage-ubi
+    status: active
+    layer: core
+    question_ko: 마일리지 보험이나 일반 UBI와 무엇이 다른가요?
+    question_en: How is this different from mileage insurance or ordinary UBI?
+    topic: 차별점-UBI
+    direct_answer_ko: "마일리지 보험은 거리만 봅니다. 일반 UBI는 급제동 같은 개별 이벤트 점수를 봅니다. MASIL은 여기에 '그 사람의 평소'라는 기준을 더합니다. 익숙한 생활권 안팎의 안전 운전과 평소 패턴의 변화를 함께 보고, 변화가 큰 달에는 벌점이 아니라 사람 검토와 지원을 연결합니다. 저주행이 곧 저위험이 아니라는 문헌도 이 접근의 배경입니다."
+    spoken_answer_en: "Mileage insurance only sees distance. Ordinary UBI scores single events, such as hard braking. MASIL adds a personal baseline. We see safe driving in and out of the familiar zone. We also watch changes from the person's normal pattern. A big change brings human review and support, not a penalty."
+    source: deck://summary-1
+
+  - id: qa-why-parameters
+    status: active
+    layer: core
+    question_ko: 왜 260m, 3일, 2개월인가요?
+    question_en: Why 260 meters, three distinct days, and two months?
+    topic: 파라미터-근거
+    direct_answer_ko: "세 값 모두 확정 최적값이 아니라 근거 있는 시작값입니다. 260m는 장소 인식 문헌의 통용 대역(200~300m) 가운데에서 잡은 거점 탐지 시작값입니다. 서로 다른 3일 반복 방문은 하루 몰림이 아닌 진짜 생활 거점을 가려냅니다. 2개월(60일) 기준선은 뜸한 거점까지 안정적으로 잡는 관찰과 서비스 시작 속도의 균형점입니다. 세 값 모두 파일럿에서 실데이터로 재보정합니다."
+    spoken_answer_en: "All three are starting values, not final constants. The 260 meters comes from the place-recognition literature range. Three distinct visit days separate real anchors from one busy day. A 60-day baseline balances stable capture with a fast start. We will recalibrate all three in the pilot."
+    followups:
+      - q: 2개월의 계산 근거가 있나요? (수치 추궁 시 — deep)
+        a: "월 2회 방문 거점 기준 포착 확률의 내부 추정(1개월 32%·2개월 76%·3개월 94%)이 있습니다. 상세는 심층 카드 '왜 기준선이 두 달인가요?'에서 다룹니다."
+    source: deck://appendix-b
+
+  - id: qa-weights-969
+    status: active
+    layer: core
+    question_ko: 왜 이 가중치이고, 969개 테스트는 무엇을 증명했나요?
+    question_en: Why these four weights, and what did the 969 tests prove?
+    topic: 가중치-검증
+    direct_answer_ko: "가중치는 문제 정의의 네 축(주행량, 생활권 안 안전, 생활권 밖 안전, 패턴 변화)에 대응하는 설계값입니다. 저희가 주장하는 것은 값 자체가 아니라 순서입니다. 969개 조합 전수 민감도 테스트는 가중치를 주변으로 움직여도 판정이 크게 흔들리지 않는다는 규칙 안정성을 확인했습니다. 예측력이나 실제 손해율을 증명한 것은 아니며, 최종 값은 파일럿 손해율 적합으로 재보정합니다."
+    spoken_answer_en: "The four weights map to our four scoring axes. They are design values, not measured constants. We defend the order of the weights, not the exact numbers. The 969 tests moved the weights across many combinations. Decisions stayed stable in a wide region. This proves rule stability, not prediction power. Final values will be refit with pilot loss data."
+    followups:
+      - q: 민감도 상세 수치는? (수치 추궁 시 — deep)
+        a: "±5 이웃 조합에서 판정 변화는 중앙 3건·최대 9건입니다. 상세는 심층 검증 자료에서 다룹니다."
+    source: deck://appendix-c
+
+  - id: qa-medical-screening-age
+    status: active
+    layer: core
+    question_ko: 이것은 의료 스크리닝이나 연령차별 아닌가요?
+    question_en: Is this medical screening or age discrimination?
+    topic: 윤리-연령차별
+    direct_answer_ko: "아닙니다. 의료 진단을 하지 않고 건강 데이터를 수집하지 않습니다. 보는 것은 주행 기록뿐이고, 나이나 위치 자체에 벌점이 없습니다. 안전하게 운전하는 고령자는 할인으로 인정받습니다. 변화가 큰 달에는 자동 조치가 아니라 사람 검토와 지원 제안이 따르고, 최종 결정은 직원과 고객에게 있습니다. 이동권을 제한하기 전에 자발적 지원을 먼저 연결하는 구조입니다."
+    spoken_answer_en: "No. We do not diagnose, and we collect no health data. We only look at driving records. Age and location carry no penalty in the score. Safe senior drivers earn recognition and discounts. A big change brings human review and a support offer. People, not the system, make the final decision. The goal is voluntary support before any restriction."
+    source: deck://summary-2
+
+  - id: qa-location-privacy
+    status: active
+    layer: core
+    question_ko: 위치 프라이버시와 동의는 어떻게 보호하나요?
+    question_en: How do you protect location privacy and obtain consent?
+    topic: 프라이버시-동의
+    direct_answer_ko: "명시적 동의 기반의 특약이고, 수집은 최소로 설계했습니다. 이동 경로 전체가 아니라 트립의 도착지 좌표와 날짜만 받습니다. 장소가 어디인지 조회하지 않고, 실시간 위치를 가족 등과 공유하지 않습니다. 판정에 필요한 위치 원본은 직전 두 달분뿐이며, 이후에는 파생값과 월별 집계만 남습니다. 법무 검토는 파일럿 전 필수 절차로 잡혀 있습니다."
+    spoken_answer_en: "The rider is based on explicit customer consent. We collect the minimum. We take only trip destinations and dates, not full routes. We do not look up what each place is. We never share real-time location with family or others. Raw location is needed only for the last two months. After that, only derived values and monthly counts remain. Legal review is a required step before the pilot."
+    source: deck://summary-2
+
+  - id: qa-insurer-adoption-pilot
+    status: active
+    layer: core
+    question_ko: 보험사가 왜 도입하고, 파일럿은 무엇을 검증하나요?
+    question_en: Why would an insurer adopt this, and what will the real-world pilot test?
+    topic: 도입-파일럿
+    direct_answer_ko: "기존 마일리지 체계는 거리만 보므로, 실제로 안전한 고령 운전자를 구분하지 못합니다. MASIL은 그 빈틈을 메우는 특약이고, 기존 할인 위에 얹는 구조라 도입 부담이 작습니다. 파일럿 목표는 500명, 가입률 15–20%, 유지율 +2%p이며 모두 검증할 목표이지 실적이 아닙니다. 파일럿은 실데이터로 규칙 재보정, 손해율 효과, 고객 수용성을 검증합니다."
+    spoken_answer_en: "Mileage systems see only distance. They cannot tell safe senior drivers apart. MASIL fills that gap as a rider on existing discounts. That keeps adoption cost low for the insurer. Our pilot targets are 500 drivers, 15 to 20% enrollment, and 2 points better retention. These are targets to test, not results. The pilot will validate the rules, loss impact, and customer acceptance with real data."
+    followups:
+      - q: 가입률 15–20%는 근거가 있나요?
+        a: "목표입니다. 비교 기준인 0.5%는 교육 이수를 먼저 요구한 특약의 가입률입니다. 우리는 그 선행 비용을 제거했습니다. 실제 가입률은 파일럿에서 검증합니다."
     source: deck://summary-2
 
   - question_ko: (3지형에서 우대 판정이 갈린 이유는? — 질문 문구는 문서에 없음, §3 표준답)
