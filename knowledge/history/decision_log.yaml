@@ -1,0 +1,73 @@
+# V20 전환을 포함한 상품·근거 결정 이력. 활성 규칙은 official_positions.yaml을 따른다.
+
+decisions:
+  - id: decision-2026-08-02-rolling-zone
+    date: 2026-08-02
+    status: retained
+    title: 생활권을 매달 직전 2개월로 재형성
+    before: 가입 초기 생활권을 장기간 고정
+    after: 해당 월을 제외한 직전 2개월 방문으로 매달 재형성
+    reason: 이사와 생활 변화에 생활권 지도가 따라가도록 하기 위함
+    source: sources/00_확정수치카드.md
+
+  - id: decision-2026-08-08-terms-and-literature
+    date: 2026-08-08
+    status: retained
+    title: 용어와 문헌 사용 범위 정리
+    before: Safe Zone과 MASIL Zone 혼용, 확인 수준과 무대 인용 가능 여부 혼재
+    after: MASIL Zone으로 통일하고 문헌에 citation_tier와 usage_scope를 분리
+    reason: 덱·대본·Q&A·MCP가 같은 용어와 인용 경계를 사용하도록 하기 위함
+    source: sources/11_V20_결정_기록_0810.md#8-문헌용어-결정
+
+  - id: decision-2026-08-09-two-axis-contract
+    date: 2026-08-09
+    status: active
+    title: 월 점수 판정과 Care review를 두 축으로 분리
+    before: Favorable·Standard·Care를 상호 배타적인 등급처럼 설명
+    after: Favorable 또는 Standard의 점수 축과 Care review 검토 축을 독립적으로 운영
+    reason: 높은 통합점수 고객에게도 급격한 변화 신호가 열릴 수 있기 때문
+    source: sources/11_V20_결정_기록_0810.md#1-상품-판정-계약
+
+  - id: decision-2026-08-09-care-price-decoupling
+    date: 2026-08-09
+    status: active
+    title: Care review와 가격을 직접 연결하지 않음
+    before: Care review 시 우대 추가 할인 중지와 13%p 할인 축소
+    after: Care review는 사람 검토와 지원 리포트만 열고 가격을 직접 바꾸지 않음
+    reason: Care는 상태 등급이 아니라 변화 감지 신호이며 가격 축과 목적이 다르기 때문
+    historical_implementation:
+      value: 13%p
+      origin: 과거 요율 샌드박스 평균 12.987%p의 반올림
+      allowed_use: 기존 데모 화면과 과거 비교 결과 설명
+      prohibited_use: 현재 상품 정책 또는 확정 요율
+    source: sources/11_V20_결정_기록_0810.md#4-이전-데모-요율의-지위
+
+  - id: decision-2026-08-09-annual-score
+    date: 2026-08-09
+    status: active_not_implemented
+    title: 연간 점수가 기본 할인율을 정함
+    before: 월별 Favorable 수와 Care 여부가 연간 요율 상태를 직접 결정
+    after: 12개월 월 통합점수의 단순 평균으로 연간 점수를 만들고 기본 할인율을 정함
+    implementation_status: pending_next_version
+    note: Favorable 9/12는 별도의 추가 할인 자격이며 최종 요율 산식은 파일럿·계리 검증 대상
+    source: sources/11_V20_결정_기록_0810.md#2-월간연간-계산
+
+  - id: decision-2026-08-09-consistency-59-of-60
+    date: 2026-08-09
+    status: active
+    title: 환경 간 실질 판정 일치를 59/60으로 해석
+    before: Care 60/60과 Favorable 54/60을 별도 헤드라인으로 사용
+    after: 옛 Care-가격 결합 효과를 제거하면 문턱 근처 1명을 제외한 59/60이 실질적으로 일치
+    source: sources/11_V20_결정_기록_0810.md#5-시뮬레이션-해석-갱신
+
+  - id: decision-2026-08-10-business-targets
+    date: 2026-08-10
+    status: active
+    title: 파일럿·가입·유지 숫자를 목표값으로 한정
+    values:
+      pilot_drivers: 500
+      voluntary_enrollment: 15-20%
+      retention_uplift: +2%p
+    evidence_status: target_not_measured
+    prohibited_use: 실측치, 예측치, 확정 성과
+    source: sources/11_V20_결정_기록_0810.md#7-사업-숫자의-지위

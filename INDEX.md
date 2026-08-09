@@ -1,88 +1,52 @@
-# MASIL Knowledge Studio — 구조 지도
+# MASIL Knowledge Studio — V20 구조
 
-한 장으로 보는 "뭐가 어디 있나". 헷갈리면 여기부터.
+## 기본 원칙
 
-## 전체 그림
+MKS의 기본 검색 범위는 최종 덱의 Summary·Appendix와 거기서 바로 파생되는 Q&A다.
+현재 대본은 V20 반영 전 초안이므로 정본으로 넣지 않는다. 과거 검토 문서도 전부 모델에
+넣지 않는다.
 
-```
-sources/          원문층 — 승인 문서 11종 전문 (사람이 읽는 원본)
-   │  ↑ 여기서만 근거를 가져온다. 여기 없으면 "근거 없음"
-   ▼
-knowledge/        색인·규칙층 — AI가 먹는 구조화 지식
-   ├─ snapshot.yaml            무엇이 유효/폐기인가 + 수치 앵커(카드 커밋 SHA)
-   ├─ official_positions.yaml  주제별 공식 스탠스 161개  ← 시스템의 심장
-   ├─ qa/cards.yaml            Q&A 53장 (직답·발표답변 전문·후속질문·금지)
-   ├─ evidence/registry.yaml   문헌 원장 176건 (URL·검증상태·주제)
-   ├─ forbidden_claims.yaml    금지 표현 129개 (+ 대체 문구)
-   ├─ glossary.yaml            용어 (공식 영어·쉬운 영어·금지 변형)
-   └─ key_numbers.yaml         수치 252개 (카드 행 단위)
+## 파일 지도
 
-OPEN_ITEMS.md     사람 판단 대기 (문헌 지위 11 · 내용 상충 4 · 용어 1 · 분류 5)
-REVIEW.md         검토 가이드 (우선순위·검증 결과)
-```
+| 파일 | 역할 | MCP 기본 검색 |
+|---|---|---|
+| `knowledge/mcp_manifest.yaml` | 포함·제외 규칙 | 항상 |
+| `knowledge/snapshot.yaml` | 현재 버전·정본·구현 차이 | 항상 |
+| `knowledge/official_positions.yaml` | V20 공식 스탠스 | `status: active`만 |
+| `knowledge/qa/cards.yaml` | 최종 덱 직접 Q&A | `status: active`만 |
+| `knowledge/key_numbers.yaml` | 발표 수치와 지위 | `status: active`만 |
+| `knowledge/glossary.yaml` | 고정 영어·쉬운 뜻 | `status: active`만 |
+| `knowledge/forbidden_claims.yaml` | 실제 충돌 방지 규칙 | `status: active`만 |
+| `knowledge/evidence/registry.yaml` | V20 문헌 카드 | `presentation_entries`만 |
+| `knowledge/history/decision_log.yaml` | 현재 데모와 V20의 변경 이력 | 기본 제외 |
+| `sources/` | 원문·과거 승인 문서 | 기본 제외, 명시 요청 시 |
 
-## 각 파일을 언제 보나
+## 현재 상품 계약
 
-| 질문 | 볼 곳 |
-|---|---|
-| "이 주제 우리 입장이 뭐지?" | `official_positions.yaml` — topic으로 찾기 |
-| "심사위원이 이렇게 물으면?" | `qa/cards.yaml` — question_ko |
-| "이 숫자 맞나?" | `key_numbers.yaml` → 원본은 `sources/00_확정수치카드.md` |
-| "이거 말해도 되나?" | `forbidden_claims.yaml` |
-| "이 문헌 써도 되나? 링크는?" | `evidence/registry.yaml` — status·url |
-| "영어로 뭐라고?" | `glossary.yaml` |
-| "왜 그렇게 정했지?" (전체 맥락) | `sources/` 원문 |
+- 월 통합점수: 30/30/20/20 네 축
+- 월 판정: Favorable 또는 Standard, 데이터 부족 시 Hold
+- Care review: 같은 달 이동 +25%p AND 위험행동 +20%p의 별도 사람 검토 신호
+- 연간 점수: 12개월 월 통합점수의 단순 평균
+- Favorable 9/12: 추가 할인 자격
+- Care review: 직접 가격 영향 없음
+- 환경 간 실질 일치: 59/60
+- 500명·15–20%·+2%p: 실측이 아닌 파일럿 목표
 
-## 문헌은 이렇게 정리돼 있다
+## 문헌 검색 규칙
 
-`evidence/registry.yaml` 176건, 각 항목의 필드:
+- `stage_citable`: 덱의 해당 문장을 위해 무대에서 사용 가능
+- `qa_only`: 질문이 들어왔을 때만 사용
+- `listed_only`: 참고문헌에는 있지만 선제 인용하지 않음
+- `banned`: 덱에 남아 있어도 해당 주장을 방어하지 않음
 
-```yaml
-- source: Ehsani & Tefft 2021 (CHANCE 34(1))   # 대표 이름
-  citation_full: ...                            # 완전한 서지
-  url: https://...                              # 실제 링크 (55건 보유)
-  status: verified                              # ← 이게 핵심
-  status_reason: 출처부록 ◎ 원문 대조 확인
-  topics: [생활권-안-사고통계, 친숙도]           # 어디에 쓰이는 근거인가
-  aliases: [...]                                # 병합된 다른 표기들
-  status_conflict: ...                          # 지위가 갈렸던 이력 (있으면 사람 확인 대상)
-```
+각 문헌은 `allowed_claim`, `caveat`, `deck_location`, `capture_available`을 함께 반환한다.
+문헌 제목만 반환하거나 허용 범위보다 강한 문장을 만들지 않는다.
 
-**status 4단계 — 이것만 기억하면 됩니다:**
+## 충돌 우선순위
 
-| status | 개수 | 의미 | 사용 |
-|---|---|---|---|
-| `verified` | 58 | 원문 대조 확인 | 무대에서 인용 가능 |
-| `internal` | 63 | 우리 실측·코드 | 인용 가능 (합성·시뮬 단서 필수) |
-| `unverified` | 41 | 팩트체크 미결 | **확보 전 발표 인용 금지** |
-| `banned` | 14 | 인용 금지 확정 | 절대 금지 |
+1. `sources/11_V20_결정_기록_0810.md`
+2. 각 파일의 `status: active`
+3. V20 문헌 카드의 허용 주장
+4. `historical_demo`·`legacy_reference`
 
-URL이 없는 건 원문에 링크가 없었던 것(내부 실측·법령·비공개 자료). `sources/`에서 마크다운 링크로 찾을 수 있는 건 전부 붙였습니다.
-
-## 정본 앵커 — 숫자가 헷갈릴 때
-
-**모든 수치의 최종 기준은 `sources/00_확정수치카드.md`** (커밋 `e2d2e49`, 2026-08-02 rolling 확정). knowledge의 수치가 카드와 다르면 카드가 이깁니다.
-
-기억할 최신값: 우대 118 / 기본 56 / 보류 6 · 케어 30 · 3지형 케어 60/60·우대 54/60 · 요율 150/113 · 민감도 ±5 중앙 3·최대 9 · 케어 월수 전원 1개월 · eps 260m 단일 · 로그 80,032.
-
-## AI에 넣는 법 (0.5단계 — 오늘 가능)
-
-GPT 프로젝트 / Claude Project 지식에 **`knowledge/` + `sources/` 둘 다** 넣습니다(색인만 넣으면 답이 얕아짐). 시스템 프롬프트 핵심:
-
-```
-0. 답변의 1순위 소스는 official_positions.yaml이다. qa/cards.yaml은 기출 아카이브이자
-   표현 캐시일 뿐, 답변 가능 범위가 아니다 — 질문이 카드에 없으면 positions를 조합해
-   답하고, 카드가 없다는 이유로 거부하지 마라. 거부는 근거가 없을 때만.
-1. 수치·스탠스는 knowledge/ 와 sources/ 밖에서 가져오지 마라.
-2. forbidden_claims.yaml의 표현은 어떤 이유로도 쓰지 마라.
-3. 근거가 없으면 "현재 승인된 자료로는 뒷받침할 수 없습니다"라고 답하고 빈칸을 채우지 마라.
-4. 답변마다 근거 상태를 밝혀라: VERIFIED / TEAM DECISION / SIMULATION / UNVERIFIED / UNSUPPORTED
-5. 수치가 카드(00_확정수치카드)와 다르면 카드를 따라라.
-```
-
-## 갱신 규칙
-
-- 원문(`final/`)이 바뀌면 → `sources/` 동기화 → 해당 항목만 수정
-- 새 결정이 나면 → `official_positions.yaml`에 topic 추가 + 구 스탠스는 삭제가 아니라 `status: deprecated`
-- 팩트체크 결과가 오면 → `registry.yaml`의 status 승급 + `OPEN_ITEMS.md`에서 제거
-- **공식 스탠스 수정은 사람만** (AI가 자동 수정하지 않는다)
+활성 근거가 없으면 과거 문서로 빈칸을 채우지 말고 근거 부족으로 답한다.

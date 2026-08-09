@@ -1,13 +1,30 @@
-# 소스: seniorcareservice/final (승인 세트) · 수치 정본: 확정수치카드 @ e2d2e49 (2026-08-02 rolling)
-# 생성: 2026-08-04 자동 추출 + 카드 대조 — 사람 검토 전 DRAFT
+# 소스: seniorcareservice/final 승인 세트 + 마스터 Q&A V20 결정 기록
+# 2026-08-10 V20 계약 반영 — 사람 검토 전 DRAFT
 
-snapshot: gaip-final-v1-draft
+snapshot: gaip-final-v20-canon-0810-draft
 status: draft_pending_review
+mcp_manifest:
+  file: knowledge/mcp_manifest.yaml
+  default_mode: presentation_active
+  legacy_in_default_context: false
 numbers_anchor:
   file: final/00_확정수치카드.md
   commit: e2d2e49
   date: 2026-08-02
+  scope: 시뮬레이션 실측·생활권·가중치 수치
+decision_anchor:
+  file: sources/11_V20_결정_기록_0810.md
+  version: V20
+  date: 2026-08-10
+  scope: 상품 판정·Care 가격 분리·연간 점수·문헌 지위·사업 목표
+source_priority:
+  - sources/11_V20_결정_기록_0810.md
+  - knowledge/official_positions.yaml의 status=active 항목
+  - knowledge/key_numbers.yaml의 status=active 항목
+  - sources/00_확정수치카드.md의 V20과 충돌하지 않는 시뮬레이션 수치
+  - historical_demo 또는 deprecated 기록
 approved_sources:
+  - sources/11_V20_결정_기록_0810.md
   - final/00_확정수치카드.md
   - final/02_마스터답변안_전항목.md
   - final/07_근거지도.md
@@ -19,6 +36,17 @@ approved_sources:
   - final/근거자료/생활권_형성주기_이슈정리.md
   - final/근거자료/안전운전자_매력도_정리.md
   - final/근거자료/생활권반경_eps_정리.md
+decision_log:
+  file: knowledge/history/decision_log.yaml
+  latest:
+    - 2026-08-09 두 축 판정 계약
+    - 2026-08-09 Care review와 가격 분리
+    - 2026-08-09 연간 점수 계약(엔진 구현 대기)
+    - 2026-08-09 환경 간 실질 일치 59/60
+    - 2026-08-10 사업 숫자 3종은 목표값
+known_implementation_gaps:
+  - annual_score_to_base_discount: pending_next_version
+  - care_price_decoupling_in_legacy_demo: historical_demo_still_visible
 deprecated_bulk:
   - path: gaip-foursure/** (34p 마스터·EVIDENCE_BOOK·TECH_APPENDIX·deliverables HTML)
     reason: rolling 이전 산출물 — 고정 기준선·구수치·eps150 시절
@@ -28,3 +56,5 @@ deprecated_bulk:
     reason: 0801 정리로 archive 이동
   - path: 발송본 3종(00_통합·09·10)
     reason: 원문 보존본 — 수치 시점 배너로만 참조, 지식 소스 아님
+  - path: sources/00_확정수치카드.md#요율·케어
+    reason: 8/2 당시 데모 요율 기록 — V20의 Care-가격 분리 계약이 우선

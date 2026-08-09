@@ -1,0 +1,49 @@
+# MCP 기본 검색 범위. legacy_reference와 history는 명시 요청이 있을 때만 연다.
+
+version: 2026-08-10-v20
+default_mode: presentation_active
+
+external_sources:
+  deck:
+    uri: deck://gaip-2026-final-9p
+    sha256: 56dba11941b1f2491f469c3c37d2555326a36c95aa7c0d977da2d70fb83cd35b
+    pages: 9
+    reviewed: 2026-08-10
+  v20:
+    uri: https://claude.ai/code/artifact/9dea93fd-3645-48c6-8166-3e4cdcad5abc
+    version: 20
+    reviewed: 2026-08-10
+
+include:
+  - file: knowledge/snapshot.yaml
+  - file: knowledge/official_positions.yaml
+    filter: status == active
+  - file: knowledge/qa/cards.yaml
+    filter: status == active
+  - file: knowledge/key_numbers.yaml
+    filter: status == active
+  - file: knowledge/glossary.yaml
+    filter: status == active
+  - file: knowledge/forbidden_claims.yaml
+    filter: status == active
+  - file: knowledge/evidence/registry.yaml
+    collection: presentation_entries
+    filter: citation_tier in [stage_citable, qa_only]
+
+exclude_by_default:
+  - knowledge/history/**
+  - entries with status in [legacy_reference, deprecated, historical_demo]
+  - evidence with citation_tier in [listed_only, internal, banned]
+  - sources/**
+  - presentation script drafts not yet aligned with V20
+
+allow_on_explicit_request:
+  - knowledge/history/decision_log.yaml
+  - sources/11_V20_결정_기록_0810.md
+  - legacy_reference entries needed to explain an old dashboard capture
+
+retrieval_rules:
+  - 먼저 현재 장표 또는 질문과 직접 연결된 활성 항목만 반환한다.
+  - 현재 답변에 historical_demo를 섞지 않는다.
+  - 덱에 남아 있지만 V20에서 철회된 문헌은 deck_conflict로 알리고 그 주장을 방어하지 않는다.
+  - 활성 근거가 없으면 legacy에서 문장을 끌어오지 말고 근거 부족으로 답한다.

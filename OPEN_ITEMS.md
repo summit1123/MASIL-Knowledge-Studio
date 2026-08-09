@@ -1,41 +1,35 @@
-# 사람 확인 대기 목록 (2026-08-04 교차검사 산출)
+# V20 이후 사람 확인 대기
 
-자동 교차검사 57건 중 **기계적으로 고친 것은 반영 완료**(eps 0/180 단서, 케어 '여러 달' 삭제, 위치 창 4개월→상시 2개월, 1/7→1/8, Ehsani 연루/유발, 85%→86.0%, MASIL Zone 정리 등).
-아래는 **팀 판단이 필요해 남긴 것**입니다. 결정하면 즉시 반영합니다.
+MCP 기본 검색은 `knowledge/mcp_manifest.yaml`의 활성 항목만 사용한다. 아래 항목은
+최종 덱·현재 데모와 V20 계약 사이에 실제로 남은 차이만 기록한다.
 
-## A. 문헌 지위 상충 11건 (registry.yaml의 `status_conflict` 필드에 이력 보존)
+## 1. 덱·데모 표기 충돌 — 팀 장표 작업 범위
 
-보수적 원칙(banned > unverified > verified)으로 임시 통일했으나, 원래 등급이 갈렸던 건들:
+- Summary 1의 `Favorable · Standard · Care Tier`는 V20의 두 축 계약과 다르다.
+- Summary 1의 `more than 3 visitings`는 `3+ distinct visit days`로 고쳐야 한다.
+- Summary 1의 KCA `2.28s (+90%)`는 시야 제한 돌발 상황의 `2.28s vs 1.20s`라는 조건을 붙여야 한다.
+- Summary 2의 `Favorable / Standard / Care` 단일 분류 표기도 두 축 표현이 필요하다.
+- Dashboard Appendix의 `MASIL proposal 3%`와 13%p 차이는 이전 데모 요율이다.
+- Appendix A의 Sumagaysay·LexisNexis 문장은 V20 문헌 검토에서 방어 근거가 철회됐다.
+- Appendix D의 Care 단일 등급과 일부 legacy persona references는 V20 설명과 맞지 않는다.
+- 영어·한국어 발표 대본 초안도 위 충돌을 포함하므로 V20 문안으로 갱신한 뒤 정본에 연결한다.
 
-| 출처 | 임시 지위 | 쟁점 |
-|---|---|---|
-| Burdett 2017 | banned | 한쪽은 ◎(자택 11km 62% 근거), 한쪽은 ✕. **우리 핵심 논거(노출의 지도)에 쓰이므로 확인 우선순위 최상** |
-| Intini 2019 | banned | ◎(초록 확인) vs ✕(결론 불확실) |
-| KTDB 2013 (트립당 14.0km) | banned | 원문 링크 미확보 |
-| KIRI리포트 2024.7 | banned | 동명 리포트 2건이 섞임 — 리포트 번호로 분리 필요 |
-| 업계 UBI 3~6개월 | banned | 세 규칙이 서로 다름(완화 인용 / 발표 금지 / 비교 생략) — **하나로 확정 필요** |
-| 2023 노인실태조사 | unverified | 경로당 주 2.9회는 ◎ 확인분이라 분해 필요 |
-| Langford 2013 (Candrive) | unverified | △(초록만) 등급을 verified로 볼지 규약 필요 |
-| Charlton 2018 | unverified | 동일 |
-| DEGURBA | unverified | 표준 자체는 실재 / 구현은 공백 — 분리 표기 |
-| 위치정보법 23조 | unverified | 조문(사실) vs 자체 해석(법무 미검토) 분리 필요 |
-| TAAS 2024 | verified | verified vs internal — 우리 산출인지 공식 통계인지 |
+이 저장소는 장표를 수정하지 않는다. Q&A에서는 활성 카드로 현재 계약을 답하고, 구 화면은
+`historical_demo`라고 설명한다.
 
-**결정 방식 제안**: △(초록만)은 "verified + '초록 기준' 명시 조건"으로 규약화하면 5건이 한 번에 정리됩니다.
+## 2. 구현 차이 — 다음 버전 범위
 
-## B. 내용 상충 — 원문층까지 고쳐야 하는 것 4건
+- 연간 점수 = 12개월 월 통합점수 평균 규칙을 기본 할인율에 연결하는 산식은 미구현이다.
+- Care review와 가격을 분리한 V20 계약이 기존 대시보드 데모에는 아직 반영되지 않았다.
 
-1. **데이터 확보 3경로 정의가 두 버전** — "① 기존 UBI 채널 ② 특약 신규 수집 ③ 공공·제휴" vs "자체 앱 → OEM → 제휴". 어느 쪽이 팀 확정인지 확인 필요
-2. **개인당 방문점 수** — "100개 수준" vs "수십 개" (원문층도 불일치). `gaip_visit_events.csv` 실측으로 확정 가능 — 원하면 계산해 드립니다
-3. **TAAS 구성비 유도 근거** — "2024년 246개 시군구" vs "2010–2024 원천 CSV 전수", 정밀도도 44.6/42.4/13.0 vs 44.55/42.43/13.02
-4. **'사고 70% 자택 8km'** — 원문 미확인인데 일부 항목에서 플래그 없이 인용됨. Burdett(11km 62%)로 대체 권장
+## 3. 문헌 캡처 자산화 — MCP 구현 단계
 
-## C. 용어 결정 1건
+V20 문헌 카드의 원문 캡처는 검토 완료 상태다. 현재 MKS에는 `allowed_claim`,
+`deck_location`, `citation_tier`, `capture_available`만 기록했다. Claude 답변 안에서 이미지를
+직접 보여주려면 다음 단계에서 캡처 원본을 저장소 또는 접근 가능한 객체 저장소로 내보내고,
+각 evidence key에 안정적인 asset URL과 페이지 좌표를 연결해야 한다.
 
-- **Safe Zone 유지 여부** — 현재 '생활권 원(circle)'에 Safe Zone이 남아 있음. MASIL Zone(생활권 전체)과 계열이 갈려 혼동 위험. 유지하려면 "Safe Zone = 원 한정" 구분 note, 폐기하려면 MASIL Zone circle 등으로 교체
+## 4. 사업 수치
 
-## D. claim_type 재분류 제안 5건
-
-- Candrive 표기 규칙 → external_fact **→ team_decision** (내용이 우리 표기 결정)
-- 위치정보법 해석 → external_fact **→ team_decision** (자체 해석, 법무 미검토)
-- 배포·검증 상태 / Safe Zone 방어선 / DBSCAN 3중 → simulation_result **→ team_decision** (설계·운영 서사)
+500명, 자발 가입률 15–20%, 유지율 +2%p는 모두 파일럿 목표다. 측정 결과가 생길 때까지
+`target` 상태를 유지한다.
