@@ -1,0 +1,73 @@
+meta:
+  effective_date: 2026-08-10
+  source_url: https://claude.ai/code/artifact/9dea93fd-3645-48c6-8166-3e4cdcad5abc
+  manifest: assets/evidence/captures/manifest.json
+  capture_count: 44
+  rule: 캡처는 덱 또는 원문에서 보이는 문장을 확인하는 시각 근거다. 문헌의 허용 주장은 registry.yaml이 정한다.
+
+capture_groups:
+  - id: capture-group-kca
+    title_ko: 한국소비자원 고령운전자 반응시간·안전검사
+    evidence_refs: [presentation-kca-2024-elderly-drivers]
+    capture_ids: [capture-001, capture-002, capture-003, capture-004]
+    note: 덱 표기와 원문 시험표를 함께 확인
+  - id: capture-group-mcgwin-ehsani
+    title_ko: 상황판단과 낯선 도로 위험 맥락
+    evidence_refs: [presentation-mcgwin-brown-1999, presentation-ehsani-tefft-2021]
+    capture_ids: [capture-005, capture-006, capture-026]
+    note: 덱 발췌. 허용 주장과 caveat는 registry를 우선
+  - id: capture-group-demography-road-deaths
+    title_ko: OECD 인구와 EU 고령자 도로사망 비중
+    evidence_refs: []
+    capture_ids: [capture-007, capture-008, capture-012, capture-013]
+    note: persons와 drivers를 구분해야 하는 덱 정정 근거
+  - id: capture-group-iihs-intersection
+    title_ko: 80세 이상 다중차량 치명 교차로 사고 비중
+    evidence_refs: []
+    capture_ids: [capture-011]
+    note: 43%와 24%는 치명사고 연루 중 다중차량 교차로 사고의 비중이며 전체 사고율이 아님
+  - id: capture-group-erso
+    title_ko: 동일 노출에서 75세 이상 치명 위험
+    evidence_refs: [presentation-erso-older-driver-risk]
+    capture_ids: [capture-014, capture-015, capture-016, capture-017]
+    note: 원문은 이동거리 보정 fatality rate를 설명
+  - id: capture-group-regulation-cessation
+    title_ko: 갱신 주기와 운전 중단의 사회적 영향
+    evidence_refs: []
+    capture_ids: [capture-009, capture-018, capture-019, capture-020]
+    note: 문제정의 배경. 개인 점수의 직접 입력이 아님
+  - id: capture-group-enrollment
+    title_ko: 국내 고령운전자 특약 가입과 기존 상품 한계
+    evidence_refs: [presentation-lexisnexis-2015, presentation-sumagaysay-2026]
+    capture_ids: [capture-010, capture-021, capture-022, capture-023, capture-024, capture-025, capture-027]
+    note: LexisNexis·Sumagaysay는 registry에서 banned이므로 해당 덱 주장을 방어하지 않음
+  - id: capture-group-isaacman
+    title_ko: 60일과 서로 다른 방문일 기반 중요 장소
+    evidence_refs: [presentation-isaacman-2011]
+    capture_ids: [capture-028, capture-029]
+    note: 운전 연구가 아니라 반복 방문지 식별 방법론
+  - id: capture-group-zheng
+    title_ko: Zheng stay point 200m 선례
+    evidence_refs: [presentation-zheng-2009]
+    capture_ids: [capture-030, capture-031]
+    note: 260m를 논문 직접값으로 말하지 않음
+  - id: capture-group-montoliu
+    title_ko: Montoliu 장소 군집 200~300m 선례
+    evidence_refs: [presentation-montoliu-gatica-perez-2010]
+    capture_ids: [capture-032, capture-033]
+    note: 현재 상품 ε=260m의 직접 검증값이 아님
+  - id: capture-group-persona-longroad
+    title_ko: 페르소나 검증표와 LongROAD 자기조절 배경
+    evidence_refs: [presentation-longroad-self-regulation]
+    capture_ids: [capture-034, capture-035, capture-036, capture-037, capture-038, capture-040]
+    note: 페르소나는 대표표본이 아니라 오류 모드 커버리지
+  - id: capture-group-kiri
+    title_ko: 국내 UBI 현황 배경
+    evidence_refs: []
+    capture_ids: [capture-039]
+    note: 현재 상품 요율의 검증 근거가 아님
+  - id: capture-group-references
+    title_ko: 결선 덱 참고문헌 페이지
+    evidence_refs: [presentation-ji-2023, presentation-candrive-marshall-2023, presentation-lexisnexis-2015]
+    capture_ids: [capture-041, capture-042, capture-043, capture-044]
+    note: 목록 등재와 무대 인용 가능 지위를 동일시하지 않음

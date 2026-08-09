@@ -1,10 +1,11 @@
 # 소스: 최종 제출 덱·최종 용어 단어장
-# status=active 용어만 MCP 기본 검색. status가 없으면 legacy_reference.
+# status=active 용어는 현재 표현 계약. 나머지는 옛 표현·동의어·충돌 탐지용 semantic support다.
 
 meta:
   effective_date: 2026-08-10
   default_status_for_missing: legacy_reference
   mcp_filter: status == active
+  supporting_filter: status != active
 
 terms:
   - id: masil-zone
@@ -21,7 +22,7 @@ terms:
     korean: 월별 세 등급
     official_english: Favorable · Standard · Care Tier
     plain_english: the three monthly result tiers shown to customers
-    notes: "덱 인쇄 표현 — 월별 결과는 세 등급(three monthly tiers)으로 설명. Hold는 네 번째 위험 등급이 아니라 데이터 부족 시 판정을 보류하는 데이터 상태(불이익 없음). 연간 할인율 계산은 월별 등급 표시와 구분 — 연간 통합 기록이 기본 할인율을 만들고, Favorable 월 수(9/12)가 추가 우대의 근거"
+    notes: "발표·고객 안내에서는 세 등급으로 쉽게 설명. 구현은 월 통합점수와 해당 월 Care 신호를 함께 보존하므로 Favorable 점수 조건과 Care가 동시에 성립할 수 있음. Care는 다음 달 다시 계산. Hold는 네 번째 위험 등급이 아니라 데이터 부족 시 불이익 없이 보류하는 상태"
 
   - id: favorable
     status: active
@@ -50,7 +51,7 @@ terms:
     korean: 케어 검토
     official_english: Care review
     plain_english: staff review and a support offer for a Care month
-    notes: "공개 계약: 월별 결과는 Favorable·Standard·Care 세 등급이며 Care는 도움이 필요할 수 있는 달을 표시. 직원 검토와 지원 제안으로 이어지고, Care 자체가 자동 할증·자동 차감을 발생시키지 않음. 연간 할인율은 연간 주행 기록으로 별도 계산"
+    notes: "월별 세 등급 설명에서 Care는 도움이 필요할 수 있는 그달을 표시. 다음 달에는 다시 계산하며 지속 건강관리 등급이 아님. 직원 검토와 지원 안내로 이어지고 자동 할증·자동 차감은 없음"
     banned_variants: [pricing tier]
 
   - id: two-independent-axes
@@ -71,7 +72,8 @@ terms:
     status: active
     korean: 연간 점수
     official_english: annual score
-    plain_english: the simple average of the 12 monthly integrated scores
+    plain_english: the average of eligible monthly integrated scores shown for the year
+    notes: 현재 화면의 설명용 숫자. 기본 할인율은 기존 마일리지 할인표로 계산하고 Favorable 자격은 9개월 기준으로 판단
 
   - id: annual-verdict
     status: active
@@ -85,7 +87,7 @@ terms:
     korean: 추가 할인
     official_english: additional discount
     plain_english: an extra discount qualification after 9 Favorable months
-    notes: 최종 요율 산식은 파일럿·계리 검증 대상
+    notes: 현재 샌드박스 후보값은 +3%p, 전체 할인율 상한 45%. 최종 요율은 파일럿·계리 검증 대상
 
   - id: core-buffer-outer
     status: active

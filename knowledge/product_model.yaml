@@ -1,0 +1,943 @@
+# MASIL 전체 상품 모델. 질문의 종류에 따라 권한 있는 자료를 고르고, 과거 자료는 설명과 충돌 탐지에만 사용한다.
+
+meta:
+  effective_date: 2026-08-10
+  status: approved_for_mcp_with_open_items
+  domain_count: 15
+  claim_count: 94
+  purpose: 문제정의부터 사회적 가치·생활권·판정·운영·공정성·규제·시장·실행·근거·한계까지 현재 설계와 미확정 경계를 한곳에 기록
+  source_code_available_in_repository: false
+  external_source_code_audited: true
+  implementation_audit_file: IMPLEMENTATION.md
+  source_code_note: 실행 코드는 MKS 저장소 밖의 seniorcareservice 작업 checkout에서 확인했다. IMPLEMENTATION.md는 2026-08-10 작업 파일의 동작을 기록하며, 재현 가능한 릴리스 커밋은 아직 고정되지 않았다.
+
+status_definitions:
+  current: 현재 발표·Q&A에서 사실 또는 팀 결정으로 사용 가능
+  candidate_parameter: 현재 후보값이지만 파일럿 재보정 대상
+  documented_reference: 과거 구현 또는 정리문서에 계산식이 있으나 현재 코드·정책과 재대조가 필요
+  pilot_target: 실측이나 예측이 아닌 파일럿 목표
+  pilot_hypothesis: 파일럿에서 검증할 가치·효과 가설
+  unresolved: 팀 결정 또는 구현 확인이 필요한 빈칸
+  historical: 과거 데모·설계·검토 이력으로만 사용
+  prohibited: 현재 답변의 근거 또는 정책으로 사용 금지
+
+implementation_state_definitions:
+  product_rule: 발표와 Q&A에서 현재 상품 원칙으로 설명할 수 있는 팀 계약
+  current_sandbox_parameter: 현재 데모 코드에 실제로 들어 있으나 파일럿·계리 재보정 대상인 후보값
+  planned_not_implemented: 팀이 채택했지만 현재 외부 데모 코드에는 아직 반영되지 않은 설계
+  validated_result: 합성 시뮬레이션 또는 테스트에서 범위를 명시해 확인한 결과
+
+unresolved_response_contract:
+  rule: 미확정 항목은 확정 사실로 승격하지 않고 현재 검증 수준, 논리에 맞는 권고 표현, 필요한 검증을 함께 반환
+  fields:
+    - current_evidence_status
+    - recommended_position_ko
+    - validation_needed
+
+authority_by_question_type:
+  slide_content:
+    primary: knowledge/claims/deck_claims.yaml
+    rule: 인쇄 내용, 구두 보완과 수정 예정 상태를 함께 반환
+  current_product_rule:
+    primary: knowledge/product_model.yaml
+    supporting:
+      - knowledge/official_positions.yaml#status=active
+      - knowledge/key_numbers.yaml#status=active
+  calculation_and_parameter:
+    primary: knowledge/product_model.yaml
+    supporting:
+      - IMPLEMENTATION.md
+      - knowledge/key_numbers.yaml#status=active
+      - sources/02_마스터답변안_전항목.md#부록-C
+    rule: IMPLEMENTATION.md에서 확인된 현재 실행 경로와 과거 reference specification을 구분해 반환
+  literature_and_statistics:
+    primary: knowledge/evidence/registry.yaml#presentation_entries
+    rule: allowed_claim과 caveat 범위를 넘지 않음
+  simulation_result:
+    primary: knowledge/key_numbers.yaml#claim_type=simulation_result,status=active
+    supporting:
+      - knowledge/claims/deck_claims.yaml
+      - sources/00_확정수치카드.md
+  change_reason_and_conflict:
+    primary: knowledge/conflict_map.yaml
+    supporting:
+      - knowledge/history/decision_log.yaml
+      - sources/11_V20_결정_기록_0810.md
+      - knowledge/qa/cards.yaml#status!=active
+  easy_wording:
+    primary:
+      - knowledge/glossary.yaml#status=active
+      - knowledge/qa/cards.yaml#status=active
+    rule: 표현만 빌리고 사실은 해당 질문 유형의 primary 자료에서 가져옴
+
+domains:
+  - domain_id: problem_definition
+    title_ko: 문제정의와 현재 제도의 간격
+    coverage: partial
+    claims:
+      - id: model-problem-risk-growth
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 고령 운전자 문제는 단순한 사고 건수보다 인구 변화, 상황 판단의 어려움, 신체 취약성과 현재 제도의 긴 갱신 주기가 함께 만드는 간격으로 설명한다.
+        source_refs:
+          - deck://summary-1
+          - deck://appendix-a
+        caveats:
+          - 나이 자체를 개인 위험 판정 입력으로 쓰지 않음
+          - 사고 심도를 예측한다고 말하지 않음
+      - id: model-problem-situational-judgment
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 핵심 문제는 단순 부주의가 아니라 교차로·양보·돌발 상황에서의 situational judgment와 looking but not seeing이다.
+        source_refs:
+          - deck://summary-1
+          - presentation-mcgwin-brown-1999
+          - presentation-cicchino-mccartt-2015
+      - id: model-problem-unfamiliar-context
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 익숙하지 않은 도로는 위험 맥락이 될 수 있지만, MASIL은 생활권 밖이라는 위치 자체를 위험 판정으로 사용하지 않는다.
+        source_refs:
+          - deck://summary-1
+          - presentation-ehsani-tefft-2021
+          - knowledge/official_positions.yaml#out-of-zone-risk-and-no-location-penalty
+      - id: model-problem-current-system-gap
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 면허·규제는 개인의 월별 변화를 빠르게 반영하기 어렵고, 기존 마일리지 특약은 주행거리만으로 같은 거리 안의 행동 차이를 구분하지 못한다.
+        source_refs:
+          - deck://summary-1
+          - deck://dashboard-appendix
+        caveats:
+          - 일반 UBI 전체가 고령자 위험을 오분류한다고 확대하지 않음
+      - id: model-problem-severity-boundary
+        status: current
+        answer_authority: current
+        layer: deep
+        statement_ko: 신체 취약성과 사고 심도는 예방 필요성의 배경일 뿐 개인 점수·Care·할인 계산의 입력이 아니다.
+        source_refs:
+          - sources/02_마스터답변안_전항목.md#12-사고-심도
+        implementation_status: 판정 입력 계약에 심도·손해액·사고 라벨 없음이라는 문서 기록, 현재 저장소에 코드 없음
+
+  - domain_id: target_and_fairness
+    title_ko: 고령자 타깃과 공정성 경계
+    coverage: partial
+    claims:
+      - id: model-target-senior-first
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: MASIL은 고령 운전자를 시작 집단으로 삼지만 나이나 건강 상태가 아니라 개인의 평소 패턴과 실제 안전행동을 본다.
+        source_refs:
+          - deck://appendix-a
+          - knowledge/qa/cards.yaml#qa-why-senior-drivers
+      - id: model-target-self-regulation
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 고령 운전자의 자기조절과 반복 생활 패턴은 개인 기준선을 만들 수 있다는 타깃 적합성의 근거다.
+        source_refs:
+          - presentation-vivoda-2021
+          - presentation-longroad-self-regulation
+      - id: model-target-no-medical-screening
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: MASIL은 질환을 진단하거나 운전 적격성을 판정하는 의료 스크리닝이 아니다.
+        source_refs:
+          - knowledge/qa/cards.yaml#qa-medical-screening-age
+          - presentation-chen-2025-neurology
+      - id: model-target-age-expansion
+        status: pilot_hypothesis
+        answer_authority: supporting
+        layer: roadmap
+        statement_ko: 고령 운전자 파일럿 뒤 다른 연령대로 확대할 수 있다는 내용은 로드맵 가설이며 현재 검증된 확장 결과가 아니다.
+        source_refs:
+          - deck://summary-2
+      - id: model-target-disparate-impact
+        status: unresolved
+        answer_authority: none
+        layer: fairness
+        statement_ko: 실제 데이터에서 연령·지역·소득·디지털 접근성 등에 따른 불리한 영향과 가입 선택편의를 어떤 지표로 검증할지는 아직 정해지지 않았다.
+        current_evidence_status: design_consistent_not_validated
+        recommended_position_ko: "나이로 위험을 정하지 않고 개인 기준선과 행동을 보므로 대리차별 위험을 줄이려는 설계다. 다만 실제 집단별 공정성은 파일럿 데이터로 별도 확인해야 한다."
+        validation_needed: 연령·지역·소득·디지털 접근성별 판정률, Hold율, 이탈률과 오탐 차이 측정
+        decision_needed: 파일럿 공정성 속성·지표·임계값·표본 이탈 점검 계획 확정
+        gap_evidence_ref: knowledge/history/coverage_probe_2026-08-04.md
+        gap_cluster_ko: 공정성·대리차별과 선택편의
+
+  - domain_id: value_proposition
+    title_ko: 상품 정의와 사회적 가치
+    coverage: partial
+    claims:
+      - id: model-value-rider-overlay
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: MASIL은 기존 마일리지 특약을 대체하는 독립 보험이 아니라 거리 외의 안전행동과 변화 맥락을 더하는 rider 제안이다.
+        source_refs:
+          - deck://summary-1
+          - knowledge/qa/cards.yaml#qa-vs-mileage-ubi
+      - id: model-value-mobility-rights
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 핵심 사회적 포지셔닝은 규제와 이동 제한보다 먼저 신뢰·Care·자발적 안전 지원을 제공해 이동권을 유지하도록 돕는 것이다.
+        source_refs:
+          - deck://summary-2
+          - knowledge/qa/cards.yaml#qa-social-value
+      - id: model-value-insurer
+        status: pilot_hypothesis
+        answer_authority: supporting
+        layer: business
+        statement_ko: 보험사에 예방적 위험관리, 역선택 완화와 기존 특약 고도화 가치를 줄 수 있다는 것은 파일럿에서 검증할 사업 가설이다.
+        source_refs:
+          - deck://summary-2
+          - knowledge/qa/cards.yaml#qa-insurer-adoption-pilot
+        caveats:
+          - 손해율 개선이나 역선택 감소가 검증됐다고 말하지 않음
+      - id: model-value-senior
+        status: pilot_hypothesis
+        answer_authority: supporting
+        layer: business
+        statement_ko: 안전한 고령 운전자를 인정하고 변화가 큰 시점에 지원을 연결해 자발적 자기조절을 돕는다는 고객 가치 가설이다.
+        source_refs:
+          - deck://summary-2
+      - id: model-value-family
+        status: pilot_hypothesis
+        answer_authority: supporting
+        layer: business
+        statement_ko: 고객 동의 아래 필요한 지원 정보를 공유해 가족 돌봄 부담을 줄일 수 있다는 것은 검증 전 가치 가설이다.
+        source_refs:
+          - deck://summary-2
+        caveats:
+          - 실시간 위치 공유 구조로 설명하지 않음
+      - id: model-value-society
+        status: pilot_hypothesis
+        answer_authority: supporting
+        layer: business
+        statement_ko: 이동권과 예방 안전을 함께 지원해 사회적 비용을 줄일 수 있다는 것은 장기 가치 가설이며 현재 합성 시뮬레이션이 증명하지 않았다.
+        source_refs:
+          - deck://summary-2
+
+  - domain_id: data_and_privacy
+    title_ko: 입력 데이터·최소수집·동의
+    coverage: partial
+    claims:
+      - id: model-data-event-inputs
+        status: documented_reference
+        answer_authority: supporting
+        layer: deep
+        statement_ko: 현재 문서상 계산에 필요한 이벤트 입력은 목적지 좌표·방문일·트립 거리·위험 이벤트·커버리지이며 전체 경로 궤적은 사용하지 않는다.
+        source_refs:
+          - sources/02_마스터답변안_전항목.md#6-위치데이터
+          - sources/02_마스터답변안_전항목.md#부록-C
+        implementation_status: reference schema documented, runtime schema not present in this repository
+      - id: model-data-no-route
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 판정은 경로·궤적이 아니라 도착지 이벤트와 월 집계값을 사용한다.
+        source_refs:
+          - knowledge/official_positions.yaml#privacy-minimum-collection
+          - sources/00_확정수치카드.md#생활권
+      - id: model-data-poi-masking
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 목적지 이름은 마스킹하고 판정·설명 권한을 분리한다.
+        source_refs:
+          - deck://summary-2
+      - id: model-data-on-device-option
+        status: pilot_hypothesis
+        answer_authority: supporting
+        layer: privacy
+        statement_ko: 존 안팎 판정을 단말에서 수행하고 보험사에는 파생 월 집계만 보내는 구조는 파일럿 설계 옵션이다.
+        source_refs:
+          - sources/02_마스터답변안_전항목.md#6-위치데이터
+      - id: model-data-legal-review
+        status: unresolved
+        answer_authority: none
+        layer: privacy
+        statement_ko: 위치정보·개인정보 동의, 보관, 철회와 가족 공유의 최종 법무 설계는 파일럿 전에 별도 확정해야 한다.
+        current_evidence_status: design_principles_only
+        recommended_position_ko: "현재 원칙은 최소수집, POI 마스킹, 권한 분리, 고객 선택이다. 구체적인 보관기간과 철회·공유 절차는 파일럿 국가의 법무 검토 뒤 확정한다."
+        validation_needed: 파일럿 데이터 흐름도, 동의서, 보관·파기표, 철회와 가족 공유 절차의 법무 검토
+        source_refs:
+          - knowledge/official_positions.yaml#privacy-minimum-collection
+      - id: model-data-jurisdiction-portability
+        status: unresolved
+        answer_authority: none
+        layer: privacy
+        statement_ko: 싱가포르 PDPA·MAS, GDPR, EU AI Act와 국가별 요율 인가 절차에 MASIL을 어떻게 이식할지는 아직 법무·규제 검토가 끝나지 않았다.
+        current_evidence_status: external_legal_review_required
+        recommended_position_ko: "MASIL의 데이터 최소화와 사람 검토 원칙은 국가별 적용의 출발점이다. 다만 규제 준수나 요율 인가 가능성은 국가별 검토 전에는 주장하지 않는다."
+        validation_needed: 국가별 개인정보·AI·보험 요율 인가 체크리스트와 현지 법무 의견
+        decision_needed: 발표 국가와 파일럿 국가별 적용 체크리스트 및 법무 검토 범위 확정
+        gap_evidence_ref: knowledge/history/coverage_probe_2026-08-04.md
+        gap_cluster_ko: 해외 관할 이식성과 요율 인가
+
+  - domain_id: zone_formation
+    title_ko: MASIL Zone 형성
+    coverage: partial
+    claims:
+      - id: model-zone-definition
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: MASIL Zone은 행정구역이나 하나의 고정 원이 아니라 반복 방문으로 생긴 개인 거점들의 집합이다.
+        source_refs:
+          - deck://appendix-b
+      - id: model-zone-window
+        status: current
+        answer_authority: current
+        layer: core
+        implementation_state: planned_not_implemented
+        statement_ko: 해당 월을 제외한 직전 2개월 방문으로 매달 생활권을 다시 형성한다.
+        source_refs:
+          - knowledge/official_positions.yaml#masil-zone-formation
+          - sources/생활권_형성주기_이슈정리.md
+        implementation_status: 상품 계약은 rolling 직전 2개월이지만 현재 외부 합성 엔진은 2025-11·12 고정 기준선으로 번들을 만든다
+      - id: model-zone-clustering
+        status: current
+        answer_authority: current
+        layer: deep
+        statement_ko: 현재 설명가능한 기본 군집 방식은 DBSCAN이며 HDBSCAN은 실데이터 재비교용 challenger다.
+        source_refs:
+          - sources/00_확정수치카드.md#생활권
+      - id: model-zone-distinct-days
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 거점은 같은 날 중복 방문이 아니라 서로 다른 3일 이상 방문한 군집으로 인정한다.
+        source_refs:
+          - deck://appendix-b
+          - knowledge/key_numbers.yaml#anchor-distinct-days
+      - id: model-zone-epsilon
+        status: candidate_parameter
+        answer_authority: current
+        layer: core
+        implementation_state: current_sandbox_parameter
+        statement_ko: DBSCAN ε=260m는 문헌의 200~300m 대역을 참고한 파일럿 시작값이며 논문이 직접 준 확정값이 아니다.
+        source_refs:
+          - deck://appendix-b
+          - presentation-zheng-2009
+          - presentation-montoliu-gatica-perez-2010
+      - id: model-zone-radius
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 거점별 반경은 max(500m, min(개인 방문거리 P90, 2km))로 정한다.
+        source_refs:
+          - deck://appendix-b
+          - knowledge/key_numbers.yaml#zone-radius-rule
+      - id: model-zone-categories
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: core는 500m, buffer는 개인화 반경까지, 그 밖은 outer이며 outer는 맥락이지 자동 벌점이 아니다.
+        source_refs:
+          - deck://appendix-b
+      - id: model-zone-seasonality
+        status: unresolved
+        answer_authority: none
+        layer: validation
+        statement_ko: 직전 2개월 rolling 생활권이 계절·날씨·농번기·장기여행·다중거주와 실제 행동 변화를 어떻게 구분할지는 합성 데이터에서 검증되지 않았다.
+        current_evidence_status: logic_defined_real_world_validation_missing
+        recommended_position_ko: "rolling 2개월은 최근 생활권을 반영하기 위한 현재 후보 설계다. 계절 이동이나 장기여행을 위험 변화로 오인하지 않는지는 실제 데이터에서 시험하고 재보정한다."
+        validation_needed: 계절·장기여행·다중거주·측위오차 코호트별 오탐률과 회복시간 측정
+        decision_needed: 실데이터 파일럿에서 계절성·콜드스타트·다중거주·측위오차 시험 설계
+        gap_evidence_ref: knowledge/history/coverage_probe_2026-08-04.md
+        gap_cluster_ko: 실데이터 전환 시 계절성·콜드스타트·측위오차·다중거주
+
+  - domain_id: monthly_measurement
+    title_ko: 월별 원시 지표와 네 축 점수
+    coverage: partial
+    claims:
+      - id: model-monthly-raw-metrics
+        status: documented_reference
+        answer_authority: supporting
+        layer: deep
+        statement_ko: 월별 원시 집계는 밖 트립 비중, 위험행동 트립 비율, 100km당 위험 이벤트, 데이터 커버리지와 목적지별 집계를 포함한다.
+        source_refs:
+          - sources/02_마스터답변안_전항목.md#부록-C
+        implementation_status: source code not present in repository
+      - id: model-monthly-four-axes
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 월 통합점수는 주행거리, 생활권 안 안전, 생활권 밖 안전, 패턴 변화의 네 축을 본다.
+        source_refs:
+          - deck://summary-1
+          - deck://appendix-c
+      - id: model-monthly-weights
+        status: candidate_parameter
+        answer_authority: current
+        layer: core
+        implementation_state: current_sandbox_parameter
+        statement_ko: 현재 가중치 후보는 30/30/20/20이며 최종값이 아니라 969개 민감도 분석에서 확인한 안정 후보다.
+        source_refs:
+          - deck://appendix-c
+          - knowledge/key_numbers.yaml#score-weights
+      - id: model-monthly-mileage-function
+        status: candidate_parameter
+        answer_authority: current
+        layer: deep
+        implementation_state: current_sandbox_parameter
+        statement_ko: 현재 합성 엔진은 월 거리를 연환산해 구간별로 100·85·70·50·30점을 준다. 이 구간은 최종 상품 기준이 아니라 현재 후보값이다.
+        source_refs:
+          - sources/02_마스터답변안_전항목.md#부록-C
+        implementation_status: verified_in_current_external_working_tree
+      - id: model-monthly-safety-function
+        status: candidate_parameter
+        answer_authority: current
+        layer: deep
+        implementation_state: current_sandbox_parameter
+        statement_ko: 현재 합성 엔진은 안·밖에 동일하게 100km당 위험 이벤트 1건마다 8점을 빼는 선형 후보식을 쓴다. 8은 현재 데모의 미검증 후보 계수다.
+        formula: score = max(0, 100 - risky_events_per_100_km * 8)
+        source_refs:
+          - sources/02_마스터답변안_전항목.md#부록-C
+        implementation_status: verified_in_current_external_working_tree
+      - id: model-monthly-pattern-function
+        status: documented_reference
+        answer_authority: supporting
+        layer: deep
+        statement_ko: 참조 패턴 안정성 점수는 위험행동 변화지수가 커질수록 낮아지는 max(0, 100-change×100) 함수다.
+        source_refs:
+          - sources/02_마스터답변안_전항목.md#부록-C
+        implementation_status: current runtime code verification unavailable
+      - id: model-monthly-integrated-formula
+        status: current
+        answer_authority: current
+        layer: deep
+        statement_ko: 통합점수는 관측된 축의 가중합을 관측된 가중치 합으로 나누며 미관측 축은 분모에서 제외한다.
+        formula: integrated_score = sum(observed_axis_score * weight) / sum(observed_weight)
+        source_refs:
+          - knowledge/official_positions.yaml#monthly-and-annual-score-contract
+          - sources/02_마스터답변안_전항목.md#부록-C
+          - IMPLEMENTATION.md#1-월별-점수
+      - id: model-monthly-coverage-hold
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 생활권을 만들 수 없거나 데이터 커버리지가 80% 미만이면 불이익 없이 Hold로 보류한다.
+        source_refs:
+          - sources/00_확정수치카드.md#산식-가중치
+
+  - domain_id: monthly_decision
+    title_ko: 월별 등급과 내부 계산 구조
+    coverage: partial
+    claims:
+      - id: model-monthly-public-grades
+        status: current
+        answer_authority: current
+        layer: core
+        implementation_state: product_rule
+        statement_ko: 발표에서는 Favorable·Standard·Care 세 결과로 쉽게 설명하되, 현재 구현은 월 통합점수에서 Favorable·Standard를 만들고 해당 월 Care 신호를 함께 표시한다.
+        source_refs:
+          - deck://summary-1
+          - knowledge/official_positions.yaml#product-monthly-tiers-contract
+          - IMPLEMENTATION.md#3-care
+      - id: model-monthly-favorable-threshold
+        status: current
+        answer_authority: current
+        layer: core
+        implementation_state: product_rule
+        statement_ko: 월 통합점수 75점 이상은 Favorable 기준이다.
+        source_refs:
+          - knowledge/key_numbers.yaml#monthly-favorable-threshold
+      - id: model-monthly-hold-state
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: Hold는 네 번째 위험 등급이 아니라 데이터 부족으로 판정을 보류하는 no-penalty 상태다.
+        source_refs:
+          - knowledge/official_positions.yaml#product-monthly-tiers-contract
+      - id: model-monthly-internal-two-signals
+        status: current
+        answer_authority: supporting
+        layer: deep
+        statement_ko: 내부 계산에서는 점수 결과와 Care 변화 신호를 별도로 계산해 같은 달에 Favorable 조건과 Care 신호가 함께 성립할 수 있다.
+        source_refs:
+          - knowledge/official_positions.yaml#internal-calculation-structure
+      - id: model-monthly-display-precedence
+        status: current
+        answer_authority: current
+        layer: implementation
+        statement_ko: 점수 결과와 해당 월 Care 신호는 함께 보존하므로 둘 중 하나를 없애는 우선순위 규칙은 필요하지 않다. 구현은 Favorable 조건과 Care가 함께 성립하면 Reward + Care Review로 표시할 수 있다.
+        source_refs:
+          - IMPLEMENTATION.md#3-care
+      - id: model-monthly-stable-low-standard
+        status: current
+        answer_authority: current
+        layer: core
+        implementation_state: product_rule
+        statement_ko: 통합점수가 계속 낮아도 직전 2개월 대비 동시 급변이 없다면 Care가 아니라 Standard다. Care는 낮은 절대 수준이 아니라 개인의 변화 시점을 알리는 등급이다.
+        source_refs:
+          - knowledge/official_positions.yaml#stable-low-score-classification
+          - IMPLEMENTATION.md#3-care
+
+  - domain_id: care_detection_and_support
+    title_ko: Care 감지·검토·지원
+    coverage: partial
+    claims:
+      - id: model-care-trigger
+        status: current
+        answer_authority: current
+        layer: core
+        implementation_state: current_sandbox_parameter
+        statement_ko: 이번 달 밖 비중이 직전 2개월 평균보다 25%p 이상 늘고 위험행동 비중도 20%p 이상 늘어야 같은 달 AND 조건으로 Care가 열린다.
+        source_refs:
+          - knowledge/official_positions.yaml#care-review-trigger-contract
+          - knowledge/key_numbers.yaml#care-trigger-thresholds
+      - id: model-care-change-not-absolute
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: Care는 절대적으로 위험한 사람을 분류하는 것이 아니라 개인의 이동과 행동이 함께 급변한 시점을 찾는다.
+        source_refs:
+          - knowledge/official_positions.yaml#care-review-trigger-contract
+      - id: model-care-human-review
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: Care는 직원 검토와 지원 제안을 열며 최종 고객 전달은 사람 승인 뒤에 이뤄진다.
+        source_refs:
+          - deck://dashboard-customer-app
+          - knowledge/official_positions.yaml#ai-role-and-human-gate
+      - id: model-care-no-direct-price
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: Care 자체는 자동 할증·자동 할인 차감·Favorable 추가 할인 중지를 만들지 않는다.
+        source_refs:
+          - knowledge/official_positions.yaml#care-review-no-direct-price-effect
+      - id: model-care-persistence-rule
+        status: current
+        answer_authority: current
+        layer: implementation
+        implementation_state: product_rule
+        statement_ko: Care는 조건을 충족한 해당 월의 안내·검토 신호이며 다음 달에는 다음 달 데이터로 다시 계산한다. 연간 Care 월 수는 발생 이력이지 지속되는 건강관리 등급이 아니다.
+        source_refs:
+          - IMPLEMENTATION.md#3-care
+      - id: model-care-support-menu
+        status: pilot_hypothesis
+        answer_authority: supporting
+        layer: operations
+        statement_ko: 예방 Care call, 건강검진 연계, 야간 대체이동 지원 등은 고객 앱 콘셉트와 파일럿 지원 메뉴 후보다.
+        source_refs:
+          - deck://dashboard-customer-app
+        caveats:
+          - 실제 제휴·급부가 확정됐다고 말하지 않음
+
+  - domain_id: annual_discount_and_pricing
+    title_ko: 연간 점수·할인·요율 경계
+    coverage: partial
+    claims:
+      - id: model-annual-score
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 화면의 연간 통합점수는 판정 가능한 평가월의 월 통합점수를 단순 평균한 설명용 숫자다. 연간 Favorable 자격은 이 평균이 아니라 75점 이상 월 수로 정한다.
+        formula: annual_display_score = mean(eligible_monthly_integrated_scores)
+        source_refs:
+          - knowledge/official_positions.yaml#monthly-and-annual-score-contract
+          - knowledge/key_numbers.yaml#annual-score-formula
+          - IMPLEMENTATION.md#2-연간-점수와-favorable
+        implementation_status: verified_in_current_gaip_studio_working_tree
+      - id: model-annual-base-discount-mapping
+        status: current
+        answer_authority: current
+        layer: pricing
+        statement_ko: 현재 구현에서 기본 할인율은 연간 통합점수가 아니라 연간 주행거리와 차량 종류를 기존 한국 마일리지 할인표에 넣어 정한다.
+        formula: base_discount = mileage_discount_table(annual_distance, vehicle_class)
+        source_refs:
+          - IMPLEMENTATION.md#4-현재-할인율-구현
+      - id: model-annual-favorable-eligibility
+        status: current
+        answer_authority: current
+        layer: core
+        implementation_state: product_rule
+        statement_ko: 12개월 중 Favorable 월이 9개월 이상이면 추가 할인 자격이 생긴다.
+        source_refs:
+          - knowledge/official_positions.yaml#favorable-additional-discount-qualification
+          - knowledge/key_numbers.yaml#number-favorable-additional-discount-qualification
+      - id: model-annual-care-month-counts-for-favorable
+        status: current
+        answer_authority: current
+        layer: core
+        implementation_state: product_rule
+        statement_ko: Care로 표시된 달도 월 통합점수가 75점 이상이면 연간 Favorable 9개월 집계에 포함한다. Care 자체가 그 달의 점수 기록이나 추가 할인 자격을 지우지 않는다.
+        source_refs:
+          - knowledge/official_positions.yaml#favorable-additional-discount-qualification
+          - IMPLEMENTATION.md#3-care
+      - id: model-annual-extra-discount-rate
+        status: candidate_parameter
+        answer_authority: current
+        layer: pricing
+        implementation_state: current_sandbox_parameter
+        statement_ko: 현재 샌드박스는 연간 Favorable 자격에 고정 3%p를 추가하고 전체 할인율을 45%로 제한한다. 이는 구현된 후보값이며 최종 보험 요율은 아니다.
+        formula: "candidate_discount = min(45%, base_mileage_discount + (Favorable ? 3%p : 0%p))"
+        source_refs:
+          - IMPLEMENTATION.md#4-현재-할인율-구현
+      - id: model-pricing-no-surcharge-principle
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 현재 공개 원칙은 Care로 자동 할증하지 않으며 MASIL을 기존 마일리지 할인 위의 지원·우대 구조로 설명하는 것이다.
+        source_refs:
+          - knowledge/official_positions.yaml#care-review-no-direct-price-effect
+      - id: model-pricing-dashboard-13p
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 대시보드 13%p 차이는 Edward 사례의 연간 시뮬레이션 결과이며 한 달 Care의 고정 차감 정책이 아니다.
+        source_refs:
+          - deck://dashboard-appendix
+          - knowledge/key_numbers.yaml#annual-simulation-13p-difference
+      - id: model-pricing-old-sandbox
+        status: historical
+        answer_authority: none
+        layer: history
+        statement_ko: 기존 korea mileage + 1~7%p bonus − Care 13%p reduction, cap 45% 산식은 과거 요율 샌드박스다.
+        source_refs:
+          - sources/02_마스터답변안_전항목.md#부록-C
+          - sources/00_확정수치카드.md#요율-케어
+        prohibited_use: 현재 상품 정책·확정 요율·Care 효과로 사용
+
+  - domain_id: ai_and_human_roles
+    title_ko: AI·규칙 엔진·사람의 역할
+    coverage: partial
+    claims:
+      - id: model-ai-synthetic-support
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: AI는 합성 이동 프로필과 설명문 생성에 보조적으로 사용된다.
+        source_refs:
+          - deck://summary-2
+      - id: model-ai-rule-engine
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 월 점수·등급·Care 조건은 사람이 정한 고정 규칙으로 계산하며 AI가 보험료를 결정하지 않는다.
+        source_refs:
+          - deck://summary-2
+          - knowledge/official_positions.yaml#ai-role-and-human-gate
+      - id: model-ai-reason-codes
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: AI 리포트는 계산 결과와 reason codes를 사람이 이해할 수 있는 설명으로 전달하는 역할이다.
+        source_refs:
+          - deck://summary-2
+      - id: model-ai-staff-approval
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: Care 리포트와 고객 조치는 직원 검토와 승인 뒤에 전달한다.
+        source_refs:
+          - deck://dashboard-customer-app
+
+  - domain_id: simulation_and_validation
+    title_ko: 합성 시뮬레이션과 검증 경계
+    coverage: partial
+    claims:
+      - id: model-sim-scale
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 검증 세트는 60명 로스터를 3환경에 둔 180개 시나리오와 80,032개 합성 이벤트다.
+        source_refs:
+          - deck://summary-2
+          - knowledge/key_numbers.yaml#simulation-scale
+          - knowledge/key_numbers.yaml#synthetic-event-count
+      - id: model-sim-period
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 각 시나리오는 2개월 기준선과 12개월 평가의 총 14개월 구조다.
+        source_refs:
+          - deck://appendix-d
+      - id: model-sim-personas
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 6개 페르소나는 인구 대표 표본이 아니라 서로 다른 오류 모드와 판정 경로를 시험하는 통제 시나리오다.
+        source_refs:
+          - deck://appendix-d
+          - sources/데이터생성_상세정리.md
+      - id: model-sim-validates
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 합성 시뮬레이션은 계산 재현성, 규칙 실행, Hold·예외 처리와 위치만으로 불이익을 주지 않는지를 검증한다.
+        source_refs:
+          - deck://appendix-d
+      - id: model-sim-does-not-validate
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 실제 사고 예측력, 손해율 개선, 최종 요율과 고객 수용도는 검증하지 않았다.
+        source_refs:
+          - deck://appendix-d
+      - id: model-sim-sensitivity
+        status: current
+        answer_authority: current
+        layer: deep
+        statement_ko: 969개 가중치 조합은 최적 가중치를 증명한 것이 아니라 현 후보가 급변하지 않는 안정 구간에 있는지 확인한 것이다.
+        source_refs:
+          - deck://appendix-c
+      - id: model-governance-drift
+        status: unresolved
+        answer_authority: none
+        layer: validation
+        statement_ko: 실제 운영에서 파라미터 드리프트, 재보정 주기, 버전 승인, 재현 감사와 롤백을 누가 관리할지는 아직 모델 거버넌스로 정리되지 않았다.
+        current_evidence_status: governance_not_designed
+        recommended_position_ko: "현재 규칙은 같은 입력에 같은 결과를 주도록 고정되어 있다. 운영 단계에서는 규칙 변경을 버전 관리하고 사람 승인·감사·롤백 절차를 둬야 한다."
+        validation_needed: 변경 승인자, 드리프트 지표, 재보정 주기, 회귀 테스트와 롤백 기준 확정
+        decision_needed: 파일럿 전 모델·규칙 변경 관리와 모니터링 책임 확정
+        gap_evidence_ref: knowledge/history/coverage_probe_2026-08-04.md
+        gap_cluster_ko: 모델 거버넌스·드리프트·재보정
+
+  - domain_id: evidence_and_claim_boundaries
+    title_ko: 문헌·수치·캡처와 주장 경계
+    coverage: partial
+    claims:
+      - id: model-evidence-tiering
+        status: current
+        answer_authority: current
+        layer: evidence
+        statement_ko: 문헌은 stage_citable, qa_only, listed_only, banned로 나누고 allowed claim과 caveat 범위 안에서만 사용한다.
+        source_refs:
+          - knowledge/evidence/registry.yaml
+      - id: model-evidence-deck-corrections
+        status: current
+        answer_authority: current
+        layer: evidence
+        statement_ko: 최종 덱 64개 claim 중 51개는 그대로 사용, 6개는 구두 맥락 필요, 7개는 수정 예정이다.
+        source_refs:
+          - knowledge/claims/deck_claims.yaml
+      - id: model-evidence-captures
+        status: unresolved
+        answer_authority: none
+        layer: evidence
+        statement_ko: 16개 발표 문헌의 캡처는 외부 원본에서 검토됐지만 실제 이미지 파일과 페이지 좌표는 아직 이 저장소에 없다.
+        current_evidence_status: externally_reviewed_local_assets_missing
+        recommended_position_ko: "문헌 주장은 현재 registry의 허용 범위로 답할 수 있다. 캡처를 직접 보여주는 기능은 로컬 이미지와 페이지 좌표를 연결한 뒤에만 제공한다."
+        validation_needed: 16개 문헌 캡처 export, 해시·페이지·인용문·덱 위치 연결 및 파일 존재 검사
+        decision_needed: 원본 캡처를 로컬 asset으로 내보내 evidence ID와 연결
+      - id: model-evidence-master-qa-localization
+        status: unresolved
+        answer_authority: none
+        layer: evidence
+        statement_ko: 외부 Master Q&A의 질문·답변·문헌·캡처 정보는 URL 런타임 참조가 아니라 로컬 데이터셋으로 내보내야 한다.
+        current_evidence_status: source_identified_export_not_started
+        recommended_position_ko: "Master Q&A는 정답집이 아니라 질문 해석과 설명 재료로 편입한다. URL을 조회하지 않고 질문·답변·문헌·캡처 단위의 로컬 조각으로 검색한다."
+        validation_needed: 전체 export, 조각 ID·출처·현재성·문헌·캡처 연결, 샘플 검색 회귀 테스트
+        decision_needed: 로컬 export 형식과 자산 경로 확정
+
+  - domain_id: operations_and_delivery
+    title_ko: 직원 검토와 고객 전달 흐름
+    coverage: partial
+    claims:
+      - id: model-ops-staff-report
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: Care 사례는 직원용 검토 리포트에서 변화 근거와 지표를 확인하는 흐름으로 설명한다.
+        source_refs:
+          - deck://dashboard-staff-review
+      - id: model-ops-approval
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 직원 승인 전에는 고객에게 자동 전달하지 않는다.
+        source_refs:
+          - deck://dashboard-customer-app
+      - id: model-ops-customer-view
+        status: current
+        answer_authority: current
+        layer: core
+        statement_ko: 고객 화면은 월별 변화와 지원 선택지를 설명하며 벌점 통지 화면으로 설계하지 않는다.
+        source_refs:
+          - deck://dashboard-customer-app
+      - id: model-ops-workflow-detail
+        status: unresolved
+        answer_authority: none
+        layer: implementation
+        statement_ko: 담당자 역할, 승인 SLA, 고객 동의, 지원 제휴와 이의제기 절차는 아직 운영 계약으로 정리되지 않았다.
+        current_evidence_status: deck_concept_only
+        recommended_position_ko: "현재 확정 원칙은 직원 검토 뒤 고객에게 안내하고 자동 조치하지 않는 것이다. 담당자와 시간 기준, 제휴, 이의제기 절차는 파일럿 운영안에서 확정한다."
+        validation_needed: 역할별 workflow, 승인 SLA, 고객 접점, 지원 제휴와 이의제기 운영표
+      - id: model-ops-review-capacity-cost
+        status: unresolved
+        answer_authority: none
+        layer: implementation
+        statement_ko: Care 검토 담당자, 건당 시간·비용, 필요한 인력, SLA와 기록 보존 기준은 아직 산정되지 않았다.
+        current_evidence_status: operating_model_not_costed
+        recommended_position_ko: "Care는 자동 건강관리 서비스가 아니라 해당 월의 직원 검토 안내다. 실제 검토 부하와 비용은 파일럿 발생률을 측정해 산정한다."
+        validation_needed: Care 발생률, 건당 처리시간, 인력단가, SLA, 기록 보존비용 기반 용량 모델
+        decision_needed: 파일럿 예상 Care 건수에 따른 운영 부하와 비용 모델 작성
+        gap_evidence_ref: knowledge/history/coverage_probe_2026-08-04.md
+        gap_cluster_ko: Care 검토 인력·비용·고객 접점
+      - id: model-ops-customer-rights
+        status: unresolved
+        answer_authority: none
+        layer: ethics
+        statement_ko: Care 통보 채널, 고객 거부권, 설명·이의제기, 가족 공유 동의와 낙인 방지 원칙은 아직 고객 권리 절차로 확정되지 않았다.
+        current_evidence_status: customer_first_principle_not_operationalized
+        recommended_position_ko: "고객 본인에게 먼저 설명하고 지원은 선택하게 하며 가족 공유는 명시적 동의가 있을 때만 허용하는 방향이 MASIL 논리에 맞다. 세부 절차는 아직 확정 전이다."
+        validation_needed: 알림 문안, opt-in·철회, 설명·이의제기, 제3자 공유, 낙인 방지 UX와 법무 검토
+        decision_needed: 고객 본인 중심 통보와 선택권·이의제기·제3자 공유 계약 확정
+        gap_evidence_ref: knowledge/history/coverage_probe_2026-08-04.md
+        gap_cluster_ko: Care 대상 고객의 권리와 윤리 정당성
+      - id: model-ops-liability
+        status: unresolved
+        answer_authority: none
+        layer: governance
+        statement_ko: Care 신호 뒤 미조치·오탐·미탐 또는 사고가 발생했을 때 보험사·운영사·지원기관의 책임 경계는 아직 정해지지 않았다.
+        current_evidence_status: external_legal_and_operational_review_required
+        recommended_position_ko: "Care는 진단이나 안전 보장이 아니라 검토와 지원을 제안하는 신호다. 이 설명은 책임을 없애는 면책이 아니므로 실제 책임 경계는 법무·운영 계약으로 정해야 한다."
+        validation_needed: 오탐·미탐·미조치·사고 시 에스컬레이션, 기록, 역할별 책임과 보험 검토
+        decision_needed: 법무 검토와 파일럿 운영 책임·면책·에스컬레이션 범위 확정
+        gap_evidence_ref: knowledge/history/coverage_probe_2026-08-04.md
+        gap_cluster_ko: Care 신호 뒤 사고와 책임 경계
+
+  - domain_id: business_and_roadmap
+    title_ko: 보험사 도입·파일럿·확대
+    coverage: partial
+    claims:
+      - id: model-business-overlay
+        status: current
+        answer_authority: current
+        layer: business
+        statement_ko: 기존 마일리지 할인 채널 위에 rider로 시작한다는 것이 도입 전략이다.
+        source_refs:
+          - deck://summary-1
+      - id: model-business-pilot-targets
+        status: pilot_target
+        answer_authority: current
+        layer: business
+        statement_ko: 500명, 자발 가입률 15~20%, 유지율 +2%p는 실측이나 예측이 아니라 검증할 목표다.
+        source_refs:
+          - deck://summary-2
+          - knowledge/key_numbers.yaml
+      - id: model-business-pilot-validation
+        status: current
+        answer_authority: current
+        layer: business
+        statement_ko: 실데이터 파일럿은 파라미터 재보정, 실제 손해 영향, 고객 수용성, 개인정보·운영 가능성을 검증해야 한다.
+        source_refs:
+          - deck://summary-2
+          - knowledge/qa/cards.yaml#qa-insurer-adoption-pilot
+      - id: model-business-data-paths
+        status: pilot_hypothesis
+        answer_authority: supporting
+        layer: business
+        statement_ko: 기존 UBI 채널, 특약 동의 기반 신규 수집, 공공·제휴 데이터의 세 경로는 실현 가능성 제안이며 확보 완료 사실이 아니다.
+        source_refs:
+          - sources/02_마스터답변안_전항목.md#13-실현-가능성
+      - id: model-business-economics
+        status: unresolved
+        answer_authority: none
+        layer: business
+        statement_ko: 손익분기, 보험료 효과, 손해율 개선과 실제 운영비는 검증되지 않았고 최종 경제성 모델이 없다.
+        current_evidence_status: illustrative_sandbox_only
+        recommended_position_ko: "현재 할인 계산은 작동 방식을 보여주는 경제성 샌드박스다. 수익성이나 손해율 개선을 증명한 것이 아니며 파일럿 데이터로 검증한다."
+        validation_needed: 예상 손해액·운영비·지원비·가입률·유지율을 포함한 단위경제성과 민감도 분석
+      - id: model-business-market-channel
+        status: unresolved
+        answer_authority: none
+        layer: business
+        statement_ko: 목표 시장 규모, 초기 고객 범위, 판매 채널, 온보딩 전환율과 고객 획득 비용은 아직 근거 있는 시장 모델로 정리되지 않았다.
+        current_evidence_status: external_market_research_required
+        recommended_position_ko: "초기 도입은 기존 보험사의 마일리지 특약 채널 위 파일럿으로 제안한다. 시장 규모와 획득비용은 공개 통계와 보험사 채널 자료를 확인한 뒤 숫자로 제시한다."
+        validation_needed: 국가별 대상 운전자 수, 보험 가입 구조, 채널 전환율, CAC 가정의 출처와 계산표
+        decision_needed: 공개 통계 기반 TAM·SAM과 보험사 채널·가입 경로 가정 확정
+        gap_evidence_ref: knowledge/history/coverage_probe_2026-08-04.md
+        gap_cluster_ko: 사업 경제성·시장 규모·채널·CAC
+      - id: model-business-competition-moat
+        status: unresolved
+        answer_authority: none
+        layer: business
+        statement_ko: 기존 UBI·텔레매틱스 상품과의 비교, MASIL의 방어 가능한 차별성, 지식재산과 데이터·운영 해자는 아직 검증된 포지션이 없다.
+        current_evidence_status: differentiation_hypothesis_not_benchmarked
+        recommended_position_ko: "MASIL의 제안 차이는 거리만이 아니라 개인 생활권의 맥락과 변화 신호를 지원 흐름에 연결한다는 점이다. 경쟁우위나 해자로 확정하려면 실제 상품 비교가 필요하다."
+        validation_needed: 주요 UBI·텔레매틱스 상품의 입력·요율·지원·프라이버시 비교와 특허·운영 차별성 검토
+        decision_needed: 공개 자료 기반 경쟁 비교와 과장 없는 차별성 설명 확정
+        gap_evidence_ref: knowledge/history/coverage_probe_2026-08-04.md
+        gap_cluster_ko: 경쟁 지형·차별성·해자·지식재산
+      - id: model-business-team-partners
+        status: unresolved
+        answer_authority: none
+        layer: execution
+        statement_ko: 팀의 보험·계리·규제·운영 역량, 데이터 및 보험사 파트너 확보 상태는 이 저장소에 사실 자료로 정리되지 않았다.
+        current_evidence_status: team_facts_not_ingested
+        recommended_position_ko: "확인된 팀 역할과 실제 파트너 상태만 말한다. 자문·보험사·데이터 협력이 제안 단계라면 확보 완료로 표현하지 않는다."
+        validation_needed: 팀 역할·경력, 자문 확인, 파트너 LOI·접촉·협의 단계와 데이터 접근 상태 자료
+        decision_needed: 발표 가능한 팀 역할·자문·파트너·확보 상태를 사실 기반으로 편입
+        gap_evidence_ref: knowledge/history/coverage_probe_2026-08-04.md
+        gap_cluster_ko: 실행 신뢰·팀 역량·파트너·데이터 경로
+      - id: model-business-pilot-design
+        status: unresolved
+        answer_authority: none
+        layer: business
+        statement_ko: 파일럿의 1차 종결점, 표본 산정, 대조 설계, 중단 기준, 예산과 성공·실패 판정 기준은 아직 완성되지 않았다.
+        current_evidence_status: targets_exist_protocol_incomplete
+        recommended_position_ko: "500명과 15~20% 가입률, +2%p 유지율은 검증할 목표값이다. 성공을 주장한 결과가 아니며 실제 파일럿에는 대조·중단·성공 기준을 별도로 둔다."
+        validation_needed: 모집·표본·대조군·기간·측정지표·중단 기준·예산·분석계획 사전등록
+        decision_needed: 목표 숫자와 별도로 측정 설계·kill criteria·예산 책임 확정
+        gap_evidence_ref: knowledge/history/coverage_probe_2026-08-04.md
+        gap_cluster_ko: 파일럿 설계 정합성
+      - id: model-business-selection-gaming
+        status: unresolved
+        answer_authority: none
+        layer: business
+        statement_ko: 자발 가입에 따른 역선택·선택편의, 데이터 회피, 단기 점수 게이밍과 Hold 반복 이탈을 어떻게 감지·관리할지는 아직 검증되지 않았다.
+        current_evidence_status: known_risk_not_tested
+        recommended_position_ko: "자발 가입과 no-penalty Hold는 고객 보호에 필요하지만 선택편의와 데이터 회피 위험을 만들 수 있다. 파일럿에서 가입·결측·이탈·점수 급변 패턴을 함께 측정한다."
+        validation_needed: 가입군·비가입군 비교, 결측·Hold·이탈률, 단기 행동 급변과 반복 패턴 탐지 기준
+        decision_needed: 파일럿에서 가입 편의·이탈·결측·게이밍 지표와 대응 규칙 확정
+        gap_evidence_ref: knowledge/history/coverage_probe_2026-08-04.md
+        gap_cluster_ko: 역선택·게이밍·이탈·Hold 반복
+
+  - domain_id: language_and_presentation
+    title_ko: 발표 용어·쉬운 답변·대본
+    coverage: partial
+    claims:
+      - id: model-language-glossary
+        status: current
+        answer_authority: current
+        layer: presentation
+        statement_ko: 현재 active glossary의 영어와 쉬운 뜻을 발표·Q&A 표현의 기본으로 사용한다.
+        source_refs:
+          - knowledge/glossary.yaml
+      - id: model-language-behavior
+        status: current
+        answer_authority: current
+        layer: presentation
+        statement_ko: 덱의 미국식 표기에 맞춰 behavior를 사용한다.
+        source_refs:
+          - knowledge/glossary.yaml#behavior-spelling
+      - id: model-language-script-draft
+        status: unresolved
+        answer_authority: none
+        layer: presentation
+        statement_ko: 현재 영어·한국어 발표 대본은 초안이므로 사실 정본으로 쓰지 않고, 승인 뒤 쉬운 문장 스타일 자료로 편입한다.
+        current_evidence_status: draft_waiting_for_user_update
+        recommended_position_ko: "지금은 active 용어와 현재 상품 모델로 쉬운 답변을 만든다. 사용자가 갱신한 대본을 받으면 사실을 재검증한 뒤 표현 자료로 편입한다."
+        validation_needed: 최종 대본 수신 뒤 덱 claim·상품 모델·수치·문헌과 문장별 교차검사
+      - id: model-language-masil-name
+        status: current
+        answer_authority: current
+        layer: presentation
+        statement_ko: MASIL은 한국어의 ‘마실 나가다’처럼 일상적으로 가까운 곳을 오가는 생활의 이미지를 담은 브랜드명으로 설명한다.
+        source_refs:
+          - knowledge/presentation_story.yaml#story-05-masil-name-and-zone
+        caveats:
+          - 이름의 문화적 의미를 알고리즘 근거로 사용하지 않음

@@ -1,33 +1,62 @@
-# MCP 기본 검색 범위. legacy_reference와 history는 명시 요청이 있을 때만 연다.
+# MCP 검색·권한 계약. 현재 정본과 보조 자료를 모두 검색하되 결론 권한을 분리한다.
 
-version: 2026-08-10-deck-canon
-default_mode: presentation_active
+version: 2026-08-10-mcp-ready-v1
+default_mode: answer_support
+mcp_implementation_allowed: true
 
-external_sources:
+runtime_sources:
   deck:
     uri: deck://gaip-2026-final-9p
     sha256: 56dba11941b1f2491f469c3c37d2555326a36c95aa7c0d977da2d70fb83cd35b
     pages: 9
     reviewed: 2026-08-10
-  master_qa_archive:
+provenance_only:
+  master_qa_origin:
     uri: https://claude.ai/code/artifact/9dea93fd-3645-48c6-8166-3e4cdcad5abc
-    layer: history
-    default_retrieval: false
-    note: 과거 Master Q&A 아카이브 — 세 등급 공개 계약과 충돌하는 옛 답변이 있어 현재 정본으로 사용하지 않음
+    runtime_retrieval: false
+    note: 원본 위치 기록만 보존. MCP는 이 URL을 조회하지 않으며 질문·답변·문헌·캡처를 로컬 데이터셋으로 내보낸 뒤 사용
     reviewed: 2026-08-10
+  master_qa_local_export:
+    text_file: sources/master_qa_artifact_2026-08-10.txt
+    capture_manifest: assets/evidence/captures/manifest.json
+    capture_index: knowledge/evidence/capture_index.yaml
+    capture_count: 44
+    canonical_for_current_facts: false
 
 canonical_sources:
+  current_implementation:
+    file: IMPLEMENTATION.md
+    role: 2026-08-10 현재 GaipStudio 작업 checkout의 실제 점수·Care·할인 계산 감사
+    portability_note: MKS 밖의 미커밋 작업 파일을 확인한 기록이므로 재현 가능한 릴리스 커밋 고정 전에는 구현 진실의 임시 스냅샷
+  product_model:
+    file: knowledge/product_model.yaml
+    role: 질문 유형별 현재 상품 설계와 미확정 경계
   deck_claims:
     file: knowledge/claims/deck_claims.yaml
-    priority: 1
+    role: 장표에 인쇄된 내용과 수정·보완 상태
   team_positions:
     file: knowledge/official_positions.yaml
     filter: status == active
-    priority: 2
+    role: product_model 세부 현재 설명
+
+authority_routing:
+  file: knowledge/product_model.yaml
+  section: authority_by_question_type
+  rule: 하나의 전역 우선순위가 아니라 질문 유형에 맞는 primary 자료가 결론을 정함
 
 include:
-  - file: knowledge/claims/deck_claims.yaml
+  - file: IMPLEMENTATION.md
+    role: current_working_tree_implementation_audit
+  - file: knowledge/product_model.yaml
     layer: core
+  - file: knowledge/presentation_story.yaml
+    role: presentation_narrative_map
+  - file: knowledge/conflict_map.yaml
+    role: conflict_resolution
+  - file: knowledge/coverage_matrix.yaml
+    role: readiness_and_gaps
+  - file: knowledge/claims/deck_claims.yaml
+    role: slide_content
   - file: knowledge/official_positions.yaml
     filter: status == active
   - file: knowledge/snapshot.yaml
@@ -44,25 +73,100 @@ include:
   - file: knowledge/evidence/registry.yaml
     collection: presentation_entries
     filter: citation_tier in [stage_citable, qa_only]
+  - file: knowledge/evidence/capture_index.yaml
+    role: local_literature_and_deck_capture_links
 
-exclude_by_default:
-  - knowledge/history/**
-  - entries with status in [legacy_reference, deprecated, historical_demo]
-  - evidence with citation_tier in [listed_only, internal, banned]
-  - sources/**
+supporting_include:
+  - file: knowledge/history/decision_log.yaml
+    role: change_history_and_conflict_context
+    retrieval_mode: semantic_support
+    canonical_for_current_facts: false
+  - file: knowledge/qa/cards.yaml
+    filter: status != active
+    role: question_mining_and_conflict_context
+    retrieval_mode: semantic_support
+    canonical_for_current_facts: false
+  - file: knowledge/official_positions.yaml
+    filter: status != active
+    role: superseded_position_and_conflict_context
+    retrieval_mode: semantic_support
+    canonical_for_current_facts: false
+  - file: knowledge/evidence/registry.yaml
+    collection: presentation_entries
+    filter: citation_tier in [listed_only, internal, banned]
+    role: evidence_lead_or_conflict_context
+    retrieval_mode: semantic_support
+    canonical_for_current_facts: false
+  - file: knowledge/glossary.yaml
+    filter: status != active
+    role: superseded_term_and_synonym_context
+    retrieval_mode: semantic_support
+    canonical_for_current_facts: false
+  - file: knowledge/forbidden_claims.yaml
+    filter: status != active
+    role: historical_guardrail_context
+    retrieval_mode: semantic_support
+    canonical_for_current_facts: false
+  - file: knowledge/history/coverage_probe_2026-08-04.md
+    role: gap_question_mining
+    retrieval_mode: semantic_support
+    canonical_for_current_facts: false
+  - files_from: knowledge/snapshot.yaml#approved_sources
+    role: approved_background_notes
+    retrieval_mode: semantic_support
+    canonical_for_current_facts: false
+
+exclude_from_answer_support:
+  - evidence with citation_tier == banned
+  - statements marked prohibited_use
   - 팀 최신 확정 설명과 아직 정합하지 않은 발표 대본 초안
+  - deprecated bulk paths listed in knowledge/snapshot.yaml
 
-allow_on_explicit_request:
-  - knowledge/history/decision_log.yaml
-  - sources/11_V20_결정_기록_0810.md
-  - legacy_reference entries needed only when a question cites a superseded capture
+asset_policy:
+  remote_artifact_runtime_lookup: false
+  text_corpus: local_files_only
+  evidence_images: local_assets_only
+  completed:
+    - Master Q&A 본문을 로컬 텍스트로 내보냄
+    - 문헌·덱 캡처 44개를 로컬 이미지와 SHA-256 manifest로 저장
+    - 캡처 그룹을 문헌·덱 주제와 연결
+
+retrieval_pipeline:
+  - stage: current_facts
+    search: authority_routing에 따라 canonical_sources + include
+    purpose: 질문 유형에 맞는 현재 결론·수치·고정 용어·허용 문헌 확보
+  - stage: supporting_context
+    search: supporting_include with retrieval_mode=semantic_support
+    purpose: 질문 의도·후속 질문·설명 재료·변경 이유·근거 단서 확보
+  - stage: conflict_resolution
+    rule: supporting material never overrides current canon
+    on_conflict: keep current conclusion and return the conflict, superseded wording, and resolution
+  - stage: response_packet
+    fields:
+      - current_conclusion
+      - answer_facts
+      - evidence_and_citations
+      - supporting_explanation_material
+      - conflicts_and_avoid_phrases
+      - easy_spoken_answer
 
 retrieval_rules:
-  - 검색 우선순위는 deck_claims → active official_positions → glossary·forbidden boundaries → presentation evidence → cards 표현 예시 순서다.
+  - 덱은 장표 내용의 정본이지만 모든 질문의 답을 단독 결정하지 않는다.
+  - 상품 논리·산식·문헌·시뮬레이션·변경 이유·표현은 product_model의 authority_by_question_type에 따라 각각 권한 있는 자료를 사용한다.
+  - 현재 정본 검색 뒤에는 질문과 의미적으로 관련된 보조 자료를 자동 검색한다.
+  - 보조 자료는 질문 해석·설명 구조·후속 질문·문헌 단서·변경 이유를 제공할 수 있지만 현재 사실을 단독 확정할 수 없다.
   - cards의 active 항목은 질문 시나리오와 표현 예시이며 사실 정본으로 사용하지 않는다.
-  - 먼저 현재 장표 또는 질문과 직접 연결된 활성 항목만 반환한다.
-  - 최종 제출 덱(9장)이 1순위 근거다. 다른 소스와 충돌하면 덱-우선 교정 문안을 따른다.
-  - layer가 deep인 항목(내부 계산·두 축·민감도 상세)은 추궁성 후속 질문에서만 사용한다.
-  - 현재 답변에 historical_demo를 섞지 않는다.
+  - 덱과 현재 상품 모델이 다르면 claim 상태와 conflict_map을 함께 반환하고, 확인된 교정은 과거 인쇄 문구보다 현재 설명에 사용한다.
+  - layer가 deep인 항목(내부 계산·두 축·민감도 상세)은 기술적 설명이 필요한 질문에서 보조 재료로 사용한다.
+  - historical_demo와 superseded 문장은 현재 정책처럼 말하지 않고 과거 화면·변경 이유·충돌 경고로만 사용한다.
   - 덱에 남아 있으나 팀이 철회한 문헌 수치는 deck_conflict로 알리고 그 주장을 방어하지 않는다.
-  - 활성 근거가 없으면 legacy에서 문장을 끌어오지 말고 근거 부족으로 답한다.
+  - 현재 근거가 부족하면 보조 자료로 결론을 만들어내지 말고 근거 부족과 추가 확인 항목을 답한다.
+  - unresolved 질문에는 current_evidence_status, recommended_position_ko, validation_needed를 함께 반환하며 권고 표현을 검증된 사실로 바꾸지 않는다.
+
+implementation_gate:
+  status: approved_for_server_implementation
+  approved_date: 2026-08-10
+  open_items_policy: 미확정 항목은 숨기지 않고 상태·권고 표현·필요 검증을 반환
+  remaining_non_blocking:
+    - MKS 밖 현재 구현 checkout을 재현 가능한 릴리스 커밋으로 고정
+    - 실제 데이터 파일럿·공정성·법무·운영·계리 검증

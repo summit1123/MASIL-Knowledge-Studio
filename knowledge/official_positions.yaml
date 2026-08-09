@@ -14,12 +14,13 @@ positions:
     status: active
     layer: core
     effective_date: 2026-08-10
-    approved_position_ko: "월별 결과는 Favorable, Standard, Care의 세 등급으로 설명한다. Care는 도움이 필요할 수 있는 달을 표시하며, 직원 검토와 지원 제안으로 이어진다. Care 자체가 자동 할증·자동 차감을 발생시키지 않는다. 데이터가 부족한 달의 Hold는 네 번째 위험 등급이 아니라 판정을 보류하는 데이터 상태이며 불이익이 없다. 연간 할인율 계산은 월별 등급 표시와 구분한다 — 연간 통합 기록이 기본 할인율을 만들고, Favorable 월 수(12개월 중 9개월)가 추가 우대의 근거다."
+    approved_position_ko: "월별 결과는 Favorable, Standard, Care의 세 등급으로 쉽게 설명한다. 실제 구현은 월 통합점수와 해당 월 Care 신호를 함께 보존하므로 Favorable 점수 조건과 Care가 같은 달에 함께 성립할 수 있다. Care는 그달의 안내와 직원 검토를 열고 다음 달에는 다시 계산한다. 데이터가 부족한 달의 Hold는 네 번째 위험 등급이 아니라 불이익 없는 데이터 상태다. 연간 할인율 계산은 월별 표시와 구분한다."
     claim_type: team_decision
     must_include:
       - Favorable · Standard · Care 세 등급 (three monthly tiers)
       - Hold는 위험 등급이 아니라 데이터 상태(불이익 없음)
       - Care는 직원 검토와 지원 제안으로 연결
+      - Care는 해당 월 신호이며 다음 달 다시 계산
       - 연간 할인율 계산은 월별 등급 표시와 구분
     must_not_say:
       - Hold를 네 번째 위험 등급으로 설명
@@ -29,13 +30,14 @@ positions:
     evidence_ref:
       - deck://summary-1
       - sources/11_V20_결정_기록_0810.md#1-상품-판정-계약
+      - IMPLEMENTATION.md#3-care
 
   - id: internal-calculation-structure
     topic: 내부 계산 구조 — 점수 판정과 Care 신호의 분리 (기술 레이어)
     status: active
     layer: deep
     effective_date: 2026-08-10
-    approved_position_ko: "내부 계산에서는 점수 판정과 Care 신호가 별도로 계산되며, Favorable과 Care가 같은 달에 함께 나타날 수 있다. 이것은 기술 질문에 추궁받을 때만 여는 내부 계산 구조(internal calculation view) 설명이고, 공개 설명은 월별 세 등급(Favorable, Standard, Care)이다."
+    approved_position_ko: "내부 계산은 월 통합점수와 해당 월 Care 조건을 함께 보존한다. Favorable 점수 조건과 Care가 같은 달에 함께 나타날 수 있으며 현재 화면은 Reward + Care Review로 둘 다 유지할 수 있다. 공개 설명은 월별 세 등급(Favorable, Standard, Care)이고, 동시 성립은 기술 질문에서만 보완한다."
     claim_type: team_decision
     must_include:
       - 점수 판정과 Care 신호는 내부적으로 별도 계산
@@ -45,55 +47,64 @@ positions:
       - 세 등급 공개 설명을 부정하는 표현
     evidence_ref:
       - sources/11_V20_결정_기록_0810.md#1-상품-판정-계약
+      - IMPLEMENTATION.md#3-care
 
   - id: monthly-and-annual-score-contract
     topic: 월 통합점수와 연간 점수
     status: active
     effective_date: 2026-08-09
-    approved_position_ko: "월 통합점수는 30/30/20/20 네 축의 가중평균이다. 연간 점수는 평가 12개월 월 통합점수의 단순 평균이며, 이 점수로 기본 할인율을 정하는 것이 현재 팀이 확정한 상품 계약이다. 다만 연간 점수 기반 요율 산식은 현재 데모 엔진에 아직 구현되지 않았다."
-    claim_type: team_decision
-    implementation_status: not_yet_in_demo_engine
+    approved_position_ko: "월 통합점수는 30/30/20/20 네 축의 가중평균이다. 화면의 연간 통합점수는 판정 가능한 월 통합점수의 단순 평균으로 설명에 사용한다. 현재 구현에서 기본 할인율은 이 평균점수가 아니라 연간 주행거리와 차량 종류를 기존 마일리지 할인표에 넣어 정한다. Favorable 9개월 이상이면 샌드박스 후보 추가 할인 3%p가 붙고 전체 할인은 45%를 넘지 않는다."
+    claim_type: implementation_audit
+    implementation_status: verified_in_current_gaip_studio_working_tree
     must_include:
       - 12개월 월 통합점수의 단순 평균
-      - 현재 데모 엔진 구현 대기
+      - 기본 할인율은 기존 마일리지 할인표로 계산
+      - 3%p와 45%는 최종 요율이 아닌 후보값
     must_not_say:
-      - 연간 점수 산식이 이미 데모 요율에 적용됨
+      - 연간 평균점수가 현재 기본 할인율을 정한다는 표현
     evidence_ref:
       - sources/11_V20_결정_기록_0810.md#2-월간연간-계산
+      - IMPLEMENTATION.md#2-연간-점수와-favorable
+      - IMPLEMENTATION.md#4-현재-할인율-구현
 
   - id: favorable-additional-discount-qualification
     topic: Favorable 추가 할인 자격
     status: active
     effective_date: 2026-08-09
-    approved_position_ko: "월 통합점수 75점 이상이면 그 달은 Favorable이다. 12개월 중 Favorable이 9개월 이상이면 연간 추가 할인 자격이 생긴다. 최종 추가 할인율 산식은 파일럿과 계리 검증 전까지 확정 요율로 말하지 않는다."
+    approved_position_ko: "월 통합점수 75점 이상이면 그 달은 Favorable이다. 12개월 중 Favorable이 9개월 이상이면 연간 추가 할인 자격이 생긴다. 현재 샌드박스는 3%p를 더하고 전체 할인율을 45%로 제한하지만, 이는 구현된 후보값이며 최종 요율은 아니다."
     claim_type: team_decision
     must_include:
       - 월 75점 이상
       - 12개월 중 9개월 이상
       - 추가 할인 자격
+      - 현재 샌드박스 후보는 +3%p, 전체 45% 상한
     must_not_say:
       - Care review 때문에 Favorable 자격 또는 추가 할인이 중지됨
       - 1~7%p가 최종 확정 요율임
     evidence_ref:
       - sources/11_V20_결정_기록_0810.md#2-월간연간-계산
+      - IMPLEMENTATION.md#4-현재-할인율-구현
 
   - id: care-review-no-direct-price-effect
     topic: Care review의 가격 영향
     status: active
     layer: core
     effective_date: 2026-08-10
-    approved_position_ko: "Care review는 사람 검토와 지원 리포트를 여는 신호다. Care 자체가 자동 할증이나 자동 차감을 발생시키지 않으며, Favorable 추가 할인을 중지하지도 않는다. 연간 할인율은 연간 주행 기록으로 별도 계산하므로, 대시보드의 13%p 차이 같은 연간 시뮬레이션 결과를 언급하는 것은 허용된다."
+    approved_position_ko: "Care review는 조건을 충족한 그달의 안내와 사람 검토를 여는 신호다. 다음 달에는 다음 달 데이터로 다시 계산하며 MASIL이 지속적인 건강관리 책임을 맡는다는 뜻이 아니다. Care 자체가 자동 할증이나 자동 차감을 발생시키지 않으며, Favorable 추가 할인을 중지하지도 않는다."
     claim_type: team_decision
     must_include:
       - Care 자체는 자동 할증·자동 차감 없음
       - 사람 검토와 지원 리포트
+      - 해당 월만 표시하고 다음 달 다시 계산
       - 연간 할인율은 별도 계산
     must_not_say:
       - Care 자체가 자동 할증·자동 차감을 만든다는 표현
       - Care 시 보너스 자동 정지 또는 유예
       - 한 달 Care = 13%p 차감이라는 인과
+      - Care가 연말까지 유지되거나 건강관리 책임이 계속된다는 표현
     evidence_ref:
       - sources/11_V20_결정_기록_0810.md#3-care-review-계약
+      - IMPLEMENTATION.md#3-care
 
   - id: care-review-trigger-contract
     topic: Care review 발동 조건과 의미
@@ -107,6 +118,23 @@ positions:
       - 변화 신호
     evidence_ref:
       - sources/11_V20_결정_기록_0810.md#3-care-review-계약
+
+  - id: stable-low-score-classification
+    topic: 낮은 점수가 지속되는 운전자의 월별 등급
+    status: active
+    layer: core
+    effective_date: 2026-08-10
+    approved_position_ko: "점수가 계속 낮더라도 직전 2개월과 비교해 이동과 위험행동이 함께 급변하지 않았다면 Standard입니다. Care는 절대적으로 위험한 사람을 분류하는 등급이 아니라 평소보다 큰 변화가 나타난 그달을 알리는 등급입니다."
+    claim_type: team_decision
+    must_include:
+      - 지속 저점수는 Standard
+      - Care는 절대 수준이 아니라 개인의 변화 신호
+      - 다음 달에는 같은 규칙으로 다시 계산
+    must_not_say:
+      - 통합점수 55점 미만이면 자동 Care
+      - Pattern Change Risk 70점이면 자동 Care
+    evidence_ref:
+      - IMPLEMENTATION.md#3-care
 
   - id: out-of-zone-risk-and-no-location-penalty
     topic: 생활권 밖 위험과 위치 무감점 원칙

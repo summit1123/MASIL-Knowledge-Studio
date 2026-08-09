@@ -21,12 +21,36 @@ numbers:
 
   - id: annual-score-formula
     name: 연간 점수 산식
-    value: 평가 12개월 월 통합점수의 단순 평균
+    value: 판정 가능한 평가월의 월 통합점수 단순 평균
     status: active
-    claim_type: team_decision
-    implementation_status: 엔진 미구현(파일럿에서 구현·검증)
-    context: 기본 할인율을 정하는 팀 확정 계약. 현재 데모 요율 엔진에는 미구현
-    source: sources/11_V20_결정_기록_0810.md#2-월간연간-계산
+    claim_type: implementation_audit
+    implementation_status: verified_in_current_gaip_studio_working_tree
+    context: 화면 설명용 연간 점수. 현재 기본 할인율을 직접 정하지 않으며 Favorable 자격은 75점 이상 월 수로 판단
+    source: IMPLEMENTATION.md#2-연간-점수와-favorable
+
+  - id: annual-base-mileage-discount
+    name: 현재 기본 할인율 계산
+    value: 기존 한국 마일리지 할인표(연간 주행거리, 차량 종류)
+    status: active
+    claim_type: implementation_audit
+    context: 연간 평균점수 매핑이 아니라 현재 GaipStudio 샌드박스의 실제 계산 경로
+    source: IMPLEMENTATION.md#4-현재-할인율-구현
+
+  - id: favorable-candidate-extra-discount
+    name: 현재 Favorable 후보 추가 할인
+    value: 3%p
+    status: active
+    claim_type: candidate_parameter
+    context: Favorable 9개월 이상일 때 적용되는 현재 샌드박스 후보값. 최종 보험 요율 아님
+    source: IMPLEMENTATION.md#4-현재-할인율-구현
+
+  - id: candidate-discount-cap
+    name: 현재 후보 할인율 상한
+    value: 45%
+    status: active
+    claim_type: candidate_parameter
+    context: 현재 샌드박스 구현값. 파일럿·계리 검증 전 최종 상한으로 말하지 않음
+    source: IMPLEMENTATION.md#4-현재-할인율-구현
 
   - id: number-favorable-additional-discount-qualification
     name: Favorable 추가 할인 자격
@@ -66,7 +90,7 @@ numbers:
     value: 평균 82.6 · 범위 78.1–88.3
     status: active
     claim_type: simulation_result
-    context: Care review는 가격 등급이 아니라 변화 신호임을 보여주는 합성 요약
+    context: 해당 연도에 Care가 발생한 합성 사례의 점수 요약. Care가 연중 지속되거나 가격을 직접 바꾼다는 뜻이 아님
     source: sources/11_V20_결정_기록_0810.md#6-연간-점수-요약
 
   - id: environment-consistency

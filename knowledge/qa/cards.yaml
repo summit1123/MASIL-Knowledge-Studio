@@ -1,6 +1,6 @@
 # 소스: 최종 덱 Summary·Appendix + 마스터 Q&A(과거 결정 기록은 sources/11_V20_결정_기록_0810.md — 파일명만 유지, 내부 버전명은 답변 본문에 쓰지 않는다)
-# layer: core = 무대에서 먼저 말하는 덱 사실·P0 답변 / deep = 추궁 시만 여는 내부 계산·문헌 상세 / history = 과거 결정(기본 검색 제외)
-# status=active 카드만 MCP 기본 검색. status가 없으면 legacy_reference.
+# layer: core = 무대에서 먼저 말하는 답변 예시 / deep = 추궁 시 쓰는 내부 계산·문헌 상세 / history = 과거 결정의 질문·표현 재료
+# status=active 카드는 현재 답변 예시. status가 없거나 inactive인 카드는 질문 확장·충돌 탐지용 semantic support다.
 # ⚠ 사용 규칙 (중요) — legacy 카드는 '답변 범위'가 아니라 '기출 아카이브'다
 #  · 기존 53장은 실제로 받은 질문의 과거 답변이며, active 카드와 충돌하면 사용하지 않는다.
 #  · 답변 생성의 1순위 소스는 official_positions.yaml(주제 단위라 조합 가능)이며,
@@ -13,6 +13,7 @@ meta:
   effective_date: 2026-08-10
   default_status_for_missing: legacy_reference
   mcp_filter: status == active
+  supporting_filter: status != active
   default_role: answer_example
   default_canonical_for_facts: false
   p0_expected_count: 15
@@ -30,12 +31,12 @@ cards:
     question_ko: Favorable, Standard, Care는 세 등급인가요?
     question_en: Are Favorable, Standard, and Care three grades?
     topic: 상품-월별등급
-    direct_answer_ko: "네. 월별 결과는 Favorable, Standard, Care의 세 등급으로 안내합니다. 데이터가 부족한 달은 Hold로 표시하는데, 이는 네 번째 위험 등급이 아니라 판정을 보류하는 데이터 상태이며 불이익이 없습니다. Care는 도움이 필요할 수 있는 달을 표시하고, 직원 검토와 지원 제안으로 이어집니다. Care 자체가 자동 할증이나 자동 차감을 만들지는 않습니다."
-    spoken_answer_en: "Yes. We present three monthly grades: Favorable, Standard, and Care. Hold is not a fourth grade. It is a data status for months with insufficient data. It carries no disadvantage. Care marks a month where help may be needed. It leads to staff review and support offers. Care itself does not create an automatic surcharge or deduction."
+    direct_answer_ko: "네. 발표와 고객 안내에서는 월별 결과를 Favorable, Standard, Care의 세 등급으로 쉽게 설명합니다. 실제 구현은 월 통합점수와 그달의 Care 신호를 함께 보존합니다. 그래서 Favorable 점수 조건과 Care가 같은 달에 함께 나와도 충돌이 아닙니다. Care는 그달의 안내와 직원 검토를 열고, 다음 달에는 다시 계산합니다. 데이터가 부족한 달은 불이익 없는 Hold입니다."
+    spoken_answer_en: "Yes. We explain three monthly grades: Favorable, Standard, and Care. The system keeps the monthly score and the Care signal together. So a Favorable score and Care can appear in the same month. Care opens guidance and staff review for that month. The next month is calculated again. Hold means there is not enough data, with no penalty."
     source: deck://summary-1
     followups:
       - q: 내부 계산도 세 등급 하나로 처리하나요? (기술 추궁 시 — deep)
-        a: 내부 계산에서는 점수 판정과 Care 신호가 별도로 계산되어, Favorable과 Care 검토가 같은 달에 함께 나타날 수 있습니다. 공개 설명은 월별 세 등급입니다.
+        a: 내부 계산은 월 통합점수와 Care 조건을 함께 보존합니다. 화면은 이를 월별 세 등급으로 쉽게 설명하고, 기술 질문에서는 Favorable 점수와 Care가 동시에 성립할 수 있다고 보완합니다.
 
   - id: qa-care-price
     status: active
@@ -56,9 +57,9 @@ cards:
     question_ko: 그러면 연간 할인율은 어떻게 정하나요?
     question_en: Then how is the annual discount determined?
     topic: 연간-할인
-    direct_answer_ko: "연간 할인율 계산은 월별 등급 표시와 구분됩니다. 12개월 통합 주행 기록으로 연간 점수를 만들고, 그 점수가 기본 할인율을 정합니다. Favorable이 9개월 이상이면 추가 우대 자격이 생깁니다. 최종 요율 산식은 아직 파일럿과 계리 검증 대상입니다."
-    spoken_answer_en: "We average the 12 monthly scores into one annual score. That score sets the base discount. Nine or more Favorable months qualify for an additional discount. The final tariff formula still needs pilot and actuarial validation."
-    source: sources/11_V20_결정_기록_0810.md#2-월간연간-계산
+    direct_answer_ko: "현재 구현은 먼저 연간 주행거리와 차량 종류로 기존 마일리지 할인율을 정합니다. Favorable이 12개월 중 9개월 이상이면 3%p를 더하고, 후보 할인율은 45%를 넘지 않습니다. Care 때문에 할인율을 깎지는 않습니다. 3%p와 45%는 샌드박스 후보값이라 실제 상품화 전 계리 검증이 필요합니다."
+    spoken_answer_en: "The current system first uses annual mileage and vehicle type to find the existing mileage discount. If nine or more months are Favorable, it adds three percentage points. The candidate discount is capped at 45 percent. Care does not reduce it. The 3-point bonus and the cap are sandbox values and still need actuarial validation."
+    source: IMPLEMENTATION.md#4-현재-할인율-구현
 
   - id: qa-care-trigger
     status: active
@@ -244,9 +245,9 @@ cards:
     question_ko: 월별 등급, Care 지원, 연간 할인은 어떤 관계인가요?
     question_en: How do the monthly grade, Care support, and annual discount relate?
     topic: 등급-지원-할인관계
-    direct_answer_ko: "세 가지는 역할이 다릅니다. 월별 등급(Favorable, Standard, Care)은 그 달의 상태를 보여줍니다. Care는 도움이 필요할 수 있는 달을 표시하고 직원 검토와 지원 제안으로 이어지며, 그 자체로 자동 할증이나 자동 차감을 만들지 않습니다. 연간 할인율은 별도입니다. 연간 통합 주행 기록이 기본 할인율을 만들고, Favorable 월 수(예: 9/12)가 추가 우대의 근거가 됩니다."
-    spoken_answer_en: "They play different roles. The monthly grade shows how that month went. Care marks a month where help may be needed. It opens staff review and support offers. Care itself does not create an automatic surcharge or deduction. The annual discount is separate. The full-year driving record sets the base discount. The count of Favorable months supports extra benefits."
-    source: deck://summary-1
+    direct_answer_ko: "월별 등급은 그달의 상태를 보여줍니다. Care는 그달의 안내와 직원 검토를 열고 다음 달에는 다시 계산합니다. 자동 할증이나 할인 차감은 없습니다. 현재 연간 기본 할인율은 연간 주행거리와 차량 종류를 기존 마일리지 할인표에 넣어 정합니다. Favorable이 9개월 이상이면 샌드박스 후보 추가 할인 3%p가 붙습니다."
+    spoken_answer_en: "The monthly grade shows how that month went. Care opens guidance and staff review for that month. The next month is calculated again. It does not create a surcharge or reduce the discount. The current base discount comes from annual mileage and vehicle type. Nine Favorable months add a three-point sandbox bonus."
+    source: IMPLEMENTATION.md#4-현재-할인율-구현
 
   - id: qa-dashboard-13-point
     status: active

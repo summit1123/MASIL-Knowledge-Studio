@@ -1,5 +1,5 @@
-# 문헌·근거 원장 · presentation_entries만 MCP 기본 검색
-# entries는 2026-08-04 legacy 원장으로 보존하며 기본 검색에서 제외
+# 문헌·근거 원장. 발표 문헌은 현재 주장 범위를 정하고, 과거 원장은 검색 보조·충돌 탐지에 사용한다.
+# entries는 현재 결론을 단독 확정하지 않지만 관련 문헌·질문 단서를 찾는 semantic support다.
 # 동일 출처 다중 등재는 대표키로 병합, 지위가 갈렸던 건은 보수적 채택 + status_conflict에 이력 기록
 # 문헌 카드의 캡처·허용 주장·덱 위치를 우선
 
@@ -7,8 +7,18 @@ meta:
   effective_date: 2026-08-10
   default_collection: presentation_entries
   legacy_collection: entries
-  capture_source_url: https://claude.ai/code/artifact/9dea93fd-3645-48c6-8166-3e4cdcad5abc
-  capture_assets: reviewed_in_v20_pending_local_export
+  capture_origin:
+    uri: https://claude.ai/code/artifact/9dea93fd-3645-48c6-8166-3e4cdcad5abc
+    provenance_only: true
+    runtime_retrieval: false
+  local_capture_asset_count: 44
+  local_capture_status: exported_and_indexed
+  local_capture_root: assets/evidence/captures
+  local_capture_manifest: assets/evidence/captures/manifest.json
+  local_capture_index: knowledge/evidence/capture_index.yaml
+  capture_field_semantics:
+    capture_reviewed_in_external_source: 외부 원본에서 캡처 존재와 내용을 검토했음
+    local_capture_available: 이 저장소에서 MCP가 직접 반환할 수 있는 로컬 이미지 파일이 있음
 
 presentation_entries:
   - key: presentation-ehsani-tefft-2021
@@ -19,7 +29,9 @@ presentation_entries:
     allowed_claim: 익숙하지 않은 도로에서 사고 연루 가능성이 2.5배 높았다
     caveat: 고령자만의 효과로 일반화하지 않고 crash involvement로 표현
     deck_location: Summary 1 · Appendix A
-    capture_available: true
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_ids: [capture-005, capture-006, capture-026]
     url: https://doi.org/10.1080/09332480.2021.1885934
 
   - key: presentation-mcgwin-brown-1999
@@ -29,7 +41,9 @@ presentation_entries:
     allowed_claim: 고령 운전자 사고가 교차로와 양보 상황에 집중되는 경향
     caveat: 부주의 전체로 일반화하지 않고 situational judgment 맥락으로 사용
     deck_location: Summary 1
-    capture_available: true
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_ids: [capture-005, capture-006]
     url: https://doi.org/10.1016/S0001-4575(98)00061-X
 
   - key: presentation-cicchino-mccartt-2015
@@ -39,7 +53,8 @@ presentation_entries:
     allowed_claim: 고령 운전자의 inadequate surveillance 오류 중 looking but not seeing이 71%, 중년은 40%
     caveat: 전체 사고 원인의 71%라고 말하지 않음
     deck_location: Appendix A
-    capture_available: true
+    capture_reviewed_in_external_source: true
+    local_capture_available: false
     url: https://doi.org/10.1016/j.aap.2015.04.015
 
   - key: presentation-chen-2025-neurology
@@ -49,7 +64,8 @@ presentation_entries:
     allowed_claim: 인지 변화가 일상 운전·이동 패턴 변화로 먼저 나타날 수 있음
     caveat: MASIL이 인지장애를 진단한다고 말하지 않음
     deck_location: Appendix A
-    capture_available: true
+    capture_reviewed_in_external_source: true
+    local_capture_available: false
     url: https://doi.org/10.1212/WNL.0000000000214440
 
   - key: presentation-vivoda-2021
@@ -59,7 +75,8 @@ presentation_entries:
     allowed_claim: 초기 자기조절 행동으로 야간 운전 회피 58.8%와 낯선 지역 회피가 관찰됨
     caveat: 전체 고령자가 모두 회피한다고 일반화하지 않음
     deck_location: Appendix A
-    capture_available: true
+    capture_reviewed_in_external_source: true
+    local_capture_available: false
     url: https://doi.org/10.1093/geroni/igab046.1019
 
   - key: presentation-isaacman-2011
@@ -70,7 +87,9 @@ presentation_entries:
     allowed_claim: 60일 관찰과 전체 일수의 5%에 해당하는 서로 다른 방문일로 중요 장소를 식별
     caveat: 운전 연구가 아니라 반복 방문지 식별 방법론
     deck_location: Appendix B
-    capture_available: true
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_ids: [capture-028, capture-029]
     url: https://doi.org/10.1007/978-3-642-21726-5_9
 
   - key: presentation-zheng-2009
@@ -80,7 +99,9 @@ presentation_entries:
     allowed_claim: stay-point 식별에 200m 거리 기준을 사용한 선례
     caveat: MASIL의 260m를 논문에서 직접 가져왔다고 말하지 않음
     deck_location: Appendix B footnote
-    capture_available: true
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_ids: [capture-030, capture-031]
     url: https://doi.org/10.1145/1526709.1526816
 
   - key: presentation-montoliu-gatica-perez-2010
@@ -90,7 +111,9 @@ presentation_entries:
     allowed_claim: 장소 군집화에 250m와 200–300m 범위가 사용된 선례
     caveat: MASIL의 260m를 논문 직접값으로 표현하지 않음
     deck_location: Appendix B footnote
-    capture_available: true
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_ids: [capture-032, capture-033]
     url: https://doi.org/10.1145/1899475.1899487
 
   - key: presentation-kca-2024-elderly-drivers
@@ -100,7 +123,9 @@ presentation_entries:
     allowed_claim: 시야가 제한된 돌발 상황에서 고령 2.28초와 비고령 1.20초가 관찰됨
     caveat: 조건 없는 일반 제동 반응 또는 모든 상황에서 90% 느리다고 일반화하지 않음. 같은 시험의 교차로 우회전 조건 차이는 0.02초였음
     deck_location: Summary 1
-    capture_available: true
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_ids: [capture-001, capture-002, capture-003, capture-004]
     url: https://www.kca.go.kr/smartconsumer/board/download.do?fno=10046786&bid=00000146&did=1003858738&menukey=7301
 
   - key: presentation-erso-older-driver-risk
@@ -110,7 +135,9 @@ presentation_entries:
     allowed_claim: 75세 이상 운전자의 fatality risk가 동일 노출에서 약 5배
     caveat: 사고 빈도와 신체 취약성에 따른 심도를 구분
     deck_location: Appendix A
-    capture_available: true
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_ids: [capture-012, capture-013, capture-014, capture-015, capture-016, capture-017]
     url: https://road-safety.transport.ec.europa.eu/eu-road-safety-policy/priorities/safe-road-use/elderly-drivers/older-drivers-risky-or-risk/high-fatality-rate-more-crashes-or-more-severe-injuries_en
 
   - key: presentation-candrive-marshall-2023
@@ -121,7 +148,8 @@ presentation_entries:
     allowed_claim: 거리 보정 at-fault 사고 위험이 저위험군 대비 고위험군 5.26배
     caveat: 발표에서 선제 인용하지 않고 3배 또는 사고빈도로 표현하지 않음
     deck_location: References only
-    capture_available: true
+    capture_reviewed_in_external_source: true
+    local_capture_available: false
     url: https://doi.org/10.1093/gerona/glad044
 
   - key: presentation-longroad-self-regulation
@@ -131,7 +159,9 @@ presentation_entries:
     allowed_claim: 고령 운전자의 자기조절과 활동공간 변화에 대한 페르소나 방향성 근거
     caveat: 합성 페르소나의 절대 파라미터를 입증하지 않음
     deck_location: Appendix D · References
-    capture_available: true
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_ids: [capture-034, capture-035]
     url: https://aaafoundation.org/research/the-role-of-driving-comfort-in-self-regulation-among-a-large-cohort-of-older-drivers-aaa-longroad-study/
 
   - key: presentation-harms-2021
@@ -141,7 +171,8 @@ presentation_entries:
     allowed_claim: route familiarity literature의 상반 결과와 한계를 확인하는 배경
     caveat: 선제 인용 금지. 사고율 메타분석으로 설명하지 않음
     deck_location: References
-    capture_available: true
+    capture_reviewed_in_external_source: true
+    local_capture_available: false
     url: https://doi.org/10.1016/j.trip.2021.100331
 
   - key: presentation-ji-2023
@@ -151,7 +182,9 @@ presentation_entries:
     allowed_claim: 개인 차량 이동 규칙성 연구의 배경
     caveat: 안전 예측 또는 MASIL 판정 타당성 근거로 사용하지 않음
     deck_location: References
-    capture_available: true
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_ids: [capture-041, capture-043]
     url: https://doi.org/10.1111/tgis.13043
 
   - key: presentation-sumagaysay-2026
@@ -161,7 +194,9 @@ presentation_entries:
     prohibited_claim: 마일리지·UBI가 고령자 특이 위험을 놓친다는 Appendix A 문장
     reason: 원문 캡처가 해당 주장을 뒷받침하지 않음
     deck_location: Appendix A · References
-    capture_available: true
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_ids: [capture-010, capture-026]
     url: https://www.kvpr.org/government-politics/2026-07-14/proposal-would-allow-drivers-to-trade-personal-data-for-potentially-lower-insurance-rates
 
   - key: presentation-lexisnexis-2015
@@ -171,7 +206,9 @@ presentation_entries:
     prohibited_claim: 비UBI 가입자 45%가 할인 매력이 부족하다고 답했다는 Appendix A 문장
     reason: fleet telematics 맥락이며 원문 캡처가 해당 주장을 뒷받침하지 않음
     deck_location: Appendix A · References
-    capture_available: true
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_ids: [capture-010, capture-021, capture-025, capture-027, capture-042]
     url: https://risk.lexisnexis.com/about-us/press-room/press-release/08-25-2015-insurance-growth
 
 entries:

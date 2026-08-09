@@ -1,29 +1,31 @@
-# 덱 우선 활성 지식 검토 가이드 — 2026-08-10
+# MASIL 전체 지식 모델 검토 가이드 — 2026-08-10
 
-이 저장소는 최종 덱 9장을 중심으로 발표와 Q&A에 필요한 사실·해석·근거를 관리한다. 질문 카드가 없는 새로운 질문도 deck claims, active positions와 evidence를 조합해 답할 수 있어야 한다.
-
-## 기본 검색 범위
-
-`knowledge/mcp_manifest.yaml`을 따른다.
-
-- `claims/deck_claims.yaml`: 항상, 최우선
-- `official_positions.yaml`: `status: active`
-- `glossary.yaml`: `status: active`
-- `forbidden_claims.yaml`: `status: active`
-- `evidence/registry.yaml`: `presentation_entries` 중 `stage_citable`·`qa_only`
-- `qa/cards.yaml`: `status: active`, 질문 시나리오와 표현 예시로만 사용
-
-과거 결정과 구 데모는 `history` 또는 `legacy_reference`다. 명시 요청이 없으면 검색하지 않는다. 발표 대본 초안은 팀 승인 전까지 정본에서 제외한다.
+현재 검토 대상은 MCP 코드가 아니라 발표 전체를 이해하는 지식 구조다.
 
 ## 검토 순서
 
-1. 최종 덱의 인쇄 사실과 장표 번호를 확인한다.
-2. 팀 확정 해석이 덱을 부정하지 않고 필요한 맥락만 보완하는지 확인한다.
-3. 고정 용어와 쉬운 spoken English 규칙을 확인한다.
-4. 숫자가 `team_decision`, `simulation_result`, `target`, `candidate_parameter` 중 무엇인지 확인한다.
-5. 문헌의 허용 주장·덱 위치·원문 캡처 연결을 확인한다.
-6. Q&A 카드는 사실 정본이 아니라 표현 예시로 사용되는지 확인한다.
-7. 구 데모·내부 버전명·과거 계약이 현재 공개 답변에 섞이지 않는지 확인한다.
+1. `presentation_story.yaml`이 문제정의부터 사회적 가치·실행 가능성까지 빠짐없이 연결하는지 본다.
+2. `product_model.yaml`의 각 주장이 current, candidate, documented reference, pilot hypothesis, unresolved, historical, prohibited 중 올바른 지위를 가졌는지 본다.
+3. 장표·상품 논리·수치·문헌·변경 이력 질문이 각각 올바른 자료로 라우팅되는지 본다.
+4. `conflict_map.yaml`이 과거 자료를 버리지 않으면서 현재 정책으로 잘못 승격시키지 않는지 본다.
+5. `coverage_matrix.yaml`의 미확정 항목이 사람 결정 없이 채워지지 않았는지 본다.
+6. 사회적 가치에서 현재 가치 제안과 파일럿 가설·미검증 성과가 구분되는지 본다.
+7. `IMPLEMENTATION.md`의 현재 실행 경로와 과거 계산 문서를 구분하고, 외부 dirty working tree라는 재현성 한계를 표시하는지 본다.
+8. 문헌은 allowed claim과 caveat 범위를 지키며, 캡처가 없으면 이미지가 있다고 반환하지 않는지 본다.
+
+## 반드시 확인할 미확정 항목
+
+- 문제정의가 덱의 통계 나열을 넘어 하나의 원인→간격→해결 논리로 연결되는지
+- 고령자 타깃이 연령 차별이나 의료 판정으로 오해되지 않는지, 공정성 검증 계획이 비어 있음을 인정하는지
+- 이동권·가족·보험사·사회 가치에서 현재 제공 가치와 파일럿 가설·장기 기대를 구분하는지
+- 데이터 최소수집·동의·철회·가족 공유·현지 규제 이식의 미확정 경계
+- 생활권의 계절성·다중거주·측위오차 실데이터 검증 부재
+- 월 점수+그달 Care 병행 표시, 다음 달 재계산, 기존 마일리지 기본할인이라는 현재 구현 설명이 정확한지
+- Favorable 후보 `+3%p`와 전체 `45%` 상한을 최종 요율로 오해하지 않는지
+- Care 검토 인력·비용·통보·거부권·이의제기·지원 제휴·사고 책임
+- 시장 규모·판매 채널·경쟁·차별성·팀 역량·파트너·파일럿 종결점과 예산
+- 문헌 캡처가 외부에서 검토됐어도 로컬 이미지가 없으면 반환 불가로 표시되는지
+- 남은 18개가 `검증된 사실`이 아니라 `권고 표현`과 `추가 검증`으로 분리되어 있는지
 
 ## 자동 검증
 
@@ -33,7 +35,7 @@ ruby knowledge/scripts/verify_knowledge.rb
 
 ## 승인 상태
 
-- 스냅샷: `draft_pending_review`
-- 덱·대본·대시보드 수정: 이번 브랜치 범위 밖
-- 이미지 자산화·FastMCP 구현: 아직 시작하지 않음
-- 원격 push·main 병합: 이번 브랜치 범위 밖
+- 전체 지식 모델: `draft_pending_review`
+- FastMCP·검색 서버·OpenAI 답변 생성: 차단
+- Master Q&A·문헌 캡처 로컬 자산화: 미착수
+- 원격 push·main 병합: 범위 밖

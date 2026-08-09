@@ -1,29 +1,45 @@
 # 소스: seniorcareservice 승인 세트(사본 sources/) + 최종 제출 덱(9장)
-# 2026-08-10 덱-우선 교정 반영 — 사람 검토 전 DRAFT
+# 2026-08-10 발표 전체 상품 모델 초안 — 사람 검토 전 DRAFT
 
-snapshot: gaip-final-deck-canon-0810-draft
-status: draft_pending_review
+snapshot: gaip-full-product-model-0810-mcp-ready-v1
+status: approved_for_mcp_with_open_items
 mcp_manifest:
   file: knowledge/mcp_manifest.yaml
-  default_mode: presentation_active
-  legacy_in_default_context: false
+  default_mode: answer_support
+  implementation_allowed: true
+  supporting_context_in_default_retrieval: true
+  supporting_context_can_override_current_canon: false
+model_anchors:
+  product:
+    file: knowledge/product_model.yaml
+  story:
+    file: knowledge/presentation_story.yaml
+  conflicts:
+    file: knowledge/conflict_map.yaml
+  coverage:
+    file: knowledge/coverage_matrix.yaml
+implementation_audit:
+  file: IMPLEMENTATION.md
+  audited_checkout: /Users/gimdonghyeon/Desktop/seniorcareservice
+  branch: review/korean-dashboard-20260524
+  head: 4029a37
+  observed_state: dirty_working_tree
+  scope: 현재 GaipStudio의 월 점수·월별 Care·연간 표시점수·기존 마일리지 기본할인·Favorable 후보 +3%p·45% 상한
+  caveat: 커밋된 릴리스가 아니라 2026-08-10 현재 작업 파일의 관측 결과
 numbers_anchor:
   file: sources/00_확정수치카드.md
   commit: e2d2e49
   date: 2026-08-02
   scope: 시뮬레이션 실측·생활권·가중치 수치
 decision_anchor:
-  name: 덱-우선 교정 2026-08-10
+  name: 최종 덱 정합화 및 전체 상품 모델 정리 2026-08-10
   date: 2026-08-10
   scope: 공개 상품 계약(월별 세 등급·Hold는 데이터 상태)·Care 지원·연간 할인 분리·문헌 지위·사업 목표
   history_record: sources/11_V20_결정_기록_0810.md
-source_priority:
-  - "1. 최종 제출 덱 9장 — deck://gaip-2026-final-9p"
-  - "2. 팀 최신 확정 설명 — knowledge/official_positions.yaml · knowledge/key_numbers.yaml · knowledge/qa/cards.yaml의 status=active 항목"
-  - "3. 발표 대본 최종본 (미정합 초안 제외)"
-  - "4. 검증 문헌·캡처 — knowledge/evidence/registry.yaml"
-  - "5. 시뮬레이션·대시보드 산출물 — sources/00_확정수치카드.md"
-  - "6. 과거 결정 이력 — knowledge/history/decision_log.yaml · sources/11_V20_결정_기록_0810.md"
+authority_routing:
+  file: knowledge/product_model.yaml
+  section: authority_by_question_type
+  note: 덱 단일 우선순위가 아니라 장표·상품·수치·문헌·시뮬레이션·이력·표현 질문별 정본 사용
 approved_sources:
   - sources/11_V20_결정_기록_0810.md
   - sources/00_확정수치카드.md
@@ -39,16 +55,23 @@ approved_sources:
   - sources/생활권반경_eps_정리.md
 decision_log:
   file: knowledge/history/decision_log.yaml
-  layer: history
-  default_retrieval: false
+  layer: supporting
+  retrieval_mode: semantic_support
+  canonical_for_current_facts: false
   latest:
     - 2026-08-09 두 축 판정 계약
     - 2026-08-09 Care review와 가격 분리
-    - 2026-08-09 연간 점수 계약(엔진 구현 대기)
+    - 2026-08-10 현재 GaipStudio 구현 감사 — 연간 점수는 설명용 평균, 기본 할인은 기존 마일리지 표, Favorable 후보 +3%p·45% 상한
     - 2026-08-09 환경 간 실질 일치 59/60
     - 2026-08-10 사업 숫자 3종은 목표값
 known_implementation_gaps:
-  - annual_score_to_base_discount: 연간 점수→기본 할인율 산식은 데모 요율 엔진 미구현 — 파일럿·계리 검증에서 구현
+  - full_story_review: 문제정의·사회적 가치·기술·운영·사업·근거·한계의 사람 검토 미완료
+  - fairness_and_regulation: 공정성 검증과 개인정보·현지 규제 이식 설계 미완료
+  - operations_and_customer_rights: Care 인력·비용·통보·거부권·이의제기·책임 계약 미완료
+  - business_readiness: 시장·채널·경쟁·팀·파트너·파일럿 측정 설계 근거 미완료
+  - real_world_validation: 계절성·다중거주·드리프트·실데이터 외적 타당성 검증 미완료
+  - implementation_reproducibility: 현재 구현은 외부 dirty working tree에서 확인했으며 재현 가능한 커밋·배포 산출물 고정 필요
+  - favorable_candidate_rate: 현재 +3%p·45% 상한은 구현된 샌드박스 후보값이며 파일럿·계리 검증 미완료
   - dashboard_13p_explanation: 대시보드 13%p는 Edward 사례 연간 시뮬레이션 결과 — 자동 차감 정책으로 읽히지 않게 정본 문안으로 설명
 deprecated_bulk:
   - path: gaip-foursure/** (34p 마스터·EVIDENCE_BOOK·TECH_APPENDIX·deliverables HTML)

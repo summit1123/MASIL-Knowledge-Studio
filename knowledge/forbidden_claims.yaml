@@ -1,10 +1,11 @@
 # 소스: 최종 제출 덱 충돌 방지 규칙
-# status=active만 MCP 기본 적용. status가 없으면 legacy_reference.
+# status=active 항목만 현재 답변 방어 규칙으로 적용. 나머지는 과거 충돌·변경 이유를 찾는 semantic support다.
 
 meta:
   effective_date: 2026-08-10
   default_status_for_missing: legacy_reference
   mcp_filter: status == active
+  supporting_filter: status != active
 
 forbidden:
   - id: no-care-price-effect
