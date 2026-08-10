@@ -2,8 +2,26 @@ from __future__ import annotations
 
 import pytest
 from fastmcp import Client
+from starlette.testclient import TestClient
 
 from masil_mcp.server import create_server
+
+
+def test_server_publishes_brand_icon() -> None:
+    server = create_server(auth_mode="none")
+    assert server.icons
+    assert server.icons[0].src.endswith("/favicon.png")
+    assert server.icons[0].mimeType == "image/png"
+
+    with TestClient(server.http_app(path="/mcp")) as client:
+        icon = client.get("/favicon.png")
+        assert icon.status_code == 200
+        assert icon.headers["content-type"].startswith("image/png")
+        assert icon.content.startswith(b"\x89PNG")
+
+        landing = client.get("/")
+        assert landing.status_code == 200
+        assert 'href="/favicon.png"' in landing.text
 
 
 @pytest.mark.asyncio

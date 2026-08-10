@@ -1,19 +1,24 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import Literal
 
 from dotenv import load_dotenv
 from fastmcp import FastMCP
 from fastmcp.utilities.types import Image
+from mcp.types import Icon
 from starlette.requests import Request
-from starlette.responses import JSONResponse
+from starlette.responses import FileResponse, HTMLResponse, JSONResponse
 
 from .auth import build_auth
 from .service import KnowledgeService
 
 
 load_dotenv()
+
+PUBLIC_URL = os.getenv("MASIL_PUBLIC_URL", "https://masil-mcp.summit1123.co.kr").rstrip("/")
+ICON_PATH = Path(__file__).resolve().parent / "static" / "masil-icon.png"
 
 INSTRUCTIONS = """
 MASIL 발표 준비용 근거 서버입니다. 최신 상품 계약과 덱 사실을 먼저 사용하고,
@@ -29,10 +34,41 @@ def create_server(*, auth_mode: str | None = None, service: KnowledgeService | N
         "MASIL Knowledge Studio",
         instructions=INSTRUCTIONS,
         version="0.1.0",
-        website_url="https://masil-mcp.summit1123.co.kr",
+        website_url=PUBLIC_URL,
+        icons=[
+            Icon(
+                src=f"{PUBLIC_URL}/favicon.png",
+                mimeType="image/png",
+                sizes=["512x512"],
+            )
+        ],
         auth=build_auth(auth_mode),
         mask_error_details=True,
     )
+
+    @mcp.custom_route("/", methods=["GET"], include_in_schema=False)
+    async def landing(_: Request) -> HTMLResponse:
+        return HTMLResponse(
+            """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MASIL Knowledge Studio</title>
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
+</head>
+<body><h1>MASIL Knowledge Studio</h1><p>Remote MCP knowledge server</p></body>
+</html>"""
+        )
+
+    @mcp.custom_route("/favicon.png", methods=["GET"], include_in_schema=False)
+    @mcp.custom_route("/favicon.ico", methods=["GET"], include_in_schema=False)
+    async def favicon(_: Request) -> FileResponse:
+        return FileResponse(
+            ICON_PATH,
+            media_type="image/png",
+            headers={"Cache-Control": "public, max-age=86400"},
+        )
 
     @mcp.custom_route("/healthz", methods=["GET"], include_in_schema=True)
     async def healthz(_: Request) -> JSONResponse:
