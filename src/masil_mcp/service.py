@@ -7,6 +7,7 @@ from typing import Any
 
 from .corpus import KnowledgeCorpus
 from .models import KnowledgeDocument, SearchHit
+from .routing import route_question
 from .search import HybridSearchIndex, normalize
 
 
@@ -487,6 +488,7 @@ class KnowledgeService:
         max_chars: int = 5000,
         evidence_scope: str = "stage",
     ) -> dict[str, Any]:
+        routing = route_question(question)
         current = self._filtered_search(
             question,
             top_k=7,
@@ -496,7 +498,15 @@ class KnowledgeService:
                 and document.source_path in ANSWER_FACT_SOURCES
             ),
         )
-        direct_evidence = self._literature_hits(question, top_k=4, usage_scope=evidence_scope)
+        if routing.route == "deck_context":
+            deck = self._search_source(question, "knowledge/claims/deck_claims.yaml", top_k=5)
+            current = self._merge_unique_hits(deck, current, limit=7)
+
+        direct_evidence = self._literature_hits(
+            question,
+            top_k=6 if routing.route == "literature_evidence" else 4,
+            usage_scope=evidence_scope,
+        )
         link_facts = (
             [hit for hit in current if hit.score >= max(5.0, current[0].score * 0.25)][:3]
             if current
@@ -519,7 +529,10 @@ class KnowledgeService:
                 and document.status == "active"
             ),
         )
-        history_requested = any(term in question.lower() for term in HISTORY_REQUEST_TERMS)
+        history_requested = (
+            routing.route == "claim_conflict_history"
+            or any(term in question.lower() for term in HISTORY_REQUEST_TERMS)
+        )
         history_material: list[SearchHit] = []
         if history_requested:
             history_material.extend(self._filtered_search(
@@ -553,6 +566,16 @@ class KnowledgeService:
             top_k=4,
             statuses={"active"},
         )
+        validation_material: list[SearchHit] = []
+        if routing.route == "validation_open_items":
+            validation_material = self._filtered_search(
+                question,
+                top_k=5,
+                predicate=lambda document: (
+                    document.source_path == "knowledge/product_model.yaml"
+                    and document.status in OPEN_ITEM_STATUSES
+                ),
+            )
 
         def answer_hit(hit: SearchHit, body_chars: int = 0) -> dict[str, Any]:
             full = hit.as_dict(include_body=False)
@@ -573,6 +596,11 @@ class KnowledgeService:
             "question": question,
             "language": language,
             "evidence_scope": evidence_scope,
+            "routing": {
+                "route": routing.route,
+                "confidence": routing.confidence,
+                "material_priority": list(routing.material_priority),
+            },
             "response_contract": {
                 "default": "직접 답하는 짧고 쉬운 문장 2~4개",
                 "evidence": "주장 뒤에 정확한 근거 최대 2개와 쓰임 한 줄",
@@ -597,6 +625,7 @@ class KnowledgeService:
             "evidence_captures": [],
             "explanation_material": [answer_hit(hit) for hit in supporting[:2]],
             "historical_material": [answer_hit(hit) for hit in history_material[:2]],
+            "validation_material": [answer_hit(hit, 600) for hit in validation_material[:3]],
             "conflicts_and_avoid": [answer_hit(hit, 480) for hit in conflicts[:2]],
             "fixed_terms": [answer_hit(hit) for hit in glossary[:2]],
             "truncated": False,
@@ -633,6 +662,7 @@ class KnowledgeService:
             "evidence_captures": visual_count,
             "explanation_material": 1 if packet["explanation_material"] and not packet["evidence_captures"] else 0,
             "historical_material": 1 if packet["historical_material"] else 0,
+            "validation_material": 1 if packet["validation_material"] else 0,
             "conflicts_and_avoid": 0,
             "fixed_terms": 0,
         }
@@ -642,6 +672,7 @@ class KnowledgeService:
             "conflicts_and_avoid",
             "current_facts",
             "historical_material",
+            "validation_material",
             "reference_only",
             "evidence",
             "evidence_captures",
@@ -655,7 +686,10 @@ class KnowledgeService:
                 break
 
         if packet_size() > max_chars:
-            for key in ("current_facts", "conflicts_and_avoid", "evidence", "reference_only"):
+            packet["routing"].pop("material_priority", None)
+
+        if packet_size() > max_chars:
+            for key in ("current_facts", "validation_material", "conflicts_and_avoid", "evidence", "reference_only"):
                 for item in packet[key]:
                     for field, limit in (("body", 360), ("snippet", 240)):
                         value = item.get(field)

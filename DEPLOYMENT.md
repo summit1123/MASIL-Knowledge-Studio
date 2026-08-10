@@ -56,6 +56,12 @@ curl -fsS https://masil-mcp.summit1123.co.kr/healthz
 
 `check_oauth.py`는 OAuth code 교환, client secret, PKCE, MCP 도구 목록, 검색, 답변 재료, 실제 캡처 이미지 반환을 한 번에 확인한다.
 
-## Operational boundary
+## Runtime state
 
-현재 OAuth authorization code와 access token 저장소는 프로세스 메모리 안에 있다. 서버 재시작 후 이미 연결된 Claude 커넥터가 재인증을 요구할 수 있다. 단기 발표 준비에는 충분하지만 장기 상시 운영 전에는 영속 저장소와 토큰 폐기 정책을 추가해야 한다.
+- OAuth authorization code는 5분 동안 프로세스 메모리에만 존재한다.
+- 발급된 access/refresh token은 기본적으로 `~/.local/share/masil-mcp/oauth.sqlite3`에 저장한다. 파일 권한은 600, 상위 디렉터리는 700이다.
+- 익명 도구 사용 통계는 `~/.local/share/masil-mcp/telemetry.sqlite3`에 저장한다. 질문·답변·도구 인자는 저장하지 않는다.
+- 위치를 바꾸려면 `MASIL_RUNTIME_DIR`, `MASIL_OAUTH_DB_PATH` 환경 변수를 사용한다.
+- 서버 재시작은 기존 access/refresh token을 무효화하지 않는다. connector URL과 OAuth client가 같으면 팀원은 커넥터를 다시 등록하지 않는다.
+- 도구 스키마가 바뀐 직후 Claude의 현재 대화가 옛 목록을 보유하면 새 대화를 열어 재발견한다. 커넥터 삭제·재등록과는 다르다.
+- 운영자가 연결을 강제로 폐기할 때는 서버를 내린 상태에서 OAuth DB를 별도 백업한 뒤 해당 token row를 폐기하는 운영 절차를 사용한다.

@@ -176,6 +176,7 @@ retrieval_rules:
   - 상품 논리·산식·문헌·시뮬레이션·변경 이유·표현은 product_model의 authority_by_question_type에 따라 각각 권한 있는 자료를 사용한다.
   - 현재 정본 검색 뒤에는 질문과 의미적으로 관련된 보조 자료를 자동 검색한다.
   - 팀원은 도구 이름을 알 필요가 없다. 실제 MASIL 질문과 붙여 넣은 초안은 prepare_answer_context를 기본 진입점으로 사용한다.
+  - prepare_answer_context는 별도 모델 호출 없이 질문을 presentation_overview, product_logic, deck_context, literature_evidence, claim_conflict_history, validation_open_items, stakeholder_value, draft_review 중 하나로 라우팅한다. 라우트는 답을 결정하지 않고 검색 재료의 우선순위만 정한다.
   - 정확한 evidence_captures가 있으면 사용자가 캡처를 따로 요청하지 않아도 show_answer_evidence로 대화 안에 표시한다. 정확한 연결이 없으면 이미지를 추측하지 않는다.
   - 기본 답변에서는 도구명·내부 ID·YAML 필드·authority/status·corpus 통계를 노출하지 않는다.
   - 보조 자료는 질문 해석·설명 구조·문헌 단서·변경 이유를 제공할 수 있지만 현재 사실을 단독 확정할 수 없다.
@@ -188,6 +189,29 @@ retrieval_rules:
   - 덱에 남아 있으나 팀이 철회한 문헌 수치는 deck_conflict로 알리고 그 주장을 방어하지 않는다.
   - 현재 근거가 부족하면 보조 자료로 결론을 만들어내지 말고 근거 부족과 추가 확인 항목을 답한다.
   - unresolved 질문에는 current_evidence_status, recommended_position_ko, validation_needed를 함께 반환하며 권고 표현을 검증된 사실로 바꾸지 않는다.
+
+telemetry_contract:
+  storage: local SQLite
+  collected:
+    - tool name and order
+    - selected answer-material route
+    - success or error
+    - duration
+    - result and capture counts
+    - anonymous session hash
+    - corpus fingerprint and server version
+  never_collected:
+    - user prompt or tool arguments
+    - Claude answer text
+    - evidence body or capture content
+    - OAuth credentials or raw user identity
+  feedback: explicit fixed tags only; never infer a rating
+
+connection_continuity:
+  oauth_access_refresh_tokens: persistent SQLite with mode 0600
+  authorization_codes: short-lived in memory
+  content_or_code_restart: existing connector registration remains valid
+  tool_schema_change: an existing conversation may need a new chat for tool rediscovery, not connector re-registration
 
 implementation_gate:
   status: approved_for_server_implementation

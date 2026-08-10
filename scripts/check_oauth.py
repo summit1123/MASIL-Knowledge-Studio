@@ -72,6 +72,8 @@ async def check(base_url: str) -> None:
             "show_answer_evidence",
             "show_evidence_capture",
             "list_open_items",
+            "usage_telemetry",
+            "record_usage_feedback",
         }
         if not required.issubset(names):
             raise RuntimeError(f"authenticated MCP missing tools: {sorted(required - names)}")
@@ -113,6 +115,7 @@ async def check(base_url: str) -> None:
             or answer.structured_content.get("packet_chars", 999999) > 5000
             or {item.get("id") for item in answer.structured_content.get("evidence_captures", [])}
             != {"capture-006", "capture-037"}
+            or answer.structured_content.get("routing", {}).get("route") != "product_logic"
         ):
             raise RuntimeError("authenticated answer-context call failed")
 
@@ -241,6 +244,10 @@ async def check(base_url: str) -> None:
         if status.is_error or status.structured_content.get("captures") != 44:
             raise RuntimeError("authenticated knowledge-status call failed")
 
+        telemetry = await client.call_tool("usage_telemetry", {"days": 7})
+        if telemetry.is_error or "privacy" not in telemetry.structured_content:
+            raise RuntimeError("authenticated privacy-telemetry call failed")
+
     async with httpx.AsyncClient(follow_redirects=True, timeout=20) as http:
         fallback_image = await http.get(resolved_image.structured_content["display_url"])
         if fallback_image.status_code != 200 or not fallback_image.headers.get("content-type", "").startswith(
@@ -275,6 +282,7 @@ async def check(base_url: str) -> None:
                 "resolved_capture_call": "PASS",
                 "public_fallback_image_url": "PASS",
                 "knowledge_status_call": "PASS",
+                "privacy_telemetry_call": "PASS",
             },
             indent=2,
         )

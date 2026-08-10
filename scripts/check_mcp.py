@@ -27,6 +27,8 @@ async def check(url: str, auth: str | None) -> None:
             "show_evidence_capture",
             "get_capture_image",
             "knowledge_status",
+            "usage_telemetry",
+            "record_usage_feedback",
         }
         missing = required - set(names)
         if missing:
@@ -65,6 +67,8 @@ async def check(url: str, auth: str | None) -> None:
         )
         if answer.is_error or not answer.structured_content.get("current_facts"):
             raise RuntimeError("answer packet tool call failed")
+        if answer.structured_content.get("routing", {}).get("route") != "product_logic":
+            raise RuntimeError("answer packet did not select the product-logic route")
         if {item.get("id") for item in answer.structured_content.get("evidence_captures", [])} != {
             "capture-006",
             "capture-037",
@@ -163,6 +167,10 @@ async def check(url: str, auth: str | None) -> None:
         if status.is_error or status.structured_content.get("captures") != 44:
             raise RuntimeError("knowledge status tool call failed")
 
+        telemetry = await client.call_tool("usage_telemetry", {"days": 7})
+        if telemetry.is_error or "privacy" not in telemetry.structured_content:
+            raise RuntimeError("privacy telemetry call failed")
+
         print(
             json.dumps(
                 {
@@ -180,6 +188,7 @@ async def check(url: str, auth: str | None) -> None:
                     "image_returned": True,
                     "resolved_image": resolved_image.structured_content["id"],
                     "status": "PASS",
+                    "telemetry": "PASS",
                 },
                 ensure_ascii=False,
                 indent=2,

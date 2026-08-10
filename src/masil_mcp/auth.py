@@ -1,19 +1,21 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import Any
 
 from fastmcp.server.auth import StaticTokenVerifier
 from fastmcp.server.auth.providers.github import GitHubProvider
-from fastmcp.server.auth.providers.in_memory import InMemoryOAuthProvider
 from mcp.server.auth.settings import ClientRegistrationOptions
 from mcp.shared.auth import OAuthClientInformationFull
+
+from .persistent_oauth import PersistentOAuthProvider
 
 
 def build_auth(mode: str | None = None) -> Any | None:
     """Build a FastMCP 2 auth provider from environment settings.
 
-    ``oauth_client`` is deliberately small and restart-local. It uses a fixed
+    ``oauth_client`` is deliberately small and restart-safe. It uses a fixed
     confidential OAuth client for the Claude callback, so only teammates with
     the configured client secret can exchange an authorization code. GitHub is
     available for deployments that need durable user identity.
@@ -50,8 +52,10 @@ def build_auth(mode: str | None = None) -> Any | None:
             raise ValueError(
                 "MASIL_OAUTH_CLIENT_ID and a 24+ character MASIL_OAUTH_CLIENT_SECRET are required"
             )
-        provider = InMemoryOAuthProvider(
+        storage_value = os.getenv("MASIL_OAUTH_DB_PATH", "").strip()
+        provider = PersistentOAuthProvider(
             base_url=public_url,
+            storage_path=Path(storage_value).expanduser() if storage_value else None,
             client_registration_options=ClientRegistrationOptions(
                 enabled=False,
                 valid_scopes=["masil:read"],
@@ -90,4 +94,3 @@ def build_auth(mode: str | None = None) -> Any | None:
         )
 
     raise ValueError("MASIL_AUTH_MODE must be one of: none, static, oauth_client, github")
-

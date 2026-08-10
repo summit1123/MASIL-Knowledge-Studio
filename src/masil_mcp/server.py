@@ -16,6 +16,7 @@ from starlette.responses import FileResponse, HTMLResponse, JSONResponse
 
 from .auth import build_auth
 from .service import KnowledgeService
+from .telemetry import PrivacyTelemetryMiddleware, TelemetryStore
 
 
 load_dotenv()
@@ -30,11 +31,13 @@ EVIDENCE_VIEW_META = {
     # the flat key. Keep it until the extension reaches broad GA adoption.
     "ui/resourceUri": EVIDENCE_VIEW_URI,
 }
+SERVER_VERSION = "0.4.0"
 
 INSTRUCTIONS = """
 MASIL 발표 준비용 근거 서버입니다. 팀원은 도구 이름을 배울 필요가 없습니다. MASIL의 상품,
 덱, 발표 문장, Q&A, 수치, 근거에 관한 실제 질문이나 붙여 넣은 초안이 들어오면 기본적으로
-prepare_answer_context를 조용히 호출해 재료를 확인한 뒤 평소 대화처럼 답하세요.
+prepare_answer_context를 조용히 호출해 재료를 확인한 뒤 평소 대화처럼 답하세요. 이 도구는 질문을
+가벼운 준비 유형으로 라우팅하지만 답을 고정하지 않습니다.
 
 답은 먼저 2~4개의 짧고 쉬운 문장으로 직접 말합니다. 도구명, 내부 ID, YAML 필드,
 authority/status, corpus 통계를 답변에 노출하지 마세요. 사용자가 자세히 묻지 않았다면 전체 기술 로직,
@@ -56,15 +59,24 @@ forbidden_claims와 must_not_say를 예상 질문 목록으로 바꾸지 마세�
 items 길이를 전체 개수로 추정하지 마세요. 기본 evidence_scope=stage는 Summary·Appendix의 active
 근거만 뜻합니다. qa_only·listed_only는 사용자가 그 범위를 명시적으로 요청했을 때만 사용하세요.
 reference_only는 목록·한계 설명용이고 banned 문헌은 사용하지 마세요.
+
+도구 사용 통계는 사용자가 명시적으로 요청할 때만 usage_telemetry를 호출하세요. 사용자가 이 답변이
+도움 됐는지 명시적으로 평가할 때만 record_usage_feedback을 호출하고 평가를 추측하지 마세요.
 """.strip()
 
 
-def create_server(*, auth_mode: str | None = None, service: KnowledgeService | None = None) -> FastMCP:
+def create_server(
+    *,
+    auth_mode: str | None = None,
+    service: KnowledgeService | None = None,
+    telemetry_store: TelemetryStore | None = None,
+) -> FastMCP:
     knowledge = service or KnowledgeService()
+    telemetry = telemetry_store or TelemetryStore()
     mcp = FastMCP(
         "MASIL Knowledge Studio",
         instructions=INSTRUCTIONS,
-        version="0.3.0",
+        version=SERVER_VERSION,
         website_url=PUBLIC_URL,
         icons=[
             Icon(
@@ -75,6 +87,13 @@ def create_server(*, auth_mode: str | None = None, service: KnowledgeService | N
         ],
         auth=build_auth(auth_mode),
         mask_error_details=True,
+    )
+    mcp.add_middleware(
+        PrivacyTelemetryMiddleware(
+            telemetry,
+            corpus_fingerprint=knowledge.stats()["fingerprint"],
+            server_version=SERVER_VERSION,
+        )
     )
 
     @mcp.custom_route("/", methods=["GET"], include_in_schema=False)
@@ -436,6 +455,40 @@ def create_server(*, auth_mode: str | None = None, service: KnowledgeService | N
     def knowledge_status() -> dict:
         """Return corpus counts and fingerprint for deployment diagnostics."""
         return knowledge.stats()
+
+    @mcp.tool(tags={"status", "telemetry"})
+    def usage_telemetry(days: int = 7) -> dict:
+        """Return aggregate tool usage without prompts, answers, arguments, or identities.
+
+        Call only when a teammate explicitly asks how the connector has been
+        used or whether a route/tool is working well.
+        """
+        return telemetry.summary(days=days)
+
+    @mcp.tool(tags={"telemetry", "feedback"})
+    def record_usage_feedback(
+        rating: Literal["helpful", "not_helpful"],
+        reason: Literal[
+            "good_answer",
+            "missing_evidence",
+            "wrong_material",
+            "hard_to_understand",
+            "image_not_visible",
+            "tool_error",
+        ],
+    ) -> dict:
+        """Record an explicit teammate rating using fixed tags and no free text.
+
+        Never infer a rating. Call only after the user clearly says the result
+        was helpful or names a concrete problem.
+        """
+        telemetry.record_feedback(rating, reason)
+        return {
+            "recorded": True,
+            "rating": rating,
+            "reason": reason,
+            "privacy": "No prompt or answer text was stored.",
+        }
 
     return mcp
 

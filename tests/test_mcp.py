@@ -42,6 +42,8 @@ async def test_in_memory_server_lists_and_calls_tools() -> None:
             "show_evidence_capture",
             "get_capture_image",
             "get_implementation",
+            "usage_telemetry",
+            "record_usage_feedback",
         }.issubset(names)
         assert "prepare_qa_strategy" not in names
         search_tool = next(tool for tool in tools if tool.name == "search_knowledge")
