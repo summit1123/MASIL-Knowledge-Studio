@@ -81,8 +81,13 @@ cards:
     question_ko: 생활권 밖이 위험하다면서 왜 위치만으로 감점하지 않나요?
     question_en: If unfamiliar areas are riskier, why is there no location-only penalty?
     topic: 생활권밖-위험
-    direct_answer_ko: "생활권 밖은 위험의 맥락이지 벌점이 아닙니다. 낯선 환경에서 위험이 커질 수 있지만, 개인이 실제로 안전하게 운전하면 감점하지 않습니다. 그래서 밖에서의 안전행동과 패턴 변화를 함께 봅니다."
-    spoken_answer_en: "Out-of-zone travel is context, not a penalty. Unfamiliar roads can raise risk, but safe driving is not punished. We look at behavior outside the zone and changes from the person's normal pattern."
+    direct_answer_ko: "생활권 밖이라는 위치 자체에는 벌점이 없습니다. 대신 현재 설계 후보는 실제 위험 이벤트를 생활권 안에서는 계수 8, 밖에서는 12로 반영합니다. 즉 밖에 나간 것을 벌주는 것이 아니라, 낯선 환경에서 실제로 나타난 위험행동을 더 민감하게 보는 방식입니다. 8과 12는 파일럿에서 다시 보정할 후보값입니다."
+    spoken_answer_en: "There is no penalty for simply driving outside the zone. Our current design uses a factor of 8 for risky events inside the zone and 12 outside. It responds more strongly to actual risky behavior in unfamiliar areas, not to the location itself. These factors will be recalibrated in the pilot."
+    followups:
+      - q: 12는 초행 도로 사고 위험 2.5배 문헌에서 계산한 값인가요?
+        a: 아닙니다. 그 문헌은 낯선 도로가 위험 맥락일 수 있다는 방향만 지지합니다. 12는 팀이 정한 설계 후보값이며 파일럿에서 재보정합니다.
+      - q: 덱의 Edward·Frank 점수도 8/12로 계산됐나요?
+        a: 아닙니다. 현재 덱과 기존 180개 시나리오 수치는 안·밖 모두 계수 8을 쓴 기존 합성 실행 결과입니다. 8/12 반영 후에는 다시 계산해야 합니다.
     source: sources/11_V20_결정_기록_0810.md#3-care-review-계약
 
   - id: qa-zone-formation
@@ -139,15 +144,12 @@ cards:
   - id: qa-business-targets
     status: active
     layer: core
-    question_ko: 500명, 가입률 15–20%, 유지율 +2%p는 실측인가요?
-    question_en: Are the 500 drivers, 15–20% enrollment, and +2-point retention measured results?
+    question_ko: Pilot, Scale up, Roll out의 숫자와 일정은 확정됐나요?
+    question_en: Are the roadmap numbers and timing final?
     topic: 사업-목표
-    direct_answer_ko: "아닙니다. 세 숫자는 모두 파일럿에서 검증할 목표입니다. 성과나 예측치가 아닙니다."
-    spoken_answer_en: "No. All three numbers are targets for the pilot. They are not measured results or forecasts."
-    followups:
-      - q: 가입률 15–20% 목표가 너무 높지 않나요?
-        a: "비교 기준인 0.5%는 교육 이수를 먼저 요구한 특약의 가입률입니다. 우리는 그 선행 비용을 제거했습니다. 실제 가입률은 파일럿에서 검증합니다."
-    source: sources/11_V20_결정_기록_0810.md#7-사업-숫자의-지위
+    direct_answer_ko: "아닙니다. 현재 확정한 것은 Pilot에서 시작해 결과를 확인한 뒤 Scale up과 Roll out으로 간다는 방향입니다. 규모, 기간, 가입률과 유지율은 아직 미정입니다. 덱의 숫자는 초기 기획 예시라 발표 대본과 기본 답변에서는 먼저 말하지 않습니다."
+    spoken_answer_en: "No. What is fixed is the direction: start with a pilot, test it, then scale up and roll out. The size, timing, enrollment, and retention targets are not final. The numbers on the slide are early planning examples."
+    source: deck://summary-2
 
   - id: qa-kca-braking-condition
     status: active
@@ -353,11 +355,11 @@ cards:
     question_ko: 보험사가 왜 도입하고, 파일럿은 무엇을 검증하나요?
     question_en: Why would an insurer adopt this, and what will the real-world pilot test?
     topic: 도입-파일럿
-    direct_answer_ko: "기존 마일리지 체계는 거리만 보므로 같은 거리 안의 안전행동과 변화를 구분하지 못합니다. MASIL은 기존 할인 위에 얹는 특약으로 제안해 통합 부담을 줄이려 합니다. 파일럿 목표는 500명, 가입률 15–20%, 유지율 +2%p이며 모두 검증할 목표이지 실적이 아닙니다. 파일럿은 실데이터로 규칙 재보정, 손해율 효과, 고객 수용성과 실제 운영 부담을 검증합니다."
-    spoken_answer_en: "Mileage systems see distance, but not safe behavior and change within the same mileage. MASIL is proposed as a rider on existing discounts, which is designed to reduce integration work. Our pilot targets are 500 drivers, 15 to 20 percent enrollment, and a 2-point retention lift. These are targets to test, not results. The pilot will test rule calibration, loss impact, customer acceptance, and real operating effort."
+    direct_answer_ko: "기존 마일리지 체계는 거리만 보므로 같은 거리 안의 안전행동과 변화를 구분하지 못합니다. MASIL은 기존 할인 위에 얹는 특약으로 시작해 통합 부담을 낮추려 합니다. 실데이터 파일럿에서는 규칙 재보정, 손해 영향, 고객 수용성과 운영 부담을 확인합니다. 구체적인 규모와 일정은 아직 확정하지 않았습니다."
+    spoken_answer_en: "Mileage systems see distance, but not safe behavior and change within the same mileage. MASIL starts as a rider on the existing mileage discount. A real-data pilot will test rule calibration, loss impact, customer acceptance, and operating effort. The size and timeline are not final."
     followups:
-      - q: 가입률 15–20%는 근거가 있나요?
-        a: "목표입니다. 비교 기준인 0.5%는 교육 이수를 먼저 요구한 특약의 가입률입니다. 우리는 그 선행 비용을 제거했습니다. 실제 가입률은 파일럿에서 검증합니다."
+      - q: 덱에는 500명·15–20%·+2%p가 있는데요?
+        a: "초기 기획 예시입니다. 현재 팀이 확정한 파일럿 규모·가입률·유지율 약속은 아닙니다."
     source: deck://summary-2
 
   - question_ko: (3지형에서 우대 판정이 갈린 이유는? — 질문 문구는 문서에 없음, §3 표준답)

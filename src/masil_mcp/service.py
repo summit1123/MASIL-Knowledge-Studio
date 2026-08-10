@@ -492,6 +492,33 @@ class KnowledgeService:
             deck = self._search_source(question, "knowledge/claims/deck_claims.yaml", top_k=5)
             current = self._merge_unique_hits(deck, current, limit=7)
 
+        # The roadmap slide still prints early planning numbers, but the team
+        # now uses only the Pilot -> Scale up -> Roll out direction by default.
+        # Keep the numeric slide claim out of ordinary roadmap answers unless
+        # the user explicitly asks about timing, scale, or the printed values.
+        roadmap_number_terms = (
+            "500",
+            "15%",
+            "20%",
+            "+2",
+            "0-6",
+            "6-18",
+            "18+",
+            "숫자",
+            "수치",
+            "인원",
+            "기간",
+            "일정",
+            "가입률",
+            "유지율",
+        )
+        if not any(term in question for term in roadmap_number_terms):
+            current = [
+                hit
+                for hit in current
+                if not hit.document.id.endswith("#p2-roadmap-targets")
+            ]
+
         # Semantic literature search is only safe when the user is actually
         # asking about a source. Product questions must traverse the curated
         # evidence_links on the matched current claim; otherwise a thematically
@@ -637,9 +664,12 @@ class KnowledgeService:
         visual_count = min(2, len(packet["evidence_captures"]))
         minimums = {
             "current_facts": 1 if packet["evidence_captures"] else 2,
-            "evidence": min(visual_count, len(packet["evidence"])),
+            # Keep at least one directly linked source even when that paper has
+            # no source-image asset. Otherwise compact product answers can lose
+            # the exact literature boundary merely because no capture exists.
+            "evidence": 1 if packet["evidence"] else 0,
             "evidence_captures": visual_count,
-            "source_capture_gaps": 0,
+            "source_capture_gaps": 1 if packet["source_capture_gaps"] else 0,
             "explanation_material": 1 if packet["explanation_material"] and not packet["evidence_captures"] else 0,
             "validation_material": 1 if packet["validation_material"] else 0,
             "conflicts_and_avoid": 0,

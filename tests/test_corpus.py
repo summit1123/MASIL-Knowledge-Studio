@@ -42,6 +42,37 @@ def test_answer_packet_is_compact_and_contains_conflict_guards() -> None:
     assert "conflicts_and_avoid" in packet
 
 
+def test_out_of_zone_packet_separates_location_neutrality_8_12_and_old_demo() -> None:
+    service = KnowledgeService()
+    packet = service.prepare_answer_context(
+        "생활권 밖은 왜 감점하지 않으면서 위험행동 계수는 더 크게 두나요?",
+        max_chars=9000,
+    )
+    encoded = json.dumps(packet, ensure_ascii=False)
+    assert "계수 8" in encoded
+    assert "계수 12" in encoded
+    assert "위치 자체" in encoded or "위치만으로" in encoded
+    assert "8/8" in encoded
+    assert "8/12" in encoded
+
+
+def test_roadmap_packet_treats_numbers_as_uncommitted_slide_examples() -> None:
+    service = KnowledgeService()
+    packet = service.prepare_answer_context(
+        "Pilot Scale up Roll out 일정과 인원은 확정됐나요?",
+        max_chars=7000,
+    )
+    encoded = json.dumps(packet, ensure_ascii=False)
+    assert "단계 방향" in encoded
+    assert "미정" in encoded or "확정" in encoded
+    assert "초기 기획 예시" in encoded
+
+    generic = service.prepare_answer_context("로드맵을 설명해줘", max_chars=5000)
+    generic_facts = json.dumps(generic["current_facts"], ensure_ascii=False)
+    assert "p2-roadmap-targets" not in generic_facts
+    assert "500 drivers" not in generic_facts
+
+
 def test_answer_packet_reports_its_final_serialized_size_within_budget() -> None:
     service = KnowledgeService()
     packet = service.prepare_answer_context("생활권 밖 주행은 왜 보는 건가요?", max_chars=7000)
@@ -60,10 +91,10 @@ def test_capture_path_is_confined_to_repository() -> None:
 def test_runtime_corpus_loads_every_current_contract_collection() -> None:
     service = KnowledgeService()
     expected = {
-        "knowledge/official_positions.yaml": ("active", 17),
+        "knowledge/official_positions.yaml": ("active", 18),
         "knowledge/glossary.yaml": ("active", 24),
         "knowledge/forbidden_claims.yaml": ("active", 11),
-        "knowledge/key_numbers.yaml": ("active", 24),
+        "knowledge/key_numbers.yaml": ("active", 21),
         "knowledge/qa/cards.yaml": ("active", 25),
         "knowledge/presentation_story.yaml": ("unspecified", 14),
         "knowledge/coverage_matrix.yaml": ("unspecified", 15),
@@ -105,6 +136,11 @@ def test_official_positions_and_presentation_story_are_searchable() -> None:
 
     target = service.search("왜 고령 운전자부터 시작하는가", top_k=8)
     assert any(item["source"] == "knowledge/presentation_story.yaml" for item in target["results"])
+
+    multiplier = service.search("3배에서 6배 위험이라고 말해도 되나", top_k=5)
+    combined = json.dumps(multiplier, ensure_ascii=False)
+    assert "포괄" in combined
+    assert "사용하지" in combined
 
 
 def test_history_is_absent_from_answer_packet_and_runtime_index() -> None:

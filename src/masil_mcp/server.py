@@ -31,11 +31,11 @@ EVIDENCE_VIEW_META = {
     # the flat key. Keep it until the extension reaches broad GA adoption.
     "ui/resourceUri": EVIDENCE_VIEW_URI,
 }
-SERVER_VERSION = "0.5.0"
+SERVER_VERSION = "0.6.0"
 
 INSTRUCTIONS = """
-MASIL 발표 준비용 근거 서버입니다. 팀원은 도구 이름을 배울 필요가 없습니다. MASIL의 상품,
-덱, 발표 문장, Q&A, 수치, 근거에 관한 실제 질문이나 붙여 넣은 초안이 들어오면 기본적으로
+MASIL 결선 Q&A 준비용 근거 서버입니다. 팀원은 도구 이름을 배울 필요가 없습니다. MASIL의 상품,
+덱, 심사 질문, Q&A, 수치, 근거에 관한 실제 질문이나 붙여 넣은 답변 초안이 들어오면 기본적으로
 prepare_answer_context를 조용히 호출해 재료를 확인한 뒤 평소 대화처럼 답하세요. 이 도구는 질문을
 가벼운 준비 유형으로 라우팅하지만 답을 고정하지 않습니다.
 
@@ -44,6 +44,10 @@ authority/status, corpus 통계를 답변에 노출하지 마세요. 사용자�
 모든 경고, 미확정 목록을 한꺼번에 펼치지 마세요. 영어 답변도 덱의 고정 용어를 유지하며 문장을 짧게
 만드세요. 최종 덱과 현재 상품 계약만 사용하고, 문헌은 allowed_claim과 caveat 범위에서만
 사용하세요. 폐기된 Q&A·과거 규칙·변경 이력은 공개 런타임에 포함되어 있지 않습니다.
+Pilot·Scale up·Roll out은 단계 방향만 현재 사실로 사용하고, 기간·인원·가입률·유지율 숫자는
+덱 인쇄값을 직접 질문받을 때만 초기 기획 예시라고 설명하세요. 발표에서 쓰지 않기로 한 포괄적
+"3배에서 6배" 위험 배수 문구도 먼저 꺼내지 마세요. 특정 문헌 수치를 직접 묻는 경우에만 해당
+문헌의 모집단·결과변수·단서를 붙여 답하세요.
 
 prepare_answer_context의 evidence_captures가 비어 있지 않으면 사용자가 캡처를 요청할 때까지 기다리지
 말고 같은 질문으로 show_answer_evidence를 바로 호출하세요. 다만 답변 2~4문장을 먼저 완성한 뒤 카드를

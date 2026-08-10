@@ -185,7 +185,7 @@ story_nodes:
       - sources/02_마스터답변안_전항목.md#13-실현-가능성
       - knowledge/product_model.yaml#business_and_roadmap
     boundaries:
-      - 500명·15~20%·+2%p는 목표값
+      - Pilot → Scale up → Roll out의 방향만 사용하고 기간·인원·가입률·유지율 수치는 말하지 않음
       - 최종 할인율·손익·손해율 효과는 미확정
 
   - story_node_id: story-14-limitations-and-closing

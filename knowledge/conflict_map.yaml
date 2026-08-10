@@ -3,7 +3,7 @@
 meta:
   effective_date: 2026-08-10
   status: approved_for_mcp_with_open_items
-  conflict_count: 19
+  conflict_count: 20
   current_resolution_source: knowledge/product_model.yaml
   rule: 현재 결론은 product_model의 current claim이 정하고, 과거 문장은 변경 이유·질문 대비·금지 표현 탐지에 사용
 
@@ -82,13 +82,17 @@ conflicts:
 
   - id: conflict-out-of-zone-risk-vs-penalty
     topic: 생활권 밖 위험과 위치 중립
-    current_resolution: 생활권 밖은 위험 맥락일 수 있지만 위치만으로 감점하지 않고 밖에서의 실제 행동과 개인 변화량을 본다.
+    current_resolution: 생활권 밖이라는 위치 자체에는 벌점이 없다. 현재 팀 설계 후보는 실제 위험 이벤트에 생활권 안 계수 8, 생활권 밖 계수 12를 적용하며 두 값은 파일럿 재보정 대상이다. 기존 덱과 180개 시나리오는 8/8 실행 결과이므로 8/12 결과와 섞지 않는다.
     historical_material:
       - sources/02_마스터답변안_전항목.md#2-생활권-안-사고
       - sources/생활권반경_eps_정리.md
     avoid_as_current:
       - Outer Zone is automatically unsafe
       - 생활권 밖 자체가 벌점
+      - Ehsani & Tefft의 2.5배에서 계수 12를 직접 도출
+      - 969개 가중치 민감도 분석이 위험 이벤트 계수 8/12를 검증
+      - 기존 Edward·Frank 및 180개 시나리오 수치를 8/12 결과로 설명
+    implementation_gap: 현재 외부 합성 엔진과 기존 덱 수치는 안·밖 모두 계수 8로 실행됐다. 8/12는 팀이 채택한 현재 후보식이지만 외부 코드·합성 번들·대시보드 재계산 전이므로 기존 수치와 섞지 않는다.
 
   - id: conflict-zone-fixed-vs-rolling
     topic: 생활권 형성 주기
@@ -156,6 +160,15 @@ conflicts:
     avoid_as_current:
       - 사회적 비용 감소를 검증 완료 성과로 제시
       - 손해율 개선을 합성 시뮬레이션 결과로 제시
+
+  - id: conflict-roadmap-direction-vs-numbers
+    topic: Pilot·Scale up·Roll out 로드맵
+    current_resolution: 단계 방향만 현재 계약으로 설명한다. 기간·인원·가입률·유지율·확대 연령은 미정이며 덱 인쇄값은 초기 기획 예시다.
+    historical_material:
+      - deck://summary-2
+    avoid_as_current:
+      - 0–6개월 · 6–18개월 · 18개월 이후를 확정 일정으로 제시
+      - 500명 · 15–20% · +2%p를 확정 목표나 예측으로 제시
 
   - id: conflict-family-alert-privacy
     topic: 가족 알림과 위치 프라이버시

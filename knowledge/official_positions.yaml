@@ -140,15 +140,19 @@ positions:
     topic: 생활권 밖 위험과 위치 무감점 원칙
     status: active
     effective_date: 2026-08-09
-    approved_position_ko: "문제 정의에서는 익숙하지 않은 생활권 밖 환경에서 위험이 커질 수 있다고 말한다. 상품 판정에서는 생활권 밖이라는 위치만으로 감점하지 않고, 밖에서의 실제 안전행동과 같은 달의 변화 맥락을 함께 본다."
+    approved_position_ko: "문제 정의에서는 익숙하지 않은 생활권 밖 환경에서 위험이 커질 수 있다고 말한다. 상품 판정에서는 생활권 밖이라는 위치만으로 감점하지 않는다. 현재 팀 설계 후보는 생활권 안 위험 이벤트에 계수 8, 생활권 밖에서 실제로 발생한 위험 이벤트에 계수 12를 적용해 밖에서의 위험행동을 더 민감하게 반영한다. 8과 12는 문헌에서 직접 도출된 값이 아니라 파일럿 재보정 전의 설계 후보값이다."
     claim_type: team_decision
     must_include:
       - 생활권 밖은 위험 맥락
       - 위치만으로 감점하지 않음
-      - 실제 안전행동을 함께 봄
+      - 생활권 안 위험 이벤트 계수 8 · 생활권 밖 위험 이벤트 계수 12
+      - 밖에서 실제로 발생한 위험행동만 더 민감하게 반영
+      - 8과 12는 파일럿 재보정 대상인 설계 후보값
     must_not_say:
       - 생활권 밖은 위험하지 않음
       - out-of-zone 자체가 자동 벌점
+      - Ehsani & Tefft의 2.5배에서 계수 12를 직접 도출했다는 표현
+      - 30/30/20/20 가중치 민감도 분석이 8/12 계수를 검증했다는 표현
     evidence_ref:
       - sources/11_V20_결정_기록_0810.md#3-care-review-계약
       - knowledge/evidence/registry.yaml#presentation-ehsani-tefft-2021
@@ -157,7 +161,7 @@ positions:
         relation: direct
         supports: 생활권 밖의 익숙하지 않은 도로에서 위험이 커질 수 있다는 문제정의
         auto_show_source: true
-    evidence_boundary_ko: "위치만으로 감점하지 않는다는 결론은 외부 문헌이 증명한 사실이 아니라 MASIL의 상품 설계 결정이다. 덱 p.3의 합성 비교는 이 결정이 계산에 적용되는 예시이지 독립 문헌 근거가 아니다."
+    evidence_boundary_ko: "위치만으로 감점하지 않는다는 결론과 8/12 계수는 외부 문헌이 증명한 사실이 아니라 MASIL의 상품 설계 결정이다. Ehsani & Tefft 2021은 익숙하지 않은 도로가 위험 맥락일 수 있다는 문제정의만 지지한다. 기존 덱 p.3과 180개 시나리오 수치는 외부 합성 엔진의 8/8 실행 결과이며 8/12로 재계산된 결과가 아니다."
 
   - id: dashboard-13-point-difference
     topic: 대시보드 13%p 차이 설명 (덱 p.3 Edward 사례)
@@ -198,21 +202,35 @@ positions:
       - sources/11_V20_결정_기록_0810.md#5-시뮬레이션-해석-갱신
 
   - id: business-targets-not-measurements
-    topic: 파일럿·가입·유지 목표값
+    topic: Pilot·Scale up·Roll out 로드맵의 지위
     status: active
     effective_date: 2026-08-10
-    approved_position_ko: "500명 파일럿, 자발 가입률 15–20%, 유지율 +2%p는 실측이나 예측이 아니라 파일럿에서 검증할 목표값이다."
-    approved_position_en: "The 500-driver pilot, 15–20% voluntary enrollment, and +2 percentage-point retention uplift are targets to validate, not measurements or forecasts."
-    claim_type: target
+    approved_position_ko: "Pilot → Scale up → Roll out의 단계 방향만 현재 로드맵으로 설명한다. 단계별 기간, 모집 인원, 가입률, 유지율과 확대 연령은 아직 확정하지 않았으므로 발표 대본과 기본 Q&A에서 먼저 말하지 않는다. 덱 인쇄값을 직접 질문받으면 초기 기획 예시이며 현재 약속이 아니라고 설명한다."
+    approved_position_en: "We present only the direction: pilot, scale up, and roll out. The timing, cohort size, enrollment, retention, and expansion age are not final. If asked about the numbers printed on the slide, we explain that they are early planning examples, not current commitments."
+    claim_type: team_decision
     must_include:
-      - 목표값
-      - 실측 아님
+      - Pilot → Scale up → Roll out의 단계 방향
+      - 구체 수치는 미정
+      - 덱 숫자는 초기 기획 예시
     must_not_say:
-      - 성과
-      - 예측치
-      - 검증 완료
+      - 덱에 인쇄된 기간·인원·가입률·유지율을 확정 목표나 예측으로 제시
     evidence_ref:
-      - sources/11_V20_결정_기록_0810.md#7-사업-숫자의-지위
+      - deck://summary-2
+
+  - id: risk-multiplier-speaking-boundary
+    topic: 포괄적 위험 배수 표현
+    status: active
+    layer: core
+    effective_date: 2026-08-10
+    approved_position_ko: "발표와 기본 Q&A에서 '3배에서 6배 위험하다'처럼 서로 다른 문헌 수치를 하나의 범위로 묶어 말하지 않는다. 연구마다 모집단과 결과변수가 달라 하나의 MASIL 근거 수치로 합칠 수 없다. 특정 문헌 수치를 직접 질문받을 때만 그 연구의 대상·결과변수·단서를 붙여 답한다."
+    approved_position_en: "We do not combine different studies into a broad three-to-six-times risk claim. Their populations and outcomes are different. If a judge asks about one study, we give only that study's result with its scope and caveat."
+    claim_type: team_decision
+    must_include:
+      - 3배에서 6배 포괄 범위는 사용하지 않음
+      - 특정 문헌을 직접 물을 때만 연구별 범위와 단서를 붙임
+    must_not_say:
+      - 고령 운전자는 일반적으로 3배에서 6배 위험하다는 표현
+      - 서로 다른 연구의 상대위험을 하나의 연속 범위로 합친 표현
 
   - id: masil-zone-formation
     topic: MASIL Zone 형성

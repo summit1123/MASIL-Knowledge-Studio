@@ -137,7 +137,7 @@ pages:
         text_en: "Pilot 0-6M: validate with a real-world driving cohort (Synthetic to Real Data), Target: 500 drivers / Scale up 6-18M: limited commercial launch, expected voluntary enrollment 15-20% / Roll out 18+M: expand to general drivers (ages 30-50), expected retention increase +2%p"
         kind: statistic
         status: as_printed_needs_context
-        note_ko: 500명·15-20%·+2%p는 전부 목표(target)이며 실측이 아니다. 0.5% 반전 문안과 함께 목표로만 말한다.
+        note_ko: Pilot → Scale up → Roll out의 방향만 현재 설명에 사용한다. 0–6M·6–18M·18+M, 500명, 15–20%, +2%p와 확대 연령은 초기 기획 예시이며 현재 확정 수치가 아니다. 발표 대본과 기본 Q&A에서는 먼저 말하지 않고, 인쇄값을 직접 질문받을 때만 미정이라고 설명한다.
 
       - id: p2-mobility-rights
         text_en: "Guaranteeing Mobility Rights: No regulation but support — guaranteeing mobility that goes beyond discounts, built on trust and care, so drivers voluntarily choose and sustain it"
@@ -182,7 +182,7 @@ pages:
         text_en: "In-zone safety score 77.3 vs 97.7 · Out-of-zone safety score 47.9 vs 95.8 · Annual average score 81.6 pts vs 98.4 pts"
         kind: statistic
         status: as_printed
-        note_ko: 대조표 점수 3종. 인쇄값 그대로 말한다.
+        note_ko: 대조표 점수 3종. 외부 합성 엔진이 안·밖 모두 계수 8을 사용해 만든 기존 실행 결과다. 인쇄값은 그대로 읽을 수 있지만 새 8/12 후보식을 반영한 결과라고 설명하지 않는다.
 
       - id: p3-tariff-13-point
         text_en: "Existing mileage: 16% · $508 (both). MASIL proposal: 3% · $586 (Edward) vs 22.6% · $468 (Frank)"
@@ -449,7 +449,7 @@ pages:
         text_en: "Validation: sensitivity analysis — 969 weight combinations x 180 simulated drivers. Classification was driven mainly by Mileage and In-zone safe driving. The selected 30% weights lie in the most stable region before rapid classification changes"
         kind: statistic
         status: as_printed
-        note_ko: 969 조합 민감도 분석의 결론. 상세 수치는 deep 레이어 — 추궁 시에만 꺼낸다.
+        note_ko: 969 조합은 네 축의 30/30/20/20 가중치를 바꾼 민감도 분석이다. 위험 이벤트 계수 8/12를 검증한 실험은 아니다. 상세 수치는 deep 레이어 — 추궁 시에만 꺼낸다.
 
   - page: 8
     title: "Appendix - D — How is the synthetic simulation structured, and what does it validate?"

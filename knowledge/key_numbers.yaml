@@ -105,7 +105,7 @@ numbers:
   - id: pilot-driver-target
     name: 파일럿 운전자 목표
     value: 500명
-    status: active
+    status: inactive
     claim_type: target
     context: 실측·예측 아님. 파일럿 설계 목표
     source: sources/11_V20_결정_기록_0810.md#7-사업-숫자의-지위
@@ -113,7 +113,7 @@ numbers:
   - id: voluntary-enrollment-target
     name: 자발 가입률 목표
     value: 15–20%
-    status: active
+    status: inactive
     claim_type: target
     context: 실측·예측 아님. 파일럿에서 검증할 목표
     source: sources/11_V20_결정_기록_0810.md#7-사업-숫자의-지위
@@ -121,7 +121,7 @@ numbers:
   - id: retention-uplift-target
     name: 유지율 개선 목표
     value: +2%p
-    status: active
+    status: inactive
     claim_type: target
     context: 실측·예측 아님. 파일럿에서 검증할 목표
     source: sources/11_V20_결정_기록_0810.md#7-사업-숫자의-지위

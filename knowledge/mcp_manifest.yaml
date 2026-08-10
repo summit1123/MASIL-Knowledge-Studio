@@ -1,7 +1,7 @@
 # 팀 발표 준비용 MCP 계약. 공개 런타임은 현재 정본과 실제 사용 문헌만 검색한다.
 
-version: 2026-08-10-mcp-ready-v3
-default_mode: answer_support
+version: 2026-08-10-mcp-ready-v4
+default_mode: qa_support
 mcp_implementation_allowed: true
 
 runtime_sources:

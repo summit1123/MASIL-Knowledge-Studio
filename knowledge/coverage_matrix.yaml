@@ -63,7 +63,7 @@ domains:
     gap: 담당자·인력·비용·SLA·통보·거부권·이의제기·제휴·책임 운영 절차
   - domain: business_and_roadmap
     coverage: partial
-    present: rider 도입·500명·15~20%·+2%p 목표·파일럿 항목
+    present: rider 도입·Pilot → Scale up → Roll out 방향·파일럿 검증 항목
     gap: 시장·채널·CAC·경쟁·해자·팀·파트너·파일럿 설계·경제성·역선택과 게이밍 검증
   - domain: language_and_presentation
     coverage: partial
