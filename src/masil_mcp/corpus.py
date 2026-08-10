@@ -138,10 +138,18 @@ def _authority(path: str, item: dict[str, Any]) -> str:
     if path in DECK_YAML:
         return "deck"
     if path == "knowledge/evidence/capture_index.yaml":
-        return "evidence" if item.get("card_status") in {"active", "qa_only"} else "historical"
+        if item.get("card_status") == "active":
+            return "evidence"
+        if item.get("card_status") == "qa_only":
+            return "supporting"
+        return "historical"
     if path in EVIDENCE_YAML:
         tier = str(item.get("citation_tier", ""))
-        return "evidence" if tier in {"stage_citable", "qa_only"} else "historical"
+        if tier == "stage_citable":
+            return "evidence"
+        if tier == "qa_only":
+            return "supporting"
+        return "historical"
     if path in CANONICAL_YAML:
         return "canonical"
     if path == "knowledge/qa/cards.yaml":
@@ -318,6 +326,13 @@ def load_capture_documents(root: Path) -> list[KnowledgeDocument]:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     documents: list[KnowledgeDocument] = []
     for capture in manifest.get("captures", []):
+        card_status = capture.get("card_status")
+        if card_status == "active":
+            authority = "evidence"
+        elif card_status == "qa_only":
+            authority = "supporting"
+        else:
+            authority = "historical"
         body = "\n".join(
             filter(None, [capture.get("heading", ""), capture.get("caption", ""), capture.get("context", ""), capture.get("alt", "")])
         )
@@ -327,7 +342,7 @@ def load_capture_documents(root: Path) -> list[KnowledgeDocument]:
                 title=f"{capture.get('alt') or '문헌 캡처'} {capture['id']}",
                 body=body or "MASIL 결선 마스터 Q&A 문헌 사용 카드 캡처",
                 source_path=capture["file"],
-                authority="evidence",
+                authority=authority,
                 status="captured",
                 layer="evidence",
                 topic="literature_capture",

@@ -99,7 +99,7 @@ async def check(base_url: str) -> None:
 
         qa_evidence = await client.call_tool(
             "get_evidence",
-            {"query": "Candrive 5.26배", "top_k": 4},
+            {"query": "Candrive 5.26배", "top_k": 4, "usage_scope": "qa_only"},
         )
         if (
             qa_evidence.is_error
@@ -113,7 +113,7 @@ async def check(base_url: str) -> None:
 
         reference = await client.call_tool(
             "get_evidence",
-            {"query": "Harms route familiarity 94편", "top_k": 4},
+            {"query": "Harms route familiarity 94편", "top_k": 4, "usage_scope": "listed_only"},
         )
         if (
             reference.is_error

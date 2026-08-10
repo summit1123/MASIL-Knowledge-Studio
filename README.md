@@ -35,17 +35,17 @@ MASIL의 12분 발표와 8분 Q&A를 위해 문제정의, 상품 설계, 기술,
 제공 도구:
 
 - `search_knowledge` — BM25와 한국어 문자 n-gram을 함께 쓰는 범위별 검색
-- `prepare_answer_context` — 현재 사실을 우선한 Q&A 재료 묶음
+- `prepare_answer_context` — 현재 사실과 Summary·Appendix 근거를 우선한 Q&A 재료 묶음
 - `explain_product_logic` — 생활권, 점수, Care, 할인 등 상품 논리
 - `get_slide_context` — 9장 덱의 인쇄 사실과 구두 보완점
-- `get_evidence` — 문헌별 주장, 한계, 캡처 연결
+- `get_evidence` — 문헌별 주장, 한계, 캡처 연결. 기본은 `stage`이며 Q&A·목록 전용은 명시적으로 범위를 열어야 함
 - `get_implementation` — 현재 외부 데모와 목표 상품 규칙의 차이
 - `compare_claims` — 현재·과거·덱 표현의 충돌 비교
 - `list_open_items` — 미확정 항목과 지금 말할 수 있는 범위
-- `list_captures`, `get_capture_image` — 44개 문헌 캡처 조회와 이미지 반환
+- `list_captures`, `get_capture_image` — 44개 문헌 캡처 조회와 이미지 반환. 기본 목록·이미지는 Summary·Appendix의 `active` 카드만 허용
 - `knowledge_status` — 코퍼스·자산·권한 상태
 
-서버는 현재 722개 검색 문서와 44개 로컬 캡처를 읽는다. 권위 순서는 질문 종류별로 다르며, 과거 Q&A와 Master Q&A 원문은 검색 재료로 보존하되 현재 상품 사실을 덮어쓸 수 없다.
+서버는 현재 828개 검색 문서와 44개 로컬 캡처를 읽는다. 권위 순서는 질문 종류별로 다르며, 과거 Q&A와 Master Q&A 원문은 검색 재료로 보존하되 현재 상품 사실을 덮어쓸 수 없다.
 
 ## 실행
 

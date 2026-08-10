@@ -72,11 +72,18 @@ include:
     filter: status == active
   - file: knowledge/evidence/registry.yaml
     collection: presentation_entries
-    filter: citation_tier in [stage_citable, qa_only]
+    filter: citation_tier == stage_citable
   - file: knowledge/evidence/capture_index.yaml
     role: local_literature_and_deck_capture_links
 
 supporting_include:
+  - file: knowledge/evidence/registry.yaml
+    collection: presentation_entries
+    filter: citation_tier == qa_only
+    role: explicit_question_only_evidence
+    retrieval_mode: semantic_support
+    access_gate: explicit_scope_only
+    canonical_for_current_facts: false
   - file: knowledge/history/decision_log.yaml
     role: change_history_and_conflict_context
     retrieval_mode: semantic_support

@@ -26,8 +26,9 @@ MASIL 발표 준비용 근거 서버입니다. 최신 상품 계약과 덱 사�
 질문 해석·충돌 탐지 재료이며 현재 규칙을 덮어쓰지 않습니다. 최종 답은 짧고 쉬운
 문장으로 구성하고 candidate, unresolved, historical 상태를 숨기지 마세요. 사용자가
 문헌의 원문·캡처·덱 사용 위치를 요청하면 get_evidence로 정확한 캡처 ID와 deck_location을 찾고,
-get_capture_image를 이어 호출해 이미지를 답변 안에 직접 표시하세요. reference_only는
-목록·한계 설명용이고 banned 문헌은 현재 근거로 사용하지 마세요.
+get_capture_image를 이어 호출해 이미지를 답변 안에 직접 표시하세요. 기본 evidence_scope=stage는
+Summary·Appendix의 active 근거만 뜻합니다. qa_only·listed_only는 사용자가 그 범위를 명시적으로
+요청했을 때만 사용하세요. reference_only는 목록·한계 설명용이고 banned 문헌은 사용하지 마세요.
 """.strip()
 
 
@@ -108,14 +109,25 @@ def create_server(*, auth_mode: str | None = None, service: KnowledgeService | N
         return knowledge.get_slide_context(page, detail=detail)
 
     @mcp.tool(tags={"evidence"})
-    def get_evidence(query: str, top_k: int = 6, include_captures: bool = True) -> dict:
-        """Find Summary/Appendix, Q&A-only, and explicit reference-only literature mappings.
+    def get_evidence(
+        query: str,
+        top_k: int = 6,
+        include_captures: bool = True,
+        usage_scope: Literal["stage", "qa_only", "listed_only", "all"] = "stage",
+    ) -> dict:
+        """Find exact literature mappings; defaults to active Summary/Appendix evidence only.
 
         If the user asks to see the source, quotation, screenshot, or deck use,
         call get_capture_image with a recommended_captures id immediately after
-        this tool. Do not substitute a fuzzy or unrelated capture.
+        this tool. Do not substitute a fuzzy or unrelated capture. Use qa_only,
+        listed_only, or all only when the user explicitly requests that scope.
         """
-        return knowledge.get_evidence(query, top_k=top_k, include_captures=include_captures)
+        return knowledge.get_evidence(
+            query,
+            top_k=top_k,
+            include_captures=include_captures,
+            usage_scope=usage_scope,
+        )
 
     @mcp.tool(tags={"implementation"})
     def get_implementation(topic: str = "점수 Care 할인 생활권") -> dict:
@@ -132,6 +144,7 @@ def create_server(*, auth_mode: str | None = None, service: KnowledgeService | N
         question: str,
         language: Literal["ko", "en"] = "ko",
         max_chars: int = 7000,
+        evidence_scope: Literal["stage", "qa_only", "listed_only", "all"] = "stage",
     ) -> dict:
         """Build a compact evidence packet so Claude can compose a short Q&A response.
 
@@ -139,7 +152,12 @@ def create_server(*, auth_mode: str | None = None, service: KnowledgeService | N
         """
         if max_chars < 2500 or max_chars > 12000:
             raise ValueError("max_chars must be between 2500 and 12000")
-        return knowledge.prepare_answer_context(question, language=language, max_chars=max_chars)
+        return knowledge.prepare_answer_context(
+            question,
+            language=language,
+            max_chars=max_chars,
+            evidence_scope=evidence_scope,
+        )
 
     @mcp.tool(tags={"gaps"})
     def list_open_items(query: str = "미확정 unresolved 검증 필요", top_k: int = 12) -> dict:
@@ -147,14 +165,26 @@ def create_server(*, auth_mode: str | None = None, service: KnowledgeService | N
         return knowledge.list_open_items(query=query, top_k=top_k)
 
     @mcp.tool(tags={"evidence", "image"})
-    def list_captures(query: str = "문헌", top_k: int = 20) -> dict:
-        """List literature capture IDs with deck location and usage status. Pass an ID to get_capture_image."""
-        return knowledge.list_captures(query=query, top_k=top_k)
+    def list_captures(
+        query: str = "문헌",
+        top_k: int = 20,
+        usage_scope: Literal["stage", "qa_only", "listed_only", "all"] = "stage",
+    ) -> dict:
+        """List exact capture IDs; defaults to active Summary/Appendix evidence only.
+
+        Use qa_only, listed_only, or all only when the user explicitly requests
+        those supporting/reference materials.
+        """
+        return knowledge.list_captures(query=query, top_k=top_k, usage_scope=usage_scope)
 
     @mcp.tool(tags={"evidence", "image"})
-    def get_capture_image(capture_id: str) -> Image:
-        """Display one exact literature/deck capture inline in Claude's answer."""
-        _, path = knowledge.capture(capture_id)
+    def get_capture_image(capture_id: str, allow_supporting: bool = False) -> Image:
+        """Display one exact capture; non-stage images require explicit supporting access."""
+        metadata, path = knowledge.capture(capture_id)
+        if metadata.get("card_status") != "active" and not allow_supporting:
+            raise ValueError(
+                "This is not active Summary/Appendix evidence. Set allow_supporting=true only when the user explicitly requested qa_only or listed_only material."
+            )
         return Image(path=path)
 
     @mcp.tool(tags={"status"})

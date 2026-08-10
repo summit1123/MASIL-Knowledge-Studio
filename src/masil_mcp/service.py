@@ -21,6 +21,7 @@ SCOPES: dict[str, set[str] | None] = {
 
 EXCLUDED_CURRENT_STATUSES = {"banned", "prohibited", "historical", "archived", "superseded", "deprecated"}
 MIN_EVIDENCE_SCORE = 8.0
+EVIDENCE_SCOPES = {"stage", "qa_only", "listed_only", "all"}
 
 
 class KnowledgeService:
@@ -60,18 +61,32 @@ class KnowledgeService:
     def _search_source(self, query: str, source: str, top_k: int = 8) -> list[SearchHit]:
         return self.index.search(query, top_k=top_k, source_contains=source)
 
-    def _literature_hits(self, query: str, top_k: int) -> list[SearchHit]:
+    def _literature_hits(self, query: str, top_k: int, usage_scope: str = "stage") -> list[SearchHit]:
+        if usage_scope not in EVIDENCE_SCOPES:
+            raise ValueError(f"usage_scope must be one of: {', '.join(sorted(EVIDENCE_SCOPES))}")
+        allowed_tiers = {
+            "stage": {"stage_citable"},
+            "qa_only": {"qa_only"},
+            "listed_only": set(),
+            "all": {"stage_citable", "qa_only"},
+        }[usage_scope]
+        if not allowed_tiers:
+            return []
         hits = self.index.search(
             query,
             top_k=min(max(top_k * 2, top_k), 30),
-            authorities={"evidence"},
+            authorities={"evidence", "supporting"},
             source_contains="knowledge/evidence/registry.yaml",
-            status_exclude=EXCLUDED_CURRENT_STATUSES,
         )
         # 문헌명이 없고 공통 숫자·짧은 단어만 겹친 결과는 Q&A에 근거처럼 주입하지 않는다.
-        return [hit for hit in hits if hit.score >= MIN_EVIDENCE_SCORE][:top_k]
+        return [
+            hit for hit in hits
+            if hit.document.status in allowed_tiers and hit.score >= MIN_EVIDENCE_SCORE
+        ][:top_k]
 
-    def _reference_only_hits(self, query: str, top_k: int) -> list[SearchHit]:
+    def _reference_only_hits(self, query: str, top_k: int, usage_scope: str = "stage") -> list[SearchHit]:
+        if usage_scope not in {"listed_only", "all"}:
+            return []
         hits = self.index.search(
             query,
             top_k=min(max(top_k * 2, top_k), 30),
@@ -83,7 +98,13 @@ class KnowledgeService:
             if hit.document.status == "listed_only" and hit.score >= MIN_EVIDENCE_SCORE
         ][:top_k]
 
-    def _capture_groups_for(self, literature: list[SearchHit]) -> list[SearchHit]:
+    def _capture_groups_for(self, literature: list[SearchHit], usage_scope: str = "stage") -> list[SearchHit]:
+        allowed_statuses = {
+            "stage": {"active"},
+            "qa_only": {"qa_only"},
+            "listed_only": {"listed_only"},
+            "all": {"active", "qa_only", "listed_only"},
+        }[usage_scope]
         evidence_keys = {
             hit.document.id.rsplit("#", 1)[-1]
             for hit in literature
@@ -92,7 +113,7 @@ class KnowledgeService:
         for document in self.corpus.documents:
             if document.source_path != "knowledge/evidence/capture_index.yaml":
                 continue
-            if document.metadata.get("card_status") not in {"active", "qa_only", "listed_only"}:
+            if document.metadata.get("card_status") not in allowed_statuses:
                 continue
             refs = set(document.metadata.get("evidence_refs", []))
             if refs & evidence_keys:
@@ -134,11 +155,17 @@ class KnowledgeService:
             "status_rule": "as_printed는 그대로, needs_context는 구두 보완과 함께, correction_planned는 교정 상태를 함께 설명합니다.",
         }
 
-    def get_evidence(self, query: str, top_k: int = 6, include_captures: bool = True) -> dict[str, Any]:
-        literature = self._literature_hits(query, top_k=top_k)
-        reference_only = self._reference_only_hits(query, top_k=top_k)
+    def get_evidence(
+        self,
+        query: str,
+        top_k: int = 6,
+        include_captures: bool = True,
+        usage_scope: str = "stage",
+    ) -> dict[str, Any]:
+        literature = self._literature_hits(query, top_k=top_k, usage_scope=usage_scope)
+        reference_only = self._reference_only_hits(query, top_k=top_k, usage_scope=usage_scope)
         selected = sorted([*literature, *reference_only], key=lambda hit: hit.score, reverse=True)
-        capture_groups = self._capture_groups_for(selected) if include_captures else []
+        capture_groups = self._capture_groups_for(selected, usage_scope=usage_scope) if include_captures else []
         capture_ids: list[str] = []
         for hit in selected:
             metadata = hit.document.metadata
@@ -157,12 +184,13 @@ class KnowledgeService:
                 recommended_ids = list(top_metadata.get("deck_capture_ids", []))
         return {
             "query": query,
+            "usage_scope": usage_scope,
             "literature": [hit.as_dict(include_body=True) for hit in literature],
             "reference_only": [hit.as_dict(include_body=True) for hit in reference_only],
             "capture_groups": [hit.as_dict(include_body=True) for hit in capture_groups],
             "capture_ids": capture_ids,
             "recommended_captures": self._capture_records(recommended_ids),
-            "citation_rule": "allowed_claim과 caveat 범위 안에서만 사용하세요. listed_only는 목록·한계·충돌 설명용이며 선제 근거로 쓰지 않습니다. banned는 반환하지 않습니다.",
+            "citation_rule": "기본 stage는 Summary·Appendix의 active 근거만 반환합니다. qa_only·listed_only는 사용자가 그 범위를 명시적으로 요청한 경우에만 사용하고, banned는 반환하지 않습니다.",
             "capture_display_rule": (
                 "사용자가 근거 원문·캡처·어디에 쓰였는지를 요청하면 recommended_captures의 id를 "
                 "get_capture_image에 넘겨 이미지를 직접 표시하세요. source 캡처가 없으면 deck_only 상태를 밝혀야 합니다."
@@ -191,15 +219,21 @@ class KnowledgeService:
             "resolution_rule": "현재 계약이 결론을 정합니다. 과거 자료는 왜 바뀌었는지 설명할 때만 사용합니다.",
         }
 
-    def prepare_answer_context(self, question: str, language: str = "ko", max_chars: int = 7000) -> dict[str, Any]:
+    def prepare_answer_context(
+        self,
+        question: str,
+        language: str = "ko",
+        max_chars: int = 7000,
+        evidence_scope: str = "stage",
+    ) -> dict[str, Any]:
         current = self.index.search(
             question,
             top_k=7,
             authorities={"canonical", "deck"},
             status_exclude=EXCLUDED_CURRENT_STATUSES,
         )
-        evidence = self._literature_hits(question, top_k=4)
-        reference_only = self._reference_only_hits(question, top_k=2)
+        evidence = self._literature_hits(question, top_k=4, usage_scope=evidence_scope)
+        reference_only = self._reference_only_hits(question, top_k=2, usage_scope=evidence_scope)
         supporting = self.index.search(question, top_k=4, authorities={"supporting"})
         conflicts = self._search_source(question, "knowledge/conflict_map.yaml", top_k=3)
         glossary = self._search_source(question, "knowledge/glossary.yaml", top_k=4)
@@ -215,6 +249,7 @@ class KnowledgeService:
         packet: dict[str, Any] = {
             "question": question,
             "language": language,
+            "evidence_scope": evidence_scope,
             "answer_instruction": (
                 "아래 재료로 의미가 정확한 짧은 문장을 만드세요. 확정 답안을 복사하지 말고 질문에 직접 답하세요. "
                 "후보값·미검증 가설·과거 이력은 상태를 숨기지 마세요."
@@ -304,25 +339,34 @@ class KnowledgeService:
             "rule": "미확정은 숨기지 않고 현재 상태, 권고 표현, 필요한 검증을 함께 말합니다.",
         }
 
-    def list_captures(self, query: str = "문헌", top_k: int = 20) -> dict[str, Any]:
-        raw_groups = self.index.search(
-            query,
-            top_k=30,
-            authorities={"evidence", "historical"},
-            source_contains="knowledge/evidence/capture_index.yaml",
-        )
-        groups = [
-            hit for hit in raw_groups
-            if hit.document.metadata.get("card_status") != "excluded_banned"
-        ][: min(top_k, 12)]
+    def list_captures(self, query: str = "문헌", top_k: int = 20, usage_scope: str = "stage") -> dict[str, Any]:
+        if usage_scope not in EVIDENCE_SCOPES:
+            raise ValueError(f"usage_scope must be one of: {', '.join(sorted(EVIDENCE_SCOPES))}")
+        allowed_statuses = {
+            "stage": {"active"},
+            "qa_only": {"qa_only"},
+            "listed_only": {"listed_only"},
+            "all": {"active", "qa_only", "listed_only"},
+        }[usage_scope]
         generic_queries = {"", "문헌", "문헌 캡처", "근거", "근거 캡처", "captures", "literature"}
-        if not groups and query.strip().lower() in generic_queries:
+        if query.strip().lower() in generic_queries:
             groups = [
                 SearchHit(document, 1.0, document.body[:520])
                 for document in self.corpus.documents
                 if document.source_path == "knowledge/evidence/capture_index.yaml"
-                and document.metadata.get("card_status") != "excluded_banned"
-            ][: min(top_k, 12)]
+                and document.metadata.get("card_status") in allowed_statuses
+            ][: min(top_k, 30)]
+        else:
+            raw_groups = self.index.search(
+                query,
+                top_k=30,
+                authorities={"evidence", "supporting", "historical"},
+                source_contains="knowledge/evidence/capture_index.yaml",
+            )
+            groups = [
+                hit for hit in raw_groups
+                if hit.document.metadata.get("card_status") in allowed_statuses
+            ][: min(top_k, 30)]
         capture_ids: list[str] = []
         for group in groups:
             for capture_id in group.document.metadata.get("capture_ids", []):
@@ -334,6 +378,7 @@ class KnowledgeService:
             captures.append(metadata)
         return {
             "query": query,
+            "usage_scope": usage_scope,
             "groups": [hit.as_dict(include_body=True) for hit in groups],
             "captures": captures,
         }

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 from fastmcp import Client
+from fastmcp.exceptions import ToolError
 from starlette.testclient import TestClient
 
 from masil_mcp.server import create_server
@@ -61,6 +62,21 @@ async def test_capture_tool_returns_image_content() -> None:
         result = await client.call_tool("get_capture_image", {"capture_id": "capture-001"})
         assert not result.is_error
         assert any(content.type == "image" for content in result.content)
+
+
+@pytest.mark.asyncio
+async def test_non_stage_capture_requires_explicit_supporting_access() -> None:
+    server = create_server(auth_mode="none")
+    async with Client(server) as client:
+        with pytest.raises(ToolError):
+            await client.call_tool("get_capture_image", {"capture_id": "capture-042"})
+
+        allowed = await client.call_tool(
+            "get_capture_image",
+            {"capture_id": "capture-042", "allow_supporting": True},
+        )
+        assert not allowed.is_error
+        assert any(content.type == "image" for content in allowed.content)
 
 
 @pytest.mark.asyncio
