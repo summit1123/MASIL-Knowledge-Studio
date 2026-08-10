@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from .corpus import KnowledgeCorpus
-from .models import SearchHit
+from .models import KnowledgeDocument, SearchHit
 from .search import HybridSearchIndex, normalize
 
 
@@ -33,6 +33,7 @@ EXCLUDED_CURRENT_STATUSES = {
 }
 MIN_EVIDENCE_SCORE = 8.0
 EVIDENCE_SCOPES = {"stage", "qa_only", "listed_only", "all"}
+OPEN_ITEM_STATUSES = {"unresolved", "pilot_hypothesis", "candidate_parameter", "planned_not_implemented"}
 SOURCE_TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9-]{3,}")
 SOURCE_TOKEN_STOPWORDS = {
     "looking",
@@ -539,19 +540,224 @@ class KnowledgeService:
             packet["packet_chars"] = final_size
         return packet
 
-    def list_open_items(self, query: str = "미확정 unresolved 검증 필요", top_k: int = 12) -> dict[str, Any]:
+    @staticmethod
+    def _focused_hits(
+        hits: list[SearchHit],
+        *,
+        limit: int,
+        absolute_floor: float = 5.0,
+        relative_floor: float = 0.12,
+    ) -> list[SearchHit]:
+        """Drop weak tail matches instead of presenting them as relevant material."""
+        if not hits:
+            return []
+        cutoff = max(absolute_floor, hits[0].score * relative_floor)
+        return [hit for hit in hits if hit.score >= cutoff][:limit]
+
+    def prepare_topic_brief(self, topic: str) -> dict[str, Any]:
+        """Return sourced interpretation material without inventing likely questions."""
+        current = self._filtered_search(
+            topic,
+            top_k=6,
+            predicate=lambda document: (
+                document.authority in {"canonical", "deck"}
+                and document.source_path in ANSWER_FACT_SOURCES
+                and document.status.lower() not in EXCLUDED_CURRENT_STATUSES
+            ),
+        )
+        guardrails = self._filtered_search(
+            topic,
+            top_k=5,
+            predicate=lambda document: (
+                document.source_path in GUARDRAIL_SOURCES
+                and document.authority == "canonical"
+                and document.status.lower() not in EXCLUDED_CURRENT_STATUSES
+            ),
+        )
+        open_material = self._filtered_search(
+            topic,
+            top_k=5,
+            predicate=lambda document: (
+                document.source_path == "knowledge/product_model.yaml"
+                and document.status in OPEN_ITEM_STATUSES
+            ),
+        )
+        examples = self._filtered_search(
+            topic,
+            top_k=3,
+            predicate=lambda document: (
+                document.source_path == "knowledge/qa/cards.yaml"
+                and document.status == "active"
+            ),
+        )
+
+        current = self._focused_hits(current, limit=5)
+        guardrails = self._focused_hits(guardrails, limit=4)
+        open_material = self._focused_hits(open_material, limit=4)
+        examples = self._focused_hits(examples, limit=2)
+
+        linked_evidence: list[KnowledgeDocument] = []
+        linked_supports: dict[str, list[str]] = {}
+        seen_ids: set[str] = set()
+        for hit in current:
+            refs = hit.document.metadata.get("evidence_ref", [])
+            if isinstance(refs, str):
+                refs = [refs]
+            for link in hit.document.metadata.get("evidence_links", []):
+                if not isinstance(link, dict) or not link.get("ref"):
+                    continue
+                ref = str(link["ref"])
+                refs.append(ref)
+                if link.get("supports"):
+                    linked_supports.setdefault(ref, []).append(str(link["supports"]))
+            for ref in refs:
+                if not str(ref).startswith("knowledge/evidence/registry.yaml#"):
+                    continue
+                document = self.corpus.by_id.get(str(ref))
+                if document and document.status == "stage_citable" and document.id not in seen_ids:
+                    linked_evidence.append(document)
+                    seen_ids.add(document.id)
+
+        if linked_evidence:
+            ranking_documents = [
+                KnowledgeDocument(
+                    id=document.id,
+                    title=document.title,
+                    body="\n".join([*linked_supports.get(document.id, []), document.body]),
+                    source_path=document.source_path,
+                    authority=document.authority,
+                    status=document.status,
+                    layer=document.layer,
+                    topic=document.topic,
+                    tags=document.tags,
+                    metadata=document.metadata,
+                )
+                for document in linked_evidence
+            ]
+            ranked = HybridSearchIndex(ranking_documents).search(topic, top_k=len(ranking_documents))
+            ranked_ids = [hit.document.id for hit in ranked]
+            ranked_ids.extend(document.id for document in linked_evidence if document.id not in ranked_ids)
+            linked_by_id = {document.id: document for document in linked_evidence}
+            linked_evidence = [linked_by_id[document_id] for document_id in ranked_ids]
+
+        return {
+            "topic": topic,
+            "purpose": "이 주제를 이해하고 설명할 재료를 제공합니다. 예상 질문이나 정답 문장을 자동 생성하지 않습니다.",
+            "usage_rules": [
+                "current_position은 현재 팀 입장과 덱 사실입니다.",
+                "claim_boundaries는 과장·오해를 피하기 위한 경계이며 질문 목록이 아닙니다.",
+                "validation_boundaries는 검증 전 항목입니다. 비어 있으면 억지로 약점을 만들지 마세요.",
+                "forbidden_claims와 must_not_say를 likely questions로 변환하지 마세요.",
+                "사용자가 실제 질문을 주면 이 재료를 prepare_answer_context와 함께 사용해 짧고 쉬운 답을 구성하세요.",
+                "사용자가 예상 질문 생성을 명시적으로 요청한 경우에만 별도로 생성하고, generated by Claude라고 표시하세요.",
+            ],
+            "current_position": [hit.as_dict(include_body=True) for hit in current],
+            "claim_boundaries": [hit.as_dict(include_body=True) for hit in guardrails],
+            "validation_boundaries": [hit.as_dict(include_body=True) for hit in open_material],
+            "linked_literature": [
+                {
+                    "id": document.id,
+                    "title": document.title,
+                    "status": document.status,
+                    "supports": linked_supports.get(document.id, []),
+                    "body": document.body,
+                    "metadata": document.metadata,
+                }
+                for document in linked_evidence[:4]
+            ],
+            "plain_wording_material": [hit.as_dict(include_body=True) for hit in examples],
+        }
+
+    def resolve_evidence_capture(self, query: str, usage_scope: str = "stage") -> dict[str, Any]:
+        """Resolve a capture through an exact literature mapping before display."""
+        evidence = self.get_evidence(query, top_k=6, include_captures=True, usage_scope=usage_scope)
+        recommended = evidence["recommended_captures"]
+        if recommended:
+            return {
+                "query": query,
+                "usage_scope": usage_scope,
+                "literature": evidence["literature"] or evidence["reference_only"],
+                "capture": recommended[0],
+                "resolution": "direct_evidence_search",
+            }
+
+        brief = self.prepare_topic_brief(query)
+        allowed_statuses = {
+            "stage": {"stage_citable"},
+            "qa_only": {"qa_only"},
+            "listed_only": {"listed_only"},
+            "all": {"stage_citable", "qa_only", "listed_only"},
+        }.get(usage_scope)
+        if allowed_statuses is None:
+            raise ValueError(f"usage_scope must be one of: {', '.join(sorted(EVIDENCE_SCOPES))}")
+        for literature in brief["linked_literature"]:
+            if literature["status"] not in allowed_statuses:
+                continue
+            metadata = literature.get("metadata", {})
+            capture_ids = [
+                *metadata.get("source_capture_ids", []),
+                *metadata.get("deck_capture_ids", []),
+                *metadata.get("capture_ids", []),
+            ]
+            for capture_id in capture_ids:
+                capture, _ = self.capture(capture_id)
+                if capture.get("card_status") == "active" or usage_scope != "stage":
+                    return {
+                        "query": query,
+                        "usage_scope": usage_scope,
+                        "literature": [literature],
+                        "capture": capture,
+                        "resolution": "current_position_evidence_link",
+                    }
+        raise ValueError(
+            "No exact mapped capture was found for this topic. Do not guess a capture ID; explain that no exact capture is linked."
+        )
+
+    def list_open_items(
+        self,
+        query: str = "미확정 unresolved 검증 필요",
+        top_k: int = 20,
+        status_filter: str = "unresolved",
+    ) -> dict[str, Any]:
         self._validate_top_k(top_k)
-        unresolved = [
+        if status_filter not in {*OPEN_ITEM_STATUSES, "all"}:
+            raise ValueError(
+                "status_filter must be one of: unresolved, pilot_hypothesis, candidate_parameter, planned_not_implemented, all"
+            )
+        eligible = [
             document
             for document in self.corpus.documents
-            if document.status in {"unresolved", "pilot_hypothesis", "candidate_parameter", "planned_not_implemented"}
+            if document.source_path == "knowledge/product_model.yaml"
+            and document.status in OPEN_ITEM_STATUSES
+            and (status_filter == "all" or document.status == status_filter)
         ]
-        local = HybridSearchIndex(unresolved)
-        hits = local.search(query, top_k=top_k) if unresolved else []
+        generic_queries = {
+            "",
+            "미확정",
+            "미확정 항목",
+            "미확정 unresolved 검증 필요",
+            "unresolved",
+            "open items",
+        }
+        if query.strip().lower() in generic_queries:
+            hits = [SearchHit(document, 1.0, document.body[:520]) for document in eligible[:top_k]]
+        else:
+            local = HybridSearchIndex(eligible)
+            hits = local.search(query, top_k=top_k) if eligible else []
+        status_counts = {
+            status: sum(document.status == status for document in eligible)
+            for status in sorted(OPEN_ITEM_STATUSES)
+            if any(document.status == status for document in eligible)
+        }
         return {
             "query": query,
+            "status_filter": status_filter,
+            "total_count": len(eligible),
+            "returned_count": len(hits),
+            "status_counts": status_counts,
+            "truncated": len(hits) < len(eligible),
             "items": [hit.as_dict(include_body=True) for hit in hits],
-            "rule": "미확정은 숨기지 않고 현재 상태, 권고 표현, 필요한 검증을 함께 말합니다.",
+            "rule": "items 길이를 전체 개수로 추정하지 말고 total_count를 사용합니다. unresolved, pilot_hypothesis, candidate_parameter를 서로 섞어 말하지 않습니다.",
         }
 
     def list_captures(self, query: str = "문헌", top_k: int = 20, usage_scope: str = "stage") -> dict[str, Any]:

@@ -151,6 +151,13 @@ positions:
       - out-of-zone 자체가 자동 벌점
     evidence_ref:
       - sources/11_V20_결정_기록_0810.md#3-care-review-계약
+      - knowledge/evidence/registry.yaml#presentation-ehsani-tefft-2021
+      - knowledge/evidence/registry.yaml#presentation-hirsch-activity-space-2014
+    evidence_links:
+      - ref: knowledge/evidence/registry.yaml#presentation-ehsani-tefft-2021
+        supports: 생활권 밖의 익숙하지 않은 도로에서 위험이 커질 수 있다는 문제정의
+      - ref: knowledge/evidence/registry.yaml#presentation-hirsch-activity-space-2014
+        supports: 활동공간 확대나 위치만으로 자동 감점하지 않는 상품 경계
 
   - id: dashboard-13-point-difference
     topic: 대시보드 13%p 차이 설명 (덱 p.3 Edward 사례)

@@ -65,6 +65,20 @@ async def check(base_url: str) -> None:
 
     async with Client(f"{base_url}/mcp", auth=token, timeout=30) as client:
         tools = await client.list_tools()
+        names = {tool.name for tool in tools}
+        required = {
+            "connector_guide",
+            "prepare_topic_brief",
+            "show_evidence_capture",
+            "list_open_items",
+        }
+        if not required.issubset(names):
+            raise RuntimeError(f"authenticated MCP missing tools: {sorted(required - names)}")
+
+        guide = await client.call_tool("connector_guide", {})
+        if guide.is_error or "고정 답변집" not in guide.structured_content.get("purpose", ""):
+            raise RuntimeError("authenticated connector-guide call failed")
+
         search = await client.call_tool(
             "search_knowledge",
             {"query": "Care가 나온 다음 달은 어떻게 되나요"},
@@ -96,6 +110,17 @@ async def check(base_url: str) -> None:
         ):
             raise RuntimeError("authenticated answer-context call failed")
 
+        brief = await client.call_tool(
+            "prepare_topic_brief",
+            {"topic": "생활권 밖 위험과 위치 무감점"},
+        )
+        if (
+            brief.is_error
+            or "likely_questions" in brief.structured_content
+            or len(brief.structured_content.get("linked_literature", [])) != 2
+        ):
+            raise RuntimeError("authenticated topic-brief call failed")
+
         implementation = await client.call_tool("get_implementation", {"topic": "위험 이벤트 계수 8"})
         if implementation.is_error or not implementation.structured_content.get("observed_implementation"):
             raise RuntimeError("authenticated implementation call failed")
@@ -104,8 +129,13 @@ async def check(base_url: str) -> None:
         if comparison.is_error or not comparison.structured_content.get("conflicts"):
             raise RuntimeError("authenticated claim-comparison call failed")
 
-        open_items = await client.call_tool("list_open_items", {"query": "개인정보 공정성"})
-        if open_items.is_error or not open_items.structured_content.get("items"):
+        open_items = await client.call_tool("list_open_items", {})
+        if (
+            open_items.is_error
+            or open_items.structured_content.get("total_count") != 16
+            or open_items.structured_content.get("returned_count") != 16
+            or open_items.structured_content.get("truncated") is not False
+        ):
             raise RuntimeError("authenticated open-items call failed")
 
         captures = await client.call_tool("list_captures", {"query": "문헌", "top_k": 50})
@@ -160,12 +190,34 @@ async def check(base_url: str) -> None:
             raise RuntimeError("authenticated reference-only evidence mapping failed")
 
         image = await client.call_tool("get_capture_image", {"capture_id": "capture-024"})
-        if image.is_error or not any(content.type == "image" for content in image.content):
+        if (
+            image.is_error
+            or not any(content.type == "image" for content in image.content)
+            or not image.structured_content.get("display_url")
+        ):
             raise RuntimeError("authenticated image call failed")
+
+        resolved_image = await client.call_tool(
+            "show_evidence_capture",
+            {"query": "생활권 밖 위험 근거 캡처"},
+        )
+        if (
+            resolved_image.is_error
+            or resolved_image.structured_content.get("id") != "capture-006"
+            or not any(content.type == "image" for content in resolved_image.content)
+        ):
+            raise RuntimeError("authenticated resolved-image call failed")
 
         status = await client.call_tool("knowledge_status", {})
         if status.is_error or status.structured_content.get("captures") != 44:
             raise RuntimeError("authenticated knowledge-status call failed")
+
+    async with httpx.AsyncClient(follow_redirects=True, timeout=20) as http:
+        fallback_image = await http.get(resolved_image.structured_content["display_url"])
+        if fallback_image.status_code != 200 or not fallback_image.headers.get("content-type", "").startswith(
+            "image/"
+        ):
+            raise RuntimeError("public fallback image URL failed")
 
     print(
         json.dumps(
@@ -175,6 +227,8 @@ async def check(base_url: str) -> None:
                 "pkce_s256": "PASS",
                 "mcp_tool_count": len(tools),
                 "authenticated_tool_call": "PASS",
+                "connector_guide_call": "PASS",
+                "topic_brief_call": "PASS",
                 "product_logic_call": "PASS",
                 "slide_context_call": "PASS",
                 "answer_context_call": "PASS",
@@ -186,6 +240,8 @@ async def check(base_url: str) -> None:
                 "qa_only_mapping": "PASS",
                 "reference_only_mapping": "PASS",
                 "capture_image_call": "PASS",
+                "resolved_capture_call": "PASS",
+                "public_fallback_image_url": "PASS",
                 "knowledge_status_call": "PASS",
             },
             indent=2,

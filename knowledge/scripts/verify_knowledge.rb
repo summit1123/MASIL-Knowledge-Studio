@@ -422,7 +422,7 @@ expected_fields = %w[
   evidence_and_citations
   supporting_explanation_material
   conflicts_and_avoid_phrases
-  easy_spoken_answer
+  plain_wording_material
 ]
 abort_check("response packet fields mismatch") unless response_fields == expected_fields
 

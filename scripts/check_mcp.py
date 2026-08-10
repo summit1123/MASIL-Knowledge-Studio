@@ -12,21 +12,28 @@ async def check(url: str, auth: str | None) -> None:
         tools = await client.list_tools()
         names = sorted(tool.name for tool in tools)
         required = {
+            "connector_guide",
             "search_knowledge",
             "explain_product_logic",
             "get_slide_context",
             "get_evidence",
             "get_implementation",
             "compare_claims",
+            "prepare_topic_brief",
             "prepare_answer_context",
             "list_open_items",
             "list_captures",
+            "show_evidence_capture",
             "get_capture_image",
             "knowledge_status",
         }
         missing = required - set(names)
         if missing:
             raise RuntimeError(f"missing tools: {sorted(missing)}")
+
+        guide = await client.call_tool("connector_guide", {})
+        if guide.is_error or "고정 답변집" not in guide.structured_content.get("purpose", ""):
+            raise RuntimeError("connector guide call failed")
 
         search = await client.call_tool(
             "search_knowledge",
@@ -55,6 +62,25 @@ async def check(url: str, auth: str | None) -> None:
         if answer.is_error or not answer.structured_content.get("current_facts"):
             raise RuntimeError("answer packet tool call failed")
 
+        brief = await client.call_tool(
+            "prepare_topic_brief",
+            {"topic": "생활권 밖 위험과 위치 무감점"},
+        )
+        literature_ids = {
+            item.get("id", "").split("#")[-1]
+            for item in brief.structured_content.get("linked_literature", [])
+        }
+        if (
+            brief.is_error
+            or not brief.structured_content.get("current_position", [{}])[0].get("id", "").endswith(
+                "out-of-zone-risk-and-no-location-penalty"
+            )
+            or literature_ids
+            != {"presentation-ehsani-tefft-2021", "presentation-hirsch-activity-space-2014"}
+            or "likely_questions" in brief.structured_content
+        ):
+            raise RuntimeError("topic brief tool call failed")
+
         implementation = await client.call_tool("get_implementation", {"topic": "위험 이벤트 계수 8"})
         if implementation.is_error or not implementation.structured_content.get("observed_implementation"):
             raise RuntimeError("implementation tool call failed")
@@ -63,8 +89,13 @@ async def check(url: str, auth: str | None) -> None:
         if comparison.is_error or not comparison.structured_content.get("conflicts"):
             raise RuntimeError("claim comparison tool call failed")
 
-        open_items = await client.call_tool("list_open_items", {"query": "개인정보 공정성"})
-        if open_items.is_error or not open_items.structured_content.get("items"):
+        open_items = await client.call_tool("list_open_items", {})
+        if (
+            open_items.is_error
+            or open_items.structured_content.get("total_count") != 16
+            or open_items.structured_content.get("returned_count") != 16
+            or open_items.structured_content.get("truncated") is not False
+        ):
             raise RuntimeError("open-items tool call failed")
 
         captures = await client.call_tool("list_captures", {"query": "문헌", "top_k": 50})
@@ -77,8 +108,24 @@ async def check(url: str, auth: str | None) -> None:
             raise RuntimeError("capture inventory tool call failed")
 
         image = await client.call_tool("get_capture_image", {"capture_id": "capture-015"})
-        if image.is_error or not any(content.type == "image" for content in image.content):
+        if (
+            image.is_error
+            or not any(content.type == "image" for content in image.content)
+            or not image.structured_content.get("display_markdown", "").startswith("![")
+        ):
             raise RuntimeError("image tool call failed")
+
+        resolved_image = await client.call_tool(
+            "show_evidence_capture",
+            {"query": "생활권 밖 위험 근거 캡처"},
+        )
+        if (
+            resolved_image.is_error
+            or resolved_image.structured_content.get("id") != "capture-006"
+            or not any(content.type == "image" for content in resolved_image.content)
+            or not resolved_image.structured_content.get("display_url")
+        ):
+            raise RuntimeError("resolved evidence image call failed")
 
         status = await client.call_tool("knowledge_status", {})
         if status.is_error or status.structured_content.get("captures") != 44:
@@ -91,10 +138,12 @@ async def check(url: str, auth: str | None) -> None:
                     "tool_count": len(names),
                     "tools": names,
                     "search_results": search.structured_content["result_count"],
+                    "topic_brief_literature": sorted(literature_ids),
                     "answer_facts": len(answer.structured_content["current_facts"]),
                     "slide_2_claims": len(slide.structured_content["claims"]),
                     "active_capture_groups": captures.structured_content["total_group_count"],
                     "image_returned": True,
+                    "resolved_image": resolved_image.structured_content["id"],
                     "status": "PASS",
                 },
                 ensure_ascii=False,
