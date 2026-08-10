@@ -80,6 +80,8 @@ STATUS_FIELDS = ("status", "claim_status", "citation_tier", "state")
 BODY_PRIORITY_FIELDS = (
     "statement_ko",
     "statement_en",
+    "text_en",
+    "note_ko",
     "direct_answer_ko",
     "spoken_answer_en",
     "allowed_claim",
@@ -214,6 +216,16 @@ def load_yaml_documents(root: Path, relative_path: str) -> list[KnowledgeDocumen
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     documents: list[KnowledgeDocument] = []
     for trail, item in _iter_yaml_items(data):
+        # deck_claims.yaml groups claims under a page object. The recursive
+        # flattener yields each claim, so carry the parent page number into the
+        # flattened document instead of losing the slide-to-claim mapping.
+        if relative_path in DECK_YAML and "page" not in item and len(trail) >= 2 and trail[0] == "pages":
+            try:
+                parent_page = data["pages"][int(trail[1])]
+            except (KeyError, IndexError, TypeError, ValueError):
+                parent_page = {}
+            if parent_page.get("page") is not None:
+                item = {**item, "page": parent_page["page"]}
         raw_id = _first(item, IDENTITY_FIELDS, "/".join(trail))
         title = _first(item, TITLE_FIELDS, raw_id)
         body = _yaml_body(item)

@@ -43,6 +43,18 @@ async def test_in_memory_server_lists_and_calls_tools() -> None:
 
 
 @pytest.mark.asyncio
+async def test_slide_context_keeps_parent_page_mapping() -> None:
+    server = create_server(auth_mode="none")
+    async with Client(server) as client:
+        page_two = await client.call_tool("get_slide_context", {"page": 2})
+        claim_ids = {claim["id"] for claim in page_two.structured_content["claims"]}
+
+        assert len(claim_ids) == 7
+        assert "knowledge/claims/deck_claims.yaml#p2-pipeline" in claim_ids
+        assert "knowledge/claims/deck_claims.yaml#p2-mobility-rights" in claim_ids
+
+
+@pytest.mark.asyncio
 async def test_capture_tool_returns_image_content() -> None:
     server = create_server(auth_mode="none")
     async with Client(server) as client:

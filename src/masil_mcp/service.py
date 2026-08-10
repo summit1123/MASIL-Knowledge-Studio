@@ -121,15 +121,11 @@ class KnowledgeService:
         }
 
     def get_slide_context(self, page: int, detail: str = "compact") -> dict[str, Any]:
-        page_terms = [f"page: {page}", f"page_number: {page}", f"slide: {page}", f"p.{page}"]
-        hits: list[SearchHit] = []
-        for document in self.corpus.documents:
-            if document.authority != "deck":
-                continue
-            metadata = json.dumps(document.metadata, ensure_ascii=False)
-            searchable = f"{document.title}\n{document.body}\n{metadata}".lower()
-            if any(term.lower() in searchable for term in page_terms):
-                hits.append(SearchHit(document, 1.0, document.body[:520]))
+        hits = [
+            SearchHit(document, 1.0, document.body[:520])
+            for document in self.corpus.documents
+            if document.authority == "deck" and document.metadata.get("page") == page
+        ]
         if not hits:
             hits = self._search_source(str(page), "deck_claims.yaml", top_k=12)
         return {
