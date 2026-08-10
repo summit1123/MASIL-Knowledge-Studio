@@ -38,10 +38,16 @@ def test_answer_packet_is_compact_and_contains_conflict_guards() -> None:
     assert "conflicts_and_avoid" in packet
 
 
+def test_answer_packet_reports_its_final_serialized_size_within_budget() -> None:
+    service = KnowledgeService()
+    packet = service.prepare_answer_context("생활권 밖 주행은 왜 보는 건가요?", max_chars=7000)
+    assert packet["packet_chars"] <= 7000
+    assert packet["packet_chars"] == len(json.dumps(packet, ensure_ascii=False))
+
+
 def test_capture_path_is_confined_to_repository() -> None:
     service = KnowledgeService()
     metadata, path = service.capture("capture-001")
     assert metadata["id"] == "capture-001"
     assert path.exists()
     assert path.is_relative_to(service.root)
-

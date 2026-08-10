@@ -24,7 +24,10 @@ INSTRUCTIONS = """
 MASIL 발표 준비용 근거 서버입니다. 최신 상품 계약과 덱 사실을 먼저 사용하고,
 문헌은 allowed_claim과 caveat 범위에서만 사용하세요. 과거 Master Q&A와 변경 이력은
 질문 해석·충돌 탐지 재료이며 현재 규칙을 덮어쓰지 않습니다. 최종 답은 짧고 쉬운
-문장으로 구성하고 candidate, unresolved, historical 상태를 숨기지 마세요.
+문장으로 구성하고 candidate, unresolved, historical 상태를 숨기지 마세요. 사용자가
+문헌의 원문·캡처·덱 사용 위치를 요청하면 get_evidence로 정확한 캡처 ID와 deck_location을 찾고,
+get_capture_image를 이어 호출해 이미지를 답변 안에 직접 표시하세요. reference_only는
+목록·한계 설명용이고 banned 문헌은 현재 근거로 사용하지 마세요.
 """.strip()
 
 
@@ -106,7 +109,12 @@ def create_server(*, auth_mode: str | None = None, service: KnowledgeService | N
 
     @mcp.tool(tags={"evidence"})
     def get_evidence(query: str, top_k: int = 6, include_captures: bool = True) -> dict:
-        """Find literature cards and local capture IDs with allowed claims and caveats."""
+        """Find Summary/Appendix, Q&A-only, and explicit reference-only literature mappings.
+
+        If the user asks to see the source, quotation, screenshot, or deck use,
+        call get_capture_image with a recommended_captures id immediately after
+        this tool. Do not substitute a fuzzy or unrelated capture.
+        """
         return knowledge.get_evidence(query, top_k=top_k, include_captures=include_captures)
 
     @mcp.tool(tags={"implementation"})
@@ -140,12 +148,12 @@ def create_server(*, auth_mode: str | None = None, service: KnowledgeService | N
 
     @mcp.tool(tags={"evidence", "image"})
     def list_captures(query: str = "문헌", top_k: int = 20) -> dict:
-        """List local evidence capture IDs. Pass an ID to get_capture_image."""
+        """List literature capture IDs with deck location and usage status. Pass an ID to get_capture_image."""
         return knowledge.list_captures(query=query, top_k=top_k)
 
     @mcp.tool(tags={"evidence", "image"})
     def get_capture_image(capture_id: str) -> Image:
-        """Return one local literature/deck capture as an image in Claude's answer."""
+        """Display one exact literature/deck capture inline in Claude's answer."""
         _, path = knowledge.capture(capture_id)
         return Image(path=path)
 

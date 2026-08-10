@@ -20,6 +20,7 @@ SCOPES: dict[str, set[str] | None] = {
 }
 
 EXCLUDED_CURRENT_STATUSES = {"banned", "prohibited", "historical", "archived", "superseded", "deprecated"}
+MIN_EVIDENCE_SCORE = 8.0
 
 
 class KnowledgeService:
@@ -59,6 +60,52 @@ class KnowledgeService:
     def _search_source(self, query: str, source: str, top_k: int = 8) -> list[SearchHit]:
         return self.index.search(query, top_k=top_k, source_contains=source)
 
+    def _literature_hits(self, query: str, top_k: int) -> list[SearchHit]:
+        hits = self.index.search(
+            query,
+            top_k=min(max(top_k * 2, top_k), 30),
+            authorities={"evidence"},
+            source_contains="knowledge/evidence/registry.yaml",
+            status_exclude=EXCLUDED_CURRENT_STATUSES,
+        )
+        # 문헌명이 없고 공통 숫자·짧은 단어만 겹친 결과는 Q&A에 근거처럼 주입하지 않는다.
+        return [hit for hit in hits if hit.score >= MIN_EVIDENCE_SCORE][:top_k]
+
+    def _reference_only_hits(self, query: str, top_k: int) -> list[SearchHit]:
+        hits = self.index.search(
+            query,
+            top_k=min(max(top_k * 2, top_k), 30),
+            authorities={"historical"},
+            source_contains="knowledge/evidence/registry.yaml",
+        )
+        return [
+            hit for hit in hits
+            if hit.document.status == "listed_only" and hit.score >= MIN_EVIDENCE_SCORE
+        ][:top_k]
+
+    def _capture_groups_for(self, literature: list[SearchHit]) -> list[SearchHit]:
+        evidence_keys = {
+            hit.document.id.rsplit("#", 1)[-1]
+            for hit in literature
+        }
+        groups: list[SearchHit] = []
+        for document in self.corpus.documents:
+            if document.source_path != "knowledge/evidence/capture_index.yaml":
+                continue
+            if document.metadata.get("card_status") not in {"active", "qa_only", "listed_only"}:
+                continue
+            refs = set(document.metadata.get("evidence_refs", []))
+            if refs & evidence_keys:
+                groups.append(SearchHit(document, 1.0, document.body[:520]))
+        return groups
+
+    def _capture_records(self, capture_ids: list[str]) -> list[dict[str, Any]]:
+        records: list[dict[str, Any]] = []
+        for capture_id in capture_ids:
+            metadata, _ = self.capture(capture_id)
+            records.append(metadata)
+        return records
+
     def explain_product_logic(self, topic: str, detail: str = "compact") -> dict[str, Any]:
         hits = self.index.search(
             topic,
@@ -92,23 +139,38 @@ class KnowledgeService:
         }
 
     def get_evidence(self, query: str, top_k: int = 6, include_captures: bool = True) -> dict[str, Any]:
-        literature = self.index.search(query, top_k=top_k, source_contains="knowledge/evidence/registry.yaml")
-        capture_groups = (
-            self.index.search(query, top_k=min(top_k, 6), source_contains="knowledge/evidence/capture_index.yaml")
-            if include_captures
-            else []
-        )
+        literature = self._literature_hits(query, top_k=top_k)
+        reference_only = self._reference_only_hits(query, top_k=top_k)
+        selected = sorted([*literature, *reference_only], key=lambda hit: hit.score, reverse=True)
+        capture_groups = self._capture_groups_for(selected) if include_captures else []
         capture_ids: list[str] = []
-        for hit in [*literature, *capture_groups]:
-            for capture_id in hit.document.metadata.get("capture_ids", []):
+        for hit in selected:
+            metadata = hit.document.metadata
+            ordered = [
+                *metadata.get("source_capture_ids", []),
+                *metadata.get("deck_capture_ids", []),
+            ]
+            for capture_id in ordered or metadata.get("capture_ids", []):
                 if capture_id not in capture_ids:
                     capture_ids.append(capture_id)
+        recommended_ids: list[str] = []
+        if selected and include_captures:
+            top_metadata = selected[0].document.metadata
+            recommended_ids = list(top_metadata.get("source_capture_ids", []))
+            if not recommended_ids:
+                recommended_ids = list(top_metadata.get("deck_capture_ids", []))
         return {
             "query": query,
             "literature": [hit.as_dict(include_body=True) for hit in literature],
+            "reference_only": [hit.as_dict(include_body=True) for hit in reference_only],
             "capture_groups": [hit.as_dict(include_body=True) for hit in capture_groups],
             "capture_ids": capture_ids,
-            "citation_rule": "allowed_claim과 caveat 범위 안에서만 사용하고 banned·listed_only를 선제 근거로 쓰지 마세요.",
+            "recommended_captures": self._capture_records(recommended_ids),
+            "citation_rule": "allowed_claim과 caveat 범위 안에서만 사용하세요. listed_only는 목록·한계·충돌 설명용이며 선제 근거로 쓰지 않습니다. banned는 반환하지 않습니다.",
+            "capture_display_rule": (
+                "사용자가 근거 원문·캡처·어디에 쓰였는지를 요청하면 recommended_captures의 id를 "
+                "get_capture_image에 넘겨 이미지를 직접 표시하세요. source 캡처가 없으면 deck_only 상태를 밝혀야 합니다."
+            ),
         }
 
     def get_implementation(self, topic: str = "점수 Care 할인 생활권") -> dict[str, Any]:
@@ -140,7 +202,8 @@ class KnowledgeService:
             authorities={"canonical", "deck"},
             status_exclude=EXCLUDED_CURRENT_STATUSES,
         )
-        evidence = self.index.search(question, top_k=4, authorities={"evidence"}, status_exclude=EXCLUDED_CURRENT_STATUSES)
+        evidence = self._literature_hits(question, top_k=4)
+        reference_only = self._reference_only_hits(question, top_k=2)
         supporting = self.index.search(question, top_k=4, authorities={"supporting"})
         conflicts = self._search_source(question, "knowledge/conflict_map.yaml", top_k=3)
         glossary = self._search_source(question, "knowledge/glossary.yaml", top_k=4)
@@ -162,10 +225,24 @@ class KnowledgeService:
             ),
             "current_facts": [answer_hit(hit, 900) for hit in current[:5]],
             "evidence": [answer_hit(hit, 700) for hit in evidence[:3]],
+            "reference_only": [answer_hit(hit, 700) for hit in reference_only[:2]],
+            "evidence_captures": [],
             "explanation_material": [answer_hit(hit) for hit in supporting[:2]],
             "conflicts_and_avoid": [answer_hit(hit, 650) for hit in conflicts[:2]],
             "fixed_terms": [answer_hit(hit) for hit in glossary[:2]],
+            "truncated": False,
+            "packet_chars": max_chars,
         }
+        capture_source = evidence[0] if evidence else (reference_only[0] if reference_only else None)
+        if capture_source:
+            metadata = capture_source.document.metadata
+            capture_ids = list(metadata.get("source_capture_ids", []))
+            if not capture_ids:
+                capture_ids = list(metadata.get("deck_capture_ids", []))
+            packet["evidence_captures"] = self._capture_records(capture_ids)
+            packet["answer_instruction"] += (
+                " 사용자가 근거 캡처를 요청했다면 evidence_captures의 id로 get_capture_image를 호출해 이미지를 직접 보여주세요."
+            )
 
         def packet_size() -> int:
             return len(json.dumps(packet, ensure_ascii=False))
@@ -174,6 +251,8 @@ class KnowledgeService:
         minimums = {
             "current_facts": 2,
             "evidence": 0,
+            "reference_only": 0,
+            "evidence_captures": 1 if packet["evidence_captures"] else 0,
             "explanation_material": 0,
             "conflicts_and_avoid": 0,
             "fixed_terms": 0,
@@ -181,7 +260,9 @@ class KnowledgeService:
         drop_order = (
             "explanation_material",
             "fixed_terms",
+            "evidence_captures",
             "evidence",
+            "reference_only",
             "conflicts_and_avoid",
             "current_facts",
         )
@@ -194,7 +275,7 @@ class KnowledgeService:
                 break
 
         if packet_size() > max_chars:
-            for key in ("current_facts", "conflicts_and_avoid", "evidence"):
+            for key in ("current_facts", "conflicts_and_avoid", "evidence", "reference_only"):
                 for item in packet[key]:
                     for field, limit in (("body", 360), ("snippet", 240)):
                         value = item.get(field)
@@ -209,6 +290,7 @@ class KnowledgeService:
         packet["truncated"] = any(
             len(packet[key]) < count for key, count in original_counts.items()
         )
+        packet["packet_chars"] = packet_size()
         packet["packet_chars"] = packet_size()
         return packet
 
@@ -227,14 +309,29 @@ class KnowledgeService:
         }
 
     def list_captures(self, query: str = "문헌", top_k: int = 20) -> dict[str, Any]:
-        groups = self.index.search(query, top_k=min(top_k, 12), source_contains="knowledge/evidence/capture_index.yaml")
+        raw_groups = self.index.search(
+            query,
+            top_k=30,
+            authorities={"evidence", "historical"},
+            source_contains="knowledge/evidence/capture_index.yaml",
+        )
+        groups = [
+            hit for hit in raw_groups
+            if hit.document.metadata.get("card_status") != "excluded_banned"
+        ][: min(top_k, 12)]
+        generic_queries = {"", "문헌", "문헌 캡처", "근거", "근거 캡처", "captures", "literature"}
+        if not groups and query.strip().lower() in generic_queries:
+            groups = [
+                SearchHit(document, 1.0, document.body[:520])
+                for document in self.corpus.documents
+                if document.source_path == "knowledge/evidence/capture_index.yaml"
+                and document.metadata.get("card_status") != "excluded_banned"
+            ][: min(top_k, 12)]
         capture_ids: list[str] = []
         for group in groups:
             for capture_id in group.document.metadata.get("capture_ids", []):
                 if capture_id not in capture_ids:
                     capture_ids.append(capture_id)
-        if not capture_ids:
-            capture_ids = [document.id.removeprefix("capture://") for document in self.corpus.documents if document.id.startswith("capture://")]
         captures = []
         for capture_id in capture_ids[:top_k]:
             metadata, _ = self.capture(capture_id)

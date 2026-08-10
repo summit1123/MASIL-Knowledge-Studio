@@ -359,9 +359,55 @@ invalid_capture_links = local_capture_entries.select do |entry|
 end
 abort_check("invalid presentation capture links") unless invalid_capture_links.empty?
 capture_index = objects.fetch("knowledge/evidence/capture_index.yaml")
-indexed_ids = capture_index.fetch("capture_groups", []).flat_map { |group| group.fetch("capture_ids", []) }.uniq
+capture_groups = capture_index.fetch("capture_groups", [])
+all_indexed_ids = capture_groups.flat_map { |group| group.fetch("capture_ids", []) }
+indexed_id_counts = all_indexed_ids.each_with_object(Hash.new(0)) { |id, counts| counts[id] += 1 }
+duplicate_indexed_ids = indexed_id_counts.select { |_id, count| count > 1 }
+abort_check("captures appear in multiple index groups: #{duplicate_indexed_ids.inspect}") unless duplicate_indexed_ids.empty?
+indexed_ids = all_indexed_ids.uniq
 abort_check("capture index is incomplete") unless indexed_ids.sort == capture_by_id.keys.sort
-puts "EVIDENCE_CAPTURES=external_reviewed:#{presentation_entries.size} local_assets:#{declared_local_capture_count} linked_entries:#{local_capture_entries.size}"
+required_capture_metadata = %w[source_key source capture_kind deck_location card_status heading caption context]
+incomplete_capture_metadata = capture_manifest.fetch("captures", []).select do |capture|
+  required_capture_metadata.any? { |field| !capture[field].is_a?(String) || capture[field].strip.empty? }
+end
+abort_check("capture metadata is incomplete") unless incomplete_capture_metadata.empty?
+
+presentation_by_key = presentation_entries.to_h { |entry| [entry["key"], entry] }
+invalid_group_links = capture_groups.select do |group|
+  refs = group.fetch("evidence_refs", [])
+  next false if refs.empty?
+
+  refs.any? do |ref|
+    entry = presentation_by_key[ref]
+    entry.nil? || Array(entry["capture_ids"]).sort != group.fetch("capture_ids", []).sort
+  end
+end
+abort_check("capture groups disagree with literature entries") unless invalid_group_links.empty?
+
+invalid_capture_kinds = presentation_entries.select do |entry|
+  deck_ids = Array(entry["deck_capture_ids"])
+  source_ids = Array(entry["source_capture_ids"])
+  deck_ids.any? { |id| capture_by_id.dig(id, "capture_kind") != "deck" } ||
+    source_ids.any? { |id| capture_by_id.dig(id, "capture_kind") != "source" } ||
+    (deck_ids + source_ids).sort != Array(entry["capture_ids"]).sort
+end
+abort_check("deck/source capture classification mismatch") unless invalid_capture_kinds.empty?
+
+active_literature = presentation_entries.select { |entry| entry["citation_tier"] == "stage_citable" }
+active_capture_groups = capture_groups.select { |group| group["card_status"] == "active" }
+active_group_refs = active_capture_groups.flat_map { |group| group.fetch("evidence_refs", []) }.sort
+abort_check("active literature and capture groups disagree") unless active_group_refs == active_literature.map { |entry| entry["key"] }.sort
+{
+  "qa_only" => "qa_only",
+  "listed_only" => "listed_only",
+  "banned" => "excluded_banned"
+}.each do |tier, group_status|
+  entry_keys = presentation_entries.select { |entry| entry["citation_tier"] == tier }.map { |entry| entry["key"] }.sort
+  group_refs = capture_groups.select { |group| group["card_status"] == group_status }
+                             .flat_map { |group| group.fetch("evidence_refs", []) }.sort
+  abort_check("#{tier} literature and capture groups disagree") unless group_refs == entry_keys
+end
+puts "EVIDENCE_CAPTURES=stage:#{active_literature.size} qa:#{presentation_entries.count { |entry| entry["citation_tier"] == "qa_only" }} listed:#{presentation_entries.count { |entry| entry["citation_tier"] == "listed_only" }} banned:#{presentation_entries.count { |entry| entry["citation_tier"] == "banned" }} local_assets:#{declared_local_capture_count}"
 
 pipeline = manifest.fetch("retrieval_pipeline", [])
 expected_stages = %w[current_facts supporting_context conflict_resolution response_packet]

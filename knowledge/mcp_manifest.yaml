@@ -129,7 +129,9 @@ asset_policy:
   completed:
     - Master Q&A 본문을 로컬 텍스트로 내보냄
     - 문헌·덱 캡처 44개를 로컬 이미지와 SHA-256 manifest로 저장
-    - 캡처 그룹을 문헌·덱 주제와 연결
+    - Summary·Appendix 문헌 22개를 주장·주의사항·장표 위치·원문/덱 캡처에 정확히 연결
+    - References/Q&A 문헌 5개도 사용 지위와 함께 검색 가능하게 연결
+    - 인용 중지 2건은 충돌 이력과 캡처만 보존하고 현재 근거에서 제외
 
 retrieval_pipeline:
   - stage: current_facts

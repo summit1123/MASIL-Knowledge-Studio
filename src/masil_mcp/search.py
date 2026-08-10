@@ -106,7 +106,14 @@ class HybridSearchIndex:
                 denominator = frequency + 1.2 * (1 - 0.75 + 0.75 * length / max(1, self.average_length))
                 score += query_count * inverse * (frequency * 2.2 / denominator)
             searchable = normalize(document.searchable_text)
-            if normalized_query in searchable:
+            if re.fullmatch(r"[0-9a-z_.+%-]+", normalized_query):
+                exact_phrase = re.search(
+                    rf"(?<![0-9a-z_]){re.escape(normalized_query)}(?![0-9a-z_])",
+                    searchable,
+                ) is not None
+            else:
+                exact_phrase = normalized_query in searchable
+            if exact_phrase:
                 score += 8.0
             if normalized_query == normalize(document.id) or normalized_query == normalize(document.title):
                 score += 25.0
@@ -125,4 +132,3 @@ def group_hits(hits: Iterable[SearchHit]) -> dict[str, list[SearchHit]]:
     for hit in hits:
         grouped[hit.document.authority].append(hit)
     return dict(grouped)
-

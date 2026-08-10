@@ -21,172 +21,228 @@ meta:
     local_capture_available: 이 저장소에서 MCP가 직접 반환할 수 있는 로컬 이미지 파일이 있음
 
 presentation_entries:
-  - key: presentation-ehsani-tefft-2021
-    canonical_key: ehsani-tefft-2021
-    source: Ehsani & Tefft 2021, CHANCE 34(1)
+  # 이 컬렉션은 최종 덱의 Summary·Appendix 문헌과 References/Q&A 카드를 함께 담는다.
+  # citation_tier로 무대 사용, 질문 시 사용, 목록·한계 설명, 인용 중지를 구분한다.
+  - key: presentation-taas-koroad-2026
+    source: 경찰청·도로교통공단 2026 고령 운전자 교통사고 발표
     citation_tier: stage_citable
-    usage_scope: summary_1_appendix_a
-    allowed_claim: 익숙하지 않은 도로에서 사고 연루 가능성이 2.5배 높았다
-    caveat: 고령자만의 효과로 일반화하지 않고 crash involvement로 표현
-    deck_location: Summary 1 · Appendix A
+    usage_scope: summary_1
+    allowed_claim: 2024→2025년 전체 사고는 196,349→193,889건(-1.3%)으로 감소했지만 고령 운전자 사고는 42,369→45,873건(+8.3%), 사망은 761→843명(+10.8%)으로 증가
+    caveat: TAAS의 고령 운전자 행과 고령 피해자를 포함하는 노인 행을 혼동하지 않음
+    deck_location: Summary 1
     capture_reviewed_in_external_source: true
     local_capture_available: true
-    capture_ids: [capture-005, capture-006, capture-026]
-    url: https://doi.org/10.1080/09332480.2021.1885934
+    capture_status: source_and_deck
+    deck_capture_ids: [capture-001]
+    source_capture_ids: [capture-002]
+    capture_ids: [capture-001, capture-002]
+
+  - key: presentation-kca-2024-elderly-drivers
+    source: 한국소비자원 2024 고령운전자 안전실태조사
+    citation_tier: stage_citable
+    usage_scope: summary_1
+    allowed_claim: 시야가 제한된 돌발 상황에서 고령 2.28초와 비고령 1.20초가 관찰됨
+    caveat: 일반 제동 반응 또는 모든 상황에서 90% 느리다고 일반화하지 않음. 같은 시험의 교차로 우회전 조건 차이는 0.02초
+    deck_location: Summary 1
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: source_and_deck
+    deck_capture_ids: [capture-003]
+    source_capture_ids: [capture-004]
+    capture_ids: [capture-003, capture-004]
+    url: https://www.kca.go.kr/smartconsumer/board/download.do?fno=10046786&bid=00000146&did=1003858738&menukey=7301
 
   - key: presentation-mcgwin-brown-1999
     source: McGwin & Brown 1999
     citation_tier: stage_citable
     usage_scope: summary_1
-    allowed_claim: 고령 운전자 사고가 교차로와 양보 상황에 집중되는 경향
-    caveat: 부주의 전체로 일반화하지 않고 situational judgment 맥락으로 사용
+    allowed_claim: 고령 운전자 사고가 교차로와 양보 등 상황 판단이 필요한 조건에 집중되는 경향
+    caveat: 부주의 전체로 일반화하지 않고 situational judgment 맥락으로만 사용. 아티팩트 검증 범위는 초록
     deck_location: Summary 1
     capture_reviewed_in_external_source: true
     local_capture_available: true
-    capture_ids: [capture-005, capture-006]
+    capture_status: deck_only
+    deck_capture_ids: [capture-005]
+    source_capture_ids: []
+    capture_ids: [capture-005]
     url: https://doi.org/10.1016/S0001-4575(98)00061-X
+
+  - key: presentation-ehsani-tefft-2021
+    source: Ehsani & Tefft 2021, CHANCE 34(1)
+    citation_tier: stage_citable
+    usage_scope: summary_1_appendix_a
+    allowed_claim: 처음 가는 도로에서 사고 연루 가능성이 2.5배, 월 1회 미만 방문 도로에서는 27% 높았음
+    caveat: 전 연령 데이터이며 고령자만의 효과로 일반화하지 않고 crash involvement로 표현. 사고 70%가 자택 8km 이내라는 문장은 이 논문에 없음
+    deck_location: Summary 1 · Appendix A
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: deck_only_source_pdf_reviewed
+    deck_capture_ids: [capture-006]
+    source_capture_ids: []
+    capture_ids: [capture-006]
+    url: https://doi.org/10.1080/09332480.2021.1885934
+
+  - key: presentation-oecd-ageing-transport-2001
+    source: OECD 2001, Ageing and Transport
+    citation_tier: stage_citable
+    usage_scope: appendix_a
+    allowed_claim: 2030년 65세 이상은 인구 4명 중 1명이며 같은 보고서는 전체 운전자의 약 3분의 1에 이를 것으로 전망
+    caveat: 인구를 운전자로 바꿔 말하지 않음. 덱의 4명 중 1명은 persons 기준
+    deck_location: Appendix A
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: source_and_deck
+    deck_capture_ids: [capture-007]
+    source_capture_ids: [capture-008]
+    capture_ids: [capture-007, capture-008]
+    url: https://doi.org/10.1787/9789264195851-en
+
+  - key: presentation-chen-2025-neurology
+    source: Chen et al. 2025, Neurology 105(12)
+    citation_tier: stage_citable
+    usage_scope: appendix_a_appendix_d
+    allowed_claim: DRIVES 코호트에서 기저 시점 운전은 유사했지만 시간에 따른 주행 궤적이 분화됐고 주행 변수만으로 MCI 판별 AUC 0.82를 보임
+    caveat: MASIL이 인지장애를 진단한다고 말하지 않고 행동 신호의 선행 가능성과 개입 시점 근거로만 사용
+    deck_location: Appendix A · Appendix D
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: deck_only_source_reviewed
+    deck_capture_ids: [capture-009]
+    source_capture_ids: []
+    capture_ids: [capture-009]
+    url: https://doi.org/10.1212/WNL.0000000000214440
+
+  - key: presentation-iihs-older-people-2026
+    source: IIHS 2026 Fatality Facts — Older people
+    citation_tier: stage_citable
+    usage_scope: appendix_a
+    allowed_claim: 교차로 다중차량 치명사고 비중이 80세 이상 43%, 16–59세 24%
+    caveat: 전체 사고율이 아니라 치명사고에 연루된 다중차량 교차로 사고의 비중
+    deck_location: Appendix A
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: source_and_deck
+    deck_capture_ids: [capture-010, capture-044]
+    source_capture_ids: [capture-011]
+    capture_ids: [capture-010, capture-011, capture-044]
+
+  - key: presentation-eu-commission-road-safety-2025
+    source: European Commission DG MOVE 2025 road safety statistics
+    citation_tier: stage_citable
+    usage_scope: appendix_a
+    allowed_claim: EU에서 65세 이상은 인구의 21%이지만 도로 사망의 31%를 차지하며 2019년 28%에서 상승
+    caveat: 인구 구성비와 도로 사망 구성비의 비교이며 개인별 사고 확률로 바꾸지 않음
+    deck_location: Appendix A
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: source_and_deck
+    deck_capture_ids: [capture-012]
+    source_capture_ids: [capture-013]
+    capture_ids: [capture-012, capture-013]
+
+  - key: presentation-erso-older-driver-risk
+    source: European Road Safety Observatory, Older drivers
+    citation_tier: stage_citable
+    usage_scope: appendix_a
+    allowed_claim: 주행거리를 감안할 때 75세 이상 승용차 운전자의 사망률은 전연령 평균의 5배 이상
+    caveat: 사고를 5배 더 낸다고 바꾸지 않으며 fatality risk와 신체 취약성에 따른 심도를 구분
+    deck_location: Appendix A
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: source_and_deck
+    deck_capture_ids: [capture-014]
+    source_capture_ids: [capture-015]
+    capture_ids: [capture-014, capture-015]
+    url: https://road-safety.transport.ec.europa.eu/eu-road-safety-policy/priorities/safe-road-use/elderly-drivers/older-drivers-risky-or-risk/high-fatality-rate-more-crashes-or-more-severe-injuries_en
+
+  - key: presentation-budget-direct-singapore-2025
+    source: Budget Direct Singapore 2025 senior driver requirements
+    citation_tier: stage_citable
+    usage_scope: appendix_a
+    allowed_claim: 싱가포르는 2025-08-01부터 65세 이상 운전자에게 3년 주기 의료증명을 요구하며 조건에 따라 인지·시야 검사를 추가할 수 있음
+    caveat: 제도 시행일과 기사 게시일 2025-09-22를 구분
+    deck_location: Appendix A
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: deck_only_source_reviewed
+    deck_capture_ids: [capture-016]
+    source_capture_ids: []
+    capture_ids: [capture-016]
+
+  - key: presentation-kotra-renewal-2018
+    source: KOTRA 2018 도로교통법 개정안 안내
+    citation_tier: stage_citable
+    usage_scope: appendix_a
+    allowed_claim: 한국 운전면허 갱신 주기는 기본 10년, 65세 이상 5년, 75세 이상 3년이며 75세 이상 추가 단축 법안이 발의됨
+    caveat: 당시 개정안의 발의와 현행 제도를 구분
+    deck_location: Appendix A
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: source_and_deck
+    deck_capture_ids: [capture-017]
+    source_capture_ids: [capture-018]
+    capture_ids: [capture-017, capture-018]
+
+  - key: presentation-chihuri-driving-cessation-2016
+    source: Chihuri et al. 2016
+    citation_tier: stage_citable
+    usage_scope: appendix_a
+    allowed_claim: 운전 중단은 우울 증상 위험 OR 1.91과 건강·사회·인지 기능 저하 및 시설 입소·사망 위험 증가와 연관
+    caveat: 인과를 단정하지 않고 체계적 고찰의 연관성으로 설명
+    deck_location: Appendix A
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: source_and_deck
+    deck_capture_ids: [capture-019]
+    source_capture_ids: [capture-020]
+    capture_ids: [capture-019, capture-020]
+    url: https://doi.org/10.1111/jgs.13931
+
+  - key: presentation-inews24-enrollment-2024
+    source: iNews24 2024 고령운전자 안전교육 할인특약 가입 기사
+    citation_tier: stage_citable
+    usage_scope: appendix_a
+    allowed_claim: 국내 고령운전자 안전교육 할인특약의 가입률이 약 0.52%로 매우 낮음
+    caveat: 교육 이수형 특약의 이용률이며 MASIL의 예상 가입률을 직접 입증하지 않음
+    deck_location: Appendix A
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: source_and_deck
+    deck_capture_ids: [capture-021]
+    source_capture_ids: [capture-022]
+    capture_ids: [capture-021, capture-022]
 
   - key: presentation-cicchino-mccartt-2015
     source: Cicchino & McCartt 2015
     citation_tier: stage_citable
     usage_scope: appendix_a
-    allowed_claim: 고령 운전자의 inadequate surveillance 오류 중 looking but not seeing이 71%, 중년은 40%
-    caveat: 전체 사고 원인의 71%라고 말하지 않음
+    allowed_claim: 고령 운전자의 inadequate surveillance 오류 중 looking but not seeing이 71%, 중년은 40%이며 고령 사례의 66%가 교차로 좌회전
+    caveat: 전체 사고 원인의 71%라고 말하지 않고 주시 실패 사례 안의 구성비로 설명
     deck_location: Appendix A
     capture_reviewed_in_external_source: true
-    local_capture_available: false
+    local_capture_available: true
+    capture_status: source_and_deck
+    deck_capture_ids: [capture-023]
+    source_capture_ids: [capture-024]
+    capture_ids: [capture-023, capture-024]
     url: https://doi.org/10.1016/j.aap.2015.04.015
-
-  - key: presentation-chen-2025-neurology
-    source: Chen et al. 2025, Neurology 105(12)
-    citation_tier: stage_citable
-    usage_scope: appendix_a
-    allowed_claim: 인지 변화가 일상 운전·이동 패턴 변화로 먼저 나타날 수 있음
-    caveat: MASIL이 인지장애를 진단한다고 말하지 않음
-    deck_location: Appendix A
-    capture_reviewed_in_external_source: true
-    local_capture_available: false
-    url: https://doi.org/10.1212/WNL.0000000000214440
 
   - key: presentation-vivoda-2021
     source: Vivoda et al. 2021
     citation_tier: stage_citable
     usage_scope: appendix_a
-    allowed_claim: 초기 자기조절 행동으로 야간 운전 회피 58.8%와 낯선 지역 회피가 관찰됨
-    caveat: 전체 고령자가 모두 회피한다고 일반화하지 않음
+    allowed_claim: 자기조절을 시작한 고령 운전자의 첫 회피 행동은 야간 58.8%, 러시아워 25.5%, 낯선 지역 11.0%, 고속도로 4.8%
+    caveat: 전체 고령자의 58.8%가 야간 운전을 피한다고 일반화하지 않고 자기조절 첫 행동의 분포라고 말함
     deck_location: Appendix A
     capture_reviewed_in_external_source: true
-    local_capture_available: false
+    local_capture_available: true
+    capture_status: deck_only_abstract_reviewed
+    deck_capture_ids: [capture-025]
+    source_capture_ids: []
+    capture_ids: [capture-025]
     url: https://doi.org/10.1093/geroni/igab046.1019
 
-  - key: presentation-isaacman-2011
-    canonical_key: isaacman-2011
-    source: Isaacman et al. 2011
-    citation_tier: stage_citable
-    usage_scope: appendix_b
-    allowed_claim: 60일 관찰과 전체 일수의 5%에 해당하는 서로 다른 방문일로 중요 장소를 식별
-    caveat: 운전 연구가 아니라 반복 방문지 식별 방법론
-    deck_location: Appendix B
-    capture_reviewed_in_external_source: true
-    local_capture_available: true
-    capture_ids: [capture-028, capture-029]
-    url: https://doi.org/10.1007/978-3-642-21726-5_9
-
-  - key: presentation-zheng-2009
-    source: Zheng et al. 2009
-    citation_tier: stage_citable
-    usage_scope: appendix_b_footnote
-    allowed_claim: stay-point 식별에 200m 거리 기준을 사용한 선례
-    caveat: MASIL의 260m를 논문에서 직접 가져왔다고 말하지 않음
-    deck_location: Appendix B footnote
-    capture_reviewed_in_external_source: true
-    local_capture_available: true
-    capture_ids: [capture-030, capture-031]
-    url: https://doi.org/10.1145/1526709.1526816
-
-  - key: presentation-montoliu-gatica-perez-2010
-    source: Montoliu & Gatica-Perez 2010
-    citation_tier: stage_citable
-    usage_scope: appendix_b_footnote
-    allowed_claim: 장소 군집화에 250m와 200–300m 범위가 사용된 선례
-    caveat: MASIL의 260m를 논문 직접값으로 표현하지 않음
-    deck_location: Appendix B footnote
-    capture_reviewed_in_external_source: true
-    local_capture_available: true
-    capture_ids: [capture-032, capture-033]
-    url: https://doi.org/10.1145/1899475.1899487
-
-  - key: presentation-kca-2024-elderly-drivers
-    source: Korea Consumer Agency 2024 elderly-driver safety inspection
-    citation_tier: stage_citable
-    usage_scope: summary_1
-    allowed_claim: 시야가 제한된 돌발 상황에서 고령 2.28초와 비고령 1.20초가 관찰됨
-    caveat: 조건 없는 일반 제동 반응 또는 모든 상황에서 90% 느리다고 일반화하지 않음. 같은 시험의 교차로 우회전 조건 차이는 0.02초였음
-    deck_location: Summary 1
-    capture_reviewed_in_external_source: true
-    local_capture_available: true
-    capture_ids: [capture-001, capture-002, capture-003, capture-004]
-    url: https://www.kca.go.kr/smartconsumer/board/download.do?fno=10046786&bid=00000146&did=1003858738&menukey=7301
-
-  - key: presentation-erso-older-driver-risk
-    source: European Road Safety Observatory, older drivers
-    citation_tier: stage_citable
-    usage_scope: appendix_a
-    allowed_claim: 75세 이상 운전자의 fatality risk가 동일 노출에서 약 5배
-    caveat: 사고 빈도와 신체 취약성에 따른 심도를 구분
-    deck_location: Appendix A
-    capture_reviewed_in_external_source: true
-    local_capture_available: true
-    capture_ids: [capture-012, capture-013, capture-014, capture-015, capture-016, capture-017]
-    url: https://road-safety.transport.ec.europa.eu/eu-road-safety-policy/priorities/safe-road-use/elderly-drivers/older-drivers-risky-or-risk/high-fatality-rate-more-crashes-or-more-severe-injuries_en
-
-  - key: presentation-candrive-marshall-2023
-    canonical_key: candrive-marshall-2023
-    source: Marshall et al. 2023, Candrive
-    citation_tier: qa_only
-    usage_scope: exposure_adjustment_question
-    allowed_claim: 거리 보정 at-fault 사고 위험이 저위험군 대비 고위험군 5.26배
-    caveat: 발표에서 선제 인용하지 않고 3배 또는 사고빈도로 표현하지 않음
-    deck_location: References only
-    capture_reviewed_in_external_source: true
-    local_capture_available: false
-    url: https://doi.org/10.1093/gerona/glad044
-
-  - key: presentation-longroad-self-regulation
-    source: AAA Foundation LongROAD
-    citation_tier: stage_citable
-    usage_scope: appendix_d_persona_reference
-    allowed_claim: 고령 운전자의 자기조절과 활동공간 변화에 대한 페르소나 방향성 근거
-    caveat: 합성 페르소나의 절대 파라미터를 입증하지 않음
-    deck_location: Appendix D · References
-    capture_reviewed_in_external_source: true
-    local_capture_available: true
-    capture_ids: [capture-034, capture-035]
-    url: https://aaafoundation.org/research/the-role-of-driving-comfort-in-self-regulation-among-a-large-cohort-of-older-drivers-aaa-longroad-study/
-
-  - key: presentation-harms-2021
-    source: Harms, Burdett & Charlton 2021
-    citation_tier: listed_only
-    usage_scope: references_only
-    allowed_claim: route familiarity literature의 상반 결과와 한계를 확인하는 배경
-    caveat: 선제 인용 금지. 사고율 메타분석으로 설명하지 않음
-    deck_location: References
-    capture_reviewed_in_external_source: true
-    local_capture_available: false
-    url: https://doi.org/10.1016/j.trip.2021.100331
-
-  - key: presentation-ji-2023
-    source: Ji et al. 2023, Transactions in GIS
-    citation_tier: listed_only
-    usage_scope: references_only
-    allowed_claim: 개인 차량 이동 규칙성 연구의 배경
-    caveat: 안전 예측 또는 MASIL 판정 타당성 근거로 사용하지 않음
-    deck_location: References
-    capture_reviewed_in_external_source: true
-    local_capture_available: true
-    capture_ids: [capture-041, capture-043]
-    url: https://doi.org/10.1111/tgis.13043
-
+  # 아래 두 항목은 덱 충돌 추적용이다. 기본 문헌 검색에는 노출하지 않는다.
   - key: presentation-sumagaysay-2026
     source: Sumagaysay 2026, KVPR
     citation_tier: banned
@@ -196,7 +252,10 @@ presentation_entries:
     deck_location: Appendix A · References
     capture_reviewed_in_external_source: true
     local_capture_available: true
-    capture_ids: [capture-010, capture-026]
+    capture_status: excluded_banned
+    deck_capture_ids: [capture-026]
+    source_capture_ids: []
+    capture_ids: [capture-026]
     url: https://www.kvpr.org/government-politics/2026-07-14/proposal-would-allow-drivers-to-trade-personal-data-for-potentially-lower-insurance-rates
 
   - key: presentation-lexisnexis-2015
@@ -208,8 +267,195 @@ presentation_entries:
     deck_location: Appendix A · References
     capture_reviewed_in_external_source: true
     local_capture_available: true
-    capture_ids: [capture-010, capture-021, capture-025, capture-027, capture-042]
+    capture_status: excluded_banned
+    deck_capture_ids: [capture-027]
+    source_capture_ids: []
+    capture_ids: [capture-027]
     url: https://risk.lexisnexis.com/about-us/press-room/press-release/08-25-2015-insurance-growth
+
+  - key: presentation-isaacman-2011
+    source: Isaacman et al. 2011
+    citation_tier: stage_citable
+    usage_scope: appendix_b
+    allowed_claim: 60일 관찰과 전체 일수의 5%에 해당하는 서로 다른 방문일로 중요 장소를 식별
+    caveat: 운전 연구가 아니라 반복 방문지 식별 방법론
+    deck_location: Appendix B
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: source_and_deck
+    deck_capture_ids: [capture-028]
+    source_capture_ids: [capture-029]
+    capture_ids: [capture-028, capture-029]
+    url: https://doi.org/10.1007/978-3-642-21726-5_9
+
+  - key: presentation-zheng-2009
+    source: Zheng et al. 2009
+    citation_tier: stage_citable
+    usage_scope: appendix_b_footnote
+    allowed_claim: stay-point 식별 실험 설정에 200m 거리 기준과 20분 시간 기준을 사용
+    caveat: MASIL의 260m를 논문에서 직접 가져왔다고 말하지 않음
+    deck_location: Appendix B footnote
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: source_and_deck
+    deck_capture_ids: [capture-030]
+    source_capture_ids: [capture-031]
+    capture_ids: [capture-030, capture-031]
+    url: https://doi.org/10.1145/1526709.1526816
+
+  - key: presentation-montoliu-gatica-perez-2010
+    source: Montoliu & Gatica-Perez 2010
+    citation_tier: stage_citable
+    usage_scope: appendix_b_footnote
+    allowed_claim: 장소 군집화 실험에 Dmax 250m를 사용했고 원문은 경험상 200–300m가 가장 좋은 결과를 냈다고 설명
+    caveat: MASIL의 260m를 논문 직접값으로 표현하지 않고 문헌 대역 안의 시작값으로만 설명
+    deck_location: Appendix B footnote
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: source_and_deck
+    deck_capture_ids: [capture-032]
+    source_capture_ids: [capture-033]
+    capture_ids: [capture-032, capture-033]
+    url: https://doi.org/10.1145/1899475.1899487
+
+  - key: presentation-longroad-self-regulation
+    source: AAA Foundation LongROAD 2019
+    citation_tier: stage_citable
+    usage_scope: appendix_d_persona
+    allowed_claim: 지각된 운전 편안감이 낮을수록 야간·낯선 지역을 피하고 덜 운전하는 자기조절이 증가
+    caveat: 합성 페르소나의 절대 파라미터를 입증하지 않고 자기조절 안정형의 방향성 근거로만 사용
+    deck_location: Appendix D
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: source_and_deck
+    deck_capture_ids: [capture-034]
+    source_capture_ids: [capture-035]
+    capture_ids: [capture-034, capture-035]
+    url: https://aaafoundation.org/research/the-role-of-driving-comfort-in-self-regulation-among-a-large-cohort-of-older-drivers-aaa-longroad-study/
+
+  - key: presentation-charlton-starkey-2013
+    source: Charlton & Starkey 2013
+    citation_tier: stage_citable
+    usage_scope: appendix_d_persona
+    allowed_claim: 익숙한 길의 반복 주행이 자동화와 부주의 맹시로 이어질 수 있으며 저자들은 이를 자택 인근 사고 맥락과 연결
+    caveat: 덱의 ScienceDirect 2017 표기를 실제 논문명과 2013년으로 정정해 사용
+    deck_location: Appendix D
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: deck_only_source_reviewed
+    deck_capture_ids: [capture-036]
+    source_capture_ids: []
+    capture_ids: [capture-036]
+    url: https://doi.org/10.1016/j.trf.2013.03.008
+
+  - key: presentation-hirsch-activity-space-2014
+    source: Hirsch et al. 2014
+    citation_tier: stage_citable
+    usage_scope: appendix_d_persona
+    allowed_claim: 면허 보유와 차량 접근성이 있는 고령자의 활동공간이 더 크고 덜 압축적으로 나타남
+    caveat: 활동공간 확대 자체를 위험으로 해석하지 않고 경로변경 안전유지형의 방향성 근거로 사용
+    deck_location: Appendix D
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: deck_only_source_reviewed
+    deck_capture_ids: [capture-037]
+    source_capture_ids: []
+    capture_ids: [capture-037]
+
+  - key: presentation-kiri-ubi-2024
+    source: Cheon & Lim, KIRI 2024
+    citation_tier: stage_citable
+    usage_scope: appendix_d_persona_product_limit
+    allowed_claim: UBI는 과속·급가감속·시간대 등 행동 변수로 요율을 정하며 국내 계기판 사진 방식의 마일리지 할인은 UBI로 분류되지 않음
+    caveat: 원거리 주행 자체가 위험 또는 벌점이라는 근거로 사용하지 않음
+    deck_location: Appendix D · product limitation
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: source_and_deck
+    deck_capture_ids: [capture-038]
+    source_capture_ids: [capture-039]
+    capture_ids: [capture-038, capture-039]
+
+  # References·Q&A 카드. 발표 본문 근거와 섞지 않고 지위와 사용 범위를 함께 반환한다.
+  - key: presentation-candrive-marshall-2023
+    source: Marshall et al. 2023, Candrive
+    keywords: [Candrive, Marshall, exposure adjusted, at-fault collision, 5.26]
+    citation_tier: qa_only
+    usage_scope: exposure_adjustment_question
+    allowed_claim: 주행 노출을 보정한 최고 위험군의 과실사고 상대위험은 최저 위험군 대비 5.26배였고 최고 위험군은 person-years의 2.9%였음
+    caveat: 발표에서 선제 인용하지 않고 3배 또는 일반 고령 운전자 전체의 사고위험으로 표현하지 않음. 임상적 운전적합성 위험도구 연구임
+    deck_location: References only
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: deck_only_reference
+    deck_capture_ids: [capture-042]
+    source_capture_ids: []
+    capture_ids: [capture-042]
+    url: https://doi.org/10.1093/gerona/glad044
+
+  - key: presentation-joyce-2024
+    source: Joyce et al. 2024
+    keywords: [Joyce, distance from home, crash location, medically at risk older drivers]
+    citation_tier: qa_only
+    usage_scope: close_to_home_counterevidence_question
+    allowed_claim: 68세 이상 사고 연루 운전자 19만여 명 자료에서 사고의 95%가 거주지 25마일 이내에 있었고 임상 집단별 평균 거리는 9마일을 넘지 않았음
+    caveat: medically-at-risk 운전자와 사고 위치 연구이며 집 근처가 안전하거나 위험하다는 인과, MASIL 반경의 타당성, 전체 고령 운전자 사고율 근거로 사용하지 않음
+    deck_location: References only
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: deck_only_reference
+    deck_capture_ids: [capture-043]
+    source_capture_ids: []
+    capture_ids: [capture-043]
+    url: https://doi.org/10.1080/08959420.2022.2145791
+
+  - key: presentation-harms-2021
+    source: Harms, Burdett & Charlton 2021
+    keywords: [Harms, route familiarity, systematic review, PRISMA, 94 studies]
+    citation_tier: listed_only
+    usage_scope: appendix_d_claim_conflict_and_references
+    allowed_claim: 94편 체계적 고찰에서 경로 친숙도가 주의·인지 통제·행동에 영향을 준다는 배경과 문헌의 상반 결과를 확인
+    caveat: 반복 목적지가 안전을 예측한다는 근거가 아니고 사고율 메타분석도 아님. 해당 Appendix D 주장을 방어하는 인용으로 사용하지 않음
+    deck_location: Appendix D persona table · References
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: deck_only_claim_conflict
+    deck_capture_ids: [capture-040]
+    source_capture_ids: []
+    capture_ids: [capture-040]
+    url: https://doi.org/10.1016/j.trip.2021.100331
+
+  - key: presentation-ji-2023
+    source: Ji et al. 2023, Transactions in GIS
+    keywords: [Ji, mobility regularity, personal vehicle drivers, location motif route]
+    citation_tier: listed_only
+    usage_scope: appendix_d_claim_conflict_and_references
+    allowed_claim: 미국 6개 도시 3,743명·400만여 통행에서 위치·모티프·경로의 다층 규칙성을 측정하고 5개 운전자 군집을 탐색한 이동 규칙성 연구
+    caveat: 규칙성이 안전을 예측하거나 반복 목적지가 안전하다는 근거가 아니며 MASIL 판정 타당성 근거로 사용하지 않음
+    deck_location: Appendix D persona references · References
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: shared_reference_page
+    deck_capture_ids: [capture-041]
+    source_capture_ids: []
+    capture_ids: [capture-041]
+    url: https://doi.org/10.1111/tgis.13043
+
+  - key: presentation-statistics-korea-2025
+    source: Statistics Korea 2025, Korean Social Trends 2025
+    keywords: [Statistics Korea, Korean Social Trends 2025, 국가데이터처, 한국의 사회동향]
+    citation_tier: listed_only
+    usage_scope: references_only
+    allowed_claim: 결선 덱 참고문헌에 등재된 국내 사회동향 배경 자료
+    caveat: Summary·Appendix의 특정 수치나 페르소나 판정을 직접 뒷받침하는 사용처가 확인되지 않아 선제 근거로 사용하지 않음
+    deck_location: References only
+    capture_reviewed_in_external_source: true
+    local_capture_available: true
+    capture_status: shared_reference_page
+    deck_capture_ids: [capture-041]
+    source_capture_ids: []
+    capture_ids: [capture-041]
+    url: https://www.mods.go.kr/boardDownload.es?bid=12310&list_no=443094&seq=1
 
 entries:
   - source: "'300만원' 통계"

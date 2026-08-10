@@ -87,6 +87,7 @@ BODY_PRIORITY_FIELDS = (
     "current_resolution",
     "recommended_position_ko",
     "plain_english",
+    "note",
     "notes",
     "caveat",
     "caveats",
@@ -134,6 +135,8 @@ def _authority(path: str, item: dict[str, Any]) -> str:
         return "historical"
     if path in DECK_YAML:
         return "deck"
+    if path == "knowledge/evidence/capture_index.yaml":
+        return "evidence" if item.get("card_status") in {"active", "qa_only"} else "historical"
     if path in EVIDENCE_YAML:
         tier = str(item.get("citation_tier", ""))
         return "evidence" if tier in {"stage_citable", "qa_only"} else "historical"
@@ -195,7 +198,11 @@ def _metadata(item: dict[str, Any]) -> dict[str, Any]:
         "url",
         "local_capture_available",
         "capture_ids",
+        "deck_capture_ids",
+        "source_capture_ids",
+        "capture_status",
         "evidence_refs",
+        "card_status",
     }
     return {key: value for key, value in item.items() if key in allowed}
 
@@ -210,6 +217,9 @@ def load_yaml_documents(root: Path, relative_path: str) -> list[KnowledgeDocumen
         raw_id = _first(item, IDENTITY_FIELDS, "/".join(trail))
         title = _first(item, TITLE_FIELDS, raw_id)
         body = _yaml_body(item)
+        source_text = _scalar_text(item.get("source"))
+        if source_text and source_text != title and source_text not in body:
+            body = f"source: {source_text}\n{body}".strip()
         if not body:
             continue
         status = _first(item, STATUS_FIELDS, "unspecified")
@@ -309,7 +319,7 @@ def load_capture_documents(root: Path) -> list[KnowledgeDocument]:
                 status="captured",
                 layer="evidence",
                 topic="literature_capture",
-                metadata={key: value for key, value in capture.items() if key not in {"context"}},
+                metadata=dict(capture),
             )
         )
     return documents

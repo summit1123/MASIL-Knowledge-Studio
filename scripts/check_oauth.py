@@ -83,7 +83,49 @@ async def check(base_url: str) -> None:
         ):
             raise RuntimeError("authenticated answer-context call failed")
 
-        image = await client.call_tool("get_capture_image", {"capture_id": "capture-015"})
+        evidence = await client.call_tool(
+            "get_evidence",
+            {"query": "Cicchino looking but not seeing 71%", "top_k": 4},
+        )
+        recommended = evidence.structured_content.get("recommended_captures", [])
+        if (
+            evidence.is_error
+            or not evidence.structured_content.get("literature", [{}])[0].get("id", "").endswith(
+                "presentation-cicchino-mccartt-2015"
+            )
+            or [capture.get("id") for capture in recommended] != ["capture-024"]
+        ):
+            raise RuntimeError("authenticated evidence-to-capture mapping failed")
+
+        qa_evidence = await client.call_tool(
+            "get_evidence",
+            {"query": "Candrive 5.26배", "top_k": 4},
+        )
+        if (
+            qa_evidence.is_error
+            or not qa_evidence.structured_content.get("literature", [{}])[0].get("id", "").endswith(
+                "presentation-candrive-marshall-2023"
+            )
+            or [capture.get("id") for capture in qa_evidence.structured_content.get("recommended_captures", [])]
+            != ["capture-042"]
+        ):
+            raise RuntimeError("authenticated Q&A-only evidence mapping failed")
+
+        reference = await client.call_tool(
+            "get_evidence",
+            {"query": "Harms route familiarity 94편", "top_k": 4},
+        )
+        if (
+            reference.is_error
+            or not reference.structured_content.get("reference_only", [{}])[0].get("id", "").endswith(
+                "presentation-harms-2021"
+            )
+            or [capture.get("id") for capture in reference.structured_content.get("recommended_captures", [])]
+            != ["capture-040"]
+        ):
+            raise RuntimeError("authenticated reference-only evidence mapping failed")
+
+        image = await client.call_tool("get_capture_image", {"capture_id": "capture-024"})
         if image.is_error or not any(content.type == "image" for content in image.content):
             raise RuntimeError("authenticated image call failed")
 
@@ -96,6 +138,9 @@ async def check(base_url: str) -> None:
                 "mcp_tool_count": len(tools),
                 "authenticated_tool_call": "PASS",
                 "answer_context_call": "PASS",
+                "evidence_capture_mapping": "PASS",
+                "qa_only_mapping": "PASS",
+                "reference_only_mapping": "PASS",
                 "capture_image_call": "PASS",
             },
             indent=2,
