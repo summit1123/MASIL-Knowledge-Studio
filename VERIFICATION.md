@@ -50,6 +50,7 @@
   "answer_context_call": "PASS",
   "inline_evidence_call": "PASS",
   "mcp_app_resource": "PASS",
+  "mcp_app_tool_metadata": "PASS",
   "implementation_call": "PASS",
   "claim_comparison_call": "PASS",
   "open_items_call": "PASS",
