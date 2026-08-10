@@ -75,6 +75,9 @@ async def check(base_url: str) -> None:
         }
         if not required.issubset(names):
             raise RuntimeError(f"authenticated MCP missing tools: {sorted(required - names)}")
+        inline_tool = next(tool for tool in tools if tool.name == "show_answer_evidence")
+        if inline_tool.meta.get("ui", {}).get("resourceUri") != "ui://masil/evidence-view.html":
+            raise RuntimeError("authenticated inline tool is missing MCP App metadata")
 
         guide = await client.call_tool("connector_guide", {})
         if guide.is_error or "고정 답변집" not in guide.structured_content.get("purpose", ""):
@@ -260,6 +263,7 @@ async def check(base_url: str) -> None:
                 "answer_context_call": "PASS",
                 "inline_evidence_call": "PASS",
                 "mcp_app_resource": "PASS",
+                "mcp_app_tool_metadata": "PASS",
                 "implementation_call": "PASS",
                 "claim_comparison_call": "PASS",
                 "open_items_call": "PASS",

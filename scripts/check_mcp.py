@@ -31,6 +31,9 @@ async def check(url: str, auth: str | None) -> None:
         missing = required - set(names)
         if missing:
             raise RuntimeError(f"missing tools: {sorted(missing)}")
+        inline_tool = next(tool for tool in tools if tool.name == "show_answer_evidence")
+        if inline_tool.meta.get("ui", {}).get("resourceUri") != "ui://masil/evidence-view.html":
+            raise RuntimeError("inline evidence tool is missing MCP App metadata")
 
         guide = await client.call_tool("connector_guide", {})
         if guide.is_error or "고정 답변집" not in guide.structured_content.get("purpose", ""):
@@ -171,6 +174,7 @@ async def check(url: str, auth: str | None) -> None:
                     "answer_facts": len(answer.structured_content["current_facts"]),
                     "inline_evidence": sorted(item["id"] for item in inline.structured_content["captures"]),
                     "mcp_app_resource": "PASS",
+                    "mcp_app_tool_metadata": "PASS",
                     "slide_2_claims": len(slide.structured_content["claims"]),
                     "active_capture_groups": captures.structured_content["total_group_count"],
                     "image_returned": True,
