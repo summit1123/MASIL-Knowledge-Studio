@@ -27,7 +27,7 @@ Before we begin, you can scan the QR code on the upper right corner
 to check out our dashboard.
 It provides a more intuitive understanding of the MASIL rider.
 
-1. SUMMARY — Problem & Solution 
+1. SUMMARY — Problem & Solution
 
 Let me start with the problem.
 Why do we need a different approach for senior drivers?
@@ -86,9 +86,9 @@ It reflects how most senior drivers actually drive.
 
 A MASIL Zone is a personalized activity zone
 based on repeated visits over a two-month baseline.
-By clustering destinations visited on at least three different days, 
-we define the Core Zone. 
-Then, using the 90th percentile, we expand it into a Buffer Zone 
+By clustering destinations visited on at least three different days,
+we define the Core Zone.
+Then, using the 90th percentile, we expand it into a Buffer Zone
 and everything beyond that falls into the Outer Zone.
 
 In simple terms,
