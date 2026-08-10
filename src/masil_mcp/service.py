@@ -160,6 +160,7 @@ class KnowledgeService:
         hits = self.index.search(
             query,
             top_k=top_k,
+            expand_aliases=False,
             authorities={"evidence", "supporting"},
             source_contains="knowledge/evidence/registry.yaml",
             status_include=allowed_tiers,
@@ -198,6 +199,7 @@ class KnowledgeService:
         hits = self.index.search(
             query,
             top_k=top_k,
+            expand_aliases=False,
             authorities={"historical"},
             source_contains="knowledge/evidence/registry.yaml",
             status_include={"listed_only"},
@@ -244,6 +246,116 @@ class KnowledgeService:
             {key: value for key, value in record.items() if key in keep}
             for record in self._capture_records(capture_ids)
         ]
+
+    @staticmethod
+    def _registry_ref(value: Any) -> str | None:
+        ref = str(value).strip()
+        if ref.startswith("knowledge/evidence/registry.yaml#presentation-"):
+            return ref
+        if ref.startswith("presentation-"):
+            return f"knowledge/evidence/registry.yaml#{ref}"
+        return None
+
+    def _linked_evidence_hits(
+        self,
+        fact_hits: list[SearchHit],
+        query: str,
+        *,
+        usage_scope: str = "stage",
+        limit: int = 4,
+    ) -> tuple[list[SearchHit], dict[str, list[str]]]:
+        """Traverse exact fact-to-literature links and rank only inside that set."""
+        allowed_statuses = {
+            "stage": {"stage_citable"},
+            "qa_only": {"qa_only"},
+            "listed_only": {"listed_only"},
+            "all": {"stage_citable", "qa_only", "listed_only"},
+        }.get(usage_scope)
+        if allowed_statuses is None:
+            raise ValueError(f"usage_scope must be one of: {', '.join(sorted(EVIDENCE_SCOPES))}")
+
+        documents: list[KnowledgeDocument] = []
+        supports: dict[str, list[str]] = {}
+        seen: set[str] = set()
+        for hit in fact_hits:
+            metadata = hit.document.metadata
+            raw_refs: list[Any] = []
+            for key in ("evidence_ref", "evidence_refs", "source_refs", "material_refs"):
+                values = metadata.get(key, [])
+                raw_refs.extend(values if isinstance(values, list) else [values])
+            for link in metadata.get("evidence_links", []):
+                if not isinstance(link, dict) or not link.get("ref"):
+                    continue
+                raw_refs.append(link["ref"])
+                normalized = self._registry_ref(link["ref"])
+                if normalized and link.get("supports"):
+                    supports.setdefault(normalized, []).append(str(link["supports"]))
+
+            for raw_ref in raw_refs:
+                ref = self._registry_ref(raw_ref)
+                if not ref or ref in seen:
+                    continue
+                document = self.corpus.by_id.get(ref)
+                if not document or document.status not in allowed_statuses:
+                    continue
+                documents.append(document)
+                seen.add(ref)
+
+        if not documents:
+            return [], supports
+
+        ranking_documents = [
+            KnowledgeDocument(
+                id=document.id,
+                title=document.title,
+                body="\n".join([*supports.get(document.id, []), document.body]),
+                source_path=document.source_path,
+                authority=document.authority,
+                status=document.status,
+                layer=document.layer,
+                topic=document.topic,
+                tags=document.tags,
+                metadata=document.metadata,
+            )
+            for document in documents
+        ]
+        ranked = HybridSearchIndex(ranking_documents).search(
+            query,
+            top_k=min(30, len(ranking_documents)),
+        )
+        ranked_before_source_filter = ranked
+        ranked = self._prefer_named_source(query, ranked)
+        named_source_filter_applied = len(ranked) < len(ranked_before_source_filter)
+        rank_by_id = {hit.document.id: hit.score for hit in ranked}
+        ordered_ids = [hit.document.id for hit in ranked]
+        if not named_source_filter_applied:
+            ordered_ids.extend(document.id for document in documents if document.id not in rank_by_id)
+        document_by_id = {document.id: document for document in documents}
+        return (
+            [
+                SearchHit(
+                    document_by_id[document_id],
+                    rank_by_id.get(document_id, 0.01),
+                    document_by_id[document_id].body[:520],
+                )
+                for document_id in ordered_ids[:limit]
+            ],
+            supports,
+        )
+
+    @staticmethod
+    def _merge_unique_hits(*groups: list[SearchHit], limit: int) -> list[SearchHit]:
+        merged: list[SearchHit] = []
+        seen: set[str] = set()
+        for group in groups:
+            for hit in group:
+                if hit.document.id in seen:
+                    continue
+                merged.append(hit)
+                seen.add(hit.document.id)
+                if len(merged) >= limit:
+                    return merged
+        return merged
 
     def explain_product_logic(self, topic: str, detail: str = "compact") -> dict[str, Any]:
         hits = self._filtered_search(
@@ -372,7 +484,7 @@ class KnowledgeService:
         self,
         question: str,
         language: str = "ko",
-        max_chars: int = 7000,
+        max_chars: int = 5000,
         evidence_scope: str = "stage",
     ) -> dict[str, Any]:
         current = self._filtered_search(
@@ -384,7 +496,19 @@ class KnowledgeService:
                 and document.source_path in ANSWER_FACT_SOURCES
             ),
         )
-        evidence = self._literature_hits(question, top_k=4, usage_scope=evidence_scope)
+        direct_evidence = self._literature_hits(question, top_k=4, usage_scope=evidence_scope)
+        link_facts = (
+            [hit for hit in current if hit.score >= max(5.0, current[0].score * 0.25)][:3]
+            if current
+            else []
+        )
+        linked_evidence, evidence_supports = self._linked_evidence_hits(
+            link_facts,
+            question,
+            usage_scope=evidence_scope,
+            limit=4,
+        )
+        evidence = self._merge_unique_hits(linked_evidence, direct_evidence, limit=4)
         reference_only = self._reference_only_hits(question, top_k=2, usage_scope=evidence_scope)
         supporting = self._filtered_search(
             question,
@@ -403,10 +527,15 @@ class KnowledgeService:
                 top_k=2,
                 predicate=lambda document: (
                     document.authority == "historical"
-                    and document.source_path in {
-                        "knowledge/history/decision_log.yaml",
-                        "knowledge/official_positions.yaml",
-                    }
+                    and document.source_path == "knowledge/history/decision_log.yaml"
+                ),
+            ))
+            history_material.extend(self._filtered_search(
+                question,
+                top_k=1,
+                predicate=lambda document: (
+                    document.authority == "historical"
+                    and document.source_path == "knowledge/official_positions.yaml"
                 ),
             ))
             history_material.extend(self._filtered_search(
@@ -426,8 +555,15 @@ class KnowledgeService:
         )
 
         def answer_hit(hit: SearchHit, body_chars: int = 0) -> dict[str, Any]:
-            payload = hit.as_dict(include_body=False)
-            payload["snippet"] = payload["snippet"][:520]
+            full = hit.as_dict(include_body=False)
+            payload = {
+                "id": full["id"],
+                "title": full["title"],
+                "authority": full["authority"],
+                "status": full["status"],
+                "source": full["source"],
+                "snippet": full["snippet"][:420],
+            }
             if body_chars:
                 body = hit.document.body
                 payload["body"] = body if len(body) <= body_chars else f"{body[:body_chars].rstrip()}…"
@@ -437,43 +573,64 @@ class KnowledgeService:
             "question": question,
             "language": language,
             "evidence_scope": evidence_scope,
+            "response_contract": {
+                "default": "직접 답하는 짧고 쉬운 문장 2~4개",
+                "evidence": "주장 뒤에 정확한 근거 최대 2개와 쓰임 한 줄",
+                "expand": "자세히 요청할 때만 기술·경계·미확정을 확장",
+                "hide": "도구명·내부 ID·YAML 필드·corpus 통계",
+                "english": "고정 용어를 유지한 짧은 문장",
+            },
             "answer_instruction": (
-                "아래 재료로 의미가 정확한 짧은 문장을 만드세요. 확정 답안을 복사하지 말고 질문에 직접 답하세요. "
-                "후보값·미검증 가설·과거 이력은 상태를 숨기지 마세요. historical_material은 현재 사실을 "
-                "정하는 근거가 아니라 질문 의도·변경 이유·후속 질문을 이해하는 재료로만 사용하세요."
+                "평소 대화처럼 질문에 필요한 재료만 골라 바로 답하세요. 내부 이름은 숨기고, exact evidence_captures는 "
+                "별도 요청 없이 주장 뒤에 쓰임 한 줄과 붙이세요. 후보·미검증 상태는 숨기지 마세요. historical_material은 "
+                "현재 사실을 정하는 근거가 아니라 변경 이유 재료입니다. 관련 없는 경고는 덧붙이지 마세요."
             ),
-            "current_facts": [answer_hit(hit, 900) for hit in current[:5]],
-            "evidence": [answer_hit(hit, 700) for hit in evidence[:3]],
-            "reference_only": [answer_hit(hit, 700) for hit in reference_only[:2]],
+            "current_facts": [answer_hit(hit, 700) for hit in current[:4]],
+            "evidence": [
+                {
+                    **answer_hit(hit, 480),
+                    "supports": evidence_supports.get(hit.document.id, []),
+                }
+                for hit in evidence[:3]
+            ],
+            "reference_only": [answer_hit(hit, 480) for hit in reference_only[:2]],
             "evidence_captures": [],
             "explanation_material": [answer_hit(hit) for hit in supporting[:2]],
             "historical_material": [answer_hit(hit) for hit in history_material[:2]],
-            "conflicts_and_avoid": [answer_hit(hit, 650) for hit in conflicts[:2]],
+            "conflicts_and_avoid": [answer_hit(hit, 480) for hit in conflicts[:2]],
             "fixed_terms": [answer_hit(hit) for hit in glossary[:2]],
             "truncated": False,
             "packet_chars": max_chars,
         }
-        wants_capture = any(term in question.lower() for term in CAPTURE_REQUEST_TERMS)
-        capture_source = (evidence[0] if evidence else (reference_only[0] if reference_only else None)) if wants_capture else None
-        if capture_source:
-            metadata = capture_source.document.metadata
+        capture_sources = evidence[:2]
+        if not capture_sources and any(term in question.lower() for term in CAPTURE_REQUEST_TERMS):
+            capture_sources = reference_only[:1]
+        for source in capture_sources:
+            metadata = source.document.metadata
             capture_ids = list(metadata.get("source_capture_ids", []))
             if not capture_ids:
                 capture_ids = list(metadata.get("deck_capture_ids", []))
-            packet["evidence_captures"] = self._answer_capture_records(capture_ids)
-            packet["answer_instruction"] += (
-                " 사용자가 근거 캡처를 요청했다면 evidence_captures의 id로 get_capture_image를 호출해 이미지를 직접 보여주세요."
-            )
+            if not capture_ids:
+                capture_ids = list(metadata.get("capture_ids", []))
+            if not capture_ids:
+                continue
+            records = self._answer_capture_records(capture_ids[:1])
+            for record in records:
+                record["evidence_id"] = source.document.id
+                record["supports"] = evidence_supports.get(source.document.id, [])
+                if record["id"] not in {item["id"] for item in packet["evidence_captures"]}:
+                    packet["evidence_captures"].append(record)
 
         def packet_size() -> int:
             return len(json.dumps(packet, ensure_ascii=False))
 
         original_counts = {key: len(value) for key, value in packet.items() if isinstance(value, list)}
+        visual_count = min(2, len(packet["evidence_captures"]))
         minimums = {
             "current_facts": 1 if packet["evidence_captures"] else 2,
-            "evidence": 1 if packet["evidence_captures"] and evidence else 0,
+            "evidence": min(visual_count, len(packet["evidence"])),
             "reference_only": 1 if packet["evidence_captures"] and not evidence and reference_only else 0,
-            "evidence_captures": 1 if packet["evidence_captures"] else 0,
+            "evidence_captures": visual_count,
             "explanation_material": 1 if packet["explanation_material"] and not packet["evidence_captures"] else 0,
             "historical_material": 1 if packet["historical_material"] else 0,
             "conflicts_and_avoid": 0,
@@ -481,13 +638,13 @@ class KnowledgeService:
         }
         drop_order = (
             "explanation_material",
-            "historical_material",
             "fixed_terms",
-            "evidence_captures",
-            "evidence",
-            "reference_only",
             "conflicts_and_avoid",
             "current_facts",
+            "historical_material",
+            "reference_only",
+            "evidence",
+            "evidence_captures",
         )
         while packet_size() > max_chars:
             for key in drop_order:
@@ -596,49 +753,12 @@ class KnowledgeService:
         open_material = self._focused_hits(open_material, limit=4)
         examples = self._focused_hits(examples, limit=2)
 
-        linked_evidence: list[KnowledgeDocument] = []
-        linked_supports: dict[str, list[str]] = {}
-        seen_ids: set[str] = set()
-        for hit in current:
-            refs = hit.document.metadata.get("evidence_ref", [])
-            if isinstance(refs, str):
-                refs = [refs]
-            for link in hit.document.metadata.get("evidence_links", []):
-                if not isinstance(link, dict) or not link.get("ref"):
-                    continue
-                ref = str(link["ref"])
-                refs.append(ref)
-                if link.get("supports"):
-                    linked_supports.setdefault(ref, []).append(str(link["supports"]))
-            for ref in refs:
-                if not str(ref).startswith("knowledge/evidence/registry.yaml#"):
-                    continue
-                document = self.corpus.by_id.get(str(ref))
-                if document and document.status == "stage_citable" and document.id not in seen_ids:
-                    linked_evidence.append(document)
-                    seen_ids.add(document.id)
-
-        if linked_evidence:
-            ranking_documents = [
-                KnowledgeDocument(
-                    id=document.id,
-                    title=document.title,
-                    body="\n".join([*linked_supports.get(document.id, []), document.body]),
-                    source_path=document.source_path,
-                    authority=document.authority,
-                    status=document.status,
-                    layer=document.layer,
-                    topic=document.topic,
-                    tags=document.tags,
-                    metadata=document.metadata,
-                )
-                for document in linked_evidence
-            ]
-            ranked = HybridSearchIndex(ranking_documents).search(topic, top_k=len(ranking_documents))
-            ranked_ids = [hit.document.id for hit in ranked]
-            ranked_ids.extend(document.id for document in linked_evidence if document.id not in ranked_ids)
-            linked_by_id = {document.id: document for document in linked_evidence}
-            linked_evidence = [linked_by_id[document_id] for document_id in ranked_ids]
+        linked_hits, linked_supports = self._linked_evidence_hits(
+            current,
+            topic,
+            usage_scope="stage",
+            limit=4,
+        )
 
         return {
             "topic": topic,
@@ -656,14 +776,14 @@ class KnowledgeService:
             "validation_boundaries": [hit.as_dict(include_body=True) for hit in open_material],
             "linked_literature": [
                 {
-                    "id": document.id,
-                    "title": document.title,
-                    "status": document.status,
-                    "supports": linked_supports.get(document.id, []),
-                    "body": document.body,
-                    "metadata": document.metadata,
+                    "id": hit.document.id,
+                    "title": hit.document.title,
+                    "status": hit.document.status,
+                    "supports": linked_supports.get(hit.document.id, []),
+                    "body": hit.document.body,
+                    "metadata": hit.document.metadata,
                 }
-                for document in linked_evidence[:4]
+                for hit in linked_hits[:4]
             ],
             "plain_wording_material": [hit.as_dict(include_body=True) for hit in examples],
         }
@@ -790,6 +910,7 @@ class KnowledgeService:
                 authorities={"evidence", "supporting", "historical"},
                 source_contains="knowledge/evidence/capture_index.yaml",
             )
+            raw_groups = self._prefer_named_source(query, raw_groups)
             groups = [
                 hit for hit in raw_groups
                 if hit.document.metadata.get("card_status") in allowed_statuses

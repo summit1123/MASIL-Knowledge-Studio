@@ -37,6 +37,7 @@ async def test_in_memory_server_lists_and_calls_tools() -> None:
             "search_knowledge",
             "prepare_topic_brief",
             "prepare_answer_context",
+            "show_answer_evidence",
             "get_evidence",
             "show_evidence_capture",
             "get_capture_image",
@@ -73,7 +74,34 @@ async def test_capture_tool_returns_image_content() -> None:
             "https://masil-mcp.summit1123.co.kr/evidence/capture-001/"
         )
         assert result.structured_content["display_markdown"].startswith("![")
-        assert result.structured_content["client_rendering"] == "not_guaranteed"
+        assert result.structured_content["client_rendering"] == "mcp_app_inline_with_markdown_fallback"
+
+
+@pytest.mark.asyncio
+async def test_evidence_tools_publish_an_inline_mcp_app_resource() -> None:
+    server = create_server(auth_mode="none")
+    async with Client(server) as client:
+        tools = await client.list_tools()
+        visual = next(tool for tool in tools if tool.name == "show_answer_evidence")
+        assert visual.meta["ui"]["resourceUri"] == "ui://masil/evidence-view.html"
+        assert visual.meta["ui/resourceUri"] == "ui://masil/evidence-view.html"
+
+        resources = await client.list_resources()
+        resource = next(item for item in resources if str(item.uri) == "ui://masil/evidence-view.html")
+        assert resource.mimeType == "text/html;profile=mcp-app"
+        rendered = await client.read_resource("ui://masil/evidence-view.html")
+        assert "MASIL Evidence Viewer" in rendered[0].text
+
+        result = await client.call_tool(
+            "show_answer_evidence",
+            {"question": "생활권 밖이 위험하다면서 왜 감점은 안 해?"},
+        )
+        assert not result.is_error
+        assert [capture["id"] for capture in result.structured_content["captures"]] == [
+            "capture-006",
+            "capture-037",
+        ]
+        assert [content.type for content in result.content].count("image") == 2
 
 
 def test_capture_fallback_route_uses_opaque_verified_token() -> None:
@@ -112,9 +140,16 @@ async def test_topic_brief_returns_materials_without_invented_questions() -> Non
         assert "likely_questions" not in brief
         assert "generated_questions" not in brief
         assert any("예상 질문" in rule for rule in brief["usage_rules"])
-        assert [item["id"].split("#")[-1] for item in brief["validation_boundaries"]] == [
-            "model-zone-seasonality"
-        ]
+        assert brief["validation_boundaries"] == []
+
+        zone = await client.call_tool(
+            "prepare_topic_brief",
+            {"topic": "rolling 2개월 MASIL Zone 갱신과 계절성"},
+        )
+        assert any(
+            item["id"].endswith("model-zone-seasonality")
+            for item in zone.structured_content["validation_boundaries"]
+        )
 
 
 @pytest.mark.asyncio

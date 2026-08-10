@@ -21,6 +21,7 @@ async def check(url: str, auth: str | None) -> None:
             "compare_claims",
             "prepare_topic_brief",
             "prepare_answer_context",
+            "show_answer_evidence",
             "list_open_items",
             "list_captures",
             "show_evidence_capture",
@@ -61,6 +62,34 @@ async def check(url: str, auth: str | None) -> None:
         )
         if answer.is_error or not answer.structured_content.get("current_facts"):
             raise RuntimeError("answer packet tool call failed")
+        if {item.get("id") for item in answer.structured_content.get("evidence_captures", [])} != {
+            "capture-006",
+            "capture-037",
+        }:
+            raise RuntimeError("answer packet did not traverse exact evidence captures")
+
+        inline = await client.call_tool(
+            "show_answer_evidence",
+            {"question": "생활권 밖으로 나가면 자동으로 감점하나요?"},
+        )
+        if (
+            inline.is_error
+            or {item.get("id") for item in inline.structured_content.get("captures", [])}
+            != {"capture-006", "capture-037"}
+            or sum(content.type == "image" for content in inline.content) != 2
+        ):
+            raise RuntimeError("inline evidence tool call failed")
+
+        resources = await client.list_resources()
+        if not any(
+            str(resource.uri) == "ui://masil/evidence-view.html"
+            and resource.mimeType == "text/html;profile=mcp-app"
+            for resource in resources
+        ):
+            raise RuntimeError("MCP App evidence resource missing")
+        view = await client.read_resource("ui://masil/evidence-view.html")
+        if not view or "MASIL Evidence Viewer" not in view[0].text:
+            raise RuntimeError("MCP App evidence resource unreadable")
 
         brief = await client.call_tool(
             "prepare_topic_brief",
@@ -140,6 +169,8 @@ async def check(url: str, auth: str | None) -> None:
                     "search_results": search.structured_content["result_count"],
                     "topic_brief_literature": sorted(literature_ids),
                     "answer_facts": len(answer.structured_content["current_facts"]),
+                    "inline_evidence": sorted(item["id"] for item in inline.structured_content["captures"]),
+                    "mcp_app_resource": "PASS",
                     "slide_2_claims": len(slide.structured_content["claims"]),
                     "active_capture_groups": captures.structured_content["total_group_count"],
                     "image_returned": True,

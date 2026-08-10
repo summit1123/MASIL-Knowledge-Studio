@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>MASIL evidence</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --surface: rgba(255, 255, 255, 0.96);
+      --text: #10224a;
+      --muted: #66738e;
+      --line: #dce5f4;
+      --accent: #1468ed;
+      --tag: #edf4ff;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --surface: rgba(24, 31, 48, 0.96);
+        --text: #f3f6ff;
+        --muted: #b2bdd2;
+        --line: #3b465d;
+        --accent: #6da7ff;
+        --tag: #223b64;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: transparent; }
+    body { color: var(--text); }
+    #app {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+      gap: 12px;
+      padding: 4px;
+    }
+    .card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface);
+      box-shadow: 0 5px 18px rgba(30, 61, 112, 0.09);
+    }
+    .visual {
+      display: grid;
+      place-items: center;
+      min-height: 180px;
+      padding: 10px;
+      background: #f7f9fd;
+      border-bottom: 1px solid var(--line);
+    }
+    .visual img {
+      display: block;
+      width: 100%;
+      max-height: 420px;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+    .copy { padding: 13px 15px 15px; }
+    .eyebrow {
+      margin: 0 0 5px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: .02em;
+    }
+    h2 { margin: 0; font-size: 17px; line-height: 1.35; }
+    .supports { margin: 8px 0 0; font-size: 14px; line-height: 1.52; }
+    .meta { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .kind {
+      display: inline-block;
+      margin-right: 6px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: var(--tag);
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .empty { padding: 18px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <main id="app"><div class="empty">근거 이미지를 불러오는 중입니다.</div></main>
+  <script type="module">
+    import { App } from "https://unpkg.com/@modelcontextprotocol/ext-apps@1.1.2/app-with-deps";
+
+    const root = document.getElementById("app");
+    const escapeHtml = (value = "") => String(value).replace(/[&<>'"]/g, (char) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
+    })[char]);
+
+    function render(result) {
+      const packet = result?.structuredContent ?? result?.structured_content ?? {};
+      const captures = Array.isArray(packet.captures)
+        ? packet.captures
+        : (packet.id ? [packet] : []);
+      const images = (result?.content ?? []).filter((item) => item.type === "image");
+
+      if (!captures.length || !images.length) {
+        root.innerHTML = '<div class="empty">표시할 정확한 근거 캡처가 없습니다.</div>';
+        return;
+      }
+
+      root.innerHTML = captures.map((capture, index) => {
+        const image = images[index] ?? images[0];
+        const safeMime = ["image/png", "image/jpeg", "image/webp", "image/gif"].includes(image.mimeType)
+          ? image.mimeType
+          : "image/png";
+        const supports = Array.isArray(capture.supports) ? capture.supports.filter(Boolean) : [];
+        const kind = capture.capture_kind === "source" ? "원문 캡처" : "덱 발췌";
+        const supportText = supports.length
+          ? supports.map(escapeHtml).join(" · ")
+          : escapeHtml(capture.caption ?? "이 주장에 연결된 발표 근거입니다.");
+        return `
+          <article class="card">
+            <div class="visual"><img src="data:${safeMime};base64,${image.data}" alt="${escapeHtml(capture.heading ?? capture.id)}"></div>
+            <div class="copy">
+              <p class="eyebrow">${escapeHtml(capture.source ?? "MASIL evidence")}</p>
+              <h2>${escapeHtml(capture.heading ?? "근거 캡처")}</h2>
+              <p class="supports">${supportText}</p>
+              <p class="meta"><span class="kind">${kind}</span>${escapeHtml(capture.deck_location ?? "")}</p>
+            </div>
+          </article>`;
+      }).join("");
+    }
+
+    const app = new App({ name: "MASIL Evidence Viewer", version: "1.0.0" });
+    app.ontoolresult = render;
+    await app.connect();
+  </script>
+</body>
+</html>

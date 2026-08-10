@@ -410,7 +410,7 @@ end
 puts "EVIDENCE_CAPTURES=stage:#{active_literature.size} qa:#{presentation_entries.count { |entry| entry["citation_tier"] == "qa_only" }} listed:#{presentation_entries.count { |entry| entry["citation_tier"] == "listed_only" }} banned:#{presentation_entries.count { |entry| entry["citation_tier"] == "banned" }} local_assets:#{declared_local_capture_count}"
 
 pipeline = manifest.fetch("retrieval_pipeline", [])
-expected_stages = %w[current_facts supporting_context conflict_resolution response_packet]
+expected_stages = %w[current_facts exact_evidence_traversal supporting_context conflict_resolution response_packet]
 actual_stages = pipeline.map { |stage| stage["stage"] }
 puts "RETRIEVAL_STAGES=#{actual_stages.inspect}"
 abort_check("retrieval pipeline mismatch") unless actual_stages == expected_stages
@@ -423,6 +423,7 @@ expected_fields = %w[
   supporting_explanation_material
   conflicts_and_avoid_phrases
   plain_wording_material
+  exact_evidence_captures
 ]
 abort_check("response packet fields mismatch") unless response_fields == expected_fields
 

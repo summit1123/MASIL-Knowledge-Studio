@@ -253,6 +253,7 @@ def _metadata(item: dict[str, Any]) -> dict[str, Any]:
         "citation_tier",
         "usage_scope",
         "source_refs",
+        "material_refs",
         "answer_authority",
         "implementation_status",
         "claim_type",

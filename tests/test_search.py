@@ -14,6 +14,27 @@ def test_korean_ngram_handles_compound_query() -> None:
     assert any("생활권" in item["snippet"] for item in result["results"])
 
 
+@pytest.mark.parametrize(
+    ("query", "expected_id"),
+    [
+        ("생활권 밖이 위험하다면서 왜 감점은 안 해?", "out-of-zone-risk-and-no-location-penalty"),
+        ("out-of-zone travel can be risky, so why is there no location penalty?", "out-of-zone-risk-and-no-location-penalty"),
+        ("우대 기본 케어는 세 등급인가?", "product-monthly-tiers-contract"),
+        ("MASIL Zone은 어떻게 만들고 매달 어떻게 갱신하나요?", "story-06-how-zone-works"),
+        ("MASIL은 무슨 뜻이야?", "model-language-masil-name"),
+        ("Care가 할인율을 깎나요?", "care-review-no-direct-price-effect"),
+    ],
+)
+def test_fielded_index_routes_bilingual_presentation_questions(
+    query: str,
+    expected_id: str,
+) -> None:
+    service = KnowledgeService()
+    result = service.search(query, top_k=3)
+
+    assert result["results"][0]["id"].endswith(expected_id)
+
+
 def test_default_search_excludes_guardrail_records_from_answer_facts() -> None:
     service = KnowledgeService()
     result = service.search("Favorable Standard Care 세 등급", top_k=10)
@@ -167,6 +188,25 @@ def test_product_question_does_not_receive_a_low_confidence_literature_capture()
     assert result["evidence_captures"] == []
 
 
+def test_out_of_zone_answer_context_traverses_both_exact_evidence_links() -> None:
+    service = KnowledgeService()
+    result = service.prepare_answer_context(
+        "생활권 밖이 위험하다면서 왜 위치만으로 감점하지 않아?",
+        max_chars=5000,
+    )
+
+    assert {item["id"].split("#")[-1] for item in result["evidence"]} == {
+        "presentation-ehsani-tefft-2021",
+        "presentation-hirsch-activity-space-2014",
+    }
+    assert {capture["id"] for capture in result["evidence_captures"]} == {
+        "capture-006",
+        "capture-037",
+    }
+    assert result["packet_chars"] <= 5000
+    assert "도구명" in result["response_contract"]["hide"]
+
+
 def test_open_items_do_not_turn_into_facts() -> None:
     service = KnowledgeService()
     result = service.list_open_items("공정성")
@@ -190,7 +230,7 @@ def test_answer_context_routes_core_questions_to_the_right_material(
     service = KnowledgeService()
     packet = service.prepare_answer_context(question, max_chars=7000)
     assert packet["current_facts"][0]["id"].endswith(expected_first)
-    assert packet["explanation_material"]
+    assert packet["response_contract"]["default"].startswith("직접 답하는")
 
 
 def test_history_material_requires_change_intent_and_prefers_decision_log() -> None:

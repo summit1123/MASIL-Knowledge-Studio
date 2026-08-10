@@ -2,7 +2,7 @@
 
 MASIL의 12분 발표와 8분 Q&A를 위해 문제정의, 상품 설계, 기술, 근거, 사회적 가치, 실행 가능성과 변경 이력을 관리하는 워크스페이스다.
 
-지식 정합성 검토를 통과한 현재 정본을 FastMCP 서버로 제공한다. 서버는 답변을 고정해 대신 말하는 도구가 아니라, Claude가 질문에 맞는 현재 사실·덱 문구·근거·구현 상태·주의점을 짧게 가져오도록 돕는 검색 및 답변 재료 계층이다.
+지식 정합성 검토를 통과한 현재 정본을 FastMCP 서버로 제공한다. 서버는 답변을 고정해 대신 말하는 도구가 아니라, Claude가 질문에 맞는 현재 사실·덱 문구·근거·구현 상태·주의점을 짧게 가져오도록 돕는 검색 및 답변 재료 계층이다. 팀원은 도구 이름을 외우지 않고 평소처럼 질문하거나 대본·Q&A 초안을 붙여 넣으면 된다.
 
 ## 네 개의 지식층
 
@@ -32,22 +32,23 @@ MASIL의 12분 발표와 8분 Q&A를 위해 문제정의, 상품 설계, 기술,
 
 공개 엔드포인트는 `https://masil-mcp.summit1123.co.kr/mcp`다. 팀 커넥터는 OAuth 2.0 Authorization Code + PKCE와 고정 confidential client를 사용한다. 로컬 개발에서는 인증 없음 또는 정적 Bearer 토큰 모드를 선택할 수 있다.
 
-제공 도구:
+Claude가 내부적으로 사용하는 도구:
 
-- `connector_guide` — 팀원이 이 커넥터로 무엇을 할 수 있는지와 맞는 도구 안내
-- `search_knowledge` — BM25와 한국어 문자 n-gram을 함께 쓰는 범위별 검색
+- `connector_guide` — 팀원에게 명령어가 아니라 평범한 질문 예시로 사용법 안내
+- `search_knowledge` — 제목·태그·메타데이터·본문을 따로 가중한 BM25F형 검색, 한국어 문자 n-gram, 한영 고정 용어 별칭
 - `prepare_topic_brief` — 한 주제의 현재 입장·근거·주장 경계·미검증 범위·쉬운 표현 재료. 예상 질문은 만들지 않음
-- `prepare_answer_context` — 현재 사실과 Summary·Appendix 근거를 우선한 Q&A 재료 묶음
+- `prepare_answer_context` — 일반 MASIL 질문과 붙여 넣은 초안의 기본 진입점. 현재 사실에서 정확한 문헌·캡처 링크를 순회해 짧은 답변 재료를 만듦
+- `show_answer_evidence` — 답변 재료에 정확히 연결된 캡처가 있을 때 별도 요청 없이 최대 2개를 대화 안의 증거 카드로 표시
 - `explain_product_logic` — 생활권, 점수, Care, 할인 등 상품 논리
 - `get_slide_context` — 9장 덱의 인쇄 사실과 구두 보완점
 - `get_evidence` — 문헌별 주장, 한계, 캡처 연결. 기본은 `stage`이며 Q&A·목록 전용은 명시적으로 범위를 열어야 함
 - `get_implementation` — 현재 외부 데모와 목표 상품 규칙의 차이
 - `compare_claims` — 현재·과거·덱 표현의 충돌 비교
 - `list_open_items` — 미확정·파일럿 가설·후보 파라미터를 상태별 정확한 총계와 함께 조회
-- `list_captures`, `show_evidence_capture`, `get_capture_image` — 44개 문헌 캡처의 근거 연결 조회와 이미지 반환. `show_evidence_capture`는 주제에서 정확한 문헌·캡처를 한 번에 찾고, 클라이언트가 이미지 블록을 표시하지 않을 때 쓸 공개 이미지 링크도 함께 반환
+- `list_captures`, `show_evidence_capture`, `get_capture_image` — 44개 문헌 캡처의 정확한 연결 조회와 이미지 반환. 이미지 도구는 MCP Apps `ui://` 뷰를 제공해 Claude가 지원하면 대화 안에 바로 렌더링하고, 미지원 클라이언트에는 공개 이미지 Markdown을 대체 경로로 반환
 - `knowledge_status` — 코퍼스·자산·권한 상태
 
-서버는 현재 1,312개 검색 문서와 44개 로컬 캡처를 읽는다. 기본 검색은 덱과 현재 상품 계약의 답변 가능한 사실만 반환한다. 과거 Q&A와 Master Q&A 원문은 변경·충돌 질문을 위한 재료로 보존하되 현재 상품 사실을 덮어쓸 수 없다.
+서버는 현재 1,312개 검색 문서와 44개 로컬 캡처를 읽는다. 기본 검색은 덱과 현재 상품 계약의 답변 가능한 사실만 반환한다. 검색어가 문헌 제목과 우연히 겹치는 것보다 현재 주장에 명시된 `source_refs`, `material_refs`, `evidence_links`를 우선한다. 과거 Q&A와 Master Q&A 원문은 변경·충돌 질문을 위한 재료로 보존하되 현재 상품 사실을 덮어쓸 수 없다.
 
 `forbidden_claims`와 `must_not_say`는 예상 질문 목록이 아니라 과장을 막는 주장 경계다. 서버는 이를 자동으로 질문으로 바꾸지 않는다. 예상 질문은 팀원이 명시적으로 요청할 때만 Claude가 별도로 만들며, 저장된 사실과 구분한다.
 
@@ -86,4 +87,4 @@ ruby knowledge/scripts/verify_knowledge.rb
 .venv/bin/python scripts/check_oauth.py https://masil-mcp.summit1123.co.kr
 ```
 
-지식 검증기는 YAML, ID, 덱 64개 claim, P0 15개, 전체 상품 영역, 발표 서사, 충돌 지도, 권한 라우팅과 이미지 자산을 확인한다. MCP 검사는 실제 초기화, 도구 목록, 검색, 답변 재료, OAuth와 이미지 반환까지 수행한다. 배포 운영 정보는 `DEPLOYMENT.md`를 참고한다.
+지식 검증기는 YAML, ID, 덱 64개 claim, P0 15개, 전체 상품 영역, 발표 서사, 충돌 지도, 권한 라우팅과 이미지 자산을 확인한다. MCP 검사는 실제 초기화, 도구 목록, 한영 검색 회귀, 답변 재료, OAuth, 다중 이미지 반환, `text/html;profile=mcp-app` 증거 뷰까지 수행한다. 배포 운영 정보는 `DEPLOYMENT.md`를 참고한다.

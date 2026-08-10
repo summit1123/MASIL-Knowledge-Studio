@@ -69,6 +69,7 @@ async def check(base_url: str) -> None:
         required = {
             "connector_guide",
             "prepare_topic_brief",
+            "show_answer_evidence",
             "show_evidence_capture",
             "list_open_items",
         }
@@ -106,9 +107,34 @@ async def check(base_url: str) -> None:
         if (
             answer.is_error
             or not answer.structured_content.get("current_facts")
-            or answer.structured_content.get("packet_chars", 999999) > 7000
+            or answer.structured_content.get("packet_chars", 999999) > 5000
+            or {item.get("id") for item in answer.structured_content.get("evidence_captures", [])}
+            != {"capture-006", "capture-037"}
         ):
             raise RuntimeError("authenticated answer-context call failed")
+
+        inline = await client.call_tool(
+            "show_answer_evidence",
+            {"question": "생활권 밖 주행은 왜 보는 건가요?"},
+        )
+        if (
+            inline.is_error
+            or {item.get("id") for item in inline.structured_content.get("captures", [])}
+            != {"capture-006", "capture-037"}
+            or sum(content.type == "image" for content in inline.content) != 2
+        ):
+            raise RuntimeError("authenticated inline-evidence call failed")
+
+        resources = await client.list_resources()
+        if not any(
+            str(resource.uri) == "ui://masil/evidence-view.html"
+            and resource.mimeType == "text/html;profile=mcp-app"
+            for resource in resources
+        ):
+            raise RuntimeError("authenticated MCP App resource missing")
+        view = await client.read_resource("ui://masil/evidence-view.html")
+        if not view or "MASIL Evidence Viewer" not in view[0].text:
+            raise RuntimeError("authenticated MCP App resource unreadable")
 
         brief = await client.call_tool(
             "prepare_topic_brief",
@@ -232,6 +258,8 @@ async def check(base_url: str) -> None:
                 "product_logic_call": "PASS",
                 "slide_context_call": "PASS",
                 "answer_context_call": "PASS",
+                "inline_evidence_call": "PASS",
+                "mcp_app_resource": "PASS",
                 "implementation_call": "PASS",
                 "claim_comparison_call": "PASS",
                 "open_items_call": "PASS",
