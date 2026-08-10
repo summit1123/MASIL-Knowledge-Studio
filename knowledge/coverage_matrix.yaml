@@ -55,8 +55,8 @@ domains:
     gap: 재현 가능한 코드·재실행 산출물 고정, 실데이터 외적 타당성, 드리프트·재보정 거버넌스
   - domain: evidence_and_claim_boundaries
     coverage: partial
-    present: 16개 발표 문헌 카드·64개 덱 claim·citation tier
-    gap: 로컬 캡처 이미지·페이지 좌표·Master Q&A export
+    present: 29개 문헌 카드·64개 덱 claim·citation tier·로컬 캡처 44개·Master Q&A 로컬 export와 78개 카드
+    gap: 새 덱·대본 변경 시 claim·문헌·캡처 연결을 다시 검증하는 운영 절차
   - domain: operations_and_delivery
     coverage: partial
     present: 직원 리포트·승인·고객 앱 콘셉트
@@ -67,8 +67,8 @@ domains:
     gap: 시장·채널·CAC·경쟁·해자·팀·파트너·파일럿 설계·경제성·역선택과 게이밍 검증
   - domain: language_and_presentation
     coverage: partial
-    present: active glossary·P0 질문·쉬운 영문 예시
-    gap: 최종 발표 대본 승인과 로컬 Master Q&A 편입
+    present: active glossary·P0 질문·쉬운 영문 예시·Master Q&A 로컬 검색 재료
+    gap: 최종 발표 대본 승인
 
 approval_gate:
   mcp_implementation_allowed: true
@@ -81,4 +81,3 @@ approval_gate:
     - 현재 구현의 점수+월별 Care, 기존 마일리지 기본할인과 Favorable +3%p·45% 상한 후보를 팀이 발표 계약으로 승인
     - 미커밋 구현 checkout을 재현 가능한 커밋 또는 배포 산출물로 고정
     - 과거 요율 샌드박스가 현재 답변으로 승격되지 않는 검증
-    - Master Q&A와 문헌 캡처의 로컬 자산화 계획 확정

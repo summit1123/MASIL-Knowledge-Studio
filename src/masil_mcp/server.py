@@ -82,13 +82,15 @@ def create_server(*, auth_mode: str | None = None, service: KnowledgeService | N
     def search_knowledge(
         query: str,
         top_k: int = 8,
-        scope: Literal["all", "current", "canonical", "slides", "evidence", "supporting", "history"] = "all",
+        scope: Literal["all", "current", "canonical", "slides", "evidence", "supporting", "history"] = "current",
         detail: Literal["compact", "full"] = "compact",
     ) -> dict:
         """Search MASIL with Korean/English BM25 plus Korean character n-grams.
 
-        Use scope=current for answer facts. Use all or history only when the
-        question asks why wording changed or when you need conflict clues.
+        The default current scope returns answer-safe facts from the final deck
+        and current product contract. Use canonical for glossary/guardrail
+        records, and all or history only when the user explicitly asks why
+        wording changed or requests superseded material.
         """
         return knowledge.search(query, top_k=top_k, scope=scope, detail=detail)
 
@@ -173,7 +175,8 @@ def create_server(*, auth_mode: str | None = None, service: KnowledgeService | N
         """List exact capture IDs; defaults to active Summary/Appendix evidence only.
 
         Use qa_only, listed_only, or all only when the user explicitly requests
-        those supporting/reference materials.
+        those supporting/reference materials. For the complete inventory, set
+        top_k=50; the response reports total counts and whether it was truncated.
         """
         return knowledge.list_captures(query=query, top_k=top_k, usage_scope=usage_scope)
 

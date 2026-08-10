@@ -10,6 +10,7 @@ meta:
 story_nodes:
   - story_node_id: story-01-one-line-definition
     stage: opening
+    keywords: [30초 소개, 한 문장 소개, elevator pitch]
     guiding_question_ko: MASIL은 한 문장으로 무엇인가?
     core_message_ko: 고령 운전자의 주행거리에 더해 개인 생활권 안팎의 안전행동과 평소 패턴 변화를 반영하는 AI-assisted mileage rider 제안이다.
     audience_takeaway: 거리만 보는 보험과 달리 같은 거리 안의 안전행동과 변화 맥락을 본다.
@@ -75,6 +76,7 @@ story_nodes:
 
   - story_node_id: story-06-how-zone-works
     stage: method
+    keywords: [MASIL Zone, 생활권 형성, rolling 2-month, monthly update]
     guiding_question_ko: 생활권은 어떻게 형성되고 왜 개인화되는가?
     core_message_ko: 서로 다른 3일 이상 반복 방문한 지점을 DBSCAN으로 묶고, 260m 시작값과 개인 P90을 사용해 거점별 반경을 만들며 직전 2개월로 매달 갱신한다.
     audience_takeaway: 거점 탐지와 생활권 반경은 다른 단계이고 지역이 아니라 개인 방문 분포가 최종 반경을 정한다.
@@ -120,6 +122,7 @@ story_nodes:
 
   - story_node_id: story-09-ai-trust-and-privacy
     stage: trust
+    keywords: [개인정보, 위치정보, GPS 프라이버시, 실시간 위치, 동의 철회, 보관 기간, privacy]
     guiding_question_ko: AI가 보험료를 정하거나 위치를 감시하는가?
     core_message_ko: AI는 합성 프로필과 설명을 돕고 판정은 고정 규칙으로 계산되며, 도착지 중심 최소수집·POI 마스킹·권한 분리와 직원 승인 원칙을 둔다.
     audience_takeaway: AI 결정 시스템이 아니라 설명 가능한 규칙과 사람 검토를 AI가 보조한다.
@@ -160,6 +163,7 @@ story_nodes:
 
   - story_node_id: story-12-social-value
     stage: impact
+    keywords: [보험사 가치, 보험사가 도입할 이유, 보험사 도입, 도입 이유, insurer value, mobility rights]
     guiding_question_ko: 누구에게 어떤 가치를 주는가?
     core_message_ko: 고령자에게 이동권과 자기조절 지원, 보험사에 예방적 관리 가능성, 가족에 선택적 지원 연결, 사회에 규제보다 신뢰 기반 안전 문화를 제안한다.
     audience_takeaway: 할인만이 아니라 이동권과 예방 지원을 함께 설계한 상품이다.
@@ -172,6 +176,7 @@ story_nodes:
 
   - story_node_id: story-13-feasibility-and-roadmap
     stage: execution
+    keywords: [미확정 사항, 미확정인 것, 검증되지 않은 것, 아직 검증되지 않음, 검증 과제, 한계, open items, pilot validation]
     guiding_question_ko: 실제 보험상품으로 어떻게 시작하고 무엇을 검증해야 하는가?
     core_message_ko: 기존 마일리지 rider 위에서 소규모 실데이터 파일럿으로 시작해 파라미터·요율·개인정보·운영·수용성을 검증한 뒤 확대한다.
     audience_takeaway: 현재는 설명 가능한 프로토타입과 합성 검증 단계이며 실제 상품 성과는 파일럿 과제다.

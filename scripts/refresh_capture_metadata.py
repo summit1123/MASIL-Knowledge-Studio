@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import hashlib
+import struct
 from pathlib import Path
 
 import yaml
@@ -9,6 +11,38 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 INDEX_PATH = ROOT / "knowledge/evidence/capture_index.yaml"
 MANIFEST_PATH = ROOT / "assets/evidence/captures/manifest.json"
+
+
+def jpeg_dimensions(path: Path) -> tuple[int, int]:
+    data = path.read_bytes()
+    if not data.startswith(b"\xff\xd8"):
+        raise ValueError(f"not a JPEG file: {path}")
+    offset = 2
+    sof_markers = {0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7, 0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF}
+    while offset + 4 <= len(data):
+        if data[offset] != 0xFF:
+            offset += 1
+            continue
+        while offset < len(data) and data[offset] == 0xFF:
+            offset += 1
+        if offset >= len(data):
+            break
+        marker = data[offset]
+        offset += 1
+        if marker in {0xD8, 0xD9}:
+            continue
+        if offset + 2 > len(data):
+            break
+        segment_length = struct.unpack(">H", data[offset:offset + 2])[0]
+        if segment_length < 2 or offset + segment_length > len(data):
+            break
+        if marker in sof_markers:
+            if segment_length < 7:
+                break
+            height, width = struct.unpack(">HH", data[offset + 3:offset + 7])
+            return width, height
+        offset += segment_length
+    raise ValueError(f"JPEG dimensions not found: {path}")
 
 
 def main() -> None:
@@ -33,9 +67,15 @@ def main() -> None:
 
     for capture in captures:
         group = group_by_capture[capture["id"]]
+        asset_path = ROOT / capture["file"]
+        width, height = jpeg_dimensions(asset_path)
         kind = "source" if "-source." in capture["file"] else "deck"
         capture.update(
             {
+                "mime_type": "image/jpeg",
+                "sha256": hashlib.sha256(asset_path.read_bytes()).hexdigest(),
+                "width": width,
+                "height": height,
                 "source_key": group["id"],
                 "source": group["source"],
                 "capture_kind": kind,

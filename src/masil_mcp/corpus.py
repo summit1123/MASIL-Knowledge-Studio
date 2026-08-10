@@ -63,18 +63,28 @@ IDENTITY_FIELDS = (
     "claim_id",
     "page_id",
     "position_id",
+    "story_node_id",
+)
+FALLBACK_IDENTITY_FIELDS = (
     "name",
+    "domain",
+    "question_ko",
+    "korean",
+    "expression",
+    "topic",
 )
 TITLE_FIELDS = (
     "title_ko",
     "title_en",
     "title",
     "name",
-    "source",
     "question_ko",
     "question_en",
+    "guiding_question_ko",
+    "korean",
+    "expression",
     "topic",
-    "statement_ko",
+    "source",
 )
 STATUS_FIELDS = ("status", "claim_status", "citation_tier", "state")
 BODY_PRIORITY_FIELDS = (
@@ -83,11 +93,26 @@ BODY_PRIORITY_FIELDS = (
     "text_en",
     "note_ko",
     "direct_answer_ko",
+    "direct_answer_en",
+    "spoken_answer_ko",
     "spoken_answer_en",
+    "approved_position_ko",
+    "approved_position_en",
     "allowed_claim",
     "prohibited_claim",
+    "expression",
+    "replacement",
     "current_resolution",
+    "before",
+    "after",
     "recommended_position_ko",
+    "guiding_question_ko",
+    "core_message_ko",
+    "audience_takeaway",
+    "present",
+    "gap",
+    "korean",
+    "official_english",
     "plain_english",
     "note",
     "notes",
@@ -95,11 +120,35 @@ BODY_PRIORITY_FIELDS = (
     "caveats",
     "formula",
     "value",
+    "values",
     "context",
     "reason",
+    "evidence_status",
+    "implementation_status",
+    "historical_implementation",
+    "prohibited_use",
+    "must_include",
+    "must_not_say",
+    "do_not_say",
+    "followups",
+    "evidence_ref",
+    "boundaries",
+    "likely_challenges",
     "validation_needed",
     "decision_needed",
 )
+
+HISTORICAL_STATUSES = {
+    "banned",
+    "prohibited",
+    "historical",
+    "archived",
+    "superseded",
+    "deprecated",
+    "legacy_reference",
+    "archived_meeting_note",
+    "historical_demo",
+}
 
 
 def _scalar_text(value: Any) -> str:
@@ -131,9 +180,9 @@ def _first(mapping: dict[str, Any], fields: Iterable[str], default: str = "") ->
     return default
 
 
-def _authority(path: str, item: dict[str, Any]) -> str:
-    status = _first(item, STATUS_FIELDS).lower()
-    if status in {"banned", "prohibited", "historical", "archived", "superseded", "deprecated"}:
+def _authority(path: str, item: dict[str, Any], status: str) -> str:
+    status = status.lower()
+    if status in HISTORICAL_STATUSES:
         return "historical"
     if path in DECK_YAML:
         return "deck"
@@ -149,6 +198,8 @@ def _authority(path: str, item: dict[str, Any]) -> str:
             return "evidence"
         if tier == "qa_only":
             return "supporting"
+        return "historical"
+    if path == "knowledge/history/decision_log.yaml":
         return "historical"
     if path in CANONICAL_YAML:
         return "canonical"
@@ -180,7 +231,7 @@ def _yaml_body(item: dict[str, Any]) -> str:
 def _iter_yaml_items(node: Any, trail: list[str] | None = None) -> Iterable[tuple[list[str], dict[str, Any]]]:
     trail = trail or []
     if isinstance(node, dict):
-        has_identity = any(field in node for field in IDENTITY_FIELDS)
+        has_identity = any(field in node for field in (*IDENTITY_FIELDS, *FALLBACK_IDENTITY_FIELDS))
         has_claim = any(field in node for field in BODY_PRIORITY_FIELDS)
         if has_identity and has_claim:
             yield trail, node
@@ -213,6 +264,10 @@ def _metadata(item: dict[str, Any]) -> dict[str, Any]:
         "capture_status",
         "evidence_refs",
         "card_status",
+        "canonical_for_facts",
+        "role",
+        "priority",
+        "scenario_id",
     }
     return {key: value for key, value in item.items() if key in allowed}
 
@@ -222,6 +277,11 @@ def load_yaml_documents(root: Path, relative_path: str) -> list[KnowledgeDocumen
     if not path.exists():
         return []
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    default_status = "unspecified"
+    if isinstance(data, dict):
+        meta = data.get("meta")
+        if isinstance(meta, dict):
+            default_status = str(meta.get("default_status_for_missing", default_status))
     documents: list[KnowledgeDocument] = []
     for trail, item in _iter_yaml_items(data):
         # deck_claims.yaml groups claims under a page object. The recursive
@@ -234,7 +294,10 @@ def load_yaml_documents(root: Path, relative_path: str) -> list[KnowledgeDocumen
                 parent_page = {}
             if parent_page.get("page") is not None:
                 item = {**item, "page": parent_page["page"]}
-        raw_id = _first(item, IDENTITY_FIELDS, "/".join(trail))
+        raw_id = _first(item, IDENTITY_FIELDS)
+        if not raw_id:
+            fallback = _first(item, FALLBACK_IDENTITY_FIELDS, "item")
+            raw_id = f"{fallback}-{'/'.join(trail)}"
         title = _first(item, TITLE_FIELDS, raw_id)
         body = _yaml_body(item)
         source_text = _scalar_text(item.get("source"))
@@ -242,7 +305,7 @@ def load_yaml_documents(root: Path, relative_path: str) -> list[KnowledgeDocumen
             body = f"source: {source_text}\n{body}".strip()
         if not body:
             continue
-        status = _first(item, STATUS_FIELDS, "unspecified")
+        status = _first(item, STATUS_FIELDS, default_status)
         layer = str(item.get("layer", "unspecified"))
         topic = str(item.get("topic", item.get("domain_id", trail[-2] if len(trail) > 1 else "general")))
         tags = [str(value) for key in ("topics", "tags", "keywords", "banned_variants") for value in (item.get(key) or [])]
@@ -252,7 +315,7 @@ def load_yaml_documents(root: Path, relative_path: str) -> list[KnowledgeDocumen
                 title=title[:300],
                 body=body,
                 source_path=relative_path,
-                authority=_authority(relative_path, item),
+                authority=_authority(relative_path, item, status),
                 status=status,
                 layer=layer,
                 topic=topic,

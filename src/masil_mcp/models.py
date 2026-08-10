@@ -30,6 +30,10 @@ class KnowledgeDocument:
             "banned",
             "archived",
             "superseded",
+            "deprecated",
+            "legacy_reference",
+            "archived_meeting_note",
+            "historical_demo",
         }
 
 
@@ -60,4 +64,3 @@ class SearchHit:
 
 def repository_root() -> Path:
     return Path(__file__).resolve().parents[2]
-

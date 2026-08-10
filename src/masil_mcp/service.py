@@ -1,17 +1,18 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any
 
 from .corpus import KnowledgeCorpus
 from .models import SearchHit
-from .search import HybridSearchIndex
+from .search import HybridSearchIndex, normalize
 
 
 SCOPES: dict[str, set[str] | None] = {
     "all": None,
-    "current": {"canonical", "deck", "evidence"},
+    "current": {"canonical", "deck"},
     "canonical": {"canonical"},
     "slides": {"deck"},
     "evidence": {"evidence"},
@@ -19,9 +20,48 @@ SCOPES: dict[str, set[str] | None] = {
     "history": {"historical"},
 }
 
-EXCLUDED_CURRENT_STATUSES = {"banned", "prohibited", "historical", "archived", "superseded", "deprecated"}
+EXCLUDED_CURRENT_STATUSES = {
+    "banned",
+    "prohibited",
+    "historical",
+    "archived",
+    "superseded",
+    "deprecated",
+    "legacy_reference",
+    "archived_meeting_note",
+    "historical_demo",
+}
 MIN_EVIDENCE_SCORE = 8.0
 EVIDENCE_SCOPES = {"stage", "qa_only", "listed_only", "all"}
+SOURCE_TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9-]{3,}")
+SOURCE_TOKEN_STOPWORDS = {
+    "looking",
+    "seeing",
+    "driver",
+    "drivers",
+    "driving",
+    "route",
+    "road",
+    "risk",
+    "safety",
+    "source",
+    "study",
+}
+CAPTURE_REQUEST_TERMS = {"캡처", "원문", "이미지", "스크린샷", "capture", "screenshot", "source image"}
+HISTORY_REQUEST_TERMS = {"과거", "이전", "변경", "바뀌", "충돌", "히스토리", "history", "changed", "previous"}
+ANSWER_FACT_SOURCES = {
+    "IMPLEMENTATION.md",
+    "knowledge/product_model.yaml",
+    "knowledge/official_positions.yaml",
+    "knowledge/key_numbers.yaml",
+    "knowledge/presentation_story.yaml",
+    "knowledge/claims/deck_claims.yaml",
+}
+GUARDRAIL_SOURCES = {
+    "knowledge/conflict_map.yaml",
+    "knowledge/forbidden_claims.yaml",
+    "knowledge/glossary.yaml",
+}
 
 
 class KnowledgeService:
@@ -42,15 +82,45 @@ class KnowledgeService:
             "fingerprint": self.corpus.fingerprint(),
         }
 
-    def search(self, query: str, top_k: int = 8, scope: str = "all", detail: str = "compact") -> dict[str, Any]:
+    @staticmethod
+    def _validate_top_k(top_k: int, maximum: int = 30) -> None:
+        if top_k < 1 or top_k > maximum:
+            raise ValueError(f"top_k must be between 1 and {maximum}")
+
+    def _filtered_search(
+        self,
+        query: str,
+        *,
+        top_k: int,
+        predicate: Any,
+    ) -> list[SearchHit]:
+        documents = [document for document in self.corpus.documents if predicate(document)]
+        return HybridSearchIndex(documents).search(query, top_k=top_k) if documents else []
+
+    def search(self, query: str, top_k: int = 8, scope: str = "current", detail: str = "compact") -> dict[str, Any]:
+        self._validate_top_k(top_k)
         if scope not in SCOPES:
             raise ValueError(f"scope must be one of: {', '.join(SCOPES)}")
-        hits = self.index.search(
-            query,
-            top_k=top_k,
-            authorities=SCOPES[scope],
-            status_exclude=EXCLUDED_CURRENT_STATUSES if scope in {"current", "canonical", "slides", "evidence"} else None,
-        )
+        if scope == "current":
+            # The default search is the material Claude may safely use as an
+            # answer premise.  Glossary/conflict/forbidden records are useful
+            # guardrails, but must not compete with the current product facts.
+            hits = self._filtered_search(
+                query,
+                top_k=top_k,
+                predicate=lambda document: (
+                    document.authority in SCOPES["current"]
+                    and document.source_path in ANSWER_FACT_SOURCES
+                    and document.status.lower() not in EXCLUDED_CURRENT_STATUSES
+                ),
+            )
+        else:
+            hits = self.index.search(
+                query,
+                top_k=top_k,
+                authorities=SCOPES[scope],
+                status_exclude=EXCLUDED_CURRENT_STATUSES if scope in {"canonical", "slides", "evidence"} else None,
+            )
         return {
             "query": query,
             "scope": scope,
@@ -58,10 +128,24 @@ class KnowledgeService:
             "results": [hit.as_dict(include_body=detail == "full") for hit in hits],
         }
 
-    def _search_source(self, query: str, source: str, top_k: int = 8) -> list[SearchHit]:
-        return self.index.search(query, top_k=top_k, source_contains=source)
+    def _search_source(
+        self,
+        query: str,
+        source: str,
+        top_k: int = 8,
+        statuses: set[str] | None = None,
+    ) -> list[SearchHit]:
+        self._validate_top_k(top_k)
+        if statuses is None:
+            return self.index.search(query, top_k=top_k, source_contains=source)
+        return self._filtered_search(
+            query,
+            top_k=top_k,
+            predicate=lambda document: source in document.source_path and document.status in statuses,
+        )
 
     def _literature_hits(self, query: str, top_k: int, usage_scope: str = "stage") -> list[SearchHit]:
+        self._validate_top_k(top_k)
         if usage_scope not in EVIDENCE_SCOPES:
             raise ValueError(f"usage_scope must be one of: {', '.join(sorted(EVIDENCE_SCOPES))}")
         allowed_tiers = {
@@ -74,29 +158,55 @@ class KnowledgeService:
             return []
         hits = self.index.search(
             query,
-            top_k=min(max(top_k * 2, top_k), 30),
+            top_k=top_k,
             authorities={"evidence", "supporting"},
             source_contains="knowledge/evidence/registry.yaml",
+            status_include=allowed_tiers,
         )
+        named_hits = self._prefer_named_source(query, hits)
+        minimum_score = 0.0 if len(named_hits) < len(hits) else MIN_EVIDENCE_SCORE
         # 문헌명이 없고 공통 숫자·짧은 단어만 겹친 결과는 Q&A에 근거처럼 주입하지 않는다.
         return [
-            hit for hit in hits
-            if hit.document.status in allowed_tiers and hit.score >= MIN_EVIDENCE_SCORE
-        ][:top_k]
+            hit for hit in named_hits
+            if hit.score >= minimum_score
+        ]
+
+    @staticmethod
+    def _prefer_named_source(query: str, hits: list[SearchHit]) -> list[SearchHit]:
+        source_tokens = {
+            token.lower()
+            for token in SOURCE_TOKEN_RE.findall(query)
+            if token.lower() not in SOURCE_TOKEN_STOPWORDS and not token.isdigit()
+        }
+        if not source_tokens:
+            return hits
+        matched = [
+            hit
+            for hit in hits
+            if any(
+                token in normalize(f"{hit.document.id} {hit.document.title}")
+                for token in source_tokens
+            )
+        ]
+        return matched or hits
 
     def _reference_only_hits(self, query: str, top_k: int, usage_scope: str = "stage") -> list[SearchHit]:
+        self._validate_top_k(top_k)
         if usage_scope not in {"listed_only", "all"}:
             return []
         hits = self.index.search(
             query,
-            top_k=min(max(top_k * 2, top_k), 30),
+            top_k=top_k,
             authorities={"historical"},
             source_contains="knowledge/evidence/registry.yaml",
+            status_include={"listed_only"},
         )
+        named_hits = self._prefer_named_source(query, hits)
+        minimum_score = 0.0 if len(named_hits) < len(hits) else MIN_EVIDENCE_SCORE
         return [
-            hit for hit in hits
-            if hit.document.status == "listed_only" and hit.score >= MIN_EVIDENCE_SCORE
-        ][:top_k]
+            hit for hit in named_hits
+            if hit.score >= minimum_score
+        ]
 
     def _capture_groups_for(self, literature: list[SearchHit], usage_scope: str = "stage") -> list[SearchHit]:
         allowed_statuses = {
@@ -127,17 +237,39 @@ class KnowledgeService:
             records.append(metadata)
         return records
 
+    def _answer_capture_records(self, capture_ids: list[str]) -> list[dict[str, Any]]:
+        keep = {"id", "source", "heading", "caption", "card_status", "deck_location", "capture_kind"}
+        return [
+            {key: value for key, value in record.items() if key in keep}
+            for record in self._capture_records(capture_ids)
+        ]
+
     def explain_product_logic(self, topic: str, detail: str = "compact") -> dict[str, Any]:
-        hits = self.index.search(
+        hits = self._filtered_search(
             topic,
             top_k=10,
-            authorities={"canonical"},
-            status_exclude=EXCLUDED_CURRENT_STATUSES,
+            predicate=lambda document: (
+                document.source_path in ANSWER_FACT_SOURCES
+                and document.authority in {"canonical", "deck"}
+                and document.status.lower() not in EXCLUDED_CURRENT_STATUSES
+            ),
+        )
+        guardrails = self._filtered_search(
+            topic,
+            top_k=5,
+            predicate=lambda document: (
+                document.source_path in GUARDRAIL_SOURCES
+                and document.authority == "canonical"
+                and document.status.lower() not in EXCLUDED_CURRENT_STATUSES
+            ),
         )
         return {
             "topic": topic,
             "contract": "최신 상품 계약과 현재 구현 후보값을 구분해 반환합니다.",
             "facts": [hit.as_dict(include_body=detail == "full") for hit in hits],
+            "terms_and_guardrails": [
+                hit.as_dict(include_body=detail == "full") for hit in guardrails
+            ],
             "boundary": "candidate_parameter와 unresolved는 확정 요율·검증 결과로 바꾸지 마세요.",
         }
 
@@ -147,8 +279,6 @@ class KnowledgeService:
             for document in self.corpus.documents
             if document.authority == "deck" and document.metadata.get("page") == page
         ]
-        if not hits:
-            hits = self._search_source(str(page), "deck_claims.yaml", top_k=12)
         return {
             "page": page,
             "claims": [hit.as_dict(include_body=detail == "full") for hit in hits[:20]],
@@ -162,20 +292,22 @@ class KnowledgeService:
         include_captures: bool = True,
         usage_scope: str = "stage",
     ) -> dict[str, Any]:
+        self._validate_top_k(top_k)
         literature = self._literature_hits(query, top_k=top_k, usage_scope=usage_scope)
         reference_only = self._reference_only_hits(query, top_k=top_k, usage_scope=usage_scope)
         selected = sorted([*literature, *reference_only], key=lambda hit: hit.score, reverse=True)
         capture_groups = self._capture_groups_for(selected, usage_scope=usage_scope) if include_captures else []
         capture_ids: list[str] = []
-        for hit in selected:
-            metadata = hit.document.metadata
-            ordered = [
-                *metadata.get("source_capture_ids", []),
-                *metadata.get("deck_capture_ids", []),
-            ]
-            for capture_id in ordered or metadata.get("capture_ids", []):
-                if capture_id not in capture_ids:
-                    capture_ids.append(capture_id)
+        if include_captures:
+            for hit in selected:
+                metadata = hit.document.metadata
+                ordered = [
+                    *metadata.get("source_capture_ids", []),
+                    *metadata.get("deck_capture_ids", []),
+                ]
+                for capture_id in ordered or metadata.get("capture_ids", []):
+                    if capture_id not in capture_ids:
+                        capture_ids.append(capture_id)
         recommended_ids: list[str] = []
         if selected and include_captures:
             top_metadata = selected[0].document.metadata
@@ -199,7 +331,15 @@ class KnowledgeService:
 
     def get_implementation(self, topic: str = "점수 Care 할인 생활권") -> dict[str, Any]:
         audit = self._search_source(topic, "IMPLEMENTATION.md", top_k=10)
-        model = self.index.search(topic, top_k=8, authorities={"canonical"}, status_exclude=EXCLUDED_CURRENT_STATUSES)
+        model = self._filtered_search(
+            topic,
+            top_k=8,
+            predicate=lambda document: (
+                document.source_path in ANSWER_FACT_SOURCES
+                and document.authority in {"canonical", "deck"}
+                and document.status.lower() not in EXCLUDED_CURRENT_STATUSES
+            ),
+        )
         return {
             "topic": topic,
             "observed_implementation": [hit.as_dict(include_body=True) for hit in audit],
@@ -208,7 +348,15 @@ class KnowledgeService:
         }
 
     def compare_claims(self, query: str) -> dict[str, Any]:
-        current = self.index.search(query, top_k=6, authorities={"canonical", "deck"}, status_exclude=EXCLUDED_CURRENT_STATUSES)
+        current = self._filtered_search(
+            query,
+            top_k=6,
+            predicate=lambda document: (
+                document.source_path in ANSWER_FACT_SOURCES
+                and document.authority in {"canonical", "deck"}
+                and document.status.lower() not in EXCLUDED_CURRENT_STATUSES
+            ),
+        )
         conflicts = self._search_source(query, "knowledge/conflict_map.yaml", top_k=6)
         history = self.index.search(query, top_k=5, authorities={"historical"})
         return {
@@ -226,17 +374,55 @@ class KnowledgeService:
         max_chars: int = 7000,
         evidence_scope: str = "stage",
     ) -> dict[str, Any]:
-        current = self.index.search(
+        current = self._filtered_search(
             question,
             top_k=7,
-            authorities={"canonical", "deck"},
-            status_exclude=EXCLUDED_CURRENT_STATUSES,
+            predicate=lambda document: (
+                document.authority in {"canonical", "deck"}
+                and document.status.lower() not in EXCLUDED_CURRENT_STATUSES
+                and document.source_path in ANSWER_FACT_SOURCES
+            ),
         )
         evidence = self._literature_hits(question, top_k=4, usage_scope=evidence_scope)
         reference_only = self._reference_only_hits(question, top_k=2, usage_scope=evidence_scope)
-        supporting = self.index.search(question, top_k=4, authorities={"supporting"})
+        supporting = self._filtered_search(
+            question,
+            top_k=4,
+            predicate=lambda document: (
+                document.authority == "supporting"
+                and document.source_path == "knowledge/qa/cards.yaml"
+                and document.status == "active"
+            ),
+        )
+        history_requested = any(term in question.lower() for term in HISTORY_REQUEST_TERMS)
+        history_material: list[SearchHit] = []
+        if history_requested:
+            history_material.extend(self._filtered_search(
+                question,
+                top_k=2,
+                predicate=lambda document: (
+                    document.authority == "historical"
+                    and document.source_path in {
+                        "knowledge/history/decision_log.yaml",
+                        "knowledge/official_positions.yaml",
+                    }
+                ),
+            ))
+            history_material.extend(self._filtered_search(
+                question,
+                top_k=1,
+                predicate=lambda document: (
+                    document.authority == "historical"
+                    and document.source_path == "knowledge/qa/cards.yaml"
+                ),
+            ))
         conflicts = self._search_source(question, "knowledge/conflict_map.yaml", top_k=3)
-        glossary = self._search_source(question, "knowledge/glossary.yaml", top_k=4)
+        glossary = self._search_source(
+            question,
+            "knowledge/glossary.yaml",
+            top_k=4,
+            statuses={"active"},
+        )
 
         def answer_hit(hit: SearchHit, body_chars: int = 0) -> dict[str, Any]:
             payload = hit.as_dict(include_body=False)
@@ -252,25 +438,28 @@ class KnowledgeService:
             "evidence_scope": evidence_scope,
             "answer_instruction": (
                 "아래 재료로 의미가 정확한 짧은 문장을 만드세요. 확정 답안을 복사하지 말고 질문에 직접 답하세요. "
-                "후보값·미검증 가설·과거 이력은 상태를 숨기지 마세요."
+                "후보값·미검증 가설·과거 이력은 상태를 숨기지 마세요. historical_material은 현재 사실을 "
+                "정하는 근거가 아니라 질문 의도·변경 이유·후속 질문을 이해하는 재료로만 사용하세요."
             ),
             "current_facts": [answer_hit(hit, 900) for hit in current[:5]],
             "evidence": [answer_hit(hit, 700) for hit in evidence[:3]],
             "reference_only": [answer_hit(hit, 700) for hit in reference_only[:2]],
             "evidence_captures": [],
             "explanation_material": [answer_hit(hit) for hit in supporting[:2]],
+            "historical_material": [answer_hit(hit) for hit in history_material[:2]],
             "conflicts_and_avoid": [answer_hit(hit, 650) for hit in conflicts[:2]],
             "fixed_terms": [answer_hit(hit) for hit in glossary[:2]],
             "truncated": False,
             "packet_chars": max_chars,
         }
-        capture_source = evidence[0] if evidence else (reference_only[0] if reference_only else None)
+        wants_capture = any(term in question.lower() for term in CAPTURE_REQUEST_TERMS)
+        capture_source = (evidence[0] if evidence else (reference_only[0] if reference_only else None)) if wants_capture else None
         if capture_source:
             metadata = capture_source.document.metadata
             capture_ids = list(metadata.get("source_capture_ids", []))
             if not capture_ids:
                 capture_ids = list(metadata.get("deck_capture_ids", []))
-            packet["evidence_captures"] = self._capture_records(capture_ids)
+            packet["evidence_captures"] = self._answer_capture_records(capture_ids)
             packet["answer_instruction"] += (
                 " 사용자가 근거 캡처를 요청했다면 evidence_captures의 id로 get_capture_image를 호출해 이미지를 직접 보여주세요."
             )
@@ -280,16 +469,18 @@ class KnowledgeService:
 
         original_counts = {key: len(value) for key, value in packet.items() if isinstance(value, list)}
         minimums = {
-            "current_facts": 2,
-            "evidence": 0,
-            "reference_only": 0,
+            "current_facts": 1 if packet["evidence_captures"] else 2,
+            "evidence": 1 if packet["evidence_captures"] and evidence else 0,
+            "reference_only": 1 if packet["evidence_captures"] and not evidence and reference_only else 0,
             "evidence_captures": 1 if packet["evidence_captures"] else 0,
-            "explanation_material": 0,
+            "explanation_material": 1 if packet["explanation_material"] and not packet["evidence_captures"] else 0,
+            "historical_material": 1 if packet["historical_material"] else 0,
             "conflicts_and_avoid": 0,
             "fixed_terms": 0,
         }
         drop_order = (
             "explanation_material",
+            "historical_material",
             "fixed_terms",
             "evidence_captures",
             "evidence",
@@ -314,18 +505,42 @@ class KnowledgeService:
                             item[field] = f"{value[:limit].rstrip()}…"
 
         if packet_size() > max_chars:
-            for item in packet["current_facts"]:
-                item.pop("metadata", None)
-                item.pop("body", None)
+            for key in (
+                "current_facts",
+                "evidence",
+                "reference_only",
+                "explanation_material",
+                "historical_material",
+                "conflicts_and_avoid",
+                "fixed_terms",
+            ):
+                for item in packet[key]:
+                    item.pop("metadata", None)
+
+        if packet_size() > max_chars:
+            for key in ("current_facts", "evidence", "reference_only", "conflicts_and_avoid"):
+                for item in packet[key]:
+                    if isinstance(item.get("body"), str):
+                        item["body"] = f"{item['body'][:240].rstrip()}…"
+                    if isinstance(item.get("snippet"), str):
+                        item["snippet"] = f"{item['snippet'][:160].rstrip()}…"
+
+        while packet_size() > max_chars and len(packet["current_facts"]) > 1:
+            packet["current_facts"].pop()
 
         packet["truncated"] = any(
             len(packet[key]) < count for key, count in original_counts.items()
         )
-        packet["packet_chars"] = packet_size()
-        packet["packet_chars"] = packet_size()
+        packet["packet_chars"] = 0
+        while True:
+            final_size = packet_size()
+            if packet["packet_chars"] == final_size:
+                break
+            packet["packet_chars"] = final_size
         return packet
 
     def list_open_items(self, query: str = "미확정 unresolved 검증 필요", top_k: int = 12) -> dict[str, Any]:
+        self._validate_top_k(top_k)
         unresolved = [
             document
             for document in self.corpus.documents
@@ -340,6 +555,7 @@ class KnowledgeService:
         }
 
     def list_captures(self, query: str = "문헌", top_k: int = 20, usage_scope: str = "stage") -> dict[str, Any]:
+        self._validate_top_k(top_k, maximum=50)
         if usage_scope not in EVIDENCE_SCOPES:
             raise ValueError(f"usage_scope must be one of: {', '.join(sorted(EVIDENCE_SCOPES))}")
         allowed_statuses = {
@@ -349,12 +565,17 @@ class KnowledgeService:
             "all": {"active", "qa_only", "listed_only"},
         }[usage_scope]
         generic_queries = {"", "문헌", "문헌 캡처", "근거", "근거 캡처", "captures", "literature"}
-        if query.strip().lower() in generic_queries:
+        is_generic_query = query.strip().lower() in generic_queries
+        eligible_groups = [
+            document
+            for document in self.corpus.documents
+            if document.source_path == "knowledge/evidence/capture_index.yaml"
+            and document.metadata.get("card_status") in allowed_statuses
+        ]
+        if is_generic_query:
             groups = [
                 SearchHit(document, 1.0, document.body[:520])
-                for document in self.corpus.documents
-                if document.source_path == "knowledge/evidence/capture_index.yaml"
-                and document.metadata.get("card_status") in allowed_statuses
+                for document in eligible_groups
             ][: min(top_k, 30)]
         else:
             raw_groups = self.index.search(
@@ -376,11 +597,21 @@ class KnowledgeService:
         for capture_id in capture_ids[:top_k]:
             metadata, _ = self.capture(capture_id)
             captures.append(metadata)
+        eligible_capture_ids = {
+            capture_id
+            for document in eligible_groups
+            for capture_id in document.metadata.get("capture_ids", [])
+        }
         return {
             "query": query,
             "usage_scope": usage_scope,
+            "total_group_count": len(eligible_groups),
+            "total_capture_count": len(eligible_capture_ids),
             "groups": [hit.as_dict(include_body=True) for hit in groups],
             "captures": captures,
+            "truncated": is_generic_query and (
+                len(groups) < len(eligible_groups) or len(captures) < len(eligible_capture_ids)
+            ),
         }
 
     def capture(self, capture_id: str) -> tuple[dict[str, Any], Path]:

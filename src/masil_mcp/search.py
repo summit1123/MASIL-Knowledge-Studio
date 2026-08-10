@@ -17,20 +17,63 @@ AUTHORITY_BOOST = {
     "supporting": 0.92,
     "historical": 0.58,
 }
+STATUS_BOOST = {
+    "current": 1.08,
+    "active": 1.08,
+    "as_printed": 1.04,
+    "as_printed_needs_context": 1.02,
+    "printed_correction_planned": 0.94,
+    "candidate_parameter": 0.94,
+    "documented_reference": 0.90,
+    "pilot_target": 0.90,
+    "pilot_hypothesis": 0.88,
+    "unresolved": 0.78,
+}
+QUERY_STOPWORDS = {
+    "왜",
+    "어떻게",
+    "무엇인가요",
+    "뭔가요",
+    "뭐예요",
+    "하나요",
+    "되나요",
+    "인가요",
+    "건가요",
+    "나뉘나요",
+    "설명해줘",
+    "설명해주세요",
+    "알려줘",
+    "알려주세요",
+}
 
 
 def normalize(text: str) -> str:
     return unicodedata.normalize("NFKC", text).lower().strip()
 
 
-def tokens(text: str) -> list[str]:
+def words(text: str) -> list[str]:
     text = normalize(text)
-    words = WORD_RE.findall(text)
+    return [
+        word
+        for word in WORD_RE.findall(text)
+        if word not in QUERY_STOPWORDS and not (re.fullmatch(r"[가-힣]", word))
+    ]
+
+
+def word_terms(word: str) -> list[str]:
+    terms = [word]
+    if re.fullmatch(r"[가-힣]+", word) and len(word) >= 2:
+        terms.extend(f"ko:{word[index:index + size]}" for size in (2, 3) for index in range(len(word) - size + 1))
+    return terms
+
+
+def tokens(text: str) -> list[str]:
+    parsed_words = words(text)
     grams: list[str] = []
-    for word in words:
+    for word in parsed_words:
         if re.fullmatch(r"[가-힣]+", word) and len(word) >= 2:
             grams.extend(f"ko:{word[index:index + size]}" for size in (2, 3) for index in range(len(word) - size + 1))
-    return [*words, *grams]
+    return [*parsed_words, *grams]
 
 
 def weighted_tokens(document: KnowledgeDocument) -> list[str]:
@@ -78,12 +121,16 @@ class HybridSearchIndex:
         top_k: int = 8,
         authorities: set[str] | None = None,
         source_contains: str | None = None,
+        status_include: set[str] | None = None,
         status_exclude: set[str] | None = None,
     ) -> list[SearchHit]:
+        if top_k < 1 or top_k > 30:
+            raise ValueError("top_k must be between 1 and 30")
         query = query.strip()
         if not query:
             return []
         query_terms = Counter(tokens(query))
+        query_words = words(query)
         normalized_query = normalize(query)
         count = len(self.documents)
         scores: list[tuple[float, int]] = []
@@ -91,6 +138,8 @@ class HybridSearchIndex:
             if authorities and document.authority not in authorities:
                 continue
             if source_contains and source_contains not in document.source_path:
+                continue
+            if status_include and document.status not in status_include:
                 continue
             if status_exclude and document.status.lower() in status_exclude:
                 continue
@@ -117,13 +166,21 @@ class HybridSearchIndex:
                 score += 8.0
             if normalized_query == normalize(document.id) or normalized_query == normalize(document.title):
                 score += 25.0
+            if len(query_words) > 1:
+                matched_words = sum(
+                    any(frequencies.get(term, 0) for term in word_terms(word))
+                    for word in query_words
+                )
+                coverage = matched_words / len(query_words)
+                score *= 0.30 + 0.70 * coverage
             score *= AUTHORITY_BOOST.get(document.authority, 1.0)
+            score *= STATUS_BOOST.get(document.status.lower(), 1.0)
             if score > 0:
                 scores.append((score, index))
         scores.sort(reverse=True)
         return [
             SearchHit(self.documents[index], score, _snippet(self.documents[index], query))
-            for score, index in scores[: max(1, min(top_k, 30))]
+            for score, index in scores[:top_k]
         ]
 
 

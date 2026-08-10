@@ -723,23 +723,23 @@ domains:
         source_refs:
           - knowledge/claims/deck_claims.yaml
       - id: model-evidence-captures
-        status: unresolved
-        answer_authority: none
+        status: current
+        answer_authority: current
         layer: evidence
-        statement_ko: 16개 발표 문헌의 캡처는 외부 원본에서 검토됐지만 실제 이미지 파일과 페이지 좌표는 아직 이 저장소에 없다.
-        current_evidence_status: externally_reviewed_local_assets_missing
-        recommended_position_ko: "문헌 주장은 현재 registry의 허용 범위로 답할 수 있다. 캡처를 직접 보여주는 기능은 로컬 이미지와 페이지 좌표를 연결한 뒤에만 제공한다."
-        validation_needed: 16개 문헌 캡처 export, 해시·페이지·인용문·덱 위치 연결 및 파일 존재 검사
-        decision_needed: 원본 캡처를 로컬 asset으로 내보내 evidence ID와 연결
+        statement_ko: 문헌·덱 캡처 44개가 로컬 이미지로 저장되어 해시, 문헌 ID, 사용 지위와 덱 위치에 연결돼 있다. 기본 조회는 Summary·Appendix의 active 22개 그룹과 38개 이미지만 사용하며 Q&A·References 자료는 명시적 범위에서만 연다.
+        source_refs:
+          - assets/evidence/captures/manifest.json
+          - knowledge/evidence/capture_index.yaml
+          - knowledge/evidence/registry.yaml
       - id: model-evidence-master-qa-localization
-        status: unresolved
-        answer_authority: none
+        status: current
+        answer_authority: current
         layer: evidence
-        statement_ko: 외부 Master Q&A의 질문·답변·문헌·캡처 정보는 URL 런타임 참조가 아니라 로컬 데이터셋으로 내보내야 한다.
-        current_evidence_status: source_identified_export_not_started
-        recommended_position_ko: "Master Q&A는 정답집이 아니라 질문 해석과 설명 재료로 편입한다. URL을 조회하지 않고 질문·답변·문헌·캡처 단위의 로컬 조각으로 검색한다."
-        validation_needed: 전체 export, 조각 ID·출처·현재성·문헌·캡처 연결, 샘플 검색 회귀 테스트
-        decision_needed: 로컬 export 형식과 자산 경로 확정
+        statement_ko: 외부 Master Q&A는 로컬 텍스트와 78개 구조화 카드로 내보냈다. active 25개는 답변 표현 예시이고, 과거 53개는 현재 사실을 정하지 않는 변경·질문 해석 재료다. 원본 URL은 출처 위치 기록일 뿐 런타임에 조회하지 않는다.
+        source_refs:
+          - sources/master_qa_artifact_2026-08-10.txt
+          - knowledge/qa/cards.yaml
+          - knowledge/mcp_manifest.yaml
 
   - domain_id: operations_and_delivery
     title_ko: 직원 검토와 고객 전달 흐름

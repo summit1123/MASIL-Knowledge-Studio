@@ -101,8 +101,8 @@ cards:
     question_ko: 왜 기준선이 두 달인가요?
     question_en: Why is the baseline two months?
     topic: 기준선-2개월
-    direct_answer_ko: "월 두 번 가는 뜸한 거점은 한 달 관찰로 잡힐 확률이 32%지만, 두 달이면 76%입니다. 세 달은 94%지만 반영이 한 달 늦습니다. Isaacman 2011도 중요 장소 식별에 60일과 서로 다른 3일을 사용했습니다. 파일럿에서 다시 재보정합니다."
-    spoken_answer_en: "Take a place visited twice a month. One month of data captures it about 32% of the time. Two months captures about 76%. Three months reaches 94% but delays action by one month. Isaacman also used a 60-day window and distinct visit days. We will recalibrate this in the pilot."
+    direct_answer_ko: "월 두 번 방문한다는 가정으로 계산한 내부 추정입니다. 뜸한 거점은 한 달 관찰로 잡힐 확률이 32%지만, 두 달이면 76%입니다. 세 달은 94%지만 반영이 한 달 늦습니다. Isaacman 2011도 중요 장소 식별에 60일과 서로 다른 3일을 사용했습니다. 실측 포착률은 파일럿에서 다시 잽니다."
+    spoken_answer_en: "This is an internal estimate based on two visits per month. One month captures such a place about 32 percent of the time. Two months reaches 76 percent. Three months reaches 94 percent but delays action by one month. Isaacman also used a 60-day window and distinct visit days. We will measure the real capture rate in the pilot."
     source: deck://appendix-b
 
   - id: qa-synthetic-validation
@@ -339,8 +339,8 @@ cards:
     question_ko: 위치 프라이버시와 동의는 어떻게 보호하나요?
     question_en: How do you protect location privacy and obtain consent?
     topic: 프라이버시-동의
-    direct_answer_ko: "명시적 동의 기반의 특약이고, 수집은 최소로 설계했습니다. 이동 경로 전체가 아니라 트립의 도착지 좌표와 날짜만 받습니다. 장소가 어디인지 조회하지 않고, 실시간 위치를 가족 등과 공유하지 않습니다. 판정에 필요한 위치 원본은 직전 두 달분뿐이며, 이후에는 파생값과 월별 집계만 남습니다. 법무 검토는 파일럿 전 필수 절차로 잡혀 있습니다."
-    spoken_answer_en: "The rider is based on explicit customer consent. We collect the minimum. We take only trip destinations and dates, not full routes. We do not look up what each place is. We never share real-time location with family or others. Raw location is needed only for the last two months. After that, only derived values and monthly counts remain. Legal review is a required step before the pilot."
+    direct_answer_ko: "명시적 동의와 최소수집이 현재 원칙입니다. 제안 구조는 이동 경로 전체가 아니라 도착지 좌표와 날짜만 받고, POI를 조회하거나 실시간 위치를 가족과 공유하지 않습니다. 운영안은 직전 두 달의 위치 원본 뒤에는 파생값과 월별 집계를 남기는 방식입니다. 다만 구체적인 보관·파기·철회·공유 절차는 파일럿 국가의 법무 검토 뒤 확정합니다."
+    spoken_answer_en: "Our current principles are explicit consent and minimum collection. The proposed design uses trip destinations and dates, not full routes. It does not look up POIs or share live location with family. The operating proposal keeps raw location for the rolling two-month window and then retains derived values and monthly counts. The exact retention, deletion, withdrawal, and sharing procedures still require legal review before the pilot."
     source: deck://summary-2
 
   - id: qa-insurer-adoption-pilot
@@ -353,8 +353,8 @@ cards:
     question_ko: 보험사가 왜 도입하고, 파일럿은 무엇을 검증하나요?
     question_en: Why would an insurer adopt this, and what will the real-world pilot test?
     topic: 도입-파일럿
-    direct_answer_ko: "기존 마일리지 체계는 거리만 보므로, 실제로 안전한 고령 운전자를 구분하지 못합니다. MASIL은 그 빈틈을 메우는 특약이고, 기존 할인 위에 얹는 구조라 도입 부담이 작습니다. 파일럿 목표는 500명, 가입률 15–20%, 유지율 +2%p이며 모두 검증할 목표이지 실적이 아닙니다. 파일럿은 실데이터로 규칙 재보정, 손해율 효과, 고객 수용성을 검증합니다."
-    spoken_answer_en: "Mileage systems see only distance. They cannot tell safe senior drivers apart. MASIL fills that gap as a rider on existing discounts. That keeps adoption cost low for the insurer. Our pilot targets are 500 drivers, 15 to 20% enrollment, and 2 points better retention. These are targets to test, not results. The pilot will validate the rules, loss impact, and customer acceptance with real data."
+    direct_answer_ko: "기존 마일리지 체계는 거리만 보므로 같은 거리 안의 안전행동과 변화를 구분하지 못합니다. MASIL은 기존 할인 위에 얹는 특약으로 제안해 통합 부담을 줄이려 합니다. 파일럿 목표는 500명, 가입률 15–20%, 유지율 +2%p이며 모두 검증할 목표이지 실적이 아닙니다. 파일럿은 실데이터로 규칙 재보정, 손해율 효과, 고객 수용성과 실제 운영 부담을 검증합니다."
+    spoken_answer_en: "Mileage systems see distance, but not safe behavior and change within the same mileage. MASIL is proposed as a rider on existing discounts, which is designed to reduce integration work. Our pilot targets are 500 drivers, 15 to 20 percent enrollment, and a 2-point retention lift. These are targets to test, not results. The pilot will test rule calibration, loss impact, customer acceptance, and real operating effort."
     followups:
       - q: 가입률 15–20%는 근거가 있나요?
         a: "목표입니다. 비교 기준인 0.5%는 교육 이수를 먼저 요구한 특약의 가입률입니다. 우리는 그 선행 비용을 제거했습니다. 실제 가입률은 파일럿에서 검증합니다."

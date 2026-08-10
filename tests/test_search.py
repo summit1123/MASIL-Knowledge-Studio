@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 import pytest
 
 from masil_mcp.service import KnowledgeService
@@ -10,6 +12,34 @@ def test_korean_ngram_handles_compound_query() -> None:
     result = service.search("생활권밖주행", top_k=6, scope="current")
     assert result["results"]
     assert any("생활권" in item["snippet"] for item in result["results"])
+
+
+def test_default_search_excludes_guardrail_records_from_answer_facts() -> None:
+    service = KnowledgeService()
+    result = service.search("Favorable Standard Care 세 등급", top_k=10)
+
+    assert result["results"]
+    assert all(item["source"] not in {
+        "knowledge/conflict_map.yaml",
+        "knowledge/forbidden_claims.yaml",
+        "knowledge/glossary.yaml",
+    } for item in result["results"])
+    assert any(item["source"] == "knowledge/official_positions.yaml" for item in result["results"])
+
+
+@pytest.mark.parametrize(
+    ("query", "expected_id"),
+    [
+        ("GPS 개인정보는 어떻게 보호하나", "story-09-ai-trust-and-privacy"),
+        ("보험사가 MASIL을 도입할 이유는 무엇인가", "story-12-social-value"),
+        ("아직 검증되지 않았거나 미확정인 것은 무엇인가", "story-13-feasibility-and-roadmap"),
+    ],
+)
+def test_presentation_intents_route_to_the_specific_story(query: str, expected_id: str) -> None:
+    service = KnowledgeService()
+    result = service.search(query, top_k=3)
+
+    assert result["results"][0]["id"].endswith(expected_id)
 
 
 def test_literature_search_returns_caveat() -> None:
@@ -90,6 +120,19 @@ def test_default_capture_and_evidence_scope_excludes_supporting_references() -> 
     assert candrive["recommended_captures"] == []
 
 
+def test_evidence_without_captures_returns_no_capture_fields() -> None:
+    service = KnowledgeService()
+    result = service.get_evidence(
+        "Cicchino looking but not seeing 71%",
+        top_k=4,
+        include_captures=False,
+    )
+    assert result["literature"]
+    assert result["capture_groups"] == []
+    assert result["capture_ids"] == []
+    assert result["recommended_captures"] == []
+
+
 def test_short_source_name_does_not_match_a_substring_in_another_source() -> None:
     service = KnowledgeService()
     result = service.list_captures("ERSO", top_k=5)
@@ -105,6 +148,18 @@ def test_answer_context_includes_the_top_literature_capture() -> None:
     assert [capture["id"] for capture in result["evidence_captures"]] == ["capture-024"]
 
 
+def test_capture_answer_context_stays_within_minimum_budget() -> None:
+    service = KnowledgeService()
+    result = service.prepare_answer_context(
+        "Cicchino looking but not seeing 71% 원문 캡처",
+        max_chars=2500,
+    )
+    assert result["packet_chars"] <= 2500
+    assert result["packet_chars"] == len(json.dumps(result, ensure_ascii=False))
+    assert result["evidence"]
+    assert [capture["id"] for capture in result["evidence_captures"]] == ["capture-024"]
+
+
 def test_product_question_does_not_receive_a_low_confidence_literature_capture() -> None:
     service = KnowledgeService()
     result = service.prepare_answer_context("3등급 판정과 연간 할인률은 어떻게 연결되나요?", max_chars=7000)
@@ -117,3 +172,32 @@ def test_open_items_do_not_turn_into_facts() -> None:
     result = service.list_open_items("공정성")
     assert result["items"]
     assert any(item["status"] in {"unresolved", "pilot_hypothesis", "candidate_parameter", "planned_not_implemented"} for item in result["items"])
+
+
+@pytest.mark.parametrize(
+    ("question", "expected_first"),
+    [
+        ("30초 안에 MASIL을 설명해줘", "story-01-one-line-definition"),
+        ("MASIL Zone은 어떻게 만들고 매달 어떻게 갱신하나요?", "story-06-how-zone-works"),
+        ("Favorable Standard Care 세 등급은 어떻게 나뉘나요?", "product-monthly-tiers-contract"),
+        ("보험사는 왜 이 상품을 도입하나요?", "story-12-social-value"),
+    ],
+)
+def test_answer_context_routes_core_questions_to_the_right_material(
+    question: str,
+    expected_first: str,
+) -> None:
+    service = KnowledgeService()
+    packet = service.prepare_answer_context(question, max_chars=7000)
+    assert packet["current_facts"][0]["id"].endswith(expected_first)
+    assert packet["explanation_material"]
+
+
+def test_history_material_requires_change_intent_and_prefers_decision_log() -> None:
+    service = KnowledgeService()
+    ordinary = service.prepare_answer_context("Care와 할인은 어떤 관계인가요?", max_chars=7000)
+    assert ordinary["historical_material"] == []
+
+    changed = service.prepare_answer_context("Care와 할인 관계가 왜 바뀌었나요?", max_chars=7000)
+    assert changed["historical_material"]
+    assert changed["historical_material"][0]["id"].endswith("decision-2026-08-09-care-price-decoupling")

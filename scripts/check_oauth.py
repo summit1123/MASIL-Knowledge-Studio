@@ -67,10 +67,23 @@ async def check(base_url: str) -> None:
         tools = await client.list_tools()
         search = await client.call_tool(
             "search_knowledge",
-            {"query": "Care가 나온 다음 달은 어떻게 되나요", "scope": "current"},
+            {"query": "Care가 나온 다음 달은 어떻게 되나요"},
         )
-        if search.is_error or search.structured_content.get("result_count", 0) < 1:
+        if (
+            search.is_error
+            or search.structured_content.get("result_count", 0) < 1
+            or search.structured_content.get("scope") != "current"
+            or any(item.get("authority") == "historical" for item in search.structured_content.get("results", []))
+        ):
             raise RuntimeError("authenticated MCP tool call failed")
+
+        product = await client.call_tool("explain_product_logic", {"topic": "세 등급 Care 할인"})
+        if product.is_error or not product.structured_content.get("facts"):
+            raise RuntimeError("authenticated product logic call failed")
+
+        slide = await client.call_tool("get_slide_context", {"page": 2})
+        if slide.is_error or len(slide.structured_content.get("claims", [])) != 7:
+            raise RuntimeError("authenticated slide-context call failed")
 
         answer = await client.call_tool(
             "prepare_answer_context",
@@ -82,6 +95,27 @@ async def check(base_url: str) -> None:
             or answer.structured_content.get("packet_chars", 999999) > 7000
         ):
             raise RuntimeError("authenticated answer-context call failed")
+
+        implementation = await client.call_tool("get_implementation", {"topic": "위험 이벤트 계수 8"})
+        if implementation.is_error or not implementation.structured_content.get("observed_implementation"):
+            raise RuntimeError("authenticated implementation call failed")
+
+        comparison = await client.call_tool("compare_claims", {"query": "Care 할인 13%p"})
+        if comparison.is_error or not comparison.structured_content.get("conflicts"):
+            raise RuntimeError("authenticated claim-comparison call failed")
+
+        open_items = await client.call_tool("list_open_items", {"query": "개인정보 공정성"})
+        if open_items.is_error or not open_items.structured_content.get("items"):
+            raise RuntimeError("authenticated open-items call failed")
+
+        captures = await client.call_tool("list_captures", {"query": "문헌", "top_k": 50})
+        if (
+            captures.is_error
+            or captures.structured_content.get("total_group_count") != 22
+            or captures.structured_content.get("total_capture_count") != 38
+            or captures.structured_content.get("truncated") is not False
+        ):
+            raise RuntimeError("authenticated capture-inventory call failed")
 
         evidence = await client.call_tool(
             "get_evidence",
@@ -129,6 +163,10 @@ async def check(base_url: str) -> None:
         if image.is_error or not any(content.type == "image" for content in image.content):
             raise RuntimeError("authenticated image call failed")
 
+        status = await client.call_tool("knowledge_status", {})
+        if status.is_error or status.structured_content.get("captures") != 44:
+            raise RuntimeError("authenticated knowledge-status call failed")
+
     print(
         json.dumps(
             {
@@ -137,11 +175,18 @@ async def check(base_url: str) -> None:
                 "pkce_s256": "PASS",
                 "mcp_tool_count": len(tools),
                 "authenticated_tool_call": "PASS",
+                "product_logic_call": "PASS",
+                "slide_context_call": "PASS",
                 "answer_context_call": "PASS",
+                "implementation_call": "PASS",
+                "claim_comparison_call": "PASS",
+                "open_items_call": "PASS",
+                "capture_inventory_call": "PASS",
                 "evidence_capture_mapping": "PASS",
                 "qa_only_mapping": "PASS",
                 "reference_only_mapping": "PASS",
                 "capture_image_call": "PASS",
+                "knowledge_status_call": "PASS",
             },
             indent=2,
         )

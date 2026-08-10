@@ -38,6 +38,8 @@ async def test_in_memory_server_lists_and_calls_tools() -> None:
             "get_capture_image",
             "get_implementation",
         }.issubset(names)
+        search_tool = next(tool for tool in tools if tool.name == "search_knowledge")
+        assert search_tool.inputSchema["properties"]["scope"]["default"] == "current"
         result = await client.call_tool("search_knowledge", {"query": "Care 다음 달", "scope": "current"})
         assert not result.is_error
         assert result.structured_content["result_count"] > 0
