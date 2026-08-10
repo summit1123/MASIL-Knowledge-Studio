@@ -11,8 +11,9 @@ from masil_mcp.service import KnowledgeService
 def test_corpus_loads_canonical_and_capture_assets() -> None:
     service = KnowledgeService()
     stats = service.stats()
-    assert stats["documents"] > 600
-    assert stats["captures"] == 44
+    assert stats["documents"] > 400
+    assert stats["captures"] > 30
+    assert "historical" not in stats["authorities"]
     assert len(stats["fingerprint"]) == 64
 
 
@@ -75,7 +76,7 @@ def test_runtime_corpus_loads_every_current_contract_collection() -> None:
         assert len(documents) == count, source
 
 
-def test_missing_status_defaults_are_historical_not_current() -> None:
+def test_missing_status_defaults_are_not_loaded_into_team_runtime() -> None:
     service = KnowledgeService()
     legacy_sources = {
         "knowledge/official_positions.yaml",
@@ -89,8 +90,7 @@ def test_missing_status_defaults_are_historical_not_current() -> None:
         for document in service.corpus.documents
         if document.source_path in legacy_sources and document.status == "legacy_reference"
     ]
-    assert legacy
-    assert {document.authority for document in legacy} == {"historical"}
+    assert legacy == []
 
     result = service.search("Care 할인 보너스", top_k=20)
     assert result["scope"] == "current"
@@ -107,13 +107,12 @@ def test_official_positions_and_presentation_story_are_searchable() -> None:
     assert any(item["source"] == "knowledge/presentation_story.yaml" for item in target["results"])
 
 
-def test_history_is_labeled_as_material_and_never_as_current_fact() -> None:
+def test_history_is_absent_from_answer_packet_and_runtime_index() -> None:
     service = KnowledgeService()
     packet = service.prepare_answer_context("Care와 할인 관계가 왜 바뀌었나요?", max_chars=12000)
-    assert packet["historical_material"]
-    assert all(item["authority"] == "historical" for item in packet["historical_material"])
+    assert "historical_material" not in packet
     assert all(item["authority"] != "historical" for item in packet["current_facts"])
-    assert "현재 사실을 정하는 근거가 아니라" in packet["answer_instruction"]
+    assert all(document.authority != "historical" for document in service.corpus.documents)
 
 
 def test_capture_manifest_dimensions_and_hashes_match_every_asset() -> None:

@@ -1,14 +1,14 @@
 # MASIL MCP verification report
 
-검증 시각: 2026-08-10 14:09 KST
+검증 시각: 2026-08-10 16:32 KST
 
 ## Result
 
 | Layer | Result | Evidence |
 |---|---|---|
-| Knowledge model | PASS | YAML 15개 파싱, 중복 ID 0, 덱 claim 64개 51/6/7 일치, P0 15개, 누락 파일 0 |
-| Evidence assets | PASS | 로컬 캡처 44개, active 22그룹·38이미지, Q&A 2그룹, References 3그룹, 공개 비밀값 노출 0 |
-| Unit and MCP tests | PASS | pytest 68개 통과, 라우팅 8종·입력 비수집·OAuth 재시작 회귀, 로컬 HTTP 17개 도구 호출 통과 |
+| Knowledge model | PASS | YAML 15개 파싱, 중복 ID 0, 덱 claim 64개 44/13/7 일치, P0 15개, 누락 파일 0 |
+| Evidence assets | PASS | 저장 자산 44개 중 공개 런타임은 active 22그룹·38이미지만 제공, 공개 비밀값 노출 0 |
+| Unit and MCP tests | PASS | pytest 68개 통과, 현재 자료 전용 인덱스·명시적 근거 연결·이미지 종류 분리 회귀 통과 |
 | Local service | PASS | LaunchAgent 재시작, `/healthz` 200, 공개 서버와 fingerprint 일치 |
 | Public tunnel | PASS | 전용 `masil-mcp` 터널, 공개 `/healthz` 200 |
 | OAuth | PASS | authorization code, confidential client secret, PKCE S256, 같은 access token으로 서버 재시작 전·후 호출 성공 |
@@ -21,16 +21,15 @@
 {
   "status": "ok",
   "service": "masil-mcp",
-  "documents": 1312,
-  "captures": 44,
+  "documents": 538,
+  "captures": 38,
   "authorities": {
     "deck": 64,
     "canonical": 235,
     "evidence": 82,
-    "historical": 732,
-    "supporting": 199
+    "supporting": 157
   },
-  "fingerprint": "94fd8af3fef788a9b592dd1b1d1b88dff861ff23a864dbbe72769bbf91e231e1"
+  "fingerprint": "b6d22561dc3aec107bf810fc3d5e321cfa9610fc49bb1f3ffc7dc1d6f967cfb8"
 }
 ```
 
@@ -56,8 +55,7 @@
   "open_items_call": "PASS",
   "capture_inventory_call": "PASS",
   "evidence_capture_mapping": "PASS",
-  "qa_only_mapping": "PASS",
-  "reference_only_mapping": "PASS",
+  "historical_material_excluded": "PASS",
   "capture_image_call": "PASS",
   "resolved_capture_call": "PASS",
   "public_fallback_image_url": "PASS",
@@ -77,16 +75,16 @@
 - `prepare_topic_brief`는 현재 입장·근거·주장 경계·미검증 범위만 반환하고 예상 질문을 생성하지 않는다.
 - `forbidden_claims`와 `must_not_say`는 주장 경계로만 사용하며 자동 질문 목록으로 바꾸지 않는다.
 - `list_open_items` 기본 호출은 unresolved 16개를 16/16으로 반환하고, 후보·파일럿 가설까지 명시적으로 열면 29개를 상태별로 구분한다.
-- 과거 설계와 Master Q&A는 변경·충돌 의도가 있는 질문에서만 `historical_material`로 반환한다.
+- 과거 설계, Master Q&A, 폐기 규칙, 변경 이력은 Git에만 보존하고 공개 런타임에서는 검색·반환하지 않는다.
 - 일반 MASIL 질문은 `prepare_answer_context`를 기본 진입점으로 사용하고, 도구명·내부 ID·YAML 필드를 최종 답변에 노출하지 않는다.
-- `prepare_answer_context`는 별도 AI 호출 없이 8개 준비 유형 중 하나를 선택한다. 라우트는 답을 고정하지 않고 덱·상품·문헌·변경 이력·미확정·가치·초안 재료의 우선순위만 조정한다.
+- `prepare_answer_context`는 별도 AI 호출 없이 질문 의도에 따라 덱·상품·문헌·미확정·가치·초안 재료의 우선순위만 조정한다.
 - 텔레메트리 SQLite 스키마와 실제 파일에는 질문, 도구 인자, 답변, 근거 본문 필드가 없으며 도구명·라우트·상태·지연시간·결과·캡처 개수와 익명 세션 해시만 남는다.
 - OAuth access/refresh token은 권한 600 SQLite에 저장된다. 공개 서버에서 발급한 동일 access token으로 재시작 전·후 17개 도구 목록과 실제 호출을 확인했다.
-- 검색은 제목·태그·메타데이터·본문 가중치와 한국어 n-gram을 사용하며, `source_refs`·`material_refs`·`evidence_links`를 통한 정확한 문헌 연결을 유사 키워드보다 우선한다.
-- 생활권 밖 위험 맥락은 Ehsani `capture-006`, 위치만으로 감점하지 않는 경계는 Hirsch `capture-037`로 함께 연결되며, 별도 캡처 요청 없이 답변 근거로 반환된다.
+- 검색은 제목·태그·메타데이터·본문 가중치와 한국어 n-gram을 사용하되, 주장-문헌 근거 연결은 명시적인 `evidence_links`만 인정한다.
+- 생활권 밖 위험 맥락에는 Ehsani만 연결한다. 위치만으로 감점하지 않는 원칙은 MASIL 상품 결정이며 Hirsch나 페르소나 장표를 직접 근거로 제시하지 않는다.
 - 이미지 도구는 MCP ImageContent, `text/html;profile=mcp-app` inline 뷰, 공개 대체 URL·Markdown을 함께 반환한다. 실제 Claude Web 카드 렌더링은 커넥터 재연결 후 화면 재확인 대상이다.
-- Cicchino, ERSO, Ehsani, Vivoda, Chen, LongROAD의 이름 기반 검색은 각 문헌의 정확한 대표 캡처로 연결된다.
-- Candrive는 `qa_only`, References 자료는 `listed_only`를 명시해야 접근할 수 있다.
+- source 모드는 실제 원문 캡처만 반환한다. Ehsani·Vivoda·Chen처럼 로컬 원문 캡처가 없는 문헌은 덱 발췌로 자동 대체하지 않는다.
+- Candrive 등 Q&A·References 전용 자료는 공개 런타임에서 접근할 수 없다.
 
 ## Known non-blocking warnings
 

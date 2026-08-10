@@ -95,6 +95,15 @@ domains:
           - deck://summary-1
           - presentation-mcgwin-brown-1999
           - presentation-cicchino-mccartt-2015
+        evidence_links:
+          - ref: presentation-mcgwin-brown-1999
+            relation: direct
+            supports: 고령 운전자 사고가 교차로·양보·교통흐름 판단 조건에 집중되는 경향
+            auto_show_source: true
+          - ref: presentation-cicchino-mccartt-2015
+            relation: direct
+            supports: inadequate surveillance 사례 안에서 looking but not seeing 오류가 높은 비중을 보였다는 근거
+            auto_show_source: true
       - id: model-problem-unfamiliar-context
         status: current
         answer_authority: current
@@ -104,6 +113,12 @@ domains:
           - deck://summary-1
           - presentation-ehsani-tefft-2021
           - knowledge/official_positions.yaml#out-of-zone-risk-and-no-location-penalty
+        evidence_links:
+          - ref: presentation-ehsani-tefft-2021
+            relation: direct
+            supports: 익숙하지 않은 도로가 사고 연루 위험이 커질 수 있는 맥락이라는 문제정의
+            auto_show_source: true
+        evidence_boundary_ko: 위치 자체를 감점하지 않는다는 후반부는 문헌 결론이 아니라 MASIL의 상품 설계 결정
       - id: model-problem-current-system-gap
         status: current
         answer_authority: current
@@ -143,6 +158,16 @@ domains:
         source_refs:
           - presentation-vivoda-2021
           - presentation-longroad-self-regulation
+        evidence_links:
+          - ref: presentation-vivoda-2021
+            relation: supporting_context
+            supports: 자기조절을 시작한 고령 운전자의 첫 회피 행동 분포
+            auto_show_source: true
+          - ref: presentation-longroad-self-regulation
+            relation: supporting_context
+            supports: 지각된 운전 편안감과 야간·낯선 지역 회피 등 자기조절의 연관
+            auto_show_source: true
+        evidence_boundary_ko: 개인 기준선의 적합성은 두 연구를 바탕으로 한 MASIL의 설계 해석이며 문헌이 보험 기준선을 직접 검증한 것은 아님
       - id: model-target-no-medical-screening
         status: current
         answer_authority: current
@@ -151,6 +176,12 @@ domains:
         source_refs:
           - knowledge/qa/cards.yaml#qa-medical-screening-age
           - presentation-chen-2025-neurology
+        evidence_links:
+          - ref: presentation-chen-2025-neurology
+            relation: supporting_context
+            supports: 실제 주행행동 변화가 MCI 집단과 정상인지 집단을 시간에 따라 구분한 배경
+            auto_show_source: true
+        evidence_boundary_ko: 의료 스크리닝을 하지 않는다는 결론은 MASIL의 입력·거버넌스 경계이며 Chen 논문이 정한 상품 규칙이 아님
       - id: model-target-age-expansion
         status: pilot_hypothesis
         answer_authority: supporting
@@ -327,6 +358,15 @@ domains:
           - deck://appendix-b
           - presentation-zheng-2009
           - presentation-montoliu-gatica-perez-2010
+        evidence_links:
+          - ref: presentation-zheng-2009
+            relation: method_reference
+            supports: stay-point 식별 실험에서 사용한 200m 거리 기준
+            auto_show_source: true
+          - ref: presentation-montoliu-gatica-perez-2010
+            relation: method_reference
+            supports: 장소 군집화의 250m 설정과 경험적 200~300m 대역
+            auto_show_source: true
       - id: model-zone-radius
         status: current
         answer_authority: current

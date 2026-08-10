@@ -107,27 +107,30 @@ async def check(base_url: str) -> None:
 
         answer = await client.call_tool(
             "prepare_answer_context",
-            {"question": "생활권 밖 주행은 왜 보는 건가요?", "language": "ko"},
+            {"question": "생활권 밖이 위험하다면서 왜 위치만으로 감점하지 않아?", "language": "ko"},
         )
         if (
             answer.is_error
             or not answer.structured_content.get("current_facts")
             or answer.structured_content.get("packet_chars", 999999) > 5000
-            or {item.get("id") for item in answer.structured_content.get("evidence_captures", [])}
-            != {"capture-006", "capture-037"}
+            or answer.structured_content.get("evidence_captures")
+            or {
+                item.get("id", "").split("#")[-1]
+                for item in answer.structured_content.get("evidence", [])
+            } != {"presentation-ehsani-tefft-2021"}
             or answer.structured_content.get("routing", {}).get("route") != "product_logic"
         ):
             raise RuntimeError("authenticated answer-context call failed")
 
         inline = await client.call_tool(
             "show_answer_evidence",
-            {"question": "생활권 밖 주행은 왜 보는 건가요?"},
+            {"question": "Cicchino looking but not seeing 71% 원문 캡처"},
         )
         if (
             inline.is_error
             or {item.get("id") for item in inline.structured_content.get("captures", [])}
-            != {"capture-006", "capture-037"}
-            or sum(content.type == "image" for content in inline.content) != 2
+            != {"capture-024"}
+            or sum(content.type == "image" for content in inline.content) != 1
         ):
             raise RuntimeError("authenticated inline-evidence call failed")
 
@@ -149,7 +152,7 @@ async def check(base_url: str) -> None:
         if (
             brief.is_error
             or "likely_questions" in brief.structured_content
-            or len(brief.structured_content.get("linked_literature", [])) != 2
+            or len(brief.structured_content.get("linked_literature", [])) != 1
         ):
             raise RuntimeError("authenticated topic-brief call failed")
 
@@ -193,34 +196,6 @@ async def check(base_url: str) -> None:
         ):
             raise RuntimeError("authenticated evidence-to-capture mapping failed")
 
-        qa_evidence = await client.call_tool(
-            "get_evidence",
-            {"query": "Candrive 5.26배", "top_k": 4, "usage_scope": "qa_only"},
-        )
-        if (
-            qa_evidence.is_error
-            or not qa_evidence.structured_content.get("literature", [{}])[0].get("id", "").endswith(
-                "presentation-candrive-marshall-2023"
-            )
-            or [capture.get("id") for capture in qa_evidence.structured_content.get("recommended_captures", [])]
-            != ["capture-042"]
-        ):
-            raise RuntimeError("authenticated Q&A-only evidence mapping failed")
-
-        reference = await client.call_tool(
-            "get_evidence",
-            {"query": "Harms route familiarity 94편", "top_k": 4, "usage_scope": "listed_only"},
-        )
-        if (
-            reference.is_error
-            or not reference.structured_content.get("reference_only", [{}])[0].get("id", "").endswith(
-                "presentation-harms-2021"
-            )
-            or [capture.get("id") for capture in reference.structured_content.get("recommended_captures", [])]
-            != ["capture-040"]
-        ):
-            raise RuntimeError("authenticated reference-only evidence mapping failed")
-
         image = await client.call_tool("get_capture_image", {"capture_id": "capture-024"})
         if (
             image.is_error
@@ -231,17 +206,17 @@ async def check(base_url: str) -> None:
 
         resolved_image = await client.call_tool(
             "show_evidence_capture",
-            {"query": "생활권 밖 위험 근거 캡처"},
+            {"query": "Cicchino looking but not seeing 71%", "capture_kind": "source"},
         )
         if (
             resolved_image.is_error
-            or resolved_image.structured_content.get("id") != "capture-006"
+            or resolved_image.structured_content.get("id") != "capture-024"
             or not any(content.type == "image" for content in resolved_image.content)
         ):
             raise RuntimeError("authenticated resolved-image call failed")
 
         status = await client.call_tool("knowledge_status", {})
-        if status.is_error or status.structured_content.get("captures") != 44:
+        if status.is_error or status.structured_content.get("captures") != 38:
             raise RuntimeError("authenticated knowledge-status call failed")
 
         telemetry = await client.call_tool("usage_telemetry", {"days": 7})
@@ -276,8 +251,7 @@ async def check(base_url: str) -> None:
                 "open_items_call": "PASS",
                 "capture_inventory_call": "PASS",
                 "evidence_capture_mapping": "PASS",
-                "qa_only_mapping": "PASS",
-                "reference_only_mapping": "PASS",
+                "historical_material_excluded": "PASS",
                 "capture_image_call": "PASS",
                 "resolved_capture_call": "PASS",
                 "public_fallback_image_url": "PASS",

@@ -41,16 +41,16 @@ Claude가 내부적으로 사용하는 도구:
 - `show_answer_evidence` — 답변 재료에 정확히 연결된 캡처가 있을 때 별도 요청 없이 최대 2개를 대화 안의 증거 카드로 표시
 - `explain_product_logic` — 생활권, 점수, Care, 할인 등 상품 논리
 - `get_slide_context` — 9장 덱의 인쇄 사실과 구두 보완점
-- `get_evidence` — 문헌별 주장, 한계, 캡처 연결. 기본은 `stage`이며 Q&A·목록 전용은 명시적으로 범위를 열어야 함
+- `get_evidence` — Summary·Appendix에서 실제 사용하는 문헌의 주장, 한계, 원문/덱 캡처 연결
 - `get_implementation` — 현재 외부 데모와 목표 상품 규칙의 차이
-- `compare_claims` — 현재·과거·덱 표현의 충돌 비교
+- `compare_claims` — 붙여 넣은 주장과 현재 덱·상품 계약의 정합성 확인
 - `list_open_items` — 미확정·파일럿 가설·후보 파라미터를 상태별 정확한 총계와 함께 조회
-- `list_captures`, `show_evidence_capture`, `get_capture_image` — 44개 문헌 캡처의 정확한 연결 조회와 이미지 반환. 이미지 도구는 MCP Apps `ui://` 뷰를 제공해 Claude가 지원하면 대화 안에 바로 렌더링하고, 미지원 클라이언트에는 공개 이미지 Markdown을 대체 경로로 반환
+- `list_captures`, `show_evidence_capture`, `get_capture_image` — active Summary·Appendix 캡처의 정확한 연결 조회와 이미지 반환. 실제 원문 캡처가 없으면 덱 이미지로 대체하지 않으며, 이미지 도구는 MCP Apps `ui://` 뷰와 공개 Markdown 대체 경로를 함께 제공
 - `knowledge_status` — 코퍼스·자산·권한 상태
 - `usage_telemetry` — 질문·답변 원문 없이 도구별 호출·성공률·지연시간·선택된 준비 유형·캡처 표시량을 집계
 - `record_usage_feedback` — 팀원이 명시적으로 평가했을 때만 고정 태그로 도움 여부를 기록
 
-서버는 현재 1,312개 검색 문서와 44개 로컬 캡처를 읽는다. 기본 검색은 덱과 현재 상품 계약의 답변 가능한 사실만 반환한다. 검색어가 문헌 제목과 우연히 겹치는 것보다 현재 주장에 명시된 `source_refs`, `material_refs`, `evidence_links`를 우선한다. 과거 Q&A와 Master Q&A 원문은 변경·충돌 질문을 위한 재료로 보존하되 현재 상품 사실을 덮어쓸 수 없다.
+서버는 최종 덱, 현재 상품 계약, 현재 용어·미확정 항목, Summary·Appendix에서 실제 사용하는 문헌과 active 캡처만 팀 런타임에 제공한다. 주장과 문헌은 명시적인 `evidence_links`로만 연결하며, provenance용 `source_refs`, `material_refs`, `evidence_ref`를 직접 근거로 오인하지 않는다. 과거 Q&A, Master Q&A 원문, 폐기된 규칙과 변경 이력은 Git에 보존되지만 공개 검색·답변·이미지 도구에서는 반환하지 않는다.
 
 텔레메트리는 도구명, 라우트, 성공 여부, 지연시간, 결과·캡처 개수와 익명 세션 해시만 로컬 SQLite에 저장한다. 질문, 도구 인자, Claude 답변, 근거 본문, 사용자 신원, OAuth 비밀값은 저장하지 않는다. OAuth access/refresh token은 권한 600의 별도 SQLite 파일에 보존하므로 일반 코드·지식 업데이트 뒤 서버가 재시작되어도 팀원이 커넥터를 다시 등록할 필요가 없다. 도구 목록이 바뀐 배포 직후 현재 대화가 예전 목록을 캐시했다면 새 대화만 열면 된다.
 

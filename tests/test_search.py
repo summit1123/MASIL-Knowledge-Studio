@@ -76,9 +76,9 @@ def test_literature_search_returns_caveat() -> None:
     [
         ("Cicchino looking but not seeing 71%", "presentation-cicchino-mccartt-2015", "capture-024"),
         ("ERSO 75세 5배", "presentation-erso-older-driver-risk", "capture-015"),
-        ("Ehsani 2.5배 초행 도로", "presentation-ehsani-tefft-2021", "capture-006"),
-        ("Vivoda 58.8% 자기조절", "presentation-vivoda-2021", "capture-025"),
-        ("Chen 2025 AUC 0.82", "presentation-chen-2025-neurology", "capture-009"),
+        ("Ehsani 2.5배 초행 도로", "presentation-ehsani-tefft-2021", None),
+        ("Vivoda 58.8% 자기조절", "presentation-vivoda-2021", None),
+        ("Chen 2025 AUC 0.82", "presentation-chen-2025-neurology", None),
         ("LongROAD 자기조절", "presentation-longroad-self-regulation", "capture-035"),
     ],
 )
@@ -90,39 +90,21 @@ def test_literature_recommends_exact_capture(
     service = KnowledgeService()
     result = service.get_evidence(query, top_k=4)
     assert result["literature"][0]["id"].endswith(literature_key)
-    assert [capture["id"] for capture in result["recommended_captures"]] == [recommended_capture]
+    expected = [] if recommended_capture is None else [recommended_capture]
+    assert [capture["id"] for capture in result["recommended_captures"]] == expected
 
 
-def test_qa_and_reference_cards_are_retrievable_with_their_usage_status() -> None:
+def test_qa_and_reference_only_material_is_not_in_team_runtime() -> None:
     service = KnowledgeService()
-    result = service.list_captures("Candrive", top_k=5, usage_scope="qa_only")
-    assert [capture["id"] for capture in result["captures"]] == ["capture-042"]
-    assert result["captures"][0]["card_status"] == "qa_only"
-    assert result["captures"][0]["deck_location"] == "References only"
-
-    evidence = service.get_evidence("Candrive 5.26배", top_k=5, usage_scope="qa_only")
-    assert evidence["literature"][0]["id"].endswith("presentation-candrive-marshall-2023")
-    assert [capture["id"] for capture in evidence["recommended_captures"]] == ["capture-042"]
-
-    reference = service.get_evidence("Harms route familiarity 94편", top_k=5, usage_scope="listed_only")
-    assert reference["literature"] == []
-    assert reference["reference_only"][0]["id"].endswith("presentation-harms-2021")
-    assert [capture["id"] for capture in reference["recommended_captures"]] == ["capture-040"]
-
-    ji = service.get_evidence("Ji mobility regularity", top_k=5, usage_scope="listed_only")
-    assert ji["reference_only"][0]["id"].endswith("presentation-ji-2023")
-    assert [capture["id"] for capture in ji["recommended_captures"]] == ["capture-041"]
-
-    statistics = service.get_evidence("Statistics Korea 2025", top_k=5, usage_scope="listed_only")
-    assert statistics["reference_only"][0]["id"].endswith("presentation-statistics-korea-2025")
-    assert [capture["id"] for capture in statistics["recommended_captures"]] == ["capture-041"]
+    assert service.get_evidence("Candrive 5.26배", top_k=5)["literature"] == []
+    assert service.list_captures("Candrive", top_k=5)["captures"] == []
+    assert all(document.status not in {"qa_only", "listed_only"} for document in service.corpus.documents)
 
 
 def test_banned_cards_remain_out_of_current_evidence_and_capture_discovery() -> None:
     service = KnowledgeService()
     result = service.get_evidence("LexisNexis 45% non-UBI", top_k=5)
     assert result["literature"] == []
-    assert result["reference_only"] == []
     assert result["recommended_captures"] == []
     captures = service.list_captures("LexisNexis", top_k=5)
     assert all(capture["id"] != "capture-027" for capture in captures["captures"])
@@ -137,7 +119,6 @@ def test_default_capture_and_evidence_scope_excludes_supporting_references() -> 
 
     candrive = service.get_evidence("Candrive 5.26배", top_k=5)
     assert candrive["literature"] == []
-    assert candrive["reference_only"] == []
     assert candrive["recommended_captures"] == []
 
 
@@ -188,7 +169,7 @@ def test_product_question_does_not_receive_a_low_confidence_literature_capture()
     assert result["evidence_captures"] == []
 
 
-def test_out_of_zone_answer_context_traverses_both_exact_evidence_links() -> None:
+def test_out_of_zone_answer_context_uses_only_direct_problem_evidence() -> None:
     service = KnowledgeService()
     result = service.prepare_answer_context(
         "생활권 밖이 위험하다면서 왜 위치만으로 감점하지 않아?",
@@ -197,12 +178,11 @@ def test_out_of_zone_answer_context_traverses_both_exact_evidence_links() -> Non
 
     assert {item["id"].split("#")[-1] for item in result["evidence"]} == {
         "presentation-ehsani-tefft-2021",
-        "presentation-hirsch-activity-space-2014",
     }
-    assert {capture["id"] for capture in result["evidence_captures"]} == {
-        "capture-006",
-        "capture-037",
-    }
+    assert result["evidence_captures"] == []
+    assert result["source_capture_gaps"][0]["evidence_id"].endswith(
+        "presentation-ehsani-tefft-2021"
+    )
     assert result["packet_chars"] <= 5000
     assert "도구명" in result["response_contract"]["hide"]
 
@@ -233,11 +213,11 @@ def test_answer_context_routes_core_questions_to_the_right_material(
     assert packet["response_contract"]["default"].startswith("직접 답하는")
 
 
-def test_history_material_requires_change_intent_and_prefers_decision_log() -> None:
+def test_history_material_is_never_returned_by_team_runtime() -> None:
     service = KnowledgeService()
     ordinary = service.prepare_answer_context("Care와 할인은 어떤 관계인가요?", max_chars=7000)
-    assert ordinary["historical_material"] == []
+    assert "historical_material" not in ordinary
 
     changed = service.prepare_answer_context("Care와 할인 관계가 왜 바뀌었나요?", max_chars=7000)
-    assert changed["historical_material"]
-    assert changed["historical_material"][0]["id"].endswith("decision-2026-08-09-care-price-decoupling")
+    assert "historical_material" not in changed
+    assert all(item["authority"] != "historical" for item in changed["current_facts"])

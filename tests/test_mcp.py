@@ -96,14 +96,11 @@ async def test_evidence_tools_publish_an_inline_mcp_app_resource() -> None:
 
         result = await client.call_tool(
             "show_answer_evidence",
-            {"question": "생활권 밖이 위험하다면서 왜 감점은 안 해?"},
+            {"question": "Cicchino looking but not seeing 71% 원문 캡처"},
         )
         assert not result.is_error
-        assert [capture["id"] for capture in result.structured_content["captures"]] == [
-            "capture-006",
-            "capture-037",
-        ]
-        assert [content.type for content in result.content].count("image") == 2
+        assert [capture["id"] for capture in result.structured_content["captures"]] == ["capture-024"]
+        assert [content.type for content in result.content].count("image") == 1
 
 
 def test_capture_fallback_route_uses_opaque_verified_token() -> None:
@@ -137,7 +134,6 @@ async def test_topic_brief_returns_materials_without_invented_questions() -> Non
         )
         assert {item["id"].split("#")[-1] for item in brief["linked_literature"]} == {
             "presentation-ehsani-tefft-2021",
-            "presentation-hirsch-activity-space-2014",
         }
         assert "likely_questions" not in brief
         assert "generated_questions" not in brief
@@ -155,29 +151,21 @@ async def test_topic_brief_returns_materials_without_invented_questions() -> Non
 
 
 @pytest.mark.asyncio
-async def test_show_evidence_capture_resolves_each_side_of_out_of_zone_position() -> None:
+async def test_out_of_zone_source_capture_is_not_replaced_with_deck_or_persona() -> None:
     server = create_server(auth_mode="none")
     async with Client(server) as client:
-        risk = await client.call_tool(
-            "show_evidence_capture",
-            {"query": "생활권 밖 위험 근거 캡처"},
-        )
-        assert not risk.is_error
-        assert risk.structured_content["id"] == "capture-006"
-        assert risk.structured_content["literature"][0]["id"].endswith(
-            "presentation-ehsani-tefft-2021"
-        )
-        assert any(content.type == "image" for content in risk.content)
+        with pytest.raises(ToolError):
+            await client.call_tool(
+                "show_evidence_capture",
+                {"query": "생활권 밖 위험 근거 캡처", "capture_kind": "source"},
+            )
 
-        no_penalty = await client.call_tool(
+        deck = await client.call_tool(
             "show_evidence_capture",
-            {"query": "활동공간 확대 자체를 위험으로 해석하지 않는 무감점 근거 캡처"},
+            {"query": "생활권 밖 위험 근거", "capture_kind": "deck"},
         )
-        assert not no_penalty.is_error
-        assert no_penalty.structured_content["id"] == "capture-037"
-        assert no_penalty.structured_content["literature"][0]["id"].endswith(
-            "presentation-hirsch-activity-space-2014"
-        )
+        assert deck.structured_content["id"] == "capture-006"
+        assert deck.structured_content["capture_kind"] == "deck"
 
 
 @pytest.mark.asyncio
@@ -205,18 +193,12 @@ async def test_open_items_reports_exact_total_for_each_scope() -> None:
 
 
 @pytest.mark.asyncio
-async def test_non_stage_capture_requires_explicit_supporting_access() -> None:
+async def test_non_stage_capture_is_unavailable_in_team_runtime() -> None:
     server = create_server(auth_mode="none")
     async with Client(server) as client:
         with pytest.raises(ToolError):
             await client.call_tool("get_capture_image", {"capture_id": "capture-042"})
 
-        allowed = await client.call_tool(
-            "get_capture_image",
-            {"capture_id": "capture-042", "allow_supporting": True},
-        )
-        assert not allowed.is_error
-        assert any(content.type == "image" for content in allowed.content)
 
 
 @pytest.mark.asyncio

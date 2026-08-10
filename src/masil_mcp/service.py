@@ -12,13 +12,10 @@ from .search import HybridSearchIndex, normalize
 
 
 SCOPES: dict[str, set[str] | None] = {
-    "all": None,
     "current": {"canonical", "deck"},
     "canonical": {"canonical"},
     "slides": {"deck"},
     "evidence": {"evidence"},
-    "supporting": {"supporting"},
-    "history": {"historical"},
 }
 
 EXCLUDED_CURRENT_STATUSES = {
@@ -33,7 +30,7 @@ EXCLUDED_CURRENT_STATUSES = {
     "historical_demo",
 }
 MIN_EVIDENCE_SCORE = 8.0
-EVIDENCE_SCOPES = {"stage", "qa_only", "listed_only", "all"}
+EVIDENCE_SCOPES = {"stage"}
 OPEN_ITEM_STATUSES = {"unresolved", "pilot_hypothesis", "candidate_parameter", "planned_not_implemented"}
 SOURCE_TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9-]{3,}")
 SOURCE_TOKEN_STOPWORDS = {
@@ -50,7 +47,6 @@ SOURCE_TOKEN_STOPWORDS = {
     "study",
 }
 CAPTURE_REQUEST_TERMS = {"캡처", "원문", "이미지", "스크린샷", "capture", "screenshot", "source image"}
-HISTORY_REQUEST_TERMS = {"과거", "이전", "변경", "바뀌", "충돌", "히스토리", "history", "changed", "previous"}
 ANSWER_FACT_SOURCES = {
     "IMPLEMENTATION.md",
     "knowledge/product_model.yaml",
@@ -150,12 +146,7 @@ class KnowledgeService:
         self._validate_top_k(top_k)
         if usage_scope not in EVIDENCE_SCOPES:
             raise ValueError(f"usage_scope must be one of: {', '.join(sorted(EVIDENCE_SCOPES))}")
-        allowed_tiers = {
-            "stage": {"stage_citable"},
-            "qa_only": {"qa_only"},
-            "listed_only": set(),
-            "all": {"stage_citable", "qa_only"},
-        }[usage_scope]
+        allowed_tiers = {"stage_citable"}
         if not allowed_tiers:
             return []
         hits = self.index.search(
@@ -193,32 +184,10 @@ class KnowledgeService:
         ]
         return matched or hits
 
-    def _reference_only_hits(self, query: str, top_k: int, usage_scope: str = "stage") -> list[SearchHit]:
-        self._validate_top_k(top_k)
-        if usage_scope not in {"listed_only", "all"}:
-            return []
-        hits = self.index.search(
-            query,
-            top_k=top_k,
-            expand_aliases=False,
-            authorities={"historical"},
-            source_contains="knowledge/evidence/registry.yaml",
-            status_include={"listed_only"},
-        )
-        named_hits = self._prefer_named_source(query, hits)
-        minimum_score = 0.0 if len(named_hits) < len(hits) else MIN_EVIDENCE_SCORE
-        return [
-            hit for hit in named_hits
-            if hit.score >= minimum_score
-        ]
-
     def _capture_groups_for(self, literature: list[SearchHit], usage_scope: str = "stage") -> list[SearchHit]:
-        allowed_statuses = {
-            "stage": {"active"},
-            "qa_only": {"qa_only"},
-            "listed_only": {"listed_only"},
-            "all": {"active", "qa_only", "listed_only"},
-        }[usage_scope]
+        if usage_scope not in EVIDENCE_SCOPES:
+            raise ValueError(f"usage_scope must be one of: {', '.join(sorted(EVIDENCE_SCOPES))}")
+        allowed_statuses = {"active"}
         evidence_keys = {
             hit.document.id.rsplit("#", 1)[-1]
             for hit in literature
@@ -264,36 +233,44 @@ class KnowledgeService:
         *,
         usage_scope: str = "stage",
         limit: int = 4,
-    ) -> tuple[list[SearchHit], dict[str, list[str]]]:
-        """Traverse exact fact-to-literature links and rank only inside that set."""
-        allowed_statuses = {
-            "stage": {"stage_citable"},
-            "qa_only": {"qa_only"},
-            "listed_only": {"listed_only"},
-            "all": {"stage_citable", "qa_only", "listed_only"},
-        }.get(usage_scope)
+    ) -> tuple[list[SearchHit], dict[str, list[dict[str, Any]]]]:
+        """Traverse curated claim-to-literature links and rank only inside that set.
+
+        Generic source_refs/material_refs/evidence_ref fields describe provenance or
+        preparation material. They are deliberately not treated as proof. Only an
+        explicit evidence_links record may connect a current claim to literature.
+        """
+        allowed_statuses = {"stage_citable"} if usage_scope == "stage" else None
         if allowed_statuses is None:
             raise ValueError(f"usage_scope must be one of: {', '.join(sorted(EVIDENCE_SCOPES))}")
 
         documents: list[KnowledgeDocument] = []
-        supports: dict[str, list[str]] = {}
+        links_by_ref: dict[str, list[dict[str, Any]]] = {}
         seen: set[str] = set()
         for hit in fact_hits:
             metadata = hit.document.metadata
-            raw_refs: list[Any] = []
-            for key in ("evidence_ref", "evidence_refs", "source_refs", "material_refs"):
-                values = metadata.get(key, [])
-                raw_refs.extend(values if isinstance(values, list) else [values])
             for link in metadata.get("evidence_links", []):
                 if not isinstance(link, dict) or not link.get("ref"):
                     continue
-                raw_refs.append(link["ref"])
                 normalized = self._registry_ref(link["ref"])
-                if normalized and link.get("supports"):
-                    supports.setdefault(normalized, []).append(str(link["supports"]))
-
-            for raw_ref in raw_refs:
-                ref = self._registry_ref(raw_ref)
+                if not normalized:
+                    continue
+                relation = str(link.get("relation", "")).strip()
+                if relation not in {
+                    "direct",
+                    "method_reference",
+                    "supporting_context",
+                    "indirect_background",
+                }:
+                    continue
+                ref = normalized
+                links_by_ref.setdefault(ref, []).append(
+                    {
+                        "supports": str(link.get("supports", "")).strip(),
+                        "relation": relation,
+                        "auto_show_source": bool(link.get("auto_show_source", False)),
+                    }
+                )
                 if not ref or ref in seen:
                     continue
                 document = self.corpus.by_id.get(ref)
@@ -303,13 +280,20 @@ class KnowledgeService:
                 seen.add(ref)
 
         if not documents:
-            return [], supports
+            return [], links_by_ref
 
         ranking_documents = [
             KnowledgeDocument(
                 id=document.id,
                 title=document.title,
-                body="\n".join([*supports.get(document.id, []), document.body]),
+                body="\n".join([
+                    *[
+                        str(link.get("supports", ""))
+                        for link in links_by_ref.get(document.id, [])
+                        if link.get("supports")
+                    ],
+                    document.body,
+                ]),
                 source_path=document.source_path,
                 authority=document.authority,
                 status=document.status,
@@ -341,7 +325,7 @@ class KnowledgeService:
                 )
                 for document_id in ordered_ids[:limit]
             ],
-            supports,
+            links_by_ref,
         )
 
     @staticmethod
@@ -405,41 +389,49 @@ class KnowledgeService:
         top_k: int = 6,
         include_captures: bool = True,
         usage_scope: str = "stage",
+        capture_kind: str = "source",
     ) -> dict[str, Any]:
         self._validate_top_k(top_k)
+        if capture_kind not in {"source", "deck"}:
+            raise ValueError("capture_kind must be source or deck")
         literature = self._literature_hits(query, top_k=top_k, usage_scope=usage_scope)
-        reference_only = self._reference_only_hits(query, top_k=top_k, usage_scope=usage_scope)
-        selected = sorted([*literature, *reference_only], key=lambda hit: hit.score, reverse=True)
+        selected = literature
         capture_groups = self._capture_groups_for(selected, usage_scope=usage_scope) if include_captures else []
         capture_ids: list[str] = []
         if include_captures:
             for hit in selected:
                 metadata = hit.document.metadata
-                ordered = [
-                    *metadata.get("source_capture_ids", []),
-                    *metadata.get("deck_capture_ids", []),
-                ]
-                for capture_id in ordered or metadata.get("capture_ids", []):
+                ordered = list(metadata.get(f"{capture_kind}_capture_ids", []))
+                for capture_id in ordered:
                     if capture_id not in capture_ids:
                         capture_ids.append(capture_id)
         recommended_ids: list[str] = []
         if selected and include_captures:
             top_metadata = selected[0].document.metadata
-            recommended_ids = list(top_metadata.get("source_capture_ids", []))
-            if not recommended_ids:
-                recommended_ids = list(top_metadata.get("deck_capture_ids", []))
+            recommended_ids = list(top_metadata.get(f"{capture_kind}_capture_ids", []))
+        capture_gaps = []
+        if include_captures:
+            for hit in selected:
+                metadata = hit.document.metadata
+                if not metadata.get(f"{capture_kind}_capture_ids", []):
+                    capture_gaps.append({
+                        "id": hit.document.id,
+                        "source": metadata.get("source", hit.document.title),
+                        "requested_capture_kind": capture_kind,
+                    })
         return {
             "query": query,
             "usage_scope": usage_scope,
             "literature": [hit.as_dict(include_body=True) for hit in literature],
-            "reference_only": [hit.as_dict(include_body=True) for hit in reference_only],
             "capture_groups": [hit.as_dict(include_body=True) for hit in capture_groups],
             "capture_ids": capture_ids,
             "recommended_captures": self._capture_records(recommended_ids),
-            "citation_rule": "기본 stage는 Summary·Appendix의 active 근거만 반환합니다. qa_only·listed_only는 사용자가 그 범위를 명시적으로 요청한 경우에만 사용하고, banned는 반환하지 않습니다.",
+            "capture_kind": capture_kind,
+            "capture_gaps": capture_gaps,
+            "citation_rule": "최종 Summary·Appendix에서 실제 사용하는 active 문헌만 반환합니다. 참고문헌 전용·폐기·과거 자료는 런타임에 포함하지 않습니다.",
             "capture_display_rule": (
-                "사용자가 근거 원문·캡처·어디에 쓰였는지를 요청하면 recommended_captures의 id를 "
-                "get_capture_image에 넘겨 이미지를 직접 표시하세요. source 캡처가 없으면 deck_only 상태를 밝혀야 합니다."
+                "source는 실제 원문 캡처만, deck은 덱 사용 위치의 발췌만 반환합니다. source가 없을 때 deck으로 "
+                "자동 대체하지 마세요. 사용자가 덱 사용 위치를 요청한 경우에만 capture_kind=deck을 사용하세요."
             ),
         }
 
@@ -472,13 +464,11 @@ class KnowledgeService:
             ),
         )
         conflicts = self._search_source(query, "knowledge/conflict_map.yaml", top_k=6)
-        history = self.index.search(query, top_k=5, authorities={"historical"})
         return {
             "query": query,
             "current": [hit.as_dict(include_body=True) for hit in current],
             "conflicts": [hit.as_dict(include_body=True) for hit in conflicts],
-            "history": [hit.as_dict() for hit in history],
-            "resolution_rule": "현재 계약이 결론을 정합니다. 과거 자료는 왜 바뀌었는지 설명할 때만 사용합니다.",
+            "resolution_rule": "최종 덱과 현재 상품 계약만 사용합니다. 폐기된 표현과 변경 이력은 공개 런타임에 포함하지 않습니다.",
         }
 
     def prepare_answer_context(
@@ -502,24 +492,27 @@ class KnowledgeService:
             deck = self._search_source(question, "knowledge/claims/deck_claims.yaml", top_k=5)
             current = self._merge_unique_hits(deck, current, limit=7)
 
-        direct_evidence = self._literature_hits(
-            question,
-            top_k=6 if routing.route == "literature_evidence" else 4,
-            usage_scope=evidence_scope,
+        # Semantic literature search is only safe when the user is actually
+        # asking about a source. Product questions must traverse the curated
+        # evidence_links on the matched current claim; otherwise a thematically
+        # similar paper can be presented as proof of a product decision.
+        direct_evidence = (
+            self._literature_hits(question, top_k=6, usage_scope=evidence_scope)
+            if routing.route == "literature_evidence"
+            else []
         )
         link_facts = (
             [hit for hit in current if hit.score >= max(5.0, current[0].score * 0.25)][:3]
             if current
             else []
         )
-        linked_evidence, evidence_supports = self._linked_evidence_hits(
+        linked_evidence, evidence_links = self._linked_evidence_hits(
             link_facts,
             question,
             usage_scope=evidence_scope,
             limit=4,
         )
         evidence = self._merge_unique_hits(linked_evidence, direct_evidence, limit=4)
-        reference_only = self._reference_only_hits(question, top_k=2, usage_scope=evidence_scope)
         supporting = self._filtered_search(
             question,
             top_k=4,
@@ -529,36 +522,6 @@ class KnowledgeService:
                 and document.status == "active"
             ),
         )
-        history_requested = (
-            routing.route == "claim_conflict_history"
-            or any(term in question.lower() for term in HISTORY_REQUEST_TERMS)
-        )
-        history_material: list[SearchHit] = []
-        if history_requested:
-            history_material.extend(self._filtered_search(
-                question,
-                top_k=2,
-                predicate=lambda document: (
-                    document.authority == "historical"
-                    and document.source_path == "knowledge/history/decision_log.yaml"
-                ),
-            ))
-            history_material.extend(self._filtered_search(
-                question,
-                top_k=1,
-                predicate=lambda document: (
-                    document.authority == "historical"
-                    and document.source_path == "knowledge/official_positions.yaml"
-                ),
-            ))
-            history_material.extend(self._filtered_search(
-                question,
-                top_k=1,
-                predicate=lambda document: (
-                    document.authority == "historical"
-                    and document.source_path == "knowledge/qa/cards.yaml"
-                ),
-            ))
         conflicts = self._search_source(question, "knowledge/conflict_map.yaml", top_k=3)
         glossary = self._search_source(
             question,
@@ -609,44 +572,61 @@ class KnowledgeService:
                 "english": "고정 용어를 유지한 짧은 문장",
             },
             "answer_instruction": (
-                "평소 대화처럼 질문에 필요한 재료만 골라 바로 답하세요. 내부 이름은 숨기고, exact evidence_captures는 "
-                "별도 요청 없이 주장 뒤에 쓰임 한 줄과 붙이세요. 후보·미검증 상태는 숨기지 마세요. historical_material은 "
-                "현재 사실을 정하는 근거가 아니라 변경 이유 재료입니다. 관련 없는 경고는 덧붙이지 마세요."
+                "평소 대화처럼 질문에 필요한 재료만 골라 먼저 2~4문장으로 직접 답하세요. 증거 카드만 보여주고 답을 "
+                "생략하지 마세요. 내부 이름은 숨기고, exact source evidence_captures는 별도 요청 없이 주장 뒤에 쓰임 "
+                "한 줄과 붙이세요. 덱 발췌를 원문 근거처럼 대체하지 마세요. 상품 설계 결정은 문헌이 입증한 사실처럼 "
+                "말하지 말고, 후보·미검증 상태는 숨기지 마세요. 관련 없는 경고는 덧붙이지 마세요."
             ),
             "current_facts": [answer_hit(hit, 700) for hit in current[:4]],
             "evidence": [
                 {
                     **answer_hit(hit, 480),
-                    "supports": evidence_supports.get(hit.document.id, []),
+                    "claim_links": evidence_links.get(hit.document.id, []),
+                    "supports": [
+                        link["supports"]
+                        for link in evidence_links.get(hit.document.id, [])
+                        if link.get("supports")
+                    ],
                 }
                 for hit in evidence[:3]
             ],
-            "reference_only": [answer_hit(hit, 480) for hit in reference_only[:2]],
             "evidence_captures": [],
+            "source_capture_gaps": [],
             "explanation_material": [answer_hit(hit) for hit in supporting[:2]],
-            "historical_material": [answer_hit(hit) for hit in history_material[:2]],
             "validation_material": [answer_hit(hit, 600) for hit in validation_material[:3]],
             "conflicts_and_avoid": [answer_hit(hit, 480) for hit in conflicts[:2]],
             "fixed_terms": [answer_hit(hit) for hit in glossary[:2]],
             "truncated": False,
             "packet_chars": max_chars,
         }
-        capture_sources = evidence[:2]
-        if not capture_sources and any(term in question.lower() for term in CAPTURE_REQUEST_TERMS):
-            capture_sources = reference_only[:1]
+        explicit_capture_request = any(term in question.lower() for term in CAPTURE_REQUEST_TERMS)
+        capture_sources = []
+        for source in evidence:
+            links = evidence_links.get(source.document.id, [])
+            if explicit_capture_request or any(link.get("auto_show_source") for link in links):
+                capture_sources.append(source)
+            if len(capture_sources) >= 2:
+                break
+        if not capture_sources and explicit_capture_request:
+            capture_sources = evidence[:1]
         for source in capture_sources:
             metadata = source.document.metadata
             capture_ids = list(metadata.get("source_capture_ids", []))
             if not capture_ids:
-                capture_ids = list(metadata.get("deck_capture_ids", []))
-            if not capture_ids:
-                capture_ids = list(metadata.get("capture_ids", []))
-            if not capture_ids:
+                packet["source_capture_gaps"].append({
+                    "evidence_id": source.document.id,
+                    "source": metadata.get("source", source.document.title),
+                    "rule": "원문 캡처가 없어 덱 발췌로 대체하지 않음",
+                })
                 continue
             records = self._answer_capture_records(capture_ids[:1])
             for record in records:
                 record["evidence_id"] = source.document.id
-                record["supports"] = evidence_supports.get(source.document.id, [])
+                record["supports"] = [
+                    link["supports"]
+                    for link in evidence_links.get(source.document.id, [])
+                    if link.get("supports")
+                ]
                 if record["id"] not in {item["id"] for item in packet["evidence_captures"]}:
                     packet["evidence_captures"].append(record)
 
@@ -658,10 +638,9 @@ class KnowledgeService:
         minimums = {
             "current_facts": 1 if packet["evidence_captures"] else 2,
             "evidence": min(visual_count, len(packet["evidence"])),
-            "reference_only": 1 if packet["evidence_captures"] and not evidence and reference_only else 0,
             "evidence_captures": visual_count,
+            "source_capture_gaps": 0,
             "explanation_material": 1 if packet["explanation_material"] and not packet["evidence_captures"] else 0,
-            "historical_material": 1 if packet["historical_material"] else 0,
             "validation_material": 1 if packet["validation_material"] else 0,
             "conflicts_and_avoid": 0,
             "fixed_terms": 0,
@@ -671,11 +650,10 @@ class KnowledgeService:
             "fixed_terms",
             "conflicts_and_avoid",
             "current_facts",
-            "historical_material",
             "validation_material",
-            "reference_only",
             "evidence",
             "evidence_captures",
+            "source_capture_gaps",
         )
         while packet_size() > max_chars:
             for key in drop_order:
@@ -689,7 +667,7 @@ class KnowledgeService:
             packet["routing"].pop("material_priority", None)
 
         if packet_size() > max_chars:
-            for key in ("current_facts", "validation_material", "conflicts_and_avoid", "evidence", "reference_only"):
+            for key in ("current_facts", "validation_material", "conflicts_and_avoid", "evidence"):
                 for item in packet[key]:
                     for field, limit in (("body", 360), ("snippet", 240)):
                         value = item.get(field)
@@ -700,9 +678,7 @@ class KnowledgeService:
             for key in (
                 "current_facts",
                 "evidence",
-                "reference_only",
                 "explanation_material",
-                "historical_material",
                 "conflicts_and_avoid",
                 "fixed_terms",
             ):
@@ -710,7 +686,7 @@ class KnowledgeService:
                     item.pop("metadata", None)
 
         if packet_size() > max_chars:
-            for key in ("current_facts", "evidence", "reference_only", "conflicts_and_avoid"):
+            for key in ("current_facts", "evidence", "conflicts_and_avoid"):
                 for item in packet[key]:
                     if isinstance(item.get("body"), str):
                         item["body"] = f"{item['body'][:240].rstrip()}…"
@@ -719,6 +695,20 @@ class KnowledgeService:
 
         while packet_size() > max_chars and len(packet["current_facts"]) > 1:
             packet["current_facts"].pop()
+
+        if packet_size() > max_chars:
+            for key in ("current_facts", "evidence"):
+                for item in packet[key]:
+                    item.pop("snippet", None)
+                    if isinstance(item.get("body"), str) and len(item["body"]) > 180:
+                        item["body"] = f"{item['body'][:180].rstrip()}…"
+                    if isinstance(item.get("claim_links"), list):
+                        item["claim_links"] = item["claim_links"][:1]
+                    if isinstance(item.get("supports"), list):
+                        item["supports"] = list(dict.fromkeys(item["supports"]))[:1]
+            for capture in packet["evidence_captures"]:
+                if isinstance(capture.get("supports"), list):
+                    capture["supports"] = list(dict.fromkeys(capture["supports"]))[:1]
 
         packet["truncated"] = any(
             len(packet[key]) < count for key, count in original_counts.items()
@@ -787,7 +777,7 @@ class KnowledgeService:
         open_material = self._focused_hits(open_material, limit=4)
         examples = self._focused_hits(examples, limit=2)
 
-        linked_hits, linked_supports = self._linked_evidence_hits(
+        linked_hits, linked_links = self._linked_evidence_hits(
             current,
             topic,
             usage_scope="stage",
@@ -813,7 +803,12 @@ class KnowledgeService:
                     "id": hit.document.id,
                     "title": hit.document.title,
                     "status": hit.document.status,
-                    "supports": linked_supports.get(hit.document.id, []),
+                    "claim_links": linked_links.get(hit.document.id, []),
+                    "supports": [
+                        link["supports"]
+                        for link in linked_links.get(hit.document.id, [])
+                        if link.get("supports")
+                    ],
                     "body": hit.document.body,
                     "metadata": hit.document.metadata,
                 }
@@ -822,49 +817,54 @@ class KnowledgeService:
             "plain_wording_material": [hit.as_dict(include_body=True) for hit in examples],
         }
 
-    def resolve_evidence_capture(self, query: str, usage_scope: str = "stage") -> dict[str, Any]:
+    def resolve_evidence_capture(
+        self,
+        query: str,
+        usage_scope: str = "stage",
+        capture_kind: str = "source",
+    ) -> dict[str, Any]:
         """Resolve a capture through an exact literature mapping before display."""
-        evidence = self.get_evidence(query, top_k=6, include_captures=True, usage_scope=usage_scope)
+        evidence = self.get_evidence(
+            query,
+            top_k=6,
+            include_captures=True,
+            usage_scope=usage_scope,
+            capture_kind=capture_kind,
+        )
         recommended = evidence["recommended_captures"]
         if recommended:
             return {
                 "query": query,
                 "usage_scope": usage_scope,
-                "literature": evidence["literature"] or evidence["reference_only"],
+                "literature": evidence["literature"],
                 "capture": recommended[0],
-                "resolution": "direct_evidence_search",
+                "resolution": f"direct_evidence_search_{capture_kind}",
             }
 
         brief = self.prepare_topic_brief(query)
-        allowed_statuses = {
-            "stage": {"stage_citable"},
-            "qa_only": {"qa_only"},
-            "listed_only": {"listed_only"},
-            "all": {"stage_citable", "qa_only", "listed_only"},
-        }.get(usage_scope)
+        allowed_statuses = {"stage_citable"} if usage_scope == "stage" else None
         if allowed_statuses is None:
             raise ValueError(f"usage_scope must be one of: {', '.join(sorted(EVIDENCE_SCOPES))}")
-        for literature in brief["linked_literature"]:
+        # Never skip a missing capture on the best-matched claim and silently
+        # substitute a lower-ranked paper. That was the source of unrelated
+        # persona/methodology images appearing beside product answers.
+        for literature in brief["linked_literature"][:1]:
             if literature["status"] not in allowed_statuses:
                 continue
             metadata = literature.get("metadata", {})
-            capture_ids = [
-                *metadata.get("source_capture_ids", []),
-                *metadata.get("deck_capture_ids", []),
-                *metadata.get("capture_ids", []),
-            ]
+            capture_ids = list(metadata.get(f"{capture_kind}_capture_ids", []))
             for capture_id in capture_ids:
                 capture, _ = self.capture(capture_id)
-                if capture.get("card_status") == "active" or usage_scope != "stage":
+                if capture.get("card_status") == "active":
                     return {
                         "query": query,
                         "usage_scope": usage_scope,
                         "literature": [literature],
                         "capture": capture,
-                        "resolution": "current_position_evidence_link",
+                        "resolution": f"current_position_evidence_link_{capture_kind}",
                     }
         raise ValueError(
-            "No exact mapped capture was found for this topic. Do not guess a capture ID; explain that no exact capture is linked."
+            f"No exact mapped {capture_kind} capture was found for this topic. Do not substitute another capture kind or guess an ID."
         )
 
     def list_open_items(
@@ -918,12 +918,7 @@ class KnowledgeService:
         self._validate_top_k(top_k, maximum=50)
         if usage_scope not in EVIDENCE_SCOPES:
             raise ValueError(f"usage_scope must be one of: {', '.join(sorted(EVIDENCE_SCOPES))}")
-        allowed_statuses = {
-            "stage": {"active"},
-            "qa_only": {"qa_only"},
-            "listed_only": {"listed_only"},
-            "all": {"active", "qa_only", "listed_only"},
-        }[usage_scope]
+        allowed_statuses = {"active"}
         generic_queries = {"", "문헌", "문헌 캡처", "근거", "근거 캡처", "captures", "literature"}
         is_generic_query = query.strip().lower() in generic_queries
         eligible_groups = [
@@ -941,7 +936,7 @@ class KnowledgeService:
             raw_groups = self.index.search(
                 query,
                 top_k=30,
-                authorities={"evidence", "supporting", "historical"},
+                authorities={"evidence"},
                 source_contains="knowledge/evidence/capture_index.yaml",
             )
             raw_groups = self._prefer_named_source(query, raw_groups)

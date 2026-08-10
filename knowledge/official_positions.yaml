@@ -152,12 +152,12 @@ positions:
     evidence_ref:
       - sources/11_V20_결정_기록_0810.md#3-care-review-계약
       - knowledge/evidence/registry.yaml#presentation-ehsani-tefft-2021
-      - knowledge/evidence/registry.yaml#presentation-hirsch-activity-space-2014
     evidence_links:
       - ref: knowledge/evidence/registry.yaml#presentation-ehsani-tefft-2021
+        relation: direct
         supports: 생활권 밖의 익숙하지 않은 도로에서 위험이 커질 수 있다는 문제정의
-      - ref: knowledge/evidence/registry.yaml#presentation-hirsch-activity-space-2014
-        supports: 활동공간 확대나 위치만으로 자동 감점하지 않는 상품 경계
+        auto_show_source: true
+    evidence_boundary_ko: "위치만으로 감점하지 않는다는 결론은 외부 문헌이 증명한 사실이 아니라 MASIL의 상품 설계 결정이다. 덱 p.3의 합성 비교는 이 결정이 계산에 적용되는 예시이지 독립 문헌 근거가 아니다."
 
   - id: dashboard-13-point-difference
     topic: 대시보드 13%p 차이 설명 (덱 p.3 Edward 사례)
@@ -235,6 +235,19 @@ positions:
       - presentation-isaacman-2011
       - presentation-zheng-2009
       - presentation-montoliu-gatica-perez-2010
+    evidence_links:
+      - ref: presentation-isaacman-2011
+        relation: method_reference
+        supports: 60일 관찰과 서로 다른 방문일을 이용한 중요 장소 식별 방식
+        auto_show_source: true
+      - ref: presentation-zheng-2009
+        relation: method_reference
+        supports: stay-point 실험의 200m 거리 기준
+        auto_show_source: true
+      - ref: presentation-montoliu-gatica-perez-2010
+        relation: method_reference
+        supports: 장소 군집화의 250m 설정과 200~300m 경험적 대역
+        auto_show_source: true
 
   - id: simulation-validation-boundary
     topic: 합성 시뮬레이션이 검증한 것과 못 한 것
@@ -684,6 +697,11 @@ positions:
     evidence_ref:
       - presentation-isaacman-2011
       - deck://appendix-b
+    evidence_links:
+      - ref: presentation-isaacman-2011
+        relation: method_reference
+        supports: 60일 관찰과 서로 다른 방문일을 이용한 중요 장소 식별 방식
+        auto_show_source: true
   - topic: 7b. 기준선 민감도 실측 — 백로그 (정직 고지)
     approved_position_ko: "기준선 1/2/3개월 민감도(180건 재판정)는 아직 돌리지 않은 개발 백로그다. 파라미터라 엔진에서 즉시 가능하고 반나절이면 표로 제출할 수 있다. 파라미터 철학: 정할 수 없는 동안은 문헌과 원리로 시작하고, 잴 수 있게 되면 잰다 — eps는 파일럿 지역별 k-거리 그래프로, 존 반경은 P90 실측으로, 기준선 기간은 실데이터 방문 빈도 분포로 재보정."
     claim_type: future_plan

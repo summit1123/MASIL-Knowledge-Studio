@@ -309,23 +309,13 @@ unless cards_entry && cards_entry["role"] == "answer_example" && cards_entry["ca
   abort_check("Q&A cards are not non-canonical examples")
 end
 
-supporting_entries = manifest.fetch("supporting_include", [])
-required_supporting_files = %w[
-  knowledge/history/decision_log.yaml
-  knowledge/history/coverage_probe_2026-08-04.md
-  knowledge/qa/cards.yaml
-  knowledge/official_positions.yaml
-  knowledge/evidence/registry.yaml
-  knowledge/glossary.yaml
-  knowledge/forbidden_claims.yaml
-]
-actual_supporting_files = supporting_entries.map { |entry| entry["file"] }.compact
-missing_supporting_files = required_supporting_files - actual_supporting_files
-abort_check("missing supporting entries: #{missing_supporting_files.inspect}") unless missing_supporting_files.empty?
-supporting_authority_valid = supporting_entries.all? do |entry|
-  entry["retrieval_mode"] == "semantic_support" && entry["canonical_for_current_facts"] == false
+runtime_excluded = manifest.fetch("runtime_excluded", [])
+required_exclusion_terms = ["Master Q&A", "decision history", "archived Q&A", "listed_only"]
+missing_exclusion_terms = required_exclusion_terms.reject do |term|
+  runtime_excluded.any? { |entry| entry.to_s.include?(term) }
 end
-abort_check("supporting authority mismatch") unless supporting_authority_valid
+abort_check("runtime exclusion contract incomplete: #{missing_exclusion_terms.inspect}") unless missing_exclusion_terms.empty?
+abort_check("supporting_include must not exist in the team runtime manifest") if manifest.key?("supporting_include")
 
 registry = objects.fetch("knowledge/evidence/registry.yaml")
 capture_origin = registry.dig("meta", "capture_origin")
@@ -410,7 +400,7 @@ end
 puts "EVIDENCE_CAPTURES=stage:#{active_literature.size} qa:#{presentation_entries.count { |entry| entry["citation_tier"] == "qa_only" }} listed:#{presentation_entries.count { |entry| entry["citation_tier"] == "listed_only" }} banned:#{presentation_entries.count { |entry| entry["citation_tier"] == "banned" }} local_assets:#{declared_local_capture_count}"
 
 pipeline = manifest.fetch("retrieval_pipeline", [])
-expected_stages = %w[current_facts exact_evidence_traversal supporting_context conflict_resolution response_packet]
+expected_stages = %w[current_facts exact_evidence_traversal conflict_resolution response_packet]
 actual_stages = pipeline.map { |stage| stage["stage"] }
 puts "RETRIEVAL_STAGES=#{actual_stages.inspect}"
 abort_check("retrieval pipeline mismatch") unless actual_stages == expected_stages
@@ -420,7 +410,6 @@ expected_fields = %w[
   current_conclusion
   answer_facts
   evidence_and_citations
-  supporting_explanation_material
   conflicts_and_avoid_phrases
   plain_wording_material
   exact_evidence_captures
@@ -457,17 +446,8 @@ actual_model_anchor_files = snapshot.fetch("model_anchors", {}).map do |name, en
   [name, entry["file"]]
 end.to_h
 abort_check("snapshot model anchors mismatch") unless actual_model_anchor_files == expected_model_anchor_files
-unless snapshot.dig("decision_log", "layer") == "supporting" &&
-       snapshot.dig("decision_log", "retrieval_mode") == "semantic_support" &&
-       snapshot.dig("decision_log", "canonical_for_current_facts") == false
-  abort_check("decision log supporting configuration mismatch")
-end
-
-decision_log = objects.fetch("knowledge/history/decision_log.yaml")
-unless decision_log.dig("meta", "retrieval_mode") == "semantic_support" &&
-       decision_log.dig("meta", "canonical_for_current_facts") == false
-  abort_check("decision log metadata authority mismatch")
-end
+# Decision history remains valid repository provenance, but it is deliberately
+# absent from the public team runtime and therefore is not a retrieval contract.
 
 approved_sources = snapshot.fetch("approved_sources", [])
 missing_approved_sources = approved_sources.reject { |path| File.exist?(File.join(ROOT, path)) }

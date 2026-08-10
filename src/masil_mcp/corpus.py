@@ -31,7 +31,6 @@ EVIDENCE_YAML = {
 }
 SUPPORTING_YAML = {
     "knowledge/qa/cards.yaml",
-    "knowledge/history/decision_log.yaml",
 }
 
 MARKDOWN_FILES = {
@@ -42,18 +41,14 @@ MARKDOWN_FILES = {
     "REVIEW.md": "supporting",
     "INDEX.md": "supporting",
     "sources/00_확정수치카드.md": "supporting",
-    "sources/02_마스터답변안_전항목.md": "supporting",
     "sources/07_근거지도.md": "supporting",
     "sources/08_출처부록_주제별.md": "supporting",
-    "sources/11_V20_결정_기록_0810.md": "historical",
     "sources/데이터생성_상세정리.md": "supporting",
     "sources/부록B_해설_팀원용.md": "supporting",
     "sources/부록D_해설_팀원용.md": "supporting",
-    "sources/브리핑_0803_이슈정리.md": "historical",
     "sources/생활권_형성주기_이슈정리.md": "supporting",
     "sources/생활권반경_eps_정리.md": "supporting",
     "sources/안전운전자_매력도_정리.md": "supporting",
-    "sources/master_qa_artifact_2026-08-10.txt": "historical",
 }
 
 IDENTITY_FIELDS = (
@@ -431,7 +426,27 @@ class KnowledgeCorpus:
         for relative_path, authority in MARKDOWN_FILES.items():
             documents.extend(load_text_documents(self.root, relative_path, authority))
         documents.extend(load_capture_documents(self.root))
-        return documents
+        # The public team connector is a current presentation-preparation
+        # surface, not a project archive. Superseded positions, archived Q&A,
+        # reference-only literature, and inactive captures remain in Git for
+        # maintainers but are never indexed by the runtime.
+        return [
+            document
+            for document in documents
+            if document.authority != "historical"
+            and not (
+                document.source_path == "knowledge/evidence/registry.yaml"
+                and document.status != "stage_citable"
+            )
+            and not (
+                document.source_path == "knowledge/evidence/capture_index.yaml"
+                and document.metadata.get("card_status") != "active"
+            )
+            and not (
+                document.id.startswith("capture://")
+                and document.metadata.get("card_status") != "active"
+            )
+        ]
 
     def fingerprint(self) -> str:
         digest = hashlib.sha256()

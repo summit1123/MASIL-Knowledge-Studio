@@ -69,21 +69,24 @@ async def check(url: str, auth: str | None) -> None:
             raise RuntimeError("answer packet tool call failed")
         if answer.structured_content.get("routing", {}).get("route") != "product_logic":
             raise RuntimeError("answer packet did not select the product-logic route")
-        if {item.get("id") for item in answer.structured_content.get("evidence_captures", [])} != {
-            "capture-006",
-            "capture-037",
-        }:
-            raise RuntimeError("answer packet did not traverse exact evidence captures")
+        evidence_ids = {
+            item.get("id", "").split("#")[-1]
+            for item in answer.structured_content.get("evidence", [])
+        }
+        if evidence_ids != {"presentation-ehsani-tefft-2021"}:
+            raise RuntimeError("answer packet did not keep the exact problem-definition evidence boundary")
+        if answer.structured_content.get("evidence_captures"):
+            raise RuntimeError("answer packet substituted a deck/persona image for a missing source capture")
 
         inline = await client.call_tool(
             "show_answer_evidence",
-            {"question": "생활권 밖으로 나가면 자동으로 감점하나요?"},
+            {"question": "Cicchino looking but not seeing 71% 원문 캡처"},
         )
         if (
             inline.is_error
             or {item.get("id") for item in inline.structured_content.get("captures", [])}
-            != {"capture-006", "capture-037"}
-            or sum(content.type == "image" for content in inline.content) != 2
+            != {"capture-024"}
+            or sum(content.type == "image" for content in inline.content) != 1
         ):
             raise RuntimeError("inline evidence tool call failed")
 
@@ -112,7 +115,7 @@ async def check(url: str, auth: str | None) -> None:
                 "out-of-zone-risk-and-no-location-penalty"
             )
             or literature_ids
-            != {"presentation-ehsani-tefft-2021", "presentation-hirsch-activity-space-2014"}
+            != {"presentation-ehsani-tefft-2021"}
             or "likely_questions" in brief.structured_content
         ):
             raise RuntimeError("topic brief tool call failed")
@@ -153,18 +156,18 @@ async def check(url: str, auth: str | None) -> None:
 
         resolved_image = await client.call_tool(
             "show_evidence_capture",
-            {"query": "생활권 밖 위험 근거 캡처"},
+            {"query": "Cicchino looking but not seeing 71%", "capture_kind": "source"},
         )
         if (
             resolved_image.is_error
-            or resolved_image.structured_content.get("id") != "capture-006"
+            or resolved_image.structured_content.get("id") != "capture-024"
             or not any(content.type == "image" for content in resolved_image.content)
             or not resolved_image.structured_content.get("display_url")
         ):
             raise RuntimeError("resolved evidence image call failed")
 
         status = await client.call_tool("knowledge_status", {})
-        if status.is_error or status.structured_content.get("captures") != 44:
+        if status.is_error or status.structured_content.get("captures") != 38:
             raise RuntimeError("knowledge status tool call failed")
 
         telemetry = await client.call_tool("usage_telemetry", {"days": 7})

@@ -11,8 +11,8 @@ meta:
   page_count: 9
   claim_counts:
     total: 64
-    as_printed: 51
-    as_printed_needs_context: 6
+    as_printed: 44
+    as_printed_needs_context: 13
     printed_correction_planned: 7
   extraction_method: pdftotext -layout (page by page)
   effective_date: 2026-08-10
@@ -33,6 +33,12 @@ pages:
         kind: statistic
         status: as_printed
         note_ko: 전체 사고 감소 대비 고령 운전자 사고 증가. 출처는 도로교통공단 TAAS.
+        evidence_ref: presentation-taas-koroad-2026
+        evidence_links:
+          - ref: presentation-taas-koroad-2026
+            relation: direct
+            supports: 2024년 대비 2025년 전체 사고 감소와 고령 운전자 사고 증가 통계
+            auto_show_source: true
 
       - id: p1-braking-228
         text_en: "Braking reaction time: 2.28s (+90% vs. non-elderly) (KCA, 2024)"
@@ -40,20 +46,35 @@ pages:
         status: as_printed_needs_context
         note_ko: 시야가 제한된 돌발 상황 조건의 수치(고령 2.28초 vs 비고령 1.20초). 모든 상황에서 무조건 90% 느리다고 일반화하지 않는다. 같은 시험의 교차로 우회전 조건 차이는 0.02초.
         evidence_ref: presentation-kca-2024-elderly-drivers
+        evidence_links:
+          - ref: presentation-kca-2024-elderly-drivers
+            relation: direct
+            supports: 시야가 제한된 돌발 상황에서 측정된 고령·비고령 반응시간
+            auto_show_source: true
 
       - id: p1-intersection-judgment
         text_en: "Accidents cluster at intersections/yielding — judgment risk, not attention (McGwin et al., 1999)"
         kind: citation
-        status: as_printed
-        note_ko: 부주의가 아니라 상황 판단 위험이라는 프레임의 근거.
+        status: as_printed_needs_context
+        note_ko: 원문은 교차로·양보 실패·보지 못한 물체·교통흐름 판단의 어려움을 보고한다. "not attention"이라는 이분법은 원문보다 강하므로 말할 때는 "단순 부주의만의 문제가 아니라 상황 판단과 지각 처리의 어려움"으로 완화한다.
         evidence_ref: presentation-mcgwin-brown-1999
+        evidence_links:
+          - ref: presentation-mcgwin-brown-1999
+            relation: direct
+            supports: 교차로·양보·교통흐름 판단 조건에 고령 운전자 사고가 집중되는 경향
+            auto_show_source: true
 
       - id: p1-firsttime-25x
         text_en: "First-time routes have 2.5x higher crash risk (Ehsani & Tefft, 2021) — burden of unfamiliarity affects elderly drivers more severely"
         kind: statistic
-        status: as_printed
-        note_ko: crash involvement 표현 유지. 고령자만의 효과로 일반화하지 않는다.
+        status: as_printed_needs_context
+        note_ko: 2.5배 crash involvement는 전 연령 자료의 익숙하지 않은 도로 효과다. 뒤의 "elderly drivers more severely"는 이 논문이 직접 검증한 결과가 아니므로 말할 때 분리한다.
         evidence_ref: presentation-ehsani-tefft-2021
+        evidence_links:
+          - ref: presentation-ehsani-tefft-2021
+            relation: direct
+            supports: 처음 가는 도로에서 사고 연루 가능성이 높았다는 문제정의
+            auto_show_source: true
 
       - id: p1-three-tiers
         text_en: "Favorable · Standard · Care Tier"
@@ -198,12 +219,24 @@ pages:
         kind: citation
         status: as_printed_needs_context
         note_ko: 원문 통계는 drivers가 아니라 persons(인구) 기준. 구두로 말할 때는 persons로 보정한다.
+        evidence_ref: presentation-oecd-ageing-transport-2001
+        evidence_links:
+          - ref: presentation-oecd-ageing-transport-2001
+            relation: direct
+            supports: 2030년 OECD의 65세 이상 인구 전망과 별도의 고령 운전자 전망
+            auto_show_source: true
 
       - id: p5-eu-road-deaths
         text_en: "Aged 65+ make up 21% of population but 31% of road deaths (EU Commission, 2025)"
         kind: statistic
         status: as_printed
         note_ko: 인구 비중 대비 사망 비중. 인쇄값 그대로.
+        evidence_ref: presentation-eu-commission-road-safety-2025
+        evidence_links:
+          - ref: presentation-eu-commission-road-safety-2025
+            relation: direct
+            supports: EU 65세 이상 인구 구성비와 도로 사망 구성비
+            auto_show_source: true
 
       - id: p5-erso-5x-fatality
         text_en: "Drivers 75+: 5x higher fatality risk at equal exposure (ERSO, n.d.)"
@@ -211,13 +244,23 @@ pages:
         status: as_printed
         note_ko: fatality(심도) 기준이다. 사고 빈도와 신체 취약성에 따른 심도를 구분해 말한다.
         evidence_ref: presentation-erso-older-driver-risk
+        evidence_links:
+          - ref: presentation-erso-older-driver-risk
+            relation: direct
+            supports: 주행 노출을 감안한 75세 이상 운전자의 사망 위험
+            auto_show_source: true
 
       - id: p5-chen-cognitive-first
         text_en: "Cognitive decline shows up first in driving/mobility patterns — before any accident (Chen et al., 2025, Neurology)"
         kind: citation
-        status: as_printed
-        note_ko: 패턴 변화 감지의 의학적 근거. MASIL이 인지장애를 진단한다고 말하지 않는다.
+        status: as_printed_needs_context
+        note_ko: 원문은 MCI 집단의 주행 빈도·복잡성 등이 시간에 따라 달라지고 주행 변수의 판별 가능성을 보였다고 말한다. "before any accident"는 연구가 직접 검증한 시간 순서가 아니므로 무대에서는 빼고, MASIL이 인지장애를 진단한다고 말하지 않는다.
         evidence_ref: presentation-chen-2025-neurology
+        evidence_links:
+          - ref: presentation-chen-2025-neurology
+            relation: direct
+            supports: MCI 집단과 정상인지 집단의 실제 주행 패턴이 시간에 따라 달라졌다는 관찰
+            auto_show_source: true
 
       - id: p5-cicchino-71
         text_en: "71% of older drivers' inadequate surveillance errors came from looking but not seeing, rather than failing to look (vs. 40% for middle-aged drivers) (Cicchino & McCartt, 2015)"
@@ -225,6 +268,11 @@ pages:
         status: as_printed
         note_ko: inadequate surveillance 오류 중의 비율이다. 전체 사고 원인의 71%로 말하지 않는다.
         evidence_ref: presentation-cicchino-mccartt-2015
+        evidence_links:
+          - ref: presentation-cicchino-mccartt-2015
+            relation: direct
+            supports: inadequate surveillance 사례 안의 looking but not seeing 비중
+            auto_show_source: true
 
       - id: p5-ehsani-25x
         text_en: "Under same road conditions, first-time travelers have 2.5x likelihood of accident involvement (Ehsani & Tefft, 2021)"
@@ -232,31 +280,63 @@ pages:
         status: as_printed
         note_ko: p.1과 동일 근거의 재등장. crash involvement 표현 유지.
         evidence_ref: presentation-ehsani-tefft-2021
+        evidence_links:
+          - ref: presentation-ehsani-tefft-2021
+            relation: direct
+            supports: 처음 가는 도로에서의 사고 연루 가능성
+            auto_show_source: true
 
       - id: p5-iihs-intersection-43
         text_en: "Multi-vehicle fatal intersection crashes: 43% for drivers 80+ vs. 24% for ages 16-59 (IIHS, 2024)"
         kind: statistic
         status: as_printed
         note_ko: 교차로 다중차량 치명 사고 비중. 인쇄값 그대로.
+        evidence_ref: presentation-iihs-older-people-2026
+        evidence_links:
+          - ref: presentation-iihs-older-people-2026
+            relation: direct
+            supports: 연령대별 다중차량 치명 교차로 사고 비중
+            auto_show_source: true
 
       - id: p5-vivoda-self-regulation
         text_en: "Seniors self-regulate as ability declines — avoiding night driving (58.8%) & unfamiliar areas (11%) (Vivoda et al., 2021)"
         kind: statistic
-        status: as_printed
-        note_ko: 초기 자기조절 행동 관찰치. 전체 고령자가 모두 회피한다고 일반화하지 않는다.
+        status: as_printed_needs_context
+        note_ko: 58.8%와 11%는 전체 고령자가 아니라 자기조절을 시작한 참가자의 첫 회피 행동 분포다. "ability declines"의 인과도 이 수치만으로 단정하지 않는다.
         evidence_ref: presentation-vivoda-2021
+        evidence_links:
+          - ref: presentation-vivoda-2021
+            relation: direct
+            supports: 자기조절을 시작한 고령 운전자의 첫 회피 행동 분포
+            auto_show_source: true
 
       - id: p5-license-renewal
         text_en: "Protracted Driver's License Renewal Cycles — renewal cycles fail to keep pace with elderly drivers' frequent cognitive changes (Budget Direct Insurance, 2026; KOTRA, 2018)"
         kind: citation
-        status: as_printed
-        note_ko: 규제 공백 프레임의 근거.
+        status: as_printed_needs_context
+        note_ko: KOTRA와 Budget Direct는 한국·싱가포르의 갱신 및 의료증명 주기를 설명한다. "인지 변화보다 느리다"는 MASIL의 문제정의 해석이지 두 자료가 직접 검증한 결론이 아니며, Budget Direct 자료의 등록 연도는 2025로 확인돼 인쇄된 2026과 구분한다.
+        evidence_ref: [presentation-budget-direct-singapore-2025, presentation-kotra-renewal-2018]
+        evidence_links:
+          - ref: presentation-budget-direct-singapore-2025
+            relation: direct
+            supports: 싱가포르 65세 이상 운전자의 의료증명 주기와 추가 검사 조건
+            auto_show_source: true
+          - ref: presentation-kotra-renewal-2018
+            relation: direct
+            supports: 한국 운전면허 갱신 주기와 당시 개정안
+            auto_show_source: true
 
       - id: p5-conditional-licensing
         text_en: "The Conditional Licensing Dilemma — backlash over age discrimination stalls policy, while blanket restrictions risk isolation and depression (Chihuri et al., 2016)"
         kind: citation
-        status: as_printed
-        note_ko: 연령차별 질문(P0-13) 대응의 출발점 — 일괄 제한의 부작용 근거.
+        status: as_printed_needs_context
+        note_ko: Chihuri는 운전 중단과 우울·건강·사회 기능 저하의 연관을 종합한 자료다. 연령차별 반발이 정책을 중단시킨다는 전반부는 이 문헌의 직접 결론이 아니며, 제한이 우울을 유발한다고 인과로 말하지 않는다.
+        evidence_ref: presentation-chihuri-driving-cessation-2016
+        evidence_links:
+          - ref: presentation-chihuri-driving-cessation-2016
+            relation: direct
+            supports: 운전 중단과 우울·건강·사회 기능 저하의 연관
+            auto_show_source: true
 
       - id: p5-sumagaysay-ubi-gap
         text_en: "Mileage metrics misclassify low-frequency, high-severity seniors as low-risk, while behavior (UBI) metrics fail to capture physical and cognitive decline (Sumagaysay, 2026)"
@@ -270,7 +350,12 @@ pages:
         kind: statistic
         status: printed_correction_planned
         note_ko: "45%(LexisNexis)는 fleet telematics 맥락이라 8/18 제거 예정 — 방어 금지. 0.5%(iNews24)는 유지하며 반전 문안으로 사용: '0.5%는 교육 이수를 먼저 요구한 특약의 가입률 — 우리는 선행 비용을 제거했다.'"
-        evidence_ref: presentation-lexisnexis-2015
+        evidence_ref: [presentation-lexisnexis-2015, presentation-inews24-enrollment-2024]
+        evidence_links:
+          - ref: presentation-inews24-enrollment-2024
+            relation: direct
+            supports: 국내 고령운전자 안전교육 할인특약 가입률 약 0.52%
+            auto_show_source: true
 
       - id: p5-masil-solution-row
         text_en: "MASIL Rider — how we solve this: 2-month baseline pattern-change detection · mobility protection with safe-driving encouragement · senior-specific benefits + risk segmentation · preventive care delivery (calls, texts, family alerts)"
@@ -305,13 +390,27 @@ pages:
         status: as_printed
         note_ko: 260m는 논문 직접값이 아니라 제안 시작값. 파일럿에서 재보정한다는 문안이 덱에 인쇄돼 있다.
         evidence_ref: [presentation-zheng-2009, presentation-montoliu-gatica-perez-2010]
+        evidence_links:
+          - ref: presentation-zheng-2009
+            relation: method_reference
+            supports: stay-point 실험의 200m 거리 기준
+            auto_show_source: true
+          - ref: presentation-montoliu-gatica-perez-2010
+            relation: method_reference
+            supports: 장소 군집화의 250m 설정과 200~300m 경험적 대역
+            auto_show_source: true
 
       - id: p6-isaacman-2month
         text_en: "Isaacman et al. (2011): repetition across multiple days explains a place's importance better than records concentrated in a single day. 60-day observation criterion — multiple records on the same day = 1 day · 3+ distinct days required"
         kind: citation
-        status: as_printed
-        note_ko: 2개월 기준선과 distinct-day 규칙의 문헌 근거.
+        status: as_printed_needs_context
+        note_ko: Isaacman은 60일 관찰과 전체 일수의 5%에 해당하는 서로 다른 방문일로 중요 장소를 찾았다. MASIL의 3+ distinct days는 60일의 5%를 적용한 설계 변환이며 논문이 모든 시스템에 3일을 직접 요구한 것은 아니다.
         evidence_ref: presentation-isaacman-2011
+        evidence_links:
+          - ref: presentation-isaacman-2011
+            relation: method_reference
+            supports: 60일 관찰과 서로 다른 방문일을 이용한 중요 장소 식별 방식
+            auto_show_source: true
 
       - id: p6-outer-neutral
         text_en: "Outer Zone represents neutral mobility context · 260m and the 2-month baseline are operational starting values (separate from care detection's preceding 2 months)"
@@ -437,7 +536,14 @@ pages:
         kind: citation
         status: as_printed
         note_ko: 페르소나 방향성 근거. 합성 페르소나의 절대 파라미터를 입증하는 것은 아니다.
-        evidence_ref: presentation-longroad-self-regulation
+        evidence_ref:
+          - presentation-longroad-self-regulation
+          - presentation-charlton-starkey-2013
+          - presentation-kiri-ubi-2024
+          - presentation-harms-2021
+          - presentation-hirsch-activity-space-2014
+          - presentation-ji-2023
+          - presentation-statistics-korea-2025
 
       - id: p9-generative-ai
         text_en: "Generative AI: NVIDIA Nemotron-Personas Korean (ko_KR) dataset, built on Gemma 4 (base), methodology referenced for persona design. OpenAI LLM used for report generation and persona context generation. OpenAI gpt-image-2 used for slide images"
