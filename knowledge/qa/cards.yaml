@@ -177,12 +177,16 @@ cards:
     question_ko: 두 사람의 거리가 비슷한데 왜 결과가 다른가요?
     question_en: Why are the results different when their annual distances are similar?
     topic: 대시보드-비교
-    direct_answer_ko: "거리가 아니라 행동과 변화가 달랐기 때문입니다. Edward는 연간 2,473.6km, Frank는 2,510.1km로 비슷하지만 위험 이벤트는 209건과 10건입니다. 연간 점수도 81.6점과 98.4점입니다. 화면의 13%p 차이는 이 사례의 연간 시뮬레이션 결과입니다. 한 달 Care를 받았다고 자동으로 13%p가 깎이는 규칙이 아닙니다. Care는 검토와 지원을 열고, 연간 할인율은 연간 주행 기록으로 별도 계산합니다."
-    spoken_answer_en: "Their mileage is similar, but their behavior is different. Edward has 209 risky events and an annual score of 81.6. Frank has 10 risky events and a score of 98.4. The rate difference on screen is the simulated annual proposal for this case. It is not an automatic penalty for one month of Care. Care triggers review and support. The annual discount is calculated separately from the annual driving record."
+    direct_answer_ko: "거리가 아니라 행동과 변화가 달랐기 때문입니다. Edward는 연간 2,473.6km, Frank는 2,510.1km로 비슷하지만 위험 이벤트는 209건과 10건입니다. 최신 비교표는 연간 Care·Favorable 등급 대신 연간 평균점수 81.6점과 98.4점을 보여줍니다. 화면의 할인율 차이는 이 사례의 연간 시뮬레이션 제안값이며, 한 달 Care에 따른 자동 차감이 아닙니다. 월별 Care는 검토와 지원을 열고 연간 할인율은 연간 주행 기록으로 별도 계산합니다."
+    spoken_answer_en: "Their mileage is similar, but their behavior is different. Edward has 209 risky events and an annual average score of 81.6. Frank has 10 risky events and a score of 98.4. The latest table shows annual scores, not annual Care or Favorable grades. The rate difference is a simulated annual proposal for this case. It is not an automatic penalty for one Care month."
     do_not_say:
       - 최종 대시보드·최종 덱을 old/legacy/이전 데모로 지칭
       - 13%p를 확정 요율·고정 차감 정책으로 제시
       - "'한 달 케어 = 13%p 차감' 인과"
+      - 최신 비교표에 연간 Care·Favorable 등급이 있다고 설명
+    followups:
+      - q: Edward는 연간 Care이고 Frank는 연간 Favorable인가요?
+        a: "아닙니다. 최신 비교표는 연간 등급 행을 제거하고 Annual average score 81.6점과 98.4점을 보여줍니다. Care는 월별 검토 신호로 설명합니다."
     source: deck://dashboard-appendix
 
   - id: qa-why-senior-drivers
@@ -276,11 +280,11 @@ cards:
     scenario_id: P0-08
     role: answer_example
     canonical_for_facts: false
-    question_ko: 마일리지 보험이나 일반 UBI와 무엇이 다른가요?
-    question_en: How is this different from mileage insurance or ordinary UBI?
+    question_ko: PAYD나 일반 UBI와 무엇이 다른가요?
+    question_en: How is this different from Pay-As-You-Drive or ordinary UBI?
     topic: 차별점-UBI
-    direct_answer_ko: "마일리지 보험은 거리만 봅니다. 일반 UBI는 급제동 같은 개별 이벤트 점수를 봅니다. MASIL은 여기에 '그 사람의 평소'라는 기준을 더합니다. 익숙한 생활권 안팎의 안전 운전과 평소 패턴의 변화를 함께 보고, 변화가 큰 달에는 벌점이 아니라 사람 검토와 지원을 연결합니다. 저주행이 곧 저위험이 아니라는 문헌도 이 접근의 배경입니다."
-    spoken_answer_en: "Mileage insurance only sees distance. Ordinary UBI scores single events, such as hard braking. MASIL adds a personal baseline. We see safe driving in and out of the familiar zone. We also watch changes from the person's normal pattern. A big change brings human review and support, not a penalty."
+    direct_answer_ko: "Pay-As-You-Drive는 얼마나 운전했는지를 봅니다. 일반 UBI는 어떻게 운전했는지를 봅니다. MASIL은 여기에 어디에서 익숙하게 운전하는지와 평소 패턴에서 무엇이 달라졌는지를 더합니다. 생활권 안팎의 안전 운전과 개인의 변화를 함께 보고, 변화가 큰 달에는 사람 검토와 지원을 연결합니다."
+    spoken_answer_en: "Pay-As-You-Drive looks at how much you drive. UBI looks at how you drive. MASIL also looks at where driving is familiar and what changed from the person's normal pattern. A large change can lead to human review and support."
     source: deck://summary-1
 
   - id: qa-why-parameters

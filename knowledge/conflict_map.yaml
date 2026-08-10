@@ -3,11 +3,22 @@
 meta:
   effective_date: 2026-08-10
   status: approved_for_mcp_with_open_items
-  conflict_count: 20
+  conflict_count: 21
   current_resolution_source: knowledge/product_model.yaml
   rule: 현재 결론은 product_model의 current claim이 정하고, 과거 문장은 변경 이유·질문 대비·금지 표현 탐지에 사용
 
 conflicts:
+  - id: conflict-dashboard-annual-tier-vs-score
+    topic: 최신 대시보드의 월별 등급과 연간 평균점수
+    current_resolution: 최신 비교표에서는 연간 Care·Favorable 등급 행을 제거하고 Annual average score 81.6·98.4를 보여준다. Favorable·Standard·Care는 월별 결과이며, 월별 Care는 그 달의 검토·지원 신호다.
+    historical_material:
+      - knowledge/claims/deck_claims.yaml#p3-annual-verdicts
+      - sources/12_presentation_script_v1_0810.md
+    avoid_as_current:
+      - 최신 연간 비교표에서 Edward는 Care, Frank는 Favorable이라고 설명
+      - 월별 Care와 연간 평균점수를 하나의 연간 등급으로 혼합
+      - 최신 표를 opposite-decision annual tier 사례라고 설명
+
   - id: conflict-monthly-three-grades-vs-two-signals
     topic: 월별 세 등급과 내부 두 신호
     current_resolution: 발표에서는 Favorable·Standard·Care 세 결과로 쉽게 설명하고, 구현은 월 통합점수와 해당 월 Care 신호를 함께 보존한다. Favorable 조건과 Care가 동시에 나오면 둘 다 표시하므로 우선순위 결정이 필요하지 않다.

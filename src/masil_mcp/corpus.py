@@ -49,6 +49,7 @@ MARKDOWN_FILES = {
     "sources/생활권_형성주기_이슈정리.md": "supporting",
     "sources/생활권반경_eps_정리.md": "supporting",
     "sources/안전운전자_매력도_정리.md": "supporting",
+    "sources/12_presentation_script_v1_0810.md": "supporting",
 }
 
 IDENTITY_FIELDS = (

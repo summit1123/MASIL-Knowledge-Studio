@@ -1,6 +1,6 @@
 # 팀 발표 준비용 MCP 계약. 공개 런타임은 현재 정본과 실제 사용 문헌만 검색한다.
 
-version: 2026-08-10-mcp-ready-v4
+version: 2026-08-10-mcp-ready-v5
 default_mode: qa_support
 mcp_implementation_allowed: true
 
@@ -39,6 +39,13 @@ canonical_sources:
     filter: status == active
     role: product_model 세부 현재 설명
 
+supporting_sources:
+  current_script:
+    file: sources/12_presentation_script_v1_0810.md
+    role: 1차 최종 발표 대본의 표현·예상 질문 표면
+    canonical_for_current_facts: false
+    rule: 덱·product_model·active official position과 충돌하면 현재 정본이 우선하며, 대본 문장은 Q&A 질문 의도와 쉬운 말투를 파악하는 데만 사용
+
 authority_routing:
   file: knowledge/product_model.yaml
   section: authority_by_question_type
@@ -63,6 +70,9 @@ include:
   - file: knowledge/qa/cards.yaml
     filter: status == active
     role: answer_example
+    canonical_for_facts: false
+  - file: sources/12_presentation_script_v1_0810.md
+    role: current_script_question_surface
     canonical_for_facts: false
   - file: knowledge/key_numbers.yaml
     filter: status == active
@@ -89,7 +99,7 @@ runtime_excluded:
 exclude_from_answer_support:
   - evidence with citation_tier == banned
   - statements marked prohibited_use
-  - 팀 최신 확정 설명과 아직 정합하지 않은 발표 대본 초안
+  - 현재 대본 안에서 덱·product_model·active official position과 충돌하는 문장
   - deprecated bulk paths listed in knowledge/snapshot.yaml
 
 asset_policy:

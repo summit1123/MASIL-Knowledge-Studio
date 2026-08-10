@@ -50,8 +50,8 @@ story_nodes:
 
   - story_node_id: story-04-current-gap
     stage: problem-to-solution
-    guiding_question_ko: 기존 규제·마일리지·UBI로는 무엇이 부족한가?
-    core_message_ko: 규제는 개인 변화를 늦게 보고, 마일리지 특약은 거리만 보며, MASIL은 기존 채널 위에서 개인의 안전행동과 변화 맥락을 보완한다.
+    guiding_question_ko: 기존 규제·PAYD·UBI로는 무엇이 부족한가?
+    core_message_ko: 규제는 개인 변화를 늦게 보고, Pay-As-You-Drive는 운전량을, UBI는 운전행동을 보며, MASIL은 기존 채널 위에서 개인 생활권과 변화 맥락을 보완한다.
     audience_takeaway: 기존 상품을 부정하거나 대체하는 것이 아니라 확인하지 못한 맥락을 더한다.
     material_refs:
       - deck://summary-1
@@ -152,7 +152,7 @@ story_nodes:
   - story_node_id: story-11-dashboard-proof
     stage: demonstration
     guiding_question_ko: 대시보드는 어떤 차이를 보여주는가?
-    core_message_ko: 비슷한 연간 주행거리라도 행동과 변화 맥락이 다르면 결과가 달라지고, 직원은 근거를 검토한 뒤 고객에게 지원을 제안한다.
+    core_message_ko: 비슷한 연간 주행거리라도 행동과 변화 맥락이 다르면 연간 평균점수가 달라지고, 변화가 큰 월에는 Care 검토를 통해 직원이 근거를 확인한 뒤 고객에게 지원을 제안한다.
     audience_takeaway: 같은 거리 안의 행동 차이를 설명하고 사람 검토까지 연결되는 실제 사용 흐름을 보여준다.
     material_refs:
       - deck://dashboard-appendix
@@ -160,6 +160,8 @@ story_nodes:
       - deck://dashboard-customer-app
     boundaries:
       - Edward 사례의 13%p를 보편 요율 정책으로 일반화하지 않음
+      - 최신 대시보드 연간 비교표는 Care·Favorable 등급이 아니라 81.6점·98.4점의 연간 평균점수를 표시
+      - 월별 Care와 연간 평균점수를 같은 종류의 판정으로 섞지 않음
 
   - story_node_id: story-12-social-value
     stage: impact

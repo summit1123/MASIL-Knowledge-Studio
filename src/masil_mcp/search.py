@@ -89,6 +89,8 @@ QUERY_ALIAS_GROUPS: tuple[tuple[tuple[str, ...], str], ...] = (
      "패턴 변화 Pattern Change Risk co-change 이동 위험행동 동시 급변"),
     (("할인율", "할인률", "discount rate", "premium discount"),
      "할인율 discount rate premium discount 연간 할인"),
+    (("pay-as-you-drive", "pay as you drive", "payd", "마일리지 보험", "마일리지 특약", "ubi와"),
+     "Pay-As-You-Drive PAYD 얼마나 운전 how much you drive UBI 어떻게 운전 how you drive MASIL 개인 기준선 생활권 패턴 변화 차이"),
     (("개인정보", "프라이버시", "privacy", "위치정보"),
      "개인정보 privacy GPS 위치정보 최소수집 POI masking 권한분리 동의"),
     (("부주의", "인지 처리", "situational judgment", "looking but not seeing"),

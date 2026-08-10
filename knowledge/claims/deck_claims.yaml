@@ -11,12 +11,13 @@ meta:
   page_count: 9
   claim_counts:
     total: 64
-    as_printed: 44
+    as_printed: 42
     as_printed_needs_context: 13
-    printed_correction_planned: 7
+    printed_correction_planned: 9
   extraction_method: pdftotext -layout (page by page)
   effective_date: 2026-08-10
   priority_note: 지식 충돌 시 최종 제출 덱이 최상위 정본이다 (deck-first)
+  pending_ppt_revision: 대시보드 비교표의 연간 Care·Favorable 행을 제거하고 Annual average score만 남긴 수정본이 준비됐으나, 새 최종 PDF는 아직 이 원장에 교체되지 않음
 
 pages:
   - page: 1
@@ -161,16 +162,16 @@ pages:
         note_ko: 대조의 전제 — 기존 마일리지 체계에서는 두 사람이 같은 보험료를 낸다.
 
       - id: p3-annual-verdicts
-        text_en: "Annual verdict — Edward Clark: Care review / Frank Wilson: Favorable. Type — Mobility + risk co-change / Wide-area, safe"
+        text_en: "Type — Edward Clark: Mobility + risk co-change / Frank Wilson: Wide-area, safe. The revised PPT removes the Annual verdict row and keeps Annual average score instead."
         kind: statistic
-        status: as_printed
-        note_ko: Care review는 직원 검토·지원 신호이지 자동 할증이 아니다. 위치·거리가 아닌 행동 변화가 판정을 갈랐다.
+        status: printed_correction_planned
+        note_ko: 최신 수정 PPT에서는 연간 Care review·Favorable 행을 제거하고 연간 평균점수 81.6·98.4만 남긴다. 새 최종 PDF로 교체되면 인쇄 상태를 다시 확정한다. 월별 Care는 해당 월의 검토·지원 신호로 계속 설명할 수 있다.
 
       - id: p3-distance-outzone
         text_en: "Annual distance 2,473.6 km vs 2,510.1 km · Out-of-zone share 7.3% vs 11.1%"
         kind: statistic
         status: as_printed
-        note_ko: 존 밖 비중이 더 큰 Frank가 Favorable — 위치만으로 감점하지 않는다는 근거로 사용.
+        note_ko: 존 밖 비중이 더 큰 Frank의 연간 평균점수와 안전점수가 더 높다. 위치만이 아니라 실제 행동을 본다는 근거로 사용.
 
       - id: p3-risky-events
         text_en: "Risky events · 12M evaluation: 209 vs 10"
@@ -193,8 +194,8 @@ pages:
       - id: p3-measured-contrast
         text_en: "Measured contrast: among the 180 scenarios, the opposite-decision case in the same vehicle class (and the same existing tariff when available) with the closest annual distance. What split the tariff was behavior (co-occurring risky-behavior change), not distance or location."
         kind: design
-        status: as_printed
-        note_ko: 대조 사례 선정 기준과 결론 문장. 거리·위치가 아닌 행동이 갈랐다는 공개 문안.
+        status: printed_correction_planned
+        note_ko: 대조 사례 선정 기준과 결론 문장. 수정 PPT에서는 연간 등급의 opposite-decision 대조가 아니라 비슷한 거리에서도 행동과 연간 평균점수가 달라진 score/behavior contrast로 문구를 맞춰야 한다.
 
   - page: 4
     title: "Appendix - Dashboard — Staff review report & customer app preview"

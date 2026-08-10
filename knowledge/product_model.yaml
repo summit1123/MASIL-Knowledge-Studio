@@ -599,7 +599,7 @@ domains:
         status: current
         answer_authority: current
         layer: core
-        statement_ko: 화면의 연간 통합점수는 판정 가능한 평가월의 월 통합점수를 단순 평균한 설명용 숫자다. 연간 Favorable 자격은 이 평균이 아니라 75점 이상 월 수로 정한다.
+        statement_ko: 최신 대시보드 비교표는 연간 Care·Favorable 등급 대신 연간 평균점수를 보여준다. 이 점수는 판정 가능한 평가월의 월 통합점수를 단순 평균한 설명용 숫자다. Favorable·Standard·Care는 월별 결과이며, 연간 Favorable 추가 할인 자격은 평균점수가 아니라 75점 이상 월 수로 정한다.
         formula: annual_display_score = mean(eligible_monthly_integrated_scores)
         source_refs:
           - knowledge/official_positions.yaml#monthly-and-annual-score-contract

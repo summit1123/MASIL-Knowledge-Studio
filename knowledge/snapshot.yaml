@@ -5,7 +5,7 @@ snapshot: gaip-full-product-model-0810-mcp-ready-v1
 status: approved_for_mcp_with_open_items
 mcp_manifest:
   file: knowledge/mcp_manifest.yaml
-  default_mode: answer_support
+  default_mode: qa_support
   implementation_allowed: true
   supporting_context_in_default_retrieval: true
   supporting_context_can_override_current_canon: false
@@ -34,7 +34,7 @@ numbers_anchor:
 decision_anchor:
   name: 최종 덱 정합화 및 전체 상품 모델 정리 2026-08-10
   date: 2026-08-10
-  scope: 공개 상품 계약(월별 세 등급·Hold는 데이터 상태)·Care 지원·연간 할인 분리·문헌 지위·사업 목표
+  scope: 공개 상품 계약(월별 세 등급·Hold는 데이터 상태)·Care 지원·연간 할인 분리·문헌 지위·로드맵 방향
   history_record: sources/11_V20_결정_기록_0810.md
 authority_routing:
   file: knowledge/product_model.yaml
@@ -53,6 +53,10 @@ approved_sources:
   - sources/생활권_형성주기_이슈정리.md
   - sources/안전운전자_매력도_정리.md
   - sources/생활권반경_eps_정리.md
+supporting_sources:
+  - file: sources/12_presentation_script_v1_0810.md
+    role: 현재 발표 흐름·쉬운 표현·예상 질문 표면
+    canonical_for_facts: false
 decision_log:
   file: knowledge/history/decision_log.yaml
   layer: supporting

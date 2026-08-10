@@ -76,11 +76,18 @@ terms:
     notes: 현재 화면의 설명용 숫자. 기본 할인율은 기존 마일리지 할인표로 계산하고 Favorable 자격은 9개월 기준으로 판단
 
   - id: annual-verdict
-    status: active
+    status: inactive
     korean: 연간 판정
     official_english: annual verdict
     plain_english: the annual result shown after 12 evaluation months
-    notes: Care review와 혼동하지 않음
+    notes: 최신 대시보드 비교표에서 제거됨. 연간 비교에는 annual average score를 쓰고 Favorable·Standard·Care는 월별 결과로 설명
+
+  - id: pay-as-you-drive
+    status: active
+    korean: 주행거리 기반 보험
+    official_english: Pay-As-You-Drive (PAYD)
+    plain_english: insurance that reflects how much a person drives
+    notes: PAYD는 얼마나 운전했는지, UBI는 어떻게 운전했는지를 본다고 간단히 구분. MASIL은 개인 생활권 안팎의 안전성과 평소 패턴 변화까지 더함
 
   - id: additional-discount
     status: active

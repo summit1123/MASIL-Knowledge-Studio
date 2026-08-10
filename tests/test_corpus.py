@@ -33,6 +33,39 @@ def test_three_tiers_and_hold_are_retrievable() -> None:
     assert "데이터 부족" in combined
 
 
+def test_payd_term_and_simple_comparison_are_retrievable() -> None:
+    service = KnowledgeService()
+    packet = service.prepare_answer_context("Pay-As-You-Drive PAYD UBI MASIL 차이", max_chars=8000)
+    combined = json.dumps(packet, ensure_ascii=False)
+    assert "Pay-As-You-Drive" in combined
+    assert "얼마나 운전" in combined or "how much you drive" in combined
+    assert "어떻게 운전" in combined or "how you drive" in combined
+
+
+def test_latest_dashboard_uses_annual_scores_not_annual_care_favorable_grades() -> None:
+    service = KnowledgeService()
+    packet = service.prepare_answer_context(
+        "Edward와 Frank의 연간 등급이 Care와 Favorable인가요? 최신 대시보드 표를 설명해줘",
+        max_chars=8000,
+    )
+    encoded = json.dumps(packet, ensure_ascii=False)
+    assert "81.6" in encoded
+    assert "98.4" in encoded
+    assert "연간 평균점수" in encoded or "annual average score" in encoded
+    assert "연간 Care·Favorable 등급" in encoded or "연간 Care·Favorable" in encoded
+
+
+def test_current_script_is_supporting_question_surface_not_fact_authority() -> None:
+    service = KnowledgeService()
+    documents = [
+        document
+        for document in service.corpus.documents
+        if document.source_path == "sources/12_presentation_script_v1_0810.md"
+    ]
+    assert documents
+    assert {document.authority for document in documents} == {"supporting"}
+
+
 def test_answer_packet_is_compact_and_contains_conflict_guards() -> None:
     service = KnowledgeService()
     packet = service.prepare_answer_context("생활권 밖이면 위험해서 감점하나요?", max_chars=7000)
