@@ -876,14 +876,13 @@ domains:
         statement_ko: 기존 마일리지 할인 채널 위에 rider로 시작한다는 것이 도입 전략이다.
         source_refs:
           - deck://summary-1
-      - id: model-business-pilot-targets
-        status: unresolved
-        answer_authority: none
+      - id: model-business-roadmap-direction
+        status: current
+        answer_authority: current
         layer: business
         statement_ko: Pilot → Scale up → Roll out의 단계 방향은 유지하지만 기간, 모집 인원, 가입률, 유지율과 확대 연령은 현재 미정이다. 덱의 숫자는 초기 기획 예시이며 발표 대본과 기본 Q&A에서 먼저 말하지 않는다.
-        current_evidence_status: roadmap_direction_only_numbers_not_committed
-        recommended_position_ko: "먼저 소규모 실데이터 파일럿으로 규칙과 운영 가능성을 확인하고, 결과에 따라 확대합니다. 구체적인 규모와 일정은 아직 확정하지 않았습니다."
-        validation_needed: 파일럿 프로토콜·표본·기간·성공 기준과 확대 조건의 팀 확정
+        caveats:
+          - 구체적인 파일럿 프로토콜·표본·기간·성공 기준과 확대 조건은 model-business-pilot-design의 미확정 범위
         source_refs:
           - deck://summary-2
           - knowledge/key_numbers.yaml
