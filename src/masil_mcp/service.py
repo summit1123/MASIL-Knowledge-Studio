@@ -540,13 +540,25 @@ class KnowledgeService:
             limit=4,
         )
         evidence = self._merge_unique_hits(linked_evidence, direct_evidence, limit=4)
+        script_context_requested = any(
+            term in question.lower()
+            for term in ("대본", "발표자", "파트 배분", "script", "speaker part")
+        )
         supporting = self._filtered_search(
             question,
-            top_k=4,
+            top_k=6,
             predicate=lambda document: (
                 document.authority == "supporting"
-                and document.source_path == "knowledge/qa/cards.yaml"
-                and document.status == "active"
+                and (
+                    (
+                        document.source_path == "knowledge/qa/cards.yaml"
+                        and document.status == "active"
+                    )
+                    or (
+                        script_context_requested
+                        and document.source_path == "sources/12_presentation_script_v1_0810.md"
+                    )
+                )
             ),
         )
         conflicts = self._search_source(question, "knowledge/conflict_map.yaml", top_k=3)
@@ -619,7 +631,13 @@ class KnowledgeService:
             ],
             "evidence_captures": [],
             "source_capture_gaps": [],
-            "explanation_material": [answer_hit(hit) for hit in supporting[:2]],
+            "explanation_material": [
+                answer_hit(
+                    hit,
+                    900 if hit.document.source_path == "sources/12_presentation_script_v1_0810.md" else 0,
+                )
+                for hit in supporting[:3]
+            ],
             "validation_material": [answer_hit(hit, 600) for hit in validation_material[:3]],
             "conflicts_and_avoid": [answer_hit(hit, 480) for hit in conflicts[:2]],
             "fixed_terms": [answer_hit(hit) for hit in glossary[:2]],

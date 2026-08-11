@@ -12,8 +12,9 @@
 - Pilot → Scale up → Roll out의 방향만 확정 설명에 사용한다. 대본의 기간·500명·15~20%·+2%p·30~50대 확대는 발표 확정 수치로 사용하지 않는다.
 - 사고 감소·손해율 개선·가족 부담·사회비용 감소는 검증된 성과가 아니라 파일럿 가설이다.
 
-1. SUMMARY 1 (다현) - 4분
-0. Opening — about 15 sec
+## Speaker 1 — SUMMARY 1 (다현, 4분)
+
+### Opening — about 15 sec
    Hello everyone.
    We are FourSure, from South Korea.
    Today, we would like to introduce our solution,
@@ -27,7 +28,7 @@ Before we begin, you can scan the QR code on the upper right corner
 to check out our dashboard.
 It provides a more intuitive understanding of the MASIL rider.
 
-1. SUMMARY — Problem & Solution
+### Problem & Solution
 
 Let me start with the problem.
 Why do we need a different approach for senior drivers?
@@ -126,47 +127,38 @@ we are not asking drivers to fit insurance.
 We are making insurance fit their real life.
 
 
-2. 대시보드 + SUMMARY 2 (AI pipeline+Data Stardards) (은서) - 4분
+## Speaker 2 — Dashboard + SUMMARY 2 (은서, 4분)
 
-2. DASHBOARD — Quick Introduction
-Let me briefly show how MASIL works in practice.
-This is Edward Clark’s dashboard.
-Edward is currently classified as Care this month.
-Staff can see his MASIL Zone, driving behavior, and the reasons behind his grade.
-For example, let’s compare Edward with Frank Wilson.
-Under the current mileage-based scheme,
-they look almost the same.
-Same vehicle class.
-Same tariff.
-Similar annual mileage.
-So today, they pay the same premium.
-But MASIL sees a different risk.
-Edward has 209 risky events,
-while Frank has only 10.
-Their safety scores also differ
-both inside and outside their familiar zones.
-Importantly, MASIL does not treat leaving the familiar zone itself as risky.
-Instead, it looks for changes from usual driving combined with risky behavior.
-That is why Edward receives only a 3% discount,
-while Frank receives 22.6%.
-Same conditions, different risk —
-because MASIL looks at how driving behavior changes,
-both inside and outside the familiar zone.
-The monthly view also shows
-whether these signals are a one-time event
-or a pattern developing over time.
-After reviewing the report,
-the staff member can approve the result.
-Edward can then check his grade in the app
+### Dashboard — Quick Introduction
+
+Now, let me show how MASIL works in practice.
+For example, let’s compare Edward Clark and Frank Wilson.
+Under the current system, they would pay the same premium.
+They drive the same car and have similar mileage.
+But their driving tells a different story.
+In one month, Edward’s driving changed from his usual pattern,
+and risky behavior also increased.
+Frank drove more outside his familiar zone,
+but his driving remained stable.
+MASIL does not simply ask whether a driver left their familiar zone.
+It looks at whether changes in driving and risky behavior happen together.
+This is Edward’s dashboard.
+It shows his MASIL Zone, driving behavior, and the reasons behind the result.
+The monthly view also helps staff see whether a signal is a one-time event or a developing pattern.
+And this is not just a concept.
+We implemented the system and tested it across 180 scenarios.
+
+After reviewing the report, staff can approve the result.
+Edward can then check it in the app
 and apply for Care support if needed.
-So MASIL connects
-risk assessment, insurance decisions, and actual support.
+
+### Simulation & Validation
 
 Now, let me explain how we tested the idea.
 We built an AI-assisted simulation pipeline.
 First, we generated synthetic GPS data
 based on different senior driver profiles.
-Then, DBSCAN and P90 created each driver’s MASIL Zone.
+Then, we combined DBSCAN clustering with P90 to create each driver’s MASIL Zone.
 Next, we ran the simulation
 and applied our rule-based grading:
 Favorable, Standard, or Care.
@@ -181,7 +173,7 @@ come from fixed, explainable rules.
 We also incorporated existing driving standards and accident statistics.
 For validation, we created 60 simulated drivers
 across six driver types and three regions,
-resulting in 180 scenarios of driving data.
+giving us 180 scenarios of driving data.
 We used the previous two months as the baseline
 and evaluated each driver over the following 12 months.
 Our goal was not to represent real customers,
@@ -190,9 +182,9 @@ This framework can later be validated
 with real driving data.
 
 
-3. SUMMARY 2 (Result + Pilot~ + Closing 멘트) (진영) - 3분
+## Speaker 3 — SUMMARY 2 (진영, 3분)
 
-4. RESULT
+### Result
 So, what does MASIL achieve?
 For society,
  road safety is important.
@@ -242,7 +234,7 @@ MASIL can help build
 This can help reduce accidents
  and, in the long term,
  reduce social costs.
-5. Roadmap / Next Steps
+### Roadmap / Next Steps
 Finally, let me show you
  our next steps.
 In the first 6 months,
@@ -258,7 +250,7 @@ So MASIL starts with senior drivers,
  but it can grow into
  a wider insurance model
  for safer driving.
-6. Closing
+### Closing
 Finally, I would like to leave you
  with one question.
 Should the answer be

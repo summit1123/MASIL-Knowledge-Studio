@@ -65,6 +65,19 @@ def test_current_script_is_supporting_question_surface_not_fact_authority() -> N
     assert documents
     assert {document.authority for document in documents} == {"supporting"}
 
+    packet = service.prepare_answer_context("최종 발표 대본이 들어왔나요? 발표자 파트를 알려줘", max_chars=7000)
+    encoded = json.dumps(packet, ensure_ascii=False)
+    assert "model-language-script-current" in encoded
+    assert "1차 최종 대본을 수신" in encoded
+    assert "다현" in encoded
+    assert "은서" in encoded
+    assert "진영" in encoded
+    assert "사용자 업데이트 대기" not in encoded
+    assert any(
+        item["source"] == "sources/12_presentation_script_v1_0810.md"
+        for item in packet["explanation_material"]
+    )
+
 
 def test_answer_packet_is_compact_and_contains_conflict_guards() -> None:
     service = KnowledgeService()

@@ -66,6 +66,8 @@ FIELD_LENGTH_NORMALIZATION = {
 # English labels. Expand only domain-specific concepts; generic words such as
 # "risk" or "AI" are deliberately omitted because they create noisy matches.
 QUERY_ALIAS_GROUPS: tuple[tuple[tuple[str, ...], str], ...] = (
+    (("발표 대본", "최신 대본", "대본 파트", "파트 배분", "speaker parts"),
+     "발표 대본 최신 대본 파트 배분 발표자 다현 Opening Problem Solution 은서 Dashboard Simulation Validation 진영 Result Roadmap Closing"),
     (("masil은", "masil 뜻", "마실 뜻", "마실 나가다"),
      "MASIL 이름 뜻 마실 나가다 가까운 일상 활동"),
     (("생활권 밖", "생활권밖", "out-of-zone", "outer zone", "unfamiliar road", "낯선 도로"),

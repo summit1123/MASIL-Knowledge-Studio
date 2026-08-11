@@ -983,14 +983,23 @@ domains:
         statement_ko: 덱의 미국식 표기에 맞춰 behavior를 사용한다.
         source_refs:
           - knowledge/glossary.yaml#behavior-spelling
-      - id: model-language-script-draft
-        status: unresolved
-        answer_authority: none
+      - id: model-language-script-current
+        status: current
+        answer_authority: current
         layer: presentation
-        statement_ko: 현재 영어·한국어 발표 대본은 초안이므로 사실 정본으로 쓰지 않고, 승인 뒤 쉬운 문장 스타일 자료로 편입한다.
-        current_evidence_status: draft_waiting_for_user_update
-        recommended_position_ko: "지금은 active 용어와 현재 상품 모델로 쉬운 답변을 만든다. 사용자가 갱신한 대본을 받으면 사실을 재검증한 뒤 표현 자료로 편입한다."
-        validation_needed: 최종 대본 수신 뒤 덱 claim·상품 모델·수치·문헌과 문장별 교차검사
+        keywords: [발표 대본, 최신 대본, 파트 배분, 발표자, 다현, 은서, 진영, script, speaker parts]
+        statement_ko: 현재 영어 1차 최종 대본을 수신해 Q&A의 질문 표면과 쉬운 표현 자료로 편입했다. 발표는 3명으로 나뉜다. 다현은 Opening과 Problem & Solution, 은서는 Dashboard와 Simulation & Validation, 진영은 Result와 Roadmap & Next Steps와 Closing을 맡는다.
+        part_summary_ko:
+          - "다현: 고령 운전자 사고 증가·상황 판단·낯선 경로 위험·현 제도의 빈틈 → MASIL 이름과 개인 생활권 형성 → 네 요소·월별 세 결과·예방적 개입"
+          - "은서: Edward와 Frank 행동 변화 대조 → 월별 대시보드·직원 승인·Care 지원 → 합성 GPS·DBSCAN+P90·고정 규칙·60명/180시나리오·2개월 기준선/12개월 평가"
+          - "진영: 보험사·고령 운전자·가족·사회 가치 → Pilot·Scale up·Roll out의 방향 → 이동 제한보다 안전한 이동 지원·같은 거리라도 같은 위험은 아니라는 결론"
+        current_evidence_status: first_final_script_received_2026_08_11
+        recommended_position_ko: "대본은 들어와 있습니다. 세 발표자 구간과 실제 문장을 기준으로 의미 해석형·실무형 Q&A를 준비할 수 있습니다. 다만 상품 사실은 대본 문장보다 current product model과 최신 덱 교정 상태가 우선합니다."
+        source_refs:
+          - sources/12_presentation_script_v1_0810.md
+        caveats:
+          - 대본은 표현·질문 표면 자료이며 상품 사실 정본을 덮어쓰지 않음
+          - 이후 팀이 문장을 수정하면 같은 파일과 파트 구조를 다시 동기화
       - id: model-language-masil-name
         status: current
         answer_authority: current

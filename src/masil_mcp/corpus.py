@@ -86,6 +86,7 @@ STATUS_FIELDS = ("status", "claim_status", "citation_tier", "state")
 BODY_PRIORITY_FIELDS = (
     "statement_ko",
     "statement_en",
+    "part_summary_ko",
     "text_en",
     "note_ko",
     "direct_answer_ko",

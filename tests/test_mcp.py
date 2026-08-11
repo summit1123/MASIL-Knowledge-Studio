@@ -176,21 +176,21 @@ async def test_open_items_reports_exact_total_for_each_scope() -> None:
     server = create_server(auth_mode="none")
     async with Client(server) as client:
         unresolved = await client.call_tool("list_open_items", {})
-        assert unresolved.structured_content["total_count"] == 16
-        assert unresolved.structured_content["returned_count"] == 16
-        assert unresolved.structured_content["status_counts"] == {"unresolved": 16}
+        assert unresolved.structured_content["total_count"] == 15
+        assert unresolved.structured_content["returned_count"] == 15
+        assert unresolved.structured_content["status_counts"] == {"unresolved": 15}
         assert unresolved.structured_content["truncated"] is False
 
         all_open = await client.call_tool(
             "list_open_items",
             {"status_filter": "all", "top_k": 30},
         )
-        assert all_open.structured_content["total_count"] == 29
-        assert all_open.structured_content["returned_count"] == 29
+        assert all_open.structured_content["total_count"] == 28
+        assert all_open.structured_content["returned_count"] == 28
         assert all_open.structured_content["status_counts"] == {
             "candidate_parameter": 5,
             "pilot_hypothesis": 8,
-            "unresolved": 16,
+            "unresolved": 15,
         }
         assert all_open.structured_content["truncated"] is False
 

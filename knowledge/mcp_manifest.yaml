@@ -1,6 +1,6 @@
 # 팀 발표 준비용 MCP 계약. 공개 런타임은 현재 정본과 실제 사용 문헌만 검색한다.
 
-version: 2026-08-10-mcp-ready-v5
+version: 2026-08-11-mcp-ready-v6
 default_mode: qa_support
 mcp_implementation_allowed: true
 
@@ -43,6 +43,8 @@ supporting_sources:
   current_script:
     file: sources/12_presentation_script_v1_0810.md
     role: 1차 최종 발표 대본의 표현·예상 질문 표면
+    source_attachment_sha256: 55cf70ad9336d8167b37d1b1bd2d6e26cbbf7de4209fed789170ee8c0d641217
+    received: 2026-08-11
     canonical_for_current_facts: false
     rule: 덱·product_model·active official position과 충돌하면 현재 정본이 우선하며, 대본 문장은 Q&A 질문 의도와 쉬운 말투를 파악하는 데만 사용
 
