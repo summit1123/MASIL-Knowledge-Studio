@@ -40,7 +40,6 @@ async def test_in_memory_server_lists_and_calls_tools() -> None:
             "show_answer_evidence",
             "get_evidence",
             "show_evidence_capture",
-            "get_capture_image",
             "get_implementation",
             "usage_telemetry",
             "record_usage_feedback",
@@ -63,20 +62,6 @@ async def test_slide_context_keeps_parent_page_mapping() -> None:
         assert len(claim_ids) == 7
         assert "knowledge/claims/deck_claims.yaml#p2-pipeline" in claim_ids
         assert "knowledge/claims/deck_claims.yaml#p2-mobility-rights" in claim_ids
-
-
-@pytest.mark.asyncio
-async def test_capture_tool_returns_image_content() -> None:
-    server = create_server(auth_mode="none")
-    async with Client(server) as client:
-        result = await client.call_tool("get_capture_image", {"capture_id": "capture-002"})
-        assert not result.is_error
-        assert any(content.type == "image" for content in result.content)
-        assert result.structured_content["display_url"].startswith(
-            "https://masil-mcp.summit1123.co.kr/evidence/capture-002/"
-        )
-        assert result.structured_content["display_markdown"].startswith("![")
-        assert result.structured_content["client_rendering"] == "mcp_app_inline_with_markdown_fallback"
 
 
 @pytest.mark.asyncio
@@ -170,11 +155,6 @@ async def test_out_of_zone_source_capture_is_not_replaced_with_deck_or_persona()
         assert deck.structured_content["id"] == "capture-006"
         assert deck.structured_content["capture_kind"] == "deck"
 
-        with pytest.raises(ToolError):
-            await client.call_tool(
-                "get_capture_image",
-                {"capture_id": "capture-006"},
-            )
 
 
 @pytest.mark.asyncio
@@ -199,15 +179,6 @@ async def test_open_items_reports_exact_total_for_each_scope() -> None:
             "unresolved": 15,
         }
         assert all_open.structured_content["truncated"] is False
-
-
-@pytest.mark.asyncio
-async def test_non_stage_capture_is_unavailable_in_team_runtime() -> None:
-    server = create_server(auth_mode="none")
-    async with Client(server) as client:
-        with pytest.raises(ToolError):
-            await client.call_tool("get_capture_image", {"capture_id": "capture-042"})
-
 
 
 @pytest.mark.asyncio

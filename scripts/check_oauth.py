@@ -208,7 +208,10 @@ async def check(base_url: str) -> None:
         ):
             raise RuntimeError("authenticated evidence-to-capture mapping failed")
 
-        image = await client.call_tool("get_capture_image", {"capture_id": "capture-024"})
+        image = await client.call_tool(
+            "show_evidence_capture",
+            {"query": "Cicchino looking but not seeing 원문 캡처", "capture_kind": "source"},
+        )
         if (
             image.is_error
             or not any(content.type == "image" for content in image.content)

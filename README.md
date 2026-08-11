@@ -47,7 +47,7 @@ Claude가 내부적으로 사용하는 도구:
 - `get_implementation` — 현재 외부 데모와 목표 상품 규칙의 차이
 - `compare_claims` — 붙여 넣은 주장과 현재 덱·상품 계약의 정합성 확인
 - `list_open_items` — 미확정·파일럿 가설·후보 파라미터를 상태별 정확한 총계와 함께 조회
-- `list_captures`, `show_evidence_capture`, `get_capture_image` — active Summary·Appendix 캡처의 정확한 연결 조회와 이미지 반환. 실제 원문 캡처가 없으면 덱 이미지로 대체하지 않으며, 이미지 도구는 MCP Apps `ui://` 뷰와 공개 Markdown 대체 경로를 함께 제공
+- `list_captures`, `show_evidence_capture` — active Summary·Appendix 캡처의 정확한 연결 조회와 이미지 반환. 실제 원문 캡처가 없으면 덱 이미지로 대체하지 않으며, 이미지 도구는 MCP Apps `ui://` 뷰와 공개 Markdown 대체 경로를 함께 제공
 - `knowledge_status` — 코퍼스·자산·권한 상태
 - `usage_telemetry` — 질문·답변 원문 없이 도구별 호출·성공률·지연시간·선택된 준비 유형·캡처 표시량을 집계
 - `record_usage_feedback` — 팀원이 명시적으로 평가했을 때만 고정 태그로 도움 여부를 기록

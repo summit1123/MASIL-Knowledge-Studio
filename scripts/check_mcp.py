@@ -26,7 +26,6 @@ async def check(url: str, auth: str | None) -> None:
             "list_open_items",
             "list_captures",
             "show_evidence_capture",
-            "get_capture_image",
             "knowledge_status",
             "usage_telemetry",
             "record_usage_feedback",
@@ -159,7 +158,10 @@ async def check(url: str, auth: str | None) -> None:
         ):
             raise RuntimeError("capture inventory tool call failed")
 
-        image = await client.call_tool("get_capture_image", {"capture_id": "capture-015"})
+        image = await client.call_tool(
+            "show_evidence_capture",
+            {"query": "European Road Safety Observatory 원문 캡처", "capture_kind": "source"},
+        )
         if (
             image.is_error
             or not any(content.type == "image" for content in image.content)
