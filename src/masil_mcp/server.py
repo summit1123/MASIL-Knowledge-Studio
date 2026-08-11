@@ -31,7 +31,7 @@ EVIDENCE_VIEW_META = {
     # the flat key. Keep it until the extension reaches broad GA adoption.
     "ui/resourceUri": EVIDENCE_VIEW_URI,
 }
-SERVER_VERSION = "0.7.1"
+SERVER_VERSION = "0.7.2"
 
 INSTRUCTIONS = """
 MASIL 결선 Q&A 준비용 근거 서버입니다. 팀원은 도구 이름을 배울 필요가 없습니다. MASIL의 상품,
@@ -236,8 +236,16 @@ def create_server(
         capture_id: str,
         *,
         allow_supporting: bool = False,
+        required_capture_kind: str | None = None,
         resolution: dict | None = None,
     ) -> ToolResult:
+        if required_capture_kind is not None:
+            metadata, _ = knowledge.capture(capture_id)
+            if metadata.get("capture_kind") != required_capture_kind:
+                raise ValueError(
+                    f"This tool only accepts {required_capture_kind} captures. "
+                    "Resolve deck excerpts through show_evidence_capture with capture_kind=deck."
+                )
         return captures_result(
             [capture_id],
             allow_supporting=allow_supporting,
@@ -497,8 +505,17 @@ def create_server(
 
     @mcp.tool(tags={"evidence", "image"}, meta=EVIDENCE_VIEW_META)
     def get_capture_image(capture_id: str) -> ToolResult:
-        """Display an already verified exact capture ID; do not use this tool to guess an image."""
-        return capture_result(capture_id, allow_supporting=False)
+        """Display an already verified exact source-page capture ID.
+
+        This low-level tool is source-only and rejects deck excerpts. Never use
+        it to bypass a missing source capture. For a deck location explicitly
+        requested by the user, use show_evidence_capture with capture_kind=deck.
+        """
+        return capture_result(
+            capture_id,
+            allow_supporting=False,
+            required_capture_kind="source",
+        )
 
     @mcp.tool(tags={"status"})
     def knowledge_status() -> dict:

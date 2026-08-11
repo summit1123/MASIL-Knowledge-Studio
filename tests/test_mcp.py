@@ -69,11 +69,11 @@ async def test_slide_context_keeps_parent_page_mapping() -> None:
 async def test_capture_tool_returns_image_content() -> None:
     server = create_server(auth_mode="none")
     async with Client(server) as client:
-        result = await client.call_tool("get_capture_image", {"capture_id": "capture-001"})
+        result = await client.call_tool("get_capture_image", {"capture_id": "capture-002"})
         assert not result.is_error
         assert any(content.type == "image" for content in result.content)
         assert result.structured_content["display_url"].startswith(
-            "https://masil-mcp.summit1123.co.kr/evidence/capture-001/"
+            "https://masil-mcp.summit1123.co.kr/evidence/capture-002/"
         )
         assert result.structured_content["display_markdown"].startswith("![")
         assert result.structured_content["client_rendering"] == "mcp_app_inline_with_markdown_fallback"
@@ -169,6 +169,12 @@ async def test_out_of_zone_source_capture_is_not_replaced_with_deck_or_persona()
         )
         assert deck.structured_content["id"] == "capture-006"
         assert deck.structured_content["capture_kind"] == "deck"
+
+        with pytest.raises(ToolError):
+            await client.call_tool(
+                "get_capture_image",
+                {"capture_id": "capture-006"},
+            )
 
 
 @pytest.mark.asyncio
