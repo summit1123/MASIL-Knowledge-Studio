@@ -24,7 +24,7 @@ implementation_audit:
   branch: review/korean-dashboard-20260524
   head: 4029a37
   observed_state: dirty_working_tree
-  scope: 현재 GaipStudio의 월 점수·월별 Care·연간 표시점수·기존 마일리지 기본할인·Favorable 후보 +3%p·45% 상한
+  scope: 과거 GaipStudio 작업 트리의 구현 감사 기록. 현재 Q&A의 상품 정본으로 사용하지 않음
   caveat: 커밋된 릴리스가 아니라 2026-08-10 현재 작업 파일의 관측 결과
 numbers_anchor:
   file: sources/00_확정수치카드.md
@@ -65,7 +65,7 @@ decision_log:
   latest:
     - 2026-08-09 두 축 판정 계약
     - 2026-08-09 Care review와 가격 분리
-    - 2026-08-10 현재 GaipStudio 구현 감사 — 연간 점수는 설명용 평균, 기본 할인은 기존 마일리지 표, Favorable 후보 +3%p·45% 상한
+    - 2026-08-11 최종 Q&A 계약 — 월 통합점수 평균으로 연간 점수와 기본 할인율을 연결하고 Favorable 9개월 이상에 후보 +3%p
     - 2026-08-09 환경 간 실질 일치 59/60
     - 2026-08-10 사업 숫자 3종은 목표값
 known_implementation_gaps:
@@ -75,7 +75,7 @@ known_implementation_gaps:
   - business_readiness: 시장·채널·경쟁·팀·파트너·파일럿 측정 설계 근거 미완료
   - real_world_validation: 계절성·다중거주·드리프트·실데이터 외적 타당성 검증 미완료
   - implementation_reproducibility: 현재 구현은 외부 dirty working tree에서 확인했으며 재현 가능한 커밋·배포 산출물 고정 필요
-  - favorable_candidate_rate: 현재 +3%p·45% 상한은 구현된 샌드박스 후보값이며 파일럿·계리 검증 미완료
+  - favorable_candidate_rate: 현재 +3%p는 상품 후보값이며 파일럿·계리 검증 미완료
   - dashboard_13p_explanation: 대시보드 13%p는 Edward 사례 연간 시뮬레이션 결과 — 자동 차감 정책으로 읽히지 않게 정본 문안으로 설명
 deprecated_bulk:
   - path: gaip-foursure/** (34p 마스터·EVIDENCE_BOOK·TECH_APPENDIX·deliverables HTML)

@@ -20,6 +20,14 @@ class AnswerRoute:
 
 ROUTE_TERMS: tuple[tuple[str, tuple[str, ...], tuple[str, ...]], ...] = (
     (
+        "qa_practice",
+        (
+            "예상 질문", "예상질문", "질의응답", "q&a", "qna", "킬러 질문", "킬러질문",
+            "후속 질문", "후속질문", "답변 연습", "질문 뽑", "judge question", "practice question",
+        ),
+        ("curated_qa_catalog", "current_contract", "presentation_script"),
+    ),
+    (
         "claim_conflict_history",
         ("과거", "예전", "이전", "바뀌", "변경", "충돌", "원래", "히스토리", "history", "previous", "changed"),
         ("current_contract", "decision_history", "conflict_boundaries"),

@@ -88,7 +88,7 @@ def test_answer_packet_is_compact_and_contains_conflict_guards() -> None:
     assert "conflicts_and_avoid" in packet
 
 
-def test_out_of_zone_packet_separates_location_neutrality_8_12_and_old_demo() -> None:
+def test_out_of_zone_packet_explains_location_neutrality_and_candidate_8_12() -> None:
     service = KnowledgeService()
     packet = service.prepare_answer_context(
         "생활권 밖은 왜 감점하지 않으면서 위험행동 계수는 더 크게 두나요?",
@@ -98,8 +98,8 @@ def test_out_of_zone_packet_separates_location_neutrality_8_12_and_old_demo() ->
     assert "계수 8" in encoded
     assert "계수 12" in encoded
     assert "위치 자체" in encoded or "위치만으로" in encoded
-    assert "8/8" in encoded
     assert "8/12" in encoded
+    assert "기존 덱" not in encoded
 
 
 def test_roadmap_packet_treats_numbers_as_uncommitted_slide_examples() -> None:
@@ -137,11 +137,11 @@ def test_capture_path_is_confined_to_repository() -> None:
 def test_runtime_corpus_loads_every_current_contract_collection() -> None:
     service = KnowledgeService()
     expected = {
-        "knowledge/official_positions.yaml": ("active", 18),
-        "knowledge/glossary.yaml": ("active", 24),
+        "knowledge/official_positions.yaml": ("active", 17),
+        "knowledge/glossary.yaml": ("active", 23),
         "knowledge/forbidden_claims.yaml": ("active", 11),
-        "knowledge/key_numbers.yaml": ("active", 21),
-        "knowledge/qa/cards.yaml": ("active", 25),
+        "knowledge/key_numbers.yaml": ("active", 20),
+        "knowledge/qa/final_qa_50.yaml": ("active", 50),
         "knowledge/presentation_story.yaml": ("unspecified", 14),
         "knowledge/coverage_matrix.yaml": ("unspecified", 15),
         "knowledge/claims/deck_claims.yaml": (None, 64),
@@ -160,7 +160,7 @@ def test_missing_status_defaults_are_not_loaded_into_team_runtime() -> None:
         "knowledge/glossary.yaml",
         "knowledge/forbidden_claims.yaml",
         "knowledge/key_numbers.yaml",
-        "knowledge/qa/cards.yaml",
+        "knowledge/qa/final_qa_50.yaml",
     }
     legacy = [
         document

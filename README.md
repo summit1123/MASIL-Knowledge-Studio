@@ -9,10 +9,11 @@ MASIL의 8분 Q&A 준비를 위해 문제정의, 상품 설계, 기술, 근거, 
 1. `knowledge/presentation_story.yaml` — 문제정의부터 마무리까지 발표 전체 논리
 2. `knowledge/product_model.yaml` — 생활권·점수·Care·할인·AI·프라이버시·검증·사업을 포함한 전체 상품 모델
 3. `knowledge/evidence/registry.yaml`과 `knowledge/claims/deck_claims.yaml` — 문헌 근거와 최종 덱 인쇄 사실
-4. `knowledge/conflict_map.yaml`과 `knowledge/history/decision_log.yaml` — 현재 설명과 과거 설계의 충돌·변경 이유
+4. `knowledge/qa/final_qa_50.yaml` — 5개 테마, S/A/B, 상위 10개로 정리한 최종 Q&A 연습 카탈로그
+5. `knowledge/conflict_map.yaml`과 `knowledge/history/decision_log.yaml` — 현재 설명과 과거 설계의 충돌·변경 이유
 
 `knowledge/coverage_matrix.yaml`은 영역별 완성도와 미확정 항목을 기록한다.
-`IMPLEMENTATION.md`는 2026-08-10 현재 실행 화면에서 실제로 확인한 월 점수·Care·연간 표시점수·할인 계산을 사람이 읽기 쉽게 설명한다.
+`IMPLEMENTATION.md`는 2026-08-10 외부 데모 작업 트리에서 확인한 계산을 보존한 과거 감사 기록이며 기본 Q&A 정본이 아니다.
 
 ## 질문 유형별 정본
 
@@ -23,10 +24,10 @@ MASIL의 8분 Q&A 준비를 위해 문제정의, 상품 설계, 기술, 근거, 
 - 수치와 시뮬레이션 결과는 무엇인가 → `key_numbers.yaml`
 - 문헌이 무엇을 지지하는가 → `evidence/registry.yaml`
 - 왜 설계가 바뀌었는가 → `conflict_map.yaml`과 `decision_log.yaml`
-- 발표에서 어떻게 쉽게 말하는가 → `glossary.yaml`과 active Q&A 표현 예시
+- 발표에서 어떻게 쉽게 말하는가 → `glossary.yaml`과 `final_qa_50.yaml`
 - 현재 화면이 실제로 어떻게 계산하는가 → `IMPLEMENTATION.md`
 
-과거 Q&A와 승인 정리문서는 자동 보조 검색 재료지만 현재 사실을 단독 확정하지 않는다. 충돌은 삭제하지 않고 현재 결론, 과거 표현, 변경 이유와 피해야 할 문장으로 나눈다.
+과거 Q&A와 구현 감사는 Git에 보존하지만 기본 답변에는 넣지 않는다. 현재 사실은 정본 자료가 결정하고, 최종 Q&A 카탈로그는 이를 짧은 한글·쉬운 영어·답변 이유·심화 논리·계산·후속답변으로 연습하기 위한 표면이다.
 
 ## MCP 서버
 
@@ -37,6 +38,7 @@ Claude가 내부적으로 사용하는 도구:
 - `connector_guide` — 팀원에게 명령어가 아니라 평범한 질문 예시로 사용법 안내
 - `search_knowledge` — 제목·태그·메타데이터·본문을 따로 가중한 BM25F형 검색, 한국어 문자 n-gram, 한영 고정 용어 별칭
 - `prepare_topic_brief` — 한 주제의 현재 입장·근거·주장 경계·미검증 범위·쉬운 표현 재료. 예상 질문은 만들지 않음
+- `prepare_qa_practice` — 승인된 50문항을 테마·S/A/B·상위 10개·검색어로 조회하고 짧은 한·영 답변부터 심화 논리·계산·후속답변까지 단계적으로 제공
 - `prepare_answer_context` — 일반 MASIL 질문과 붙여 넣은 초안의 기본 진입점. 별도 AI 호출 없이 질문을 8개 준비 유형으로 가볍게 라우팅하고, 현재 사실에서 정확한 문헌·캡처 링크를 순회해 짧은 답변 재료를 만듦
 - `show_answer_evidence` — 답변 재료에 정확히 연결된 캡처가 있을 때 별도 요청 없이 최대 2개를 대화 안의 증거 카드로 표시
 - `explain_product_logic` — 생활권, 점수, Care, 할인 등 상품 논리
@@ -54,7 +56,7 @@ Claude가 내부적으로 사용하는 도구:
 
 텔레메트리는 도구명, 라우트, 성공 여부, 지연시간, 결과·캡처 개수와 익명 세션 해시만 로컬 SQLite에 저장한다. 질문, 도구 인자, Claude 답변, 근거 본문, 사용자 신원, OAuth 비밀값은 저장하지 않는다. OAuth access/refresh token은 권한 600의 별도 SQLite 파일에 보존하므로 일반 코드·지식 업데이트 뒤 서버가 재시작되어도 팀원이 커넥터를 다시 등록할 필요가 없다. 도구 목록이 바뀐 배포 직후 현재 대화가 예전 목록을 캐시했다면 새 대화만 열면 된다.
 
-`forbidden_claims`와 `must_not_say`는 예상 질문 목록이 아니라 과장을 막는 주장 경계다. 서버는 이를 자동으로 질문으로 바꾸지 않는다. 예상 질문은 팀원이 명시적으로 요청할 때만 Claude가 별도로 만들며, 저장된 사실과 구분한다.
+`forbidden_claims`와 `must_not_say`는 예상 질문 목록이 아니라 과장을 막는 주장 경계다. 서버는 이를 자동으로 질문으로 바꾸지 않는다. 예상 질문 요청에는 승인된 50문항과 상위 10문항을 먼저 사용하고, 그 범위를 벗어난 새 질문만 Claude가 추가 제안으로 구분한다.
 
 ## 실행
 
@@ -75,7 +77,7 @@ cp .env.example .env
 - 시장 규모·채널·경쟁·차별성·팀·파트너·파일럿 측정 설계
 - 계절성·다중거주·드리프트·재보정과 실제 코드 기반 검증
 - 현재 구현 checkout을 재현 가능한 커밋·배포 산출물로 고정
-- Favorable 후보 `+3%p`와 전체 `45%` 상한의 계리·파일럿 검증
+- 연간 점수-기본 할인율 매핑과 Favorable 후보 `+3%p`의 계리·파일럿 검증
 - 발표 직전 대본 수정본과 수정 예정 PPT/PDF의 최종 버전 동기화
 
 남은 항목 15개와 각 항목에서 지금 말할 수 있는 범위는 `OPEN_ITEMS.md`에 표로 정리했다.
@@ -91,4 +93,4 @@ ruby knowledge/scripts/verify_knowledge.rb
 .venv/bin/python scripts/check_oauth.py https://masil-mcp.summit1123.co.kr
 ```
 
-지식 검증기는 YAML, ID, 덱 64개 claim, P0 15개, 전체 상품 영역, 발표 서사, 충돌 지도, 권한 라우팅과 이미지 자산을 확인한다. MCP 검사는 실제 초기화, 도구 목록, 한영 검색 회귀, 답변 재료, OAuth, 다중 이미지 반환, `text/html;profile=mcp-app` 증거 뷰까지 수행한다. 배포 운영 정보는 `DEPLOYMENT.md`를 참고한다.
+지식 검증기는 YAML, ID, 덱 64개 claim, 최종 Q&A 50개(S 15/A 27/B 8, 상위 10개), 전체 상품 영역, 발표 서사, 충돌 지도, 권한 라우팅과 이미지 자산을 확인한다. MCP 검사는 실제 초기화, 도구 목록, Q&A 카탈로그, 한영 검색 회귀, 답변 재료, OAuth, 다중 이미지 반환, `text/html;profile=mcp-app` 증거 뷰까지 수행한다. 배포 운영 정보는 `DEPLOYMENT.md`를 참고한다.

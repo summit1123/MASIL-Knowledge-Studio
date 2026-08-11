@@ -86,6 +86,17 @@ unless p0_cards.all? { |card| card["role"] == "answer_example" && card["canonica
   abort_check("P0 role mismatch")
 end
 
+final_qa = objects.fetch("knowledge/qa/final_qa_50.yaml")
+final_questions = final_qa.fetch("questions", [])
+final_ids = final_questions.map { |item| item["id"] }
+rank_counts = final_questions.group_by { |item| item["rank"] }.transform_values(&:size)
+puts "FINAL_QA_TOTAL=#{final_questions.size} RANKS=#{rank_counts.inspect} TOP10=#{final_qa.fetch("top10", []).size}"
+abort_check("final Q&A count mismatch") unless final_questions.size == 50
+abort_check("final Q&A duplicate IDs") unless final_ids.uniq.size == final_ids.size
+abort_check("final Q&A rank distribution mismatch") unless rank_counts == {"S"=>15, "A"=>27, "B"=>8}
+abort_check("final Q&A top10 mismatch") unless final_qa.fetch("top10", []).size == 10
+abort_check("final Q&A top10 contains unknown ID") unless (final_qa.fetch("top10", []) - final_ids).empty?
+
 file_refs = []
 walk_file_refs = lambda do |value, path, source_file|
   case value
@@ -161,7 +172,7 @@ unless incomplete_unresolved.empty?
 end
 
 implementation_contract = {
-  "model-monthly-display-precedence" => "current",
+  "model-monthly-display-precedence" => "historical",
   "model-care-persistence-rule" => "current",
   "model-annual-base-discount-mapping" => "current",
   "model-annual-extra-discount-rate" => "candidate_parameter"
@@ -300,13 +311,13 @@ missing_includes = required_includes - actual_includes
 abort_check("manifest missing model files: #{missing_includes.inspect}") unless missing_includes.empty?
 
 implementation_entry = manifest.fetch("include", []).find { |entry| entry["file"] == "IMPLEMENTATION.md" }
-unless implementation_entry && implementation_entry["role"] == "current_working_tree_implementation_audit"
+unless implementation_entry && implementation_entry["role"] == "historical_working_tree_implementation_audit"
   abort_check("implementation audit manifest entry mismatch")
 end
 
-cards_entry = manifest.fetch("include", []).find { |entry| entry["file"] == "knowledge/qa/cards.yaml" }
-unless cards_entry && cards_entry["role"] == "answer_example" && cards_entry["canonical_for_facts"] == false
-  abort_check("Q&A cards are not non-canonical examples")
+cards_entry = manifest.fetch("include", []).find { |entry| entry["file"] == "knowledge/qa/final_qa_50.yaml" }
+unless cards_entry && cards_entry["role"] == "approved_qna_practice_catalog" && cards_entry["canonical_for_facts"] == false
+  abort_check("final Q&A catalog is not a non-canonical practice surface")
 end
 
 runtime_excluded = manifest.fetch("runtime_excluded", [])

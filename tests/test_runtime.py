@@ -25,6 +25,7 @@ from masil_mcp.telemetry import TelemetryStore
         ("아직 검증되지 않은 파일럿 항목은 뭐야?", "validation_open_items"),
         ("보험사와 가족에게 어떤 가치가 있어?", "stakeholder_value"),
         ("Favorable Standard Care 판정은 어떻게 해?", "product_logic"),
+        ("8분 Q&A 예상질문 10개를 뽑아줘", "qa_practice"),
         ("MASIL을 30초로 소개해줘", "presentation_overview"),
         ("이 대본을 검토해줘\n" + "MASIL Zone은 개인 생활권입니다. " * 12, "draft_review"),
     ],
@@ -82,6 +83,23 @@ def test_oauth_tokens_survive_provider_restart(tmp_path: Path) -> None:
 
     asyncio.run(exercise())
     assert database.stat().st_mode & 0o777 == 0o600
+
+
+@pytest.mark.asyncio
+async def test_final_qa_practice_tool_returns_approved_top10() -> None:
+    server = create_server(auth_mode="none")
+    async with Client(server) as client:
+        result = await client.call_tool(
+            "prepare_qa_practice",
+            {"top_only": True, "limit": 10},
+        )
+    payload = result.structured_content
+    assert payload["total_catalog_questions"] == 50
+    assert [item["id"] for item in payload["questions"]] == [
+        "T1-01", "T1-03", "T1-09", "T2-01", "T2-03",
+        "T2-04", "T3-02", "T4-02", "T5-01", "T5-02",
+    ]
+    assert all(item["short_answer_ko"] and item["short_answer_en"] for item in payload["questions"])
 
 
 @pytest.mark.asyncio

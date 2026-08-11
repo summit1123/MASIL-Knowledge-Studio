@@ -1,6 +1,6 @@
 # 팀 발표 준비용 MCP 계약. 공개 런타임은 현재 정본과 실제 사용 문헌만 검색한다.
 
-version: 2026-08-11-mcp-ready-v6
+version: 2026-08-11-qna-final-v1
 default_mode: qa_support
 mcp_implementation_allowed: true
 
@@ -26,7 +26,7 @@ provenance_only:
 canonical_sources:
   current_implementation:
     file: IMPLEMENTATION.md
-    role: 2026-08-10 현재 GaipStudio 작업 checkout의 실제 점수·Care·할인 계산 감사
+    role: 2026-08-10 GaipStudio 작업 checkout의 과거 점수·Care·할인 계산 감사
     portability_note: MKS 밖의 미커밋 작업 파일을 확인한 기록이므로 재현 가능한 릴리스 커밋 고정 전에는 구현 진실의 임시 스냅샷
   product_model:
     file: knowledge/product_model.yaml
@@ -55,7 +55,7 @@ authority_routing:
 
 include:
   - file: IMPLEMENTATION.md
-    role: current_working_tree_implementation_audit
+    role: historical_working_tree_implementation_audit
   - file: knowledge/product_model.yaml
     layer: core
   - file: knowledge/presentation_story.yaml
@@ -69,9 +69,9 @@ include:
   - file: knowledge/official_positions.yaml
     filter: status == active
   - file: knowledge/snapshot.yaml
-  - file: knowledge/qa/cards.yaml
+  - file: knowledge/qa/final_qa_50.yaml
     filter: status == active
-    role: answer_example
+    role: approved_qna_practice_catalog
     canonical_for_facts: false
   - file: sources/12_presentation_script_v1_0810.md
     role: current_script_question_surface
@@ -90,6 +90,7 @@ include:
 
 runtime_excluded:
   - past Master Q&A exports
+  - knowledge/qa/cards.yaml legacy answer cards
   - decision history and meeting records
   - inactive or superseded official positions
   - archived Q&A cards
@@ -151,7 +152,8 @@ retrieval_rules:
   - 기본 답변에서는 도구명·내부 ID·YAML 필드·authority/status·corpus 통계를 노출하지 않는다.
   - forbidden_claims와 must_not_say는 주장 경계이지 예상 질문 목록이 아니다. 사용자가 요청하지 않으면 질문으로 변환하지 않는다.
   - 예상 질문은 사용자가 명시적으로 요청한 경우에만 생성하며 지식베이스 사실이 아니라 Claude가 만든 준비용 질문으로 표시한다.
-  - cards의 active 항목은 질문 시나리오와 표현 예시이며 사실 정본으로 사용하지 않는다.
+  - final_qa_50의 50문항은 승인된 연습 표면이며 사실 충돌 시 현재 상품 정본이 우선한다.
+  - 예상 질문·킬러 질문·Q&A 연습 요청은 새 질문을 임의 생성하기 전에 final_qa_50의 S/A/B 및 상위 10문항을 사용한다.
   - 덱과 현재 상품 모델이 다르면 claim 상태와 conflict_map을 함께 반환하고, 확인된 교정은 과거 인쇄 문구보다 현재 설명에 사용한다.
   - layer가 deep인 항목(내부 계산·두 축·민감도 상세)은 기술적 설명이 필요한 질문에서 보조 재료로 사용한다.
   - 덱에 남아 있으나 팀이 철회한 문헌 수치는 deck_conflict로 알리고 그 주장을 방어하지 않는다.

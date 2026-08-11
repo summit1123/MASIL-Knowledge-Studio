@@ -31,6 +31,7 @@ EVIDENCE_YAML = {
 }
 SUPPORTING_YAML = {
     "knowledge/qa/cards.yaml",
+    "knowledge/qa/final_qa_50.yaml",
 }
 
 MARKDOWN_FILES = {
@@ -91,6 +92,14 @@ BODY_PRIORITY_FIELDS = (
     "note_ko",
     "direct_answer_ko",
     "direct_answer_en",
+    "short_answer_ko",
+    "short_answer_en",
+    "why_this_answer",
+    "product_logic",
+    "calculation_or_validation",
+    "follow_up",
+    "answer_boundary",
+    "presentation_source",
     "spoken_answer_ko",
     "spoken_answer_en",
     "approved_position_ko",
@@ -201,6 +210,8 @@ def _authority(path: str, item: dict[str, Any], status: str) -> str:
     if path in CANONICAL_YAML:
         return "canonical"
     if path == "knowledge/qa/cards.yaml":
+        return "historical"
+    if path == "knowledge/qa/final_qa_50.yaml":
         return "supporting" if status == "active" else "historical"
     return "supporting"
 

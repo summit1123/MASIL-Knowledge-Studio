@@ -20,6 +20,7 @@ async def check(url: str, auth: str | None) -> None:
             "get_implementation",
             "compare_claims",
             "prepare_topic_brief",
+            "prepare_qa_practice",
             "prepare_answer_context",
             "show_answer_evidence",
             "list_open_items",
@@ -40,6 +41,18 @@ async def check(url: str, auth: str | None) -> None:
         guide = await client.call_tool("connector_guide", {})
         if guide.is_error or "고정 답변집" not in guide.structured_content.get("purpose", ""):
             raise RuntimeError("connector guide call failed")
+
+        practice = await client.call_tool(
+            "prepare_qa_practice",
+            {"top_only": True, "limit": 10},
+        )
+        if (
+            practice.is_error
+            or practice.structured_content.get("total_catalog_questions") != 50
+            or len(practice.structured_content.get("questions", [])) != 10
+            or practice.structured_content.get("questions", [{}])[0].get("id") != "T1-01"
+        ):
+            raise RuntimeError("final Q&A practice tool call failed")
 
         search = await client.call_tool(
             "search_knowledge",
@@ -131,8 +144,8 @@ async def check(url: str, auth: str | None) -> None:
         open_items = await client.call_tool("list_open_items", {})
         if (
             open_items.is_error
-            or open_items.structured_content.get("total_count") != 16
-            or open_items.structured_content.get("returned_count") != 16
+            or open_items.structured_content.get("total_count") != 15
+            or open_items.structured_content.get("returned_count") != 15
             or open_items.structured_content.get("truncated") is not False
         ):
             raise RuntimeError("open-items tool call failed")
@@ -181,6 +194,7 @@ async def check(url: str, auth: str | None) -> None:
                     "tool_count": len(names),
                     "tools": names,
                     "search_results": search.structured_content["result_count"],
+                    "qa_practice_questions": len(practice.structured_content["questions"]),
                     "topic_brief_literature": sorted(literature_ids),
                     "answer_facts": len(answer.structured_content["current_facts"]),
                     "inline_evidence": sorted(item["id"] for item in inline.structured_content["captures"]),

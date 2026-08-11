@@ -1,4 +1,6 @@
-# MASIL 현재 구현 설명 — 2026-08-10 확인
+# MASIL 과거 데모 구현 감사 — 2026-08-10 확인
+
+> 이 문서는 외부 GaipStudio 작업 트리의 관측 기록이다. 현재 팀 Q&A의 상품 정본이 아니며 기본 검색·답변에서는 제외한다. 현재 월별 결과, 연간 점수·할인, 안 8/밖 12 후보식은 `knowledge/product_model.yaml`과 `knowledge/official_positions.yaml`을 사용한다.
 
 이 문서는 YAML을 읽지 않아도 현재 실행 화면의 점수·Care·할인 계산을 이해할 수 있도록 만든 팀 검토용 설명이다.
 

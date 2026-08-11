@@ -69,6 +69,7 @@ async def check(base_url: str) -> None:
         required = {
             "connector_guide",
             "prepare_topic_brief",
+            "prepare_qa_practice",
             "show_answer_evidence",
             "show_evidence_capture",
             "list_open_items",
@@ -84,6 +85,17 @@ async def check(base_url: str) -> None:
         guide = await client.call_tool("connector_guide", {})
         if guide.is_error or "고정 답변집" not in guide.structured_content.get("purpose", ""):
             raise RuntimeError("authenticated connector-guide call failed")
+
+        practice = await client.call_tool(
+            "prepare_qa_practice",
+            {"top_only": True, "limit": 10},
+        )
+        if (
+            practice.is_error
+            or practice.structured_content.get("total_catalog_questions") != 50
+            or len(practice.structured_content.get("questions", [])) != 10
+        ):
+            raise RuntimeError("authenticated Q&A practice call failed")
 
         search = await client.call_tool(
             "search_knowledge",
@@ -167,8 +179,8 @@ async def check(base_url: str) -> None:
         open_items = await client.call_tool("list_open_items", {})
         if (
             open_items.is_error
-            or open_items.structured_content.get("total_count") != 16
-            or open_items.structured_content.get("returned_count") != 16
+            or open_items.structured_content.get("total_count") != 15
+            or open_items.structured_content.get("returned_count") != 15
             or open_items.structured_content.get("truncated") is not False
         ):
             raise RuntimeError("authenticated open-items call failed")
@@ -239,6 +251,7 @@ async def check(base_url: str) -> None:
                 "mcp_tool_count": len(tools),
                 "authenticated_tool_call": "PASS",
                 "connector_guide_call": "PASS",
+                "qa_practice_call": "PASS",
                 "topic_brief_call": "PASS",
                 "product_logic_call": "PASS",
                 "slide_context_call": "PASS",

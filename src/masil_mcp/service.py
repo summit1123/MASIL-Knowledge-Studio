@@ -5,6 +5,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 from .corpus import KnowledgeCorpus
 from .models import KnowledgeDocument, SearchHit
 from .routing import route_question
@@ -48,7 +50,6 @@ SOURCE_TOKEN_STOPWORDS = {
 }
 CAPTURE_REQUEST_TERMS = {"캡처", "원문", "이미지", "스크린샷", "capture", "screenshot", "source image"}
 ANSWER_FACT_SOURCES = {
-    "IMPLEMENTATION.md",
     "knowledge/product_model.yaml",
     "knowledge/official_positions.yaml",
     "knowledge/key_numbers.yaml",
@@ -60,6 +61,7 @@ GUARDRAIL_SOURCES = {
     "knowledge/forbidden_claims.yaml",
     "knowledge/glossary.yaml",
 }
+FINAL_QA_SOURCE = "knowledge/qa/final_qa_50.yaml"
 
 
 class KnowledgeService:
@@ -67,6 +69,8 @@ class KnowledgeService:
         self.corpus = KnowledgeCorpus(root)
         self.index = HybridSearchIndex(self.corpus.documents)
         self.root = self.corpus.root
+        self.qa_catalog = yaml.safe_load((self.root / FINAL_QA_SOURCE).read_text(encoding="utf-8"))
+        self.qa_by_id = {item["id"]: item for item in self.qa_catalog["questions"]}
 
     def stats(self) -> dict[str, Any]:
         authorities: dict[str, int] = {}
@@ -471,6 +475,66 @@ class KnowledgeService:
             "resolution_rule": "최종 덱과 현재 상품 계약만 사용합니다. 폐기된 표현과 변경 이력은 공개 런타임에 포함하지 않습니다.",
         }
 
+    def prepare_qa_practice(
+        self,
+        query: str = "",
+        theme: str = "all",
+        rank: str = "all",
+        top_only: bool = False,
+        limit: int = 10,
+    ) -> dict[str, Any]:
+        """Return the approved 50-question practice catalog, not generated questions."""
+        self._validate_top_k(limit, maximum=50)
+        valid_themes = {item["id"] for item in self.qa_catalog["themes"]}
+        if theme != "all" and theme not in valid_themes:
+            raise ValueError(f"theme must be all or one of: {', '.join(sorted(valid_themes))}")
+        if rank not in {"all", "S", "A", "B"}:
+            raise ValueError("rank must be all, S, A, or B")
+
+        allowed_ids = {
+            item["id"]
+            for item in self.qa_catalog["questions"]
+            if (theme == "all" or item["theme"] == theme)
+            and (rank == "all" or item["rank"] == rank)
+            and (not top_only or item["id"] in self.qa_catalog["top10"])
+        }
+        if query.strip():
+            hits = self._filtered_search(
+                query,
+                top_k=50,
+                predicate=lambda document: (
+                    document.source_path == FINAL_QA_SOURCE
+                    and document.id.rsplit("#", 1)[-1] in allowed_ids
+                ),
+            )
+            ordered_ids = [hit.document.id.rsplit("#", 1)[-1] for hit in hits]
+        else:
+            ordered_ids = [
+                item["id"]
+                for item in self.qa_catalog["questions"]
+                if item["id"] in allowed_ids
+            ]
+
+        selected = [self.qa_by_id[item_id] for item_id in ordered_ids[:limit]]
+        return {
+            "query": query,
+            "theme": theme,
+            "rank": rank,
+            "top_only": top_only,
+            "catalog_version": self.qa_catalog["version"],
+            "total_catalog_questions": len(self.qa_catalog["questions"]),
+            "matched_count": len(ordered_ids),
+            "questions": selected,
+            "response_contract": {
+                "first": "short_answer_ko 또는 short_answer_en으로 먼저 직접 답함",
+                "why": "why_this_answer로 왜 이렇게 답하는지 이해함",
+                "expand": "추가 질문에서만 product_logic과 calculation_or_validation을 사용함",
+                "follow_up": "follow_up의 화살표 연결을 실제 후속질문 답변으로 풀어 설명함",
+                "boundary": "answer_boundary는 과장 방지용이며 답변 첫 문장으로 읽지 않음",
+            },
+            "authority_rule": "이 카탈로그는 승인된 연습 표면입니다. 사실 충돌 시 current canon이 우선합니다.",
+        }
+
     def prepare_answer_context(
         self,
         question: str,
@@ -528,11 +592,11 @@ class KnowledgeService:
             if routing.route == "literature_evidence"
             else []
         )
-        link_facts = (
-            [hit for hit in current if hit.score >= max(5.0, current[0].score * 0.25)][:3]
-            if current
-            else []
-        )
+        # Evidence must support the best-matched current claim, not merely a
+        # neighboring fact from the same broad topic. Traversing several facts
+        # caused methodology/persona captures to appear beside unrelated product
+        # answers (for example a DBSCAN paper on a location-penalty question).
+        link_facts = current[:1]
         linked_evidence, evidence_links = self._linked_evidence_hits(
             link_facts,
             question,
@@ -544,22 +608,27 @@ class KnowledgeService:
             term in question.lower()
             for term in ("대본", "발표자", "파트 배분", "script", "speaker part")
         )
-        supporting = self._filtered_search(
+        curated_qa = self._filtered_search(
             question,
-            top_k=6,
+            top_k=4,
+            predicate=lambda document: (
+                document.source_path == FINAL_QA_SOURCE
+                and document.status == "active"
+            ),
+        )
+        legacy_examples = self._filtered_search(
+            question,
+            top_k=3,
             predicate=lambda document: (
                 document.authority == "supporting"
-                and (
-                    (
-                        document.source_path == "knowledge/qa/cards.yaml"
-                        and document.status == "active"
-                    )
-                    or (
-                        script_context_requested
-                        and document.source_path == "sources/12_presentation_script_v1_0810.md"
-                    )
-                )
+                and script_context_requested
+                and document.source_path == "sources/12_presentation_script_v1_0810.md"
             ),
+        )
+        supporting = self._merge_unique_hits(
+            legacy_examples if script_context_requested else [],
+            curated_qa,
+            limit=6,
         )
         conflicts = self._search_source(question, "knowledge/conflict_map.yaml", top_k=3)
         glossary = self._search_source(
@@ -815,7 +884,7 @@ class KnowledgeService:
             topic,
             top_k=3,
             predicate=lambda document: (
-                document.source_path == "knowledge/qa/cards.yaml"
+                document.source_path == FINAL_QA_SOURCE
                 and document.status == "active"
             ),
         )

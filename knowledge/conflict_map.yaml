@@ -21,14 +21,14 @@ conflicts:
 
   - id: conflict-monthly-three-grades-vs-two-signals
     topic: 월별 세 등급과 내부 두 신호
-    current_resolution: 발표에서는 Favorable·Standard·Care 세 결과로 쉽게 설명하고, 구현은 월 통합점수와 해당 월 Care 신호를 함께 보존한다. Favorable 조건과 Care가 동시에 나오면 둘 다 표시하므로 우선순위 결정이 필요하지 않다.
+    current_resolution: 월별 결과는 Favorable·Standard·Care 중 하나로 표시한다. 월 통합점수 75점 이상이고 Care 동시 변화가 없으면 Favorable, 동시 변화 조건이면 Care, 그 밖의 판정 가능 월은 Standard다. Hold는 데이터 부족 상태다.
     historical_material:
       - sources/11_V20_결정_기록_0810.md#1-상품-판정-계약
       - knowledge/history/decision_log.yaml#decision-2026-08-09-two-axis-contract
       - IMPLEMENTATION.md#3-care
     avoid_as_current:
-      - 점수와 Care 중 하나를 반드시 버려야 한다는 설명
-      - Care 때문에 Favorable 점수 기록을 삭제
+      - Favorable과 Care가 한 달 결과로 동시에 표시된다는 설명
+      - Hold를 네 번째 위험 등급으로 설명
 
   - id: conflict-care-month-vs-annual-summary
     topic: 해당 월 Care와 연간 Care 발생 이력
@@ -81,7 +81,7 @@ conflicts:
 
   - id: conflict-annual-pricing-models
     topic: 연간 점수·월수·요율 산식
-    current_resolution: 현재 실행 화면의 연간 표시점수는 판정 가능한 월 통합점수의 평균이고, Favorable 9개월은 추가 할인 자격이다. 기본 할인율은 연간 주행거리와 차량 종류를 기존 마일리지 할인표에 넣어 정한다. 현재 샌드박스는 Favorable에 3%p를 더하고 45%로 제한하지만 두 수치는 최종 요율이 아닌 후보값이다.
+    current_resolution: 연간 점수는 Hold를 제외한 유효 월 통합점수의 평균이다. 이 점수를 후보 할인표에 매핑해 기본 할인율을 정하고, Favorable 9개월 이상이면 현재 후보 +3%p를 더한다. Care 자체의 직접 가격 영향은 0이며 구체 요율 구간은 계리 검증 전 미확정이다.
     historical_material:
       - sources/02_마스터답변안_전항목.md#부록-C
       - sources/00_확정수치카드.md#요율-케어
@@ -89,11 +89,12 @@ conflicts:
     avoid_as_current:
       - annual Care ANY가 현행 가격을 결정
       - 1~7%p bonus가 최종 확정 요율
-      - 연간 평균점수가 현재 기본 할인율을 정한다는 설명
+      - 기본 할인율을 주행거리 하나만으로 정한다는 설명
+      - Care 한 달이 할인율을 직접 차감한다는 설명
 
   - id: conflict-out-of-zone-risk-vs-penalty
     topic: 생활권 밖 위험과 위치 중립
-    current_resolution: 생활권 밖이라는 위치 자체에는 벌점이 없다. 현재 팀 설계 후보는 실제 위험 이벤트에 생활권 안 계수 8, 생활권 밖 계수 12를 적용하며 두 값은 파일럿 재보정 대상이다. 기존 덱과 180개 시나리오는 8/8 실행 결과이므로 8/12 결과와 섞지 않는다.
+    current_resolution: 생활권 밖이라는 위치 자체에는 벌점이 없다. 현재 팀 설계 후보는 실제 위험 이벤트에 생활권 안 계수 8, 생활권 밖 계수 12를 적용하며 두 값은 파일럿 재보정 대상이다. 발표 답변에서는 의미를 먼저 설명하고, 계수는 계산을 추가로 물을 때만 제시한다.
     historical_material:
       - sources/02_마스터답변안_전항목.md#2-생활권-안-사고
       - sources/생활권반경_eps_정리.md
@@ -102,8 +103,7 @@ conflicts:
       - 생활권 밖 자체가 벌점
       - Ehsani & Tefft의 2.5배에서 계수 12를 직접 도출
       - 969개 가중치 민감도 분석이 위험 이벤트 계수 8/12를 검증
-      - 기존 Edward·Frank 및 180개 시나리오 수치를 8/12 결과로 설명
-    implementation_gap: 현재 외부 합성 엔진과 기존 덱 수치는 안·밖 모두 계수 8로 실행됐다. 8/12는 팀이 채택한 현재 후보식이지만 외부 코드·합성 번들·대시보드 재계산 전이므로 기존 수치와 섞지 않는다.
+      - 8과 12를 문헌에서 직접 도출된 확정값으로 설명
 
   - id: conflict-zone-fixed-vs-rolling
     topic: 생활권 형성 주기

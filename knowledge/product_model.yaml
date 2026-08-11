@@ -450,7 +450,7 @@ domains:
           - IMPLEMENTATION.md#1-월별-점수
         implementation_status: approved_team_candidate_not_yet_in_external_demo
       - id: model-monthly-safety-function-observed-demo
-        status: documented_reference
+        status: historical
         answer_authority: supporting
         layer: deep
         implementation_state: current_sandbox_parameter
@@ -494,7 +494,7 @@ domains:
         answer_authority: current
         layer: core
         implementation_state: product_rule
-        statement_ko: 발표에서는 Favorable·Standard·Care 세 결과로 쉽게 설명하되, 현재 구현은 월 통합점수에서 Favorable·Standard를 만들고 해당 월 Care 신호를 함께 표시한다.
+        statement_ko: 월별 결과는 Favorable·Standard·Care 중 하나로 표시한다. 월 통합점수 75점 이상이고 Care 동시 변화 조건이 없으면 Favorable, 동시 변화 조건이면 Care, 그 밖의 판정 가능 월은 Standard다.
         source_refs:
           - deck://summary-1
           - knowledge/official_positions.yaml#product-monthly-tiers-contract
@@ -504,7 +504,7 @@ domains:
         answer_authority: current
         layer: core
         implementation_state: product_rule
-        statement_ko: 월 통합점수 75점 이상은 Favorable 기준이다.
+        statement_ko: 월 통합점수 75점 이상이고 Care 동시 변화 조건이 없으면 Favorable이다.
         source_refs:
           - knowledge/key_numbers.yaml#monthly-favorable-threshold
       - id: model-monthly-hold-state
@@ -515,14 +515,14 @@ domains:
         source_refs:
           - knowledge/official_positions.yaml#product-monthly-tiers-contract
       - id: model-monthly-internal-two-signals
-        status: current
+        status: historical
         answer_authority: supporting
         layer: deep
         statement_ko: 내부 계산에서는 점수 결과와 Care 변화 신호를 별도로 계산해 같은 달에 Favorable 조건과 Care 신호가 함께 성립할 수 있다.
         source_refs:
           - knowledge/official_positions.yaml#internal-calculation-structure
       - id: model-monthly-display-precedence
-        status: current
+        status: historical
         answer_authority: current
         layer: implementation
         statement_ko: 점수 결과와 해당 월 Care 신호는 함께 보존하므로 둘 중 하나를 없애는 우선순위 규칙은 필요하지 않다. 구현은 Favorable 조건과 Care가 함께 성립하면 Reward + Care Review로 표시할 수 있다.
@@ -599,19 +599,19 @@ domains:
         status: current
         answer_authority: current
         layer: core
-        statement_ko: 최신 대시보드 비교표는 연간 Care·Favorable 등급 대신 연간 평균점수를 보여준다. 이 점수는 판정 가능한 평가월의 월 통합점수를 단순 평균한 설명용 숫자다. Favorable·Standard·Care는 월별 결과이며, 연간 Favorable 추가 할인 자격은 평균점수가 아니라 75점 이상 월 수로 정한다.
+        statement_ko: 최신 대시보드 비교표는 연간 등급 대신 연간 평균점수를 보여준다. 이 점수는 Hold를 제외한 판정 가능한 월 통합점수의 평균이며 기본 할인율 매핑의 입력이다. Favorable·Standard·Care는 월별 결과이고, Favorable 9개월 이상이면 현재 후보 +3%p 추가 할인 자격이 생긴다.
         formula: annual_display_score = mean(eligible_monthly_integrated_scores)
         source_refs:
           - knowledge/official_positions.yaml#monthly-and-annual-score-contract
           - knowledge/key_numbers.yaml#annual-score-formula
           - IMPLEMENTATION.md#2-연간-점수와-favorable
-        implementation_status: verified_in_current_gaip_studio_working_tree
+        implementation_status: approved_product_contract
       - id: model-annual-base-discount-mapping
         status: current
         answer_authority: current
         layer: pricing
-        statement_ko: 현재 구현에서 기본 할인율은 연간 통합점수가 아니라 연간 주행거리와 차량 종류를 기존 한국 마일리지 할인표에 넣어 정한다.
-        formula: base_discount = mileage_discount_table(annual_distance, vehicle_class)
+        statement_ko: 연간 기본 할인율은 연간 평균 통합점수를 후보 할인표에 매핑해 정한다. 구체 구간과 요율은 실제 보험사 데이터와 계리 검증 전에는 확정값이 아니다.
+        formula: base_discount = candidate_score_discount_table(annual_average_integrated_score)
         source_refs:
           - IMPLEMENTATION.md#4-현재-할인율-구현
       - id: model-annual-favorable-eligibility
@@ -624,7 +624,7 @@ domains:
           - knowledge/official_positions.yaml#favorable-additional-discount-qualification
           - knowledge/key_numbers.yaml#number-favorable-additional-discount-qualification
       - id: model-annual-care-month-counts-for-favorable
-        status: current
+        status: historical
         answer_authority: current
         layer: core
         implementation_state: product_rule
@@ -637,8 +637,8 @@ domains:
         answer_authority: current
         layer: pricing
         implementation_state: current_sandbox_parameter
-        statement_ko: 현재 샌드박스는 연간 Favorable 자격에 고정 3%p를 추가하고 전체 할인율을 45%로 제한한다. 이는 구현된 후보값이며 최종 보험 요율은 아니다.
-        formula: "candidate_discount = min(45%, base_mileage_discount + (Favorable ? 3%p : 0%p))"
+        statement_ko: 현재 상품 후보는 Favorable 9개월 이상이면 기본 할인율에 3%p를 추가한다. 이는 후보값이며 최종 보험 요율은 아니다.
+        formula: "candidate_discount = score_based_base_discount + (favorable_months >= 9 ? 3%p : 0%p)"
         source_refs:
           - IMPLEMENTATION.md#4-현재-할인율-구현
       - id: model-pricing-no-surcharge-principle

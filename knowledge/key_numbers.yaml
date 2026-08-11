@@ -23,31 +23,31 @@ numbers:
     name: 연간 점수 산식
     value: 판정 가능한 평가월의 월 통합점수 단순 평균
     status: active
-    claim_type: implementation_audit
-    implementation_status: verified_in_current_gaip_studio_working_tree
-    context: 화면 설명용 연간 점수. 현재 기본 할인율을 직접 정하지 않으며 Favorable 자격은 75점 이상 월 수로 판단
-    source: IMPLEMENTATION.md#2-연간-점수와-favorable
+    claim_type: team_decision
+    implementation_status: approved_product_contract
+    context: Hold를 제외한 유효 월 점수의 평균. 기본 할인율 매핑의 입력이며 Favorable 자격은 75점 이상 월 수로 별도 판단
+    source: knowledge/official_positions.yaml#monthly-and-annual-score-contract
 
-  - id: annual-base-mileage-discount
-    name: 현재 기본 할인율 계산
-    value: 기존 한국 마일리지 할인표(연간 주행거리, 차량 종류)
+  - id: annual-base-score-discount
+    name: 연간 기본 할인율 계산
+    value: 연간 평균 통합점수를 후보 할인표에 매핑
     status: active
-    claim_type: implementation_audit
-    context: 연간 평균점수 매핑이 아니라 현재 GaipStudio 샌드박스의 실제 계산 경로
-    source: IMPLEMENTATION.md#4-현재-할인율-구현
+    claim_type: team_decision
+    context: 네 축 30/30/20/20이 반영된 월 통합점수의 연간 평균을 사용. 실제 구간과 요율은 계리 검증 전 미확정
+    source: knowledge/official_positions.yaml#monthly-and-annual-score-contract
 
   - id: favorable-candidate-extra-discount
     name: 현재 Favorable 후보 추가 할인
     value: 3%p
     status: active
     claim_type: candidate_parameter
-    context: Favorable 9개월 이상일 때 적용되는 현재 샌드박스 후보값. 최종 보험 요율 아님
-    source: IMPLEMENTATION.md#4-현재-할인율-구현
+    context: Favorable 9개월 이상일 때 적용되는 현재 후보값. 최종 보험 요율 아님
+    source: knowledge/official_positions.yaml#favorable-additional-discount-qualification
 
   - id: candidate-discount-cap
     name: 현재 후보 할인율 상한
     value: 45%
-    status: active
+    status: historical
     claim_type: candidate_parameter
     context: 현재 샌드박스 구현값. 파일럿·계리 검증 전 최종 상한으로 말하지 않음
     source: IMPLEMENTATION.md#4-현재-할인율-구현
@@ -133,7 +133,7 @@ numbers:
     status: active
     layer: core
     claim_type: simulation_result
-    context: 이 사례의 연간 시뮬레이션 결과. 한 달 Care에 대한 자동 차감 규칙이 아님 — Care는 검토·지원을 열고, 연간 할인율은 연간 주행 기록으로 별도 계산. 확정 요율·고정 정책으로 제시 금지
+    context: 이 사례의 연간 시뮬레이션 결과. 한 달 Care에 대한 자동 차감 규칙이 아님 — 가격 차이는 네 축이 반영된 연간 점수 차이에서 발생. 확정 요율·고정 정책으로 제시 금지
     source: deck://gaip-2026-final-9p#p3
     history_ref: knowledge/history/decision_log.yaml#decision-2026-08-09-care-price-decoupling
 

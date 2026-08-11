@@ -14,14 +14,14 @@ positions:
     status: active
     layer: core
     effective_date: 2026-08-10
-    approved_position_ko: "월별 결과는 Favorable, Standard, Care의 세 등급으로 쉽게 설명한다. 실제 구현은 월 통합점수와 해당 월 Care 신호를 함께 보존하므로 Favorable 점수 조건과 Care가 같은 달에 함께 성립할 수 있다. Care는 그달의 안내와 직원 검토를 열고 다음 달에는 다시 계산한다. 데이터가 부족한 달의 Hold는 네 번째 위험 등급이 아니라 불이익 없는 데이터 상태다. 연간 할인율 계산은 월별 표시와 구분한다."
+    approved_position_ko: "월별 결과는 Favorable, Standard, Care의 세 등급이다. 월 통합점수가 75점 이상이고 Care 동시 변화 조건이 없으면 Favorable, 동시 변화 조건이 충족되면 Care, 그 밖의 판정 가능 월은 Standard다. Care는 그달의 안내와 직원 검토를 열고 다음 달에는 다시 계산한다. 데이터가 부족한 달의 Hold는 네 번째 위험 등급이 아니라 불이익 없는 데이터 상태다."
     claim_type: team_decision
     must_include:
       - Favorable · Standard · Care 세 등급 (three monthly tiers)
       - Hold는 위험 등급이 아니라 데이터 상태(불이익 없음)
       - Care는 직원 검토와 지원 제안으로 연결
       - Care는 해당 월 신호이며 다음 달 다시 계산
-      - 연간 할인율 계산은 월별 등급 표시와 구분
+      - 월별 결과는 하나로 표시
     must_not_say:
       - Hold를 네 번째 위험 등급으로 설명
       - Care 자체가 자동 할증·자동 차감을 만든다는 표현
@@ -34,7 +34,7 @@ positions:
 
   - id: internal-calculation-structure
     topic: 내부 계산 구조 — 점수 판정과 Care 신호의 분리 (기술 레이어)
-    status: active
+    status: historical
     layer: deep
     effective_date: 2026-08-10
     approved_position_ko: "내부 계산은 월 통합점수와 해당 월 Care 조건을 함께 보존한다. Favorable 점수 조건과 Care가 같은 달에 함께 나타날 수 있으며 현재 화면은 Reward + Care Review로 둘 다 유지할 수 있다. 공개 설명은 월별 세 등급(Favorable, Standard, Care)이고, 동시 성립은 기술 질문에서만 보완한다."
@@ -53,17 +53,17 @@ positions:
     topic: 월 통합점수와 연간 점수
     status: active
     effective_date: 2026-08-09
-    approved_position_ko: "월 통합점수는 네 축의 가중평균이고, Favorable·Standard·Care는 월별 결과다. 최신 대시보드 비교표는 연간 Care·Favorable 등급을 빼고 판정 가능한 월 통합점수의 단순 평균인 연간 평균점수를 보여준다. 현재 구현에서 기본 할인율은 이 평균점수가 아니라 연간 주행거리와 차량 종류를 기존 마일리지 할인표에 넣어 정한다. Favorable 9개월 이상이면 샌드박스 후보 추가 할인 3%p가 붙고 전체 할인은 45%를 넘지 않는다."
-    claim_type: implementation_audit
-    implementation_status: verified_in_current_gaip_studio_working_tree
+    approved_position_ko: "월 통합점수는 Mileage 30%, In-Zone Safety 30%, Out-Zone Safety 20%, Pattern Stability 20%를 합친 점수다. 연간 점수는 판정 가능한 월 통합점수의 평균이며 Hold 월은 제외한다. 이 연간 점수를 후보 할인표에 매핑해 기본 할인율을 정하고, Favorable이 12개월 중 9개월 이상이면 현재 후보 +3%p를 더한다. Care 자체는 할인율을 직접 깎지 않는다."
+    claim_type: team_decision
+    implementation_status: approved_product_contract
     must_include:
       - 12개월 월 통합점수의 단순 평균
       - Favorable·Standard·Care는 월별 결과
       - 최신 대시보드 연간 비교는 등급 대신 연간 평균점수 표시
-      - 기본 할인율은 기존 마일리지 할인표로 계산
-      - 3%p와 45%는 최종 요율이 아닌 후보값
+      - 기본 할인율은 연간 통합점수로 계산
+      - Favorable 9개월 이상이면 현재 후보 +3%p
+      - Care 자체의 직접 가격 영향은 0
     must_not_say:
-      - 연간 평균점수가 현재 기본 할인율을 정한다는 표현
       - 최신 대시보드 비교표에 연간 Care·Favorable 등급이 남아 있다는 표현
     evidence_ref:
       - sources/11_V20_결정_기록_0810.md#2-월간연간-계산
@@ -74,13 +74,13 @@ positions:
     topic: Favorable 추가 할인 자격
     status: active
     effective_date: 2026-08-09
-    approved_position_ko: "월 통합점수 75점 이상이면 그 달은 Favorable이다. 12개월 중 Favorable이 9개월 이상이면 연간 추가 할인 자격이 생긴다. 현재 샌드박스는 3%p를 더하고 전체 할인율을 45%로 제한하지만, 이는 구현된 후보값이며 최종 요율은 아니다."
+    approved_position_ko: "월 통합점수 75점 이상이고 Care 동시 변화 조건이 없으면 그 달은 Favorable이다. 12개월 중 Favorable이 9개월 이상이면 현재 후보 +3%p 추가 할인 자격이 생긴다. 실제 요율은 보험사 데이터와 계리 검증을 거쳐 확정한다."
     claim_type: team_decision
     must_include:
       - 월 75점 이상
       - 12개월 중 9개월 이상
       - 추가 할인 자격
-      - 현재 샌드박스 후보는 +3%p, 전체 45% 상한
+      - 현재 후보 추가 할인 +3%p
     must_not_say:
       - Care review 때문에 Favorable 자격 또는 추가 할인이 중지됨
       - 1~7%p가 최종 확정 요율임
@@ -164,20 +164,20 @@ positions:
         relation: direct
         supports: 생활권 밖의 익숙하지 않은 도로에서 위험이 커질 수 있다는 문제정의
         auto_show_source: true
-    evidence_boundary_ko: "위치만으로 감점하지 않는다는 결론과 8/12 계수는 외부 문헌이 증명한 사실이 아니라 MASIL의 상품 설계 결정이다. Ehsani & Tefft 2021은 익숙하지 않은 도로가 위험 맥락일 수 있다는 문제정의만 지지한다. 기존 덱 p.3과 180개 시나리오 수치는 외부 합성 엔진의 8/8 실행 결과이며 8/12로 재계산된 결과가 아니다."
+    evidence_boundary_ko: "위치만으로 감점하지 않는다는 결론과 8/12 계수는 외부 문헌이 증명한 사실이 아니라 MASIL의 상품 설계 결정이다. Ehsani & Tefft 2021은 익숙하지 않은 도로가 위험 맥락일 수 있다는 문제정의만 지지한다. 8과 12는 파일럿 데이터로 재보정할 후보값이다."
 
   - id: dashboard-13-point-difference
     topic: 대시보드 13%p 차이 설명 (덱 p.3 Edward 사례)
     status: active
     layer: core
     effective_date: 2026-08-10
-    approved_position_ko: "13%p 차이는 이 사례의 연간 시뮬레이션 결과입니다. 한 달 Care를 받았다고 자동으로 13%p가 깎이는 규칙이 아닙니다. Care는 검토와 지원을 열고, 연간 할인율은 연간 주행 기록으로 별도 계산합니다."
-    approved_position_en: "The 13-point difference is the simulated annual proposal for this case. It is not an automatic penalty for one month of Care. Care triggers review and support. The annual discount is calculated separately from the annual driving record."
+    approved_position_ko: "13%p 차이는 이 사례의 연간 시뮬레이션 결과입니다. 한 달 Care를 받았다고 자동으로 13%p가 깎이는 규칙이 아닙니다. Care는 검토와 지원을 열고, 가격 차이는 네 축이 반영된 연간 점수 차이에서 나옵니다."
+    approved_position_en: "The 13-point difference is the simulated annual proposal for this case. It is not an automatic penalty for one month of Care. Care opens review and support. The price difference comes from the annual score across the four factors."
     claim_type: team_decision
     must_include:
       - 이 사례의 연간 시뮬레이션 결과
       - Care는 검토와 지원을 여는 신호
-      - 연간 할인율은 연간 주행 기록으로 별도 계산
+      - 가격 차이는 네 축이 반영된 연간 점수 차이에서 발생
     must_not_say:
       - 13%p를 확정 요율·고정 차감 정책으로 제시
       - 한 달 Care = 13%p 차감이라는 인과

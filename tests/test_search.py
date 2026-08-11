@@ -169,6 +169,26 @@ def test_product_question_does_not_receive_a_low_confidence_literature_capture()
     assert result["evidence_captures"] == []
 
 
+def test_final_qa_catalog_drives_plain_answer_material() -> None:
+    service = KnowledgeService()
+    result = service.prepare_answer_context(
+        "연간 할인율은 어떻게 정하나요?",
+        max_chars=7000,
+    )
+    assert result["explanation_material"]
+    assert result["explanation_material"][0]["id"].endswith("T2-04")
+    encoded = json.dumps(result, ensure_ascii=False)
+    assert "연간 평균 통합점수" in encoded
+    assert "연간 주행거리와 차량 종류" not in encoded
+
+
+def test_qa_practice_filters_by_theme_and_rank() -> None:
+    service = KnowledgeService()
+    result = service.prepare_qa_practice(theme="T4", rank="S", limit=50)
+    assert result["questions"]
+    assert all(item["theme"] == "T4" and item["rank"] == "S" for item in result["questions"])
+
+
 def test_out_of_zone_answer_context_uses_only_direct_problem_evidence() -> None:
     service = KnowledgeService()
     result = service.prepare_answer_context(
