@@ -150,6 +150,38 @@ def test_answer_context_includes_the_top_literature_capture() -> None:
     assert [capture["id"] for capture in result["evidence_captures"]] == ["capture-024"]
 
 
+def test_answer_contract_uses_progressive_disclosure_for_evidence_and_capture_gap() -> None:
+    service = KnowledgeService()
+    result = service.prepare_answer_context(
+        "초행 도로 위험 근거와 상품에서 어디까지 쓰는지 캡처와 함께 보여줘",
+        max_chars=7000,
+    )
+    contract = result["response_contract"]
+    assert contract["requested_layers"] == {
+        "evidence": True,
+        "calculation": False,
+        "capture": True,
+    }
+    assert "대표 결과 하나" in contract["evidence"]
+    assert "현재 연결된 원문 캡처는 없습니다" in contract["capture_gap"]
+    assert "한꺼번에 나열하지" in result["answer_instruction"]
+    assert [item["id"] for item in result["evidence"]] == [
+        "knowledge/evidence/registry.yaml#presentation-ehsani-tefft-2021"
+    ]
+    assert result["evidence_captures"] == []
+    assert result["source_capture_gaps"][0]["evidence_id"].endswith(
+        "#presentation-ehsani-tefft-2021"
+    )
+
+
+def test_calculation_layer_is_only_requested_by_calculation_question() -> None:
+    service = KnowledgeService()
+    simple = service.prepare_answer_context("Care가 나오면 할인율이 줄어드나요?", max_chars=7000)
+    detailed = service.prepare_answer_context("Care의 월 점수 계산식과 숫자 예시를 보여줘", max_chars=7000)
+    assert simple["response_contract"]["requested_layers"]["calculation"] is False
+    assert detailed["response_contract"]["requested_layers"]["calculation"] is True
+
+
 def test_capture_answer_context_stays_within_minimum_budget() -> None:
     service = KnowledgeService()
     result = service.prepare_answer_context(

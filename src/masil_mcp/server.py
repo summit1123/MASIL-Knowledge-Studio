@@ -31,7 +31,7 @@ EVIDENCE_VIEW_META = {
     # the flat key. Keep it until the extension reaches broad GA adoption.
     "ui/resourceUri": EVIDENCE_VIEW_URI,
 }
-SERVER_VERSION = "0.7.0"
+SERVER_VERSION = "0.7.1"
 
 INSTRUCTIONS = """
 MASIL 결선 Q&A 준비용 근거 서버입니다. 팀원은 도구 이름을 배울 필요가 없습니다. MASIL의 상품,
@@ -39,11 +39,13 @@ MASIL 결선 Q&A 준비용 근거 서버입니다. 팀원은 도구 이름을 �
 prepare_answer_context를 조용히 호출해 재료를 확인한 뒤 평소 대화처럼 답하세요. 이 도구는 질문을
 가벼운 준비 유형으로 라우팅하지만 답을 고정하지 않습니다.
 
-답은 먼저 2~4개의 짧고 쉬운 문장으로 직접 말합니다. 도구명, 내부 ID, YAML 필드,
-authority/status, corpus 통계를 답변에 노출하지 마세요. 사용자가 자세히 묻지 않았다면 전체 기술 로직,
-모든 경고, 미확정 목록을 한꺼번에 펼치지 마세요. 영어 답변도 덱의 고정 용어를 유지하며 문장을 짧게
-만드세요. 최종 덱과 현재 상품 계약만 사용하고, 문헌은 allowed_claim과 caveat 범위에서만
-사용하세요. 폐기된 Q&A·과거 규칙·변경 이력은 공개 런타임에 포함되어 있지 않습니다.
+답은 먼저 2~4개의 짧고 쉬운 문장으로 질문에 직접 답합니다. 첫 답변에는 결론과 가장 필요한 이유만
+넣으세요. 문헌 수치·계산식·구현값·한계·주의사항은 사용자가 그 층을 직접 요청했거나 후속 질문을
+했을 때만 펼칩니다. 근거를 요청해도 질문과 직접 연결된 대표 수치 하나를 우선하고, 같은 문헌의 다른
+통계나 질문하지 않은 반박·금지 문구를 한꺼번에 나열하지 마세요. 도구명, 내부 ID, YAML 필드,
+authority/status, corpus 통계와 검색·캡처 처리 규칙은 답변에 노출하지 마세요. 영어 답변도 덱의 고정
+용어를 유지하며 문장을 짧게 만드세요. 최종 덱과 현재 상품 계약만 사용하고, 문헌은 allowed_claim과
+caveat 범위에서만 사용하세요. 폐기된 Q&A·과거 규칙·변경 이력은 공개 런타임에 포함되어 있지 않습니다.
 Pilot·Scale up·Roll out은 단계 방향만 현재 사실로 사용하고, 기간·인원·가입률·유지율 숫자는
 덱 인쇄값을 직접 질문받을 때만 초기 기획 예시라고 설명하세요. 발표에서 쓰지 않기로 한 포괄적
 "3배에서 6배" 위험 배수 문구도 먼저 꺼내지 마세요. 특정 문헌 수치를 직접 묻는 경우에만 해당
@@ -55,6 +57,8 @@ prepare_answer_context의 evidence_captures가 비어 있지 않으면 사용자
 없으면 덱 발췌로 대체하지 마세요. 사용자가 특정 문헌 원문을 요청하면 show_evidence_capture의
 capture_kind=source를, 덱에서 사용된 위치를 요청하면 capture_kind=deck을 사용하세요. 캡처 ID는
 추측하지 말고 compare_claims만으로 캡처를 선택하지 마세요.
+사용자가 캡처를 요청했지만 정확한 원문 캡처가 없으면 "현재 연결된 원문 캡처는 없습니다."라고 한
+문장만 말하세요. source_capture_gaps, 대체 금지 규칙, 인덱싱 상태 같은 내부 사유를 설명하지 마세요.
 
 주제 전체를 학습·정리하거나 발표 흐름을 준비해 달라는 요청에는 prepare_topic_brief를 사용하세요.
 예상 질문·킬러 질문·파트별 Q&A·답변 연습 요청에는 prepare_qa_practice를 사용하세요. 이 도구에는
@@ -351,7 +355,8 @@ def create_server(
 
         Returns the approved 50-question catalog with priority, short Korean and
         easy-English answers, answer rationale, product logic, calculations or
-        validation, full follow-up answers, and speaking boundaries. Use
+        validation, full follow-up answers, and speaking boundaries. Give the
+        short answer first; do not dump every layer in one response. Use
         top_only=true for the ten questions most likely to matter in an 8-minute
         Q&A. Use a theme or free-text query to narrow the practice set. Do not
         invent questions from guardrails when this catalog already covers the

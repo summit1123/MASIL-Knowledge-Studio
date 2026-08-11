@@ -49,6 +49,9 @@ SOURCE_TOKEN_STOPWORDS = {
     "study",
 }
 CAPTURE_REQUEST_TERMS = {"캡처", "원문", "이미지", "스크린샷", "capture", "screenshot", "source image"}
+EVIDENCE_QUERY_HINTS: tuple[tuple[tuple[str, ...], str], ...] = (
+    (("초행 도로", "처음 가는 도로", "처음 가는 경로", "낯선 도로", "unfamiliar road"), "Ehsani Tefft 2021"),
+)
 ANSWER_FACT_SOURCES = {
     "knowledge/product_model.yaml",
     "knowledge/official_positions.yaml",
@@ -153,8 +156,15 @@ class KnowledgeService:
         allowed_tiers = {"stage_citable"}
         if not allowed_tiers:
             return []
+        normalized_query = normalize(query)
+        query_hints = [
+            hint
+            for triggers, hint in EVIDENCE_QUERY_HINTS
+            if any(normalize(trigger) in normalized_query for trigger in triggers)
+        ]
+        evidence_query = " ".join([query, *query_hints])
         hits = self.index.search(
-            query,
+            evidence_query,
             top_k=top_k,
             expand_aliases=False,
             authorities={"evidence", "supporting"},
@@ -528,9 +538,9 @@ class KnowledgeService:
             "response_contract": {
                 "first": "short_answer_ko 또는 short_answer_en으로 먼저 직접 답함",
                 "why": "why_this_answer로 왜 이렇게 답하는지 이해함",
-                "expand": "추가 질문에서만 product_logic과 calculation_or_validation을 사용함",
+                "expand": "추가 질문에서만 product_logic과 calculation_or_validation을 사용함. 한 번에 전부 읽지 않음",
                 "follow_up": "follow_up의 화살표 연결을 실제 후속질문 답변으로 풀어 설명함",
-                "boundary": "answer_boundary는 과장 방지용이며 답변 첫 문장으로 읽지 않음",
+                "boundary": "answer_boundary는 과장 방지용이며 사용자가 묻지 않은 경고 목록으로 읽지 않음",
             },
             "authority_rule": "이 카탈로그는 승인된 연습 표면입니다. 사실 충돌 시 current canon이 우선합니다.",
         }
@@ -543,6 +553,13 @@ class KnowledgeService:
         evidence_scope: str = "stage",
     ) -> dict[str, Any]:
         routing = route_question(question)
+        normalized_question = question.lower()
+        calculation_requested = any(
+            term in normalized_question
+            for term in ("계산", "산식", "공식", "계수", "수치", "숫자", "formula", "calculate", "coefficient")
+        )
+        evidence_requested = routing.route == "literature_evidence"
+        capture_requested = any(term in normalized_question for term in CAPTURE_REQUEST_TERMS)
         current = self._filtered_search(
             question,
             top_k=7,
@@ -603,7 +620,11 @@ class KnowledgeService:
             usage_scope=evidence_scope,
             limit=4,
         )
-        evidence = self._merge_unique_hits(linked_evidence, direct_evidence, limit=4)
+        evidence = self._merge_unique_hits(
+            direct_evidence if routing.route == "literature_evidence" else linked_evidence,
+            linked_evidence if routing.route == "literature_evidence" else direct_evidence,
+            limit=4,
+        )
         script_context_requested = any(
             term in question.lower()
             for term in ("대본", "발표자", "파트 배분", "script", "speaker part")
@@ -673,17 +694,23 @@ class KnowledgeService:
                 "material_priority": list(routing.material_priority),
             },
             "response_contract": {
-                "default": "직접 답하는 짧고 쉬운 문장 2~4개",
-                "evidence": "주장 뒤에 정확한 근거 최대 2개와 쓰임 한 줄",
-                "expand": "자세히 요청할 때만 기술·경계·미확정을 확장",
-                "hide": "도구명·내부 ID·YAML 필드·corpus 통계",
+                "default": "직접 답하는 짧고 쉬운 결론 2~4문장",
+                "evidence": "근거 요청 시 직접 연결된 대표 결과 하나와 적용 범위만 설명",
+                "expand": "계산·추가 수치·한계는 요청받은 층만 확장",
+                "capture_gap": "캡처 요청에 정확한 원문이 없으면 '현재 연결된 원문 캡처는 없습니다.' 한 문장만 추가",
+                "hide": "도구명·내부 ID·YAML 필드·통계·검색/캡처 처리 규칙",
                 "english": "고정 용어를 유지한 짧은 문장",
+                "requested_layers": {
+                    "evidence": evidence_requested,
+                    "calculation": calculation_requested,
+                    "capture": capture_requested,
+                },
             },
             "answer_instruction": (
-                "평소 대화처럼 질문에 필요한 재료만 골라 먼저 2~4문장으로 직접 답하세요. 증거 카드만 보여주고 답을 "
-                "생략하지 마세요. 내부 이름은 숨기고, exact source evidence_captures는 별도 요청 없이 주장 뒤에 쓰임 "
-                "한 줄과 붙이세요. 덱 발췌를 원문 근거처럼 대체하지 마세요. 상품 설계 결정은 문헌이 입증한 사실처럼 "
-                "말하지 말고, 후보·미검증 상태는 숨기지 마세요. 관련 없는 경고는 덧붙이지 마세요."
+                "결론과 필요한 이유만 2~4문장으로 먼저 답하세요. 질문하지 않은 다른 수치·경고·구현 이력을 한꺼번에 나열하지 "
+                "마세요. 근거는 대표 결과 하나와 사용 범위만 말하고, 계산·캡처는 requested_layers가 true인 층만 "
+                "설명하세요. 원문 캡처가 없으면 내부 사유 없이 '현재 연결된 원문 캡처는 없습니다.'라고만 하세요. "
+                "덱 발췌를 원문처럼 대체하거나 상품 결정을 문헌이 증명했다고 말하지 마세요."
             ),
             "current_facts": [answer_hit(hit, 700) for hit in current[:4]],
             "evidence": [
@@ -713,7 +740,7 @@ class KnowledgeService:
             "truncated": False,
             "packet_chars": max_chars,
         }
-        explicit_capture_request = any(term in question.lower() for term in CAPTURE_REQUEST_TERMS)
+        explicit_capture_request = capture_requested
         capture_sources = []
         for source in evidence:
             links = evidence_links.get(source.document.id, [])
