@@ -124,7 +124,12 @@ def create_server(
 
     @mcp.custom_route("/healthz", methods=["GET"], include_in_schema=True)
     async def healthz(_: Request) -> JSONResponse:
-        return JSONResponse({"status": "ok", "service": "masil-mcp", **knowledge.stats()})
+        return JSONResponse({
+            "status": "ok",
+            "service": "masil-mcp",
+            "version": SERVER_VERSION,
+            **knowledge.stats(),
+        })
 
     @mcp.custom_route("/evidence/{capture_id}/{token}", methods=["GET"], include_in_schema=False)
     async def evidence_image(request: Request):

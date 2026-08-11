@@ -25,6 +25,10 @@ def test_server_publishes_brand_icon() -> None:
         assert landing.status_code == 200
         assert 'href="/favicon.png"' in landing.text
 
+        health = client.get("/healthz")
+        assert health.status_code == 200
+        assert health.json()["version"] == "0.7.4"
+
 
 @pytest.mark.asyncio
 async def test_in_memory_server_lists_and_calls_tools() -> None:
