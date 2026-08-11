@@ -65,19 +65,12 @@ async def test_slide_context_keeps_parent_page_mapping() -> None:
 
 
 @pytest.mark.asyncio
-async def test_evidence_tools_publish_an_inline_mcp_app_resource() -> None:
+async def test_evidence_tools_return_native_image_content_with_markdown_fallback() -> None:
     server = create_server(auth_mode="none")
     async with Client(server) as client:
         tools = await client.list_tools()
         visual = next(tool for tool in tools if tool.name == "show_answer_evidence")
-        assert visual.meta["ui"]["resourceUri"] == "ui://masil/evidence-view.html"
-        assert visual.meta["ui/resourceUri"] == "ui://masil/evidence-view.html"
-
-        resources = await client.list_resources()
-        resource = next(item for item in resources if str(item.uri) == "ui://masil/evidence-view.html")
-        assert resource.mimeType == "text/html;profile=mcp-app"
-        rendered = await client.read_resource("ui://masil/evidence-view.html")
-        assert "MASIL Evidence Viewer" in rendered[0].text
+        assert not visual.meta or "ui" not in visual.meta
 
         result = await client.call_tool(
             "show_answer_evidence",
@@ -86,6 +79,10 @@ async def test_evidence_tools_publish_an_inline_mcp_app_resource() -> None:
         assert not result.is_error
         assert [capture["id"] for capture in result.structured_content["captures"]] == ["capture-024"]
         assert [content.type for content in result.content].count("image") == 1
+        assert result.structured_content["client_rendering"] == (
+            "native_image_content_with_markdown_fallback"
+        )
+        assert result.structured_content["display_markdown"].startswith("![")
 
 
 def test_capture_fallback_route_uses_opaque_verified_token() -> None:

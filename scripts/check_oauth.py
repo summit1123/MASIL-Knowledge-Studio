@@ -78,10 +78,6 @@ async def check(base_url: str) -> None:
         }
         if not required.issubset(names):
             raise RuntimeError(f"authenticated MCP missing tools: {sorted(required - names)}")
-        inline_tool = next(tool for tool in tools if tool.name == "show_answer_evidence")
-        if inline_tool.meta.get("ui", {}).get("resourceUri") != "ui://masil/evidence-view.html":
-            raise RuntimeError("authenticated inline tool is missing MCP App metadata")
-
         guide = await client.call_tool("connector_guide", {})
         if guide.is_error or "고정 답변집" not in guide.structured_content.get("purpose", ""):
             raise RuntimeError("authenticated connector-guide call failed")
@@ -145,17 +141,6 @@ async def check(base_url: str) -> None:
             or sum(content.type == "image" for content in inline.content) != 1
         ):
             raise RuntimeError("authenticated inline-evidence call failed")
-
-        resources = await client.list_resources()
-        if not any(
-            str(resource.uri) == "ui://masil/evidence-view.html"
-            and resource.mimeType == "text/html;profile=mcp-app"
-            for resource in resources
-        ):
-            raise RuntimeError("authenticated MCP App resource missing")
-        view = await client.read_resource("ui://masil/evidence-view.html")
-        if not view or "MASIL Evidence Viewer" not in view[0].text:
-            raise RuntimeError("authenticated MCP App resource unreadable")
 
         brief = await client.call_tool(
             "prepare_topic_brief",
@@ -260,8 +245,8 @@ async def check(base_url: str) -> None:
                 "slide_context_call": "PASS",
                 "answer_context_call": "PASS",
                 "inline_evidence_call": "PASS",
-                "mcp_app_resource": "PASS",
-                "mcp_app_tool_metadata": "PASS",
+                "native_image_content": "PASS",
+                "markdown_image_fallback": "PASS",
                 "implementation_call": "PASS",
                 "claim_comparison_call": "PASS",
                 "open_items_call": "PASS",

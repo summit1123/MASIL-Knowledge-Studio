@@ -23,15 +23,7 @@ load_dotenv()
 
 PUBLIC_URL = os.getenv("MASIL_PUBLIC_URL", "https://masil-mcp.summit1123.co.kr").rstrip("/")
 ICON_PATH = Path(__file__).resolve().parent / "static" / "masil-icon.png"
-EVIDENCE_VIEW_PATH = Path(__file__).resolve().parent / "static" / "evidence-view.html"
-EVIDENCE_VIEW_URI = "ui://masil/evidence-view.html"
-EVIDENCE_VIEW_META = {
-    "ui": {"resourceUri": EVIDENCE_VIEW_URI, "visibility": ["model", "app"]},
-    # Claude clients that implemented the earlier MCP Apps draft still read
-    # the flat key. Keep it until the extension reaches broad GA adoption.
-    "ui/resourceUri": EVIDENCE_VIEW_URI,
-}
-SERVER_VERSION = "0.7.3"
+SERVER_VERSION = "0.7.4"
 
 INSTRUCTIONS = """
 MASIL 결선 Q&A 준비용 근거 서버입니다. 팀원은 도구 이름을 배울 필요가 없습니다. MASIL의 상품,
@@ -155,21 +147,6 @@ def create_server(
             },
         )
 
-    @mcp.resource(
-        EVIDENCE_VIEW_URI,
-        name="MASIL evidence viewer",
-        description="Inline viewer for exact evidence captures returned by MASIL tools.",
-        mime_type="text/html;profile=mcp-app",
-        meta={
-            "ui": {
-                "csp": {"resourceDomains": ["https://unpkg.com"]},
-                "prefersBorder": True,
-            }
-        },
-    )
-    def evidence_view() -> str:
-        return EVIDENCE_VIEW_PATH.read_text(encoding="utf-8")
-
     def captures_result(
         capture_ids: list[str],
         *,
@@ -212,10 +189,10 @@ def create_server(
             **(payloads[0] if len(payloads) == 1 else {}),
             "captures": payloads,
             "display_markdown": "\n\n".join(markdown),
-            "client_rendering": "mcp_app_inline_with_markdown_fallback",
+            "client_rendering": "native_image_content_with_markdown_fallback",
             "display_rule": (
-                "MCP App을 지원하는 Claude에서는 대화 안의 증거 카드로 표시합니다. 카드가 표시되지 않는 클라이언트에서는 "
-                "display_markdown을 답변에 포함하세요. capture_kind=deck이면 원문 전체가 아니라 덱 발췌임을 밝히세요."
+                "반환된 image content를 대화에 직접 표시합니다. 이미지가 표시되지 않는 클라이언트에서는 display_markdown을 "
+                "답변에 포함하세요. capture_kind=deck이면 원문 전체가 아니라 덱 발췌임을 밝히세요."
             ),
         }
         if resolution:
@@ -225,7 +202,7 @@ def create_server(
             + structured["display_markdown"]
             + "\n\nEVIDENCE_DISPLAY_PACKET\n"
             + json.dumps(structured, ensure_ascii=False, indent=2)
-            + "\nThe MCP App renders these captures inline. Use the Markdown only as a fallback."
+            + "\nRender the returned image content directly. Use the Markdown only as a fallback."
         )
         return ToolResult(
             content=[TextContent(type="text", text=text), *images],
@@ -424,7 +401,7 @@ def create_server(
         """
         return knowledge.list_captures(query=query, top_k=top_k, usage_scope=usage_scope)
 
-    @mcp.tool(tags={"evidence", "image"}, meta=EVIDENCE_VIEW_META)
+    @mcp.tool(tags={"evidence", "image"})
     def show_answer_evidence(
         question: str,
         usage_scope: Literal["stage"] = "stage",
@@ -465,7 +442,7 @@ def create_server(
             extras_by_id=extras,
         )
 
-    @mcp.tool(tags={"evidence", "image"}, meta=EVIDENCE_VIEW_META)
+    @mcp.tool(tags={"evidence", "image"})
     def show_evidence_capture(
         query: str,
         usage_scope: Literal["stage"] = "stage",
