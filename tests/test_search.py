@@ -17,12 +17,12 @@ def test_korean_ngram_handles_compound_query() -> None:
 @pytest.mark.parametrize(
     ("query", "expected_id"),
     [
-        ("생활권 밖이 위험하다면서 왜 감점은 안 해?", "field-outer-zone-neutral"),
-        ("out-of-zone travel can be risky, so why is there no location penalty?", "R08"),
-        ("우대 기본 케어는 세 등급인가?", "R20"),
-        ("MASIL Zone은 어떻게 만들고 매달 어떻게 갱신하나요?", "R13"),
-        ("MASIL은 무슨 뜻이야?", "field-masil-name"),
-        ("Care가 할인율을 깎나요?", "field-annual-refund"),
+        ("생활권 밖이 위험하다면서 왜 감점은 안 해?", "C09"),
+        ("out-of-zone travel can be risky, so why is there no location penalty?", "G27"),
+        ("우대 기본 케어는 세 등급인가?", "G31"),
+        ("MASIL Zone은 어떻게 만들고 매달 어떻게 갱신하나요?", "C07"),
+        ("MASIL은 무슨 뜻이야?", "G08"),
+        ("Care가 할인율을 깎나요?", "G56"),
     ],
 )
 def test_fielded_index_routes_bilingual_presentation_questions(
@@ -209,15 +209,33 @@ def test_current_contract_drives_annual_refund_answer_material() -> None:
     )
     assert result["current_facts"]
     encoded = json.dumps(result, ensure_ascii=False)
-    assert "12개 월 통합점수" in encoded
-    assert "Care 자체" in encoded
+    assert "유효한 12개월 점수" in encoded
+    assert "Care가 나온 달이 있다는 이유만으로 환급률을 자동 차감하지 않습니다" in encoded
 
 
-def test_qa_practice_filters_by_theme_and_rank() -> None:
+def test_qa_practice_filters_by_group_and_depth() -> None:
     service = KnowledgeService()
-    result = service.prepare_qa_practice(theme="T4", rank="S", limit=50)
+    result = service.prepare_qa_practice(theme="VALUE", rank="GENERAL", limit=100)
     assert result["questions"]
-    assert all(item["theme"] == "T4" and item["rank"] == "S" for item in result["questions"])
+    assert all(item["group"] == "VALUE" and item["tier"] == "GENERAL" for item in result["questions"])
+
+
+def test_qa_practice_keyword_search_stays_within_search_limit() -> None:
+    service = KnowledgeService()
+    result = service.prepare_qa_practice(query="민감도", limit=10)
+    encoded = json.dumps(result, ensure_ascii=False)
+    assert "969" in encoded
+    assert "stable region" in encoded
+
+
+def test_exact_final_qna_returns_detailed_approved_answer() -> None:
+    service = KnowledgeService()
+    result = service.prepare_answer_context("AI는 정확히 무엇을 하고, 무엇을 하지 않나요?")
+    assert result["approved_answer"]["id"] == "C16"
+    encoded = json.dumps(result["approved_answer"], ensure_ascii=False)
+    assert "DBSCAN" in encoded
+    assert "P90" in encoded
+    assert "Reason Code" in encoded
 
 
 def test_out_of_zone_answer_context_uses_only_direct_problem_evidence() -> None:
@@ -246,10 +264,10 @@ def test_open_items_do_not_turn_into_facts() -> None:
 @pytest.mark.parametrize(
     ("question", "expected_first"),
     [
-        ("30초 안에 MASIL을 설명해줘", "R06"),
-        ("MASIL Zone은 어떻게 만들고 매달 어떻게 갱신하나요?", "R13"),
-        ("Favorable Standard Care 세 등급은 어떻게 나뉘나요?", "field-monthly-tiers"),
-        ("보험사는 왜 이 상품을 도입하나요?", "field-insurer-value"),
+        ("30초 안에 MASIL을 설명해줘", "G26"),
+        ("MASIL Zone은 어떻게 만들고 매달 어떻게 갱신하나요?", "C07"),
+        ("Favorable Standard Care 세 등급은 어떻게 나뉘나요?", "G31"),
+        ("보험사는 왜 이 상품을 도입하나요?", "C20"),
     ],
 )
 def test_answer_context_routes_core_questions_to_the_right_material(

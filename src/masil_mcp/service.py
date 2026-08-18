@@ -54,13 +54,14 @@ EVIDENCE_QUERY_HINTS: tuple[tuple[tuple[str, ...], str], ...] = (
 )
 ANSWER_FACT_SOURCES = {
     "knowledge/qa/field_regression_36.yaml",
+    "knowledge/qa/field_qna_100.yaml",
     "knowledge/field_contract.yaml",
     "knowledge/claims/deck_claims.yaml",
 }
 GUARDRAIL_SOURCES = {
     "knowledge/field_contract.yaml",
 }
-FINAL_QA_SOURCE = "knowledge/qa/final_qa_50.yaml"
+FINAL_QA_SOURCE = "knowledge/qa/field_qna_100.yaml"
 FIELD_QA_SOURCE = "knowledge/qa/field_regression_36.yaml"
 CURRENT_SCRIPT_SOURCE = "sources/13_presentation_script_final_0818.md"
 
@@ -76,6 +77,11 @@ class KnowledgeService:
         self.field_qa_by_question = {
             normalize(question): item
             for item in self.field_qa["questions"]
+            for question in (item["question_ko"], item["question_en"])
+        }
+        self.qa_by_question = {
+            normalize(question): item
+            for item in self.qa_catalog["questions"]
             for question in (item["question_ko"], item["question_en"])
         }
 
@@ -497,25 +503,25 @@ class KnowledgeService:
         top_only: bool = False,
         limit: int = 10,
     ) -> dict[str, Any]:
-        """Return the approved 50-question practice catalog, not generated questions."""
-        self._validate_top_k(limit, maximum=50)
-        valid_themes = {item["id"] for item in self.qa_catalog["themes"]}
+        """Return the final 100-question Q&A canon used by both the app and MCP."""
+        self._validate_top_k(limit, maximum=100)
+        valid_themes = {item["id"] for item in self.qa_catalog["groups"]}
         if theme != "all" and theme not in valid_themes:
             raise ValueError(f"theme must be all or one of: {', '.join(sorted(valid_themes))}")
-        if rank not in {"all", "S", "A", "B"}:
-            raise ValueError("rank must be all, S, A, or B")
+        if rank not in {"all", "CORE", "GENERAL", "DEEP"}:
+            raise ValueError("rank must be all, CORE, GENERAL, or DEEP")
 
         allowed_ids = {
             item["id"]
             for item in self.qa_catalog["questions"]
-            if (theme == "all" or item["theme"] == theme)
-            and (rank == "all" or item["rank"] == rank)
-            and (not top_only or item["id"] in self.qa_catalog["top10"])
+            if (theme == "all" or item["group"] == theme)
+            and (rank == "all" or item["tier"] == rank)
+            and (not top_only or item["tier"] == "CORE")
         }
         if query.strip():
             hits = self._filtered_search(
                 query,
-                top_k=50,
+                top_k=30,
                 predicate=lambda document: (
                     document.source_path == FINAL_QA_SOURCE
                     and document.id.rsplit("#", 1)[-1] in allowed_ids
@@ -529,31 +535,22 @@ class KnowledgeService:
                 if item["id"] in allowed_ids
             ]
 
-        # The 50-question file is retained as a question-selection catalog only.
-        # Its older answer prose must never bypass the current field contract.
-        selected = [
-            {
-                key: self.qa_by_id[item_id][key]
-                for key in ("id", "theme", "rank", "question_ko", "question_en")
-                if key in self.qa_by_id[item_id]
-            }
-            for item_id in ordered_ids[:limit]
-        ]
+        selected = [self.qa_by_id[item_id] for item_id in ordered_ids[:limit]]
         return {
             "query": query,
             "theme": theme,
             "rank": rank,
             "top_only": top_only,
-            "catalog_version": self.qa_catalog["version"],
+            "catalog_version": self.qa_catalog["meta"]["version"],
             "total_catalog_questions": len(self.qa_catalog["questions"]),
             "matched_count": len(ordered_ids),
             "questions": selected,
             "response_contract": {
-                "answer": "반환된 질문을 prepare_answer_context에 다시 넣어 최신 field_contract로 답함",
+                "answer": "앱과 MCP가 같은 100문항 정본의 짧은 한·영 답변, 상세 논리, 검증 경계와 후속 질문을 사용함",
                 "language": "질문 언어와 같은 언어, 영어는 짧고 쉬운 문장",
-                "boundary": "이 도구는 질문 후보만 고르고 과거 답변 본문은 반환하지 않음",
+                "boundary": "최종 덱과 대본이 최우선이며 100문항의 설명은 이를 덮어쓸 수 없음",
             },
-            "authority_rule": "50문항은 연습용 질문 표면일 뿐이며 답변 권한은 최신 덱·field_contract·36문항 공식 답변에 있습니다.",
+            "authority_rule": "정확히 일치하는 36문항 공식 답변을 먼저 사용하고, 그 외에는 최종 덱·대본을 기준으로 정리한 100문항 정본을 사용합니다.",
         }
 
     def prepare_answer_context(
@@ -564,7 +561,11 @@ class KnowledgeService:
         evidence_scope: str = "stage",
     ) -> dict[str, Any]:
         routing = route_question(question)
-        approved_answer = self.field_qa_by_question.get(normalize(question))
+        normalized = normalize(question)
+        approved_answer = self.field_qa_by_question.get(normalized) or self.qa_by_question.get(normalized)
+        approved_answer_source = (
+            FIELD_QA_SOURCE if normalized in self.field_qa_by_question else FINAL_QA_SOURCE
+        ) if approved_answer else None
         normalized_question = question.lower()
         calculation_requested = any(
             term in normalized_question
@@ -587,7 +588,7 @@ class KnowledgeService:
                 approved_id,
                 top_k=1,
                 predicate=lambda document: (
-                    document.source_path == FIELD_QA_SOURCE
+                    document.source_path == approved_answer_source
                     and document.id.rsplit("#", 1)[-1] == approved_id
                 ),
             )
@@ -636,7 +637,13 @@ class KnowledgeService:
         # neighboring fact from the same broad topic. Traversing several facts
         # caused methodology/persona captures to appear beside unrelated product
         # answers (for example a DBSCAN paper on a location-penalty question).
-        link_facts = current[:1]
+        contract_link_facts = self._search_source(
+            question,
+            "knowledge/field_contract.yaml",
+            top_k=2,
+            statuses={"active"},
+        )
+        link_facts = self._merge_unique_hits(current[:1], contract_link_facts, limit=3)
         linked_evidence, evidence_links = self._linked_evidence_hits(
             link_facts,
             question,
@@ -906,12 +913,21 @@ class KnowledgeService:
 
     def prepare_topic_brief(self, topic: str) -> dict[str, Any]:
         """Return sourced interpretation material without inventing likely questions."""
-        current = self._filtered_search(
+        contract_current = self._filtered_search(
+            topic,
+            top_k=4,
+            predicate=lambda document: (
+                document.source_path == "knowledge/field_contract.yaml"
+                and document.status.lower() not in EXCLUDED_CURRENT_STATUSES
+            ),
+        )
+        supporting_current = self._filtered_search(
             topic,
             top_k=6,
             predicate=lambda document: (
                 document.authority in {"canonical", "deck"}
                 and document.source_path in ANSWER_FACT_SOURCES
+                and document.source_path != "knowledge/field_contract.yaml"
                 and document.status.lower() not in EXCLUDED_CURRENT_STATUSES
             ),
         )
@@ -941,7 +957,17 @@ class KnowledgeService:
             ),
         )
 
-        current = self._focused_hits(current, limit=5)
+        # The field contract is the public interpretation layer.  Keep its best
+        # matches ahead of deck/Q&A supplements so a detailed Q&A card cannot
+        # displace the current official position in a topic brief.
+        current = self._focused_hits(contract_current, limit=3)
+        seen = {hit.document.id for hit in current}
+        current.extend(
+            hit
+            for hit in self._focused_hits(supporting_current, limit=5)
+            if hit.document.id not in seen
+        )
+        current = current[:5]
         guardrails = self._focused_hits(guardrails, limit=4)
         open_material = self._focused_hits(open_material, limit=4)
         examples = self._focused_hits(examples, limit=2)

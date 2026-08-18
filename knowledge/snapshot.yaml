@@ -15,6 +15,9 @@ model_anchors:
   regression_answers:
     file: knowledge/qa/field_regression_36.yaml
     role: 36개 한국어·쉬운 영어 공식 답변
+  field_qna:
+    file: knowledge/qa/field_qna_100.yaml
+    role: 앱·MCP 공용 Core 20 · General 52 · Deep Dive 28 현장 Q&A 정본
   deck_claims:
     file: knowledge/claims/deck_claims.yaml
     role: 최신 9장 장표 사실과 구두 보완
@@ -40,6 +43,7 @@ authority_routing:
   order:
     - 최신 PPT — 장표에 보이는 사실
     - knowledge/qa/field_regression_36.yaml — 현장 36문항 공식 답변
+    - knowledge/qa/field_qna_100.yaml — 최종 100문항의 한·영 답변·상세 논리·검증 경계
     - active product contract — 세부 상품 논리
     - 최신 Appendix — 알고리즘·검증 경계
     - 최신 대본 — 쉬운 표현과 발표 흐름만
@@ -48,6 +52,7 @@ authority_routing:
 approved_sources:
   - knowledge/field_contract.yaml
   - knowledge/qa/field_regression_36.yaml
+  - knowledge/qa/field_qna_100.yaml
   - knowledge/claims/deck_claims.yaml
 supporting_sources:
   - file: sources/13_presentation_script_final_0818.md

@@ -56,7 +56,7 @@ capture_kind=source를, 덱에서 사용된 위치를 요청하면 capture_kind=
 
 주제 전체를 학습·정리하거나 발표 흐름을 준비해 달라는 요청에는 prepare_topic_brief를 사용하세요.
 예상 질문·킬러 질문·파트별 Q&A·답변 연습 요청에는 prepare_qa_practice를 사용하세요. 이 도구에는
-최종 대본과 덱의 기억 지점을 기준으로 승인된 50문항, S/A/B 우선순위, 상위 10문항, 짧은 한·영 답변,
+최종 대본과 덱을 기준으로 승인된 100문항, Core/General/Deep 깊이, 핵심 20문항, 짧은 한·영 답변,
 답변 이유, 상품 논리, 계산·검증, 후속질문, 발언 경계가 들어 있습니다. 먼저 짧은 답을 주고, 사용자가
 더 물을 때만 심화 논리와 계산을 펼치세요. forbidden_claims와 must_not_say를 새 질문으로 만들지 마세요.
 
@@ -330,18 +330,17 @@ def create_server(
     @mcp.tool(tags={"answer", "preparation", "practice"})
     def prepare_qa_practice(
         query: str = "",
-        theme: Literal["all", "T1", "T2", "T3", "T4", "T5"] = "all",
-        rank: Literal["all", "S", "A", "B"] = "all",
+        theme: Literal["all", "PROBLEM", "DIFFERENCE", "MASIL_LOGIC", "REWARD", "CARE", "VALIDATION", "VALUE"] = "all",
+        rank: Literal["all", "CORE", "GENERAL", "DEEP"] = "all",
         top_only: bool = False,
         limit: int = 10,
     ) -> dict:
         """Use for expected questions, killer questions, or Q&A practice.
 
-        Returns the 50-question selection catalog without its older answer prose.
-        For each selected question, use prepare_answer_context so the answer is
-        rebuilt from the latest field contract. Use
-        top_only=true for the ten questions most likely to matter in an 8-minute
-        Q&A. Use a theme or free-text query to narrow the practice set. Do not
+        Returns the final 100-question catalog with the same short answers,
+        detailed logic, validation boundaries, and follow-ups used by the Q&A app.
+        Use top_only=true for the Core 20 questions. Use a theme, depth, or
+        free-text query to narrow the practice set. Do not
         invent questions from guardrails when this catalog already covers the
         request.
         """

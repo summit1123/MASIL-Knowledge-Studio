@@ -16,6 +16,7 @@ CANONICAL_YAML = {
     "knowledge/snapshot.yaml",
     "knowledge/mcp_manifest.yaml",
     "knowledge/qa/field_regression_36.yaml",
+    "knowledge/qa/field_qna_100.yaml",
 }
 
 DECK_YAML = {"knowledge/claims/deck_claims.yaml"}
@@ -25,7 +26,6 @@ EVIDENCE_YAML = {
 }
 SUPPORTING_YAML = {
     "knowledge/qa/cards.yaml",
-    "knowledge/qa/final_qa_50.yaml",
 }
 
 MARKDOWN_FILES = {
@@ -88,6 +88,12 @@ BODY_PRIORITY_FIELDS = (
     "direct_answer_en",
     "main_answer_ko",
     "main_answer_en",
+    "answer_ko_short",
+    "answer_en_short",
+    "logic_ko",
+    "validation_and_limit_ko",
+    "answer_boundaries_ko",
+    "followup_questions",
     "evidence_ko",
     "evidence_en",
     "limitation_ko",
@@ -211,8 +217,6 @@ def _authority(path: str, item: dict[str, Any], status: str) -> str:
         return "canonical"
     if path == "knowledge/qa/cards.yaml":
         return "historical"
-    if path == "knowledge/qa/final_qa_50.yaml":
-        return "supporting" if status == "active" else "historical"
     return "supporting"
 
 

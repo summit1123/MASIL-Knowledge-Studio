@@ -114,16 +114,21 @@ end
 end
 puts "FIELD_QA_TOTAL=#{field_questions.size}"
 
-final_qa = objects.fetch("knowledge/qa/final_qa_50.yaml")
+final_qa = objects.fetch("knowledge/qa/field_qna_100.yaml")
 final_questions = final_qa.fetch("questions", [])
 final_ids = final_questions.map { |item| item["id"] }
-rank_counts = final_questions.group_by { |item| item["rank"] }.transform_values(&:size)
-puts "FINAL_QA_TOTAL=#{final_questions.size} RANKS=#{rank_counts.inspect} TOP10=#{final_qa.fetch("top10", []).size}"
-abort_check("final Q&A count mismatch") unless final_questions.size == 50
+tier_counts = final_questions.group_by { |item| item["tier"] }.transform_values(&:size)
+group_ids = final_qa.fetch("groups", []).map { |item| item["id"] }
+puts "FINAL_QA_TOTAL=#{final_questions.size} TIERS=#{tier_counts.inspect} GROUPS=#{group_ids.inspect}"
+abort_check("final Q&A count mismatch") unless final_questions.size == 100
 abort_check("final Q&A duplicate IDs") unless final_ids.uniq.size == final_ids.size
-abort_check("final Q&A rank distribution mismatch") unless rank_counts == {"S"=>15, "A"=>27, "B"=>8}
-abort_check("final Q&A top10 mismatch") unless final_qa.fetch("top10", []).size == 10
-abort_check("final Q&A top10 contains unknown ID") unless (final_qa.fetch("top10", []) - final_ids).empty?
+abort_check("final Q&A tier distribution mismatch") unless tier_counts == {"CORE"=>20, "GENERAL"=>52, "DEEP"=>28}
+abort_check("final Q&A group contract mismatch") unless group_ids == %w[PROBLEM DIFFERENCE MASIL_LOGIC REWARD CARE VALIDATION VALUE]
+abort_check("Core 20 sequence mismatch") unless final_questions.select { |item| item["tier"] == "CORE" }.map { |item| item["id"] } == (1..20).map { |number| format("C%02d", number) }
+abort_check("final Q&A bilingual or detail contract incomplete") unless final_questions.all? { |item| item["question_ko"] && item["question_en"] && item["answer_ko_short"] && item["answer_en_short"] && item["logic_ko"] }
+removed_ids = %w[G10 G13 G21 G38 G40 G42 D18 D25]
+abort_check("removed Q&A IDs leaked into final catalog") unless (final_ids & removed_ids).empty?
+abort_check("new business Q&A set incomplete") unless (51..58).all? { |number| final_ids.include?("G#{number}") }
 
 file_refs = []
 walk_file_refs = lambda do |value, path, source_file|
@@ -330,7 +335,7 @@ required_includes = %w[
   knowledge/field_contract.yaml
   knowledge/claims/deck_claims.yaml
   knowledge/qa/field_regression_36.yaml
-  knowledge/qa/final_qa_50.yaml
+  knowledge/qa/field_qna_100.yaml
   sources/13_presentation_script_final_0818.md
   knowledge/evidence/registry.yaml
   knowledge/evidence/capture_index.yaml
@@ -350,9 +355,9 @@ legacy_runtime_files = %w[
 leaked_legacy_runtime_files = actual_includes & legacy_runtime_files
 abort_check("legacy files leaked into current runtime: #{leaked_legacy_runtime_files.inspect}") unless leaked_legacy_runtime_files.empty?
 
-cards_entry = manifest.fetch("include", []).find { |entry| entry["file"] == "knowledge/qa/final_qa_50.yaml" }
-unless cards_entry && cards_entry["role"] == "approved_qna_practice_catalog" && cards_entry["canonical_for_facts"] == false
-  abort_check("final Q&A catalog is not a non-canonical practice surface")
+cards_entry = manifest.fetch("include", []).find { |entry| entry["file"] == "knowledge/qa/field_qna_100.yaml" }
+unless cards_entry && cards_entry["role"] == "canonical_qna_100"
+  abort_check("final 100-question Q&A canon is not in the runtime manifest")
 end
 
 runtime_excluded = manifest.fetch("runtime_excluded", [])
@@ -485,6 +490,7 @@ end
 expected_model_anchor_files = {
   "field_contract" => "knowledge/field_contract.yaml",
   "regression_answers" => "knowledge/qa/field_regression_36.yaml",
+  "field_qna" => "knowledge/qa/field_qna_100.yaml",
   "deck_claims" => "knowledge/claims/deck_claims.yaml"
 }
 actual_model_anchor_files = snapshot.fetch("model_anchors", {}).map do |name, entry|
@@ -501,6 +507,7 @@ abort_check("missing approved support sources: #{missing_approved_sources.inspec
 expected_approved_sources = %w[
   knowledge/field_contract.yaml
   knowledge/qa/field_regression_36.yaml
+  knowledge/qa/field_qna_100.yaml
   knowledge/claims/deck_claims.yaml
 ]
 abort_check("snapshot approved source contract mismatch") unless approved_sources == expected_approved_sources

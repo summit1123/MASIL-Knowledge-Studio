@@ -97,7 +97,7 @@ def test_out_of_zone_packet_explains_location_neutrality_without_retired_coeffic
     )
     encoded = json.dumps(packet, ensure_ascii=False)
     assert "위치 자체" in encoded or "위치만으로" in encoded
-    assert "Out-of-Zone Safety" in encoded
+    assert "생활권 밖" in encoded and "위험행동" in encoded
     assert "8/12" not in encoded
 
 
@@ -138,6 +138,7 @@ def test_runtime_corpus_loads_every_current_contract_collection() -> None:
     expected = {
         "knowledge/field_contract.yaml": (None, 24),
         "knowledge/qa/field_regression_36.yaml": ("active", 36),
+        "knowledge/qa/field_qna_100.yaml": ("active", 100),
         "knowledge/claims/deck_claims.yaml": (None, 30),
     }
     for source, (status, count) in expected.items():
@@ -154,7 +155,6 @@ def test_missing_status_defaults_are_not_loaded_into_team_runtime() -> None:
         "knowledge/glossary.yaml",
         "knowledge/forbidden_claims.yaml",
         "knowledge/key_numbers.yaml",
-        "knowledge/qa/final_qa_50.yaml",
     }
     legacy = [
         document
@@ -162,6 +162,10 @@ def test_missing_status_defaults_are_not_loaded_into_team_runtime() -> None:
         if document.source_path in legacy_sources and document.status == "legacy_reference"
     ]
     assert legacy == []
+    assert not any(
+        document.source_path == "knowledge/qa/final_qa_50.yaml"
+        for document in service.corpus.documents
+    )
 
     result = service.search("Care 할인 보너스", top_k=20)
     assert result["scope"] == "current"

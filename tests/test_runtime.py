@@ -86,21 +86,21 @@ def test_oauth_tokens_survive_provider_restart(tmp_path: Path) -> None:
 
 
 @pytest.mark.asyncio
-async def test_final_qa_practice_tool_returns_approved_top10() -> None:
+async def test_final_qa_practice_tool_returns_core20() -> None:
     server = create_server(auth_mode="none")
     async with Client(server) as client:
         result = await client.call_tool(
             "prepare_qa_practice",
-            {"top_only": True, "limit": 10},
+            {"top_only": True, "limit": 100},
         )
     payload = result.structured_content
-    assert payload["total_catalog_questions"] == 50
+    assert payload["total_catalog_questions"] == 100
     assert [item["id"] for item in payload["questions"]] == [
-        "T1-01", "T1-03", "T1-09", "T2-01", "T2-03",
-        "T2-04", "T3-02", "T4-02", "T5-01", "T5-02",
+        f"C{number:02d}" for number in range(1, 21)
     ]
     assert all(item["question_ko"] for item in payload["questions"])
-    assert all("short_answer_ko" not in item and "short_answer_en" not in item for item in payload["questions"])
+    assert all(item["answer_ko_short"] and item["answer_en_short"] for item in payload["questions"])
+    assert all(item["logic_ko"] for item in payload["questions"])
 
 
 @pytest.mark.asyncio

@@ -30,6 +30,9 @@ canonical_sources:
   field_answers:
     file: knowledge/qa/field_regression_36.yaml
     role: 36개 한국어·쉬운 영어 직접 답변 정본
+  field_qna:
+    file: knowledge/qa/field_qna_100.yaml
+    role: 앱과 MCP가 함께 사용하는 Core 20 · General 52 · Deep Dive 28 현장 Q&A 정본
   deck_claims:
     file: knowledge/claims/deck_claims.yaml
     role: 장표에 인쇄된 내용과 수정·보완 상태
@@ -46,7 +49,7 @@ supporting_sources:
     rule: 최신 덱·field_contract·36문항 정본과 충돌하면 현재 정본이 우선하며, 대본 문장은 Q&A 질문 의도와 쉬운 말투를 파악하는 데만 사용
 
 authority_routing:
-  rule: 최신 덱의 보이는 사실과 field_contract의 현재 해석을 우선하고, 정확히 일치하는 36문항은 field_regression_36의 공식 답변을 사용함
+  rule: 최신 덱과 field_contract를 우선하고, 정확히 일치하는 36문항 공식 답변 다음으로 최종 100문항의 한·영 답변과 상세 논리를 사용함
 
 include:
   - file: knowledge/field_contract.yaml
@@ -56,11 +59,10 @@ include:
   - file: knowledge/qa/field_regression_36.yaml
     filter: status == active
     role: canonical_field_answer_contract
-  - file: knowledge/snapshot.yaml
-  - file: knowledge/qa/final_qa_50.yaml
+  - file: knowledge/qa/field_qna_100.yaml
     filter: status == active
-    role: approved_qna_practice_catalog
-    canonical_for_facts: false
+    role: canonical_qna_100
+  - file: knowledge/snapshot.yaml
   - file: sources/13_presentation_script_final_0818.md
     role: current_script_question_surface
     canonical_for_facts: false
@@ -75,6 +77,7 @@ runtime_excluded:
   - deck claims extracted from the 2026-08-10 PDF
   - past Master Q&A exports
   - knowledge/qa/cards.yaml legacy answer cards
+  - knowledge/qa/final_qa_50.yaml legacy 50-question catalog
   - decision history and meeting records
   - inactive or superseded official positions
   - archived Q&A cards
@@ -103,7 +106,7 @@ asset_policy:
 
 retrieval_pipeline:
   - stage: current_facts
-    search: 최신 deck_claims + field_contract + 정확히 일치하는 field_regression_36
+    search: 최신 deck_claims + field_contract + 정확히 일치하는 field_regression_36 + field_qna_100
     purpose: 질문 유형에 맞는 현재 결론·수치·고정 용어·허용 문헌 확보
   - stage: exact_evidence_traversal
     search: 현재 사실의 evidence_links만 탐색
@@ -131,6 +134,7 @@ client_rendering:
 retrieval_rules:
   - 덱은 장표에 보이는 사실의 정본이고 field_contract는 그 사실의 현재 상품 해석 정본이다.
   - 정확히 일치하는 36문항은 field_regression_36의 한국어·쉬운 영어 답변을 우선 사용한다.
+  - 그 외 최종 100문항과 정확히 일치하면 field_qna_100의 한국어·쉬운 영어 답변, 상세 논리, 검증 경계와 후속 질문을 사용한다.
   - 과거 Q&A·폐기 규칙·변경 이력은 공개 런타임에서 검색하거나 반환하지 않는다.
   - 팀원은 도구 이름을 알 필요가 없다. 실제 MASIL 질문과 붙여 넣은 초안은 prepare_answer_context를 기본 진입점으로 사용한다.
   - prepare_answer_context는 별도 모델 호출 없이 질문을 발표 개요·상품 논리·덱 맥락·문헌 근거·현재 주장 검토·미확정 검증·사회적 가치·초안 검토로 라우팅한다. 라우트는 답을 결정하지 않고 검색 재료의 우선순위만 정한다.
@@ -138,8 +142,7 @@ retrieval_rules:
   - 기본 답변에서는 도구명·내부 ID·YAML 필드·authority/status·corpus 통계를 노출하지 않는다.
   - forbidden_claims와 must_not_say는 주장 경계이지 예상 질문 목록이 아니다. 사용자가 요청하지 않으면 질문으로 변환하지 않는다.
   - 예상 질문은 사용자가 명시적으로 요청한 경우에만 생성하며 지식베이스 사실이 아니라 Claude가 만든 준비용 질문으로 표시한다.
-  - final_qa_50의 50문항은 질문 후보만 제공하며 과거 답변 본문은 공개하지 않는다. 각 질문의 답은 현재 field_contract로 다시 만든다.
-  - 예상 질문·킬러 질문·Q&A 연습 요청은 final_qa_50의 질문 제목만 사용하고 답은 prepare_answer_context로 구성한다.
+  - 예상 질문·킬러 질문·Q&A 연습 요청은 field_qna_100의 Core 20 · General 52 · Deep Dive 28을 사용한다.
   - 덱 인쇄 문구에 보완이 필요하면 deck_claims의 상태와 field_contract의 현재 경계를 함께 사용한다.
   - layer가 deep인 항목(내부 계산·두 축·민감도 상세)은 기술적 설명이 필요한 질문에서 보조 재료로 사용한다.
   - 덱에 남아 있으나 팀이 철회한 문헌 수치는 deck_conflict로 알리고 그 주장을 방어하지 않는다.
