@@ -10,7 +10,8 @@ MASIL의 8분 Q&A 준비를 위해 문제정의, 상품 설계, 기술, 근거, 
 2. `knowledge/field_contract.yaml` — 생활권·월 점수·Care·연간 환급·AI·검증 한계를 정리한 현장 상품 계약
 3. `knowledge/qa/field_regression_36.yaml` — 한국어와 쉬운 영어로 고정한 36개 핵심 질문의 공식 답변
 4. `knowledge/evidence/registry.yaml`과 `knowledge/evidence/capture_index.yaml` — 현재 덱이 실제 사용하는 문헌 근거와 로컬 캡처 연결
-5. `knowledge/qa/final_qa_50.yaml`과 `sources/13_presentation_script_final_0818.md` — 예상 질문 제목과 최신 발표 흐름을 찾는 보조 표면
+5. `knowledge/qa/field_qna_100.yaml` — 앱과 MCP가 함께 사용하는 Core 20 · General 52 · Deep Dive 28 현장 Q&A 정본
+6. `sources/13_presentation_script_final_0818.md` — 최신 발표 흐름과 쉬운 현장 표현을 찾는 보조 표면
 
 과거 `product_model`, `presentation_story`, `conflict_map`, `cards`, 결정 이력과 이전 대본은 Git에 보존하지만 공개 검색과 답변 패킷에서는 제외한다. `IMPLEMENTATION.md`도 2026-08-10 외부 데모 작업 트리의 과거 감사 기록일 뿐 현장 Q&A 정본이 아니다.
 
@@ -22,7 +23,7 @@ MASIL의 8분 Q&A 준비를 위해 문제정의, 상품 설계, 기술, 근거, 
 - 현장에서 어떤 뜻으로 설명하는가 → `field_contract.yaml`
 - 핵심 질문에 어떤 문장으로 답하는가 → `field_regression_36.yaml`
 - 문헌이 무엇을 지지하는가 → `evidence/registry.yaml`
-- 예상 질문을 더 연습하는가 → `final_qa_50.yaml`의 질문 제목을 현재 계약으로 다시 답함
+- 예상 질문을 더 연습하는가 → `field_qna_100.yaml`의 짧은 한·영 답변, 상세 논리, 검증 경계와 후속 질문을 사용함
 - 발표 표현과 흐름을 확인하는가 → `13_presentation_script_final_0818.md`를 보조로 사용함
 
 과거 Q&A와 구현 감사는 Git에 보존하지만 기본 답변에는 넣지 않는다. 현재 사실은 정본 자료가 결정하고, 최종 Q&A 카탈로그는 이를 짧은 한글·쉬운 영어·답변 이유·심화 논리·계산·후속답변으로 연습하기 위한 표면이다.
@@ -36,7 +37,7 @@ Claude가 내부적으로 사용하는 도구:
 - `connector_guide` — 팀원에게 명령어가 아니라 평범한 질문 예시로 사용법 안내
 - `search_knowledge` — 제목·태그·메타데이터·본문을 따로 가중한 BM25F형 검색, 한국어 문자 n-gram, 한영 고정 용어 별칭
 - `prepare_topic_brief` — 한 주제의 현재 입장·근거·주장 경계·미검증 범위·쉬운 표현 재료. 예상 질문은 만들지 않음
-- `prepare_qa_practice` — 50개 예상 질문의 테마·S/A/B·상위 10개를 조회하되, 답변은 과거 본문이 아니라 현재 `field_contract`와 36문항 정본으로 다시 구성
+- `prepare_qa_practice` — 최종 100문항을 7개 논리축과 Core 20 · General 52 · Deep Dive 28로 조회하고, 앱과 같은 한·영 답변·상세 논리·검증 경계·후속 질문을 반환
 - `prepare_answer_context` — 일반 MASIL 질문과 붙여 넣은 초안의 기본 진입점. 별도 AI 호출 없이 질문을 8개 준비 유형으로 가볍게 라우팅하고, 현재 사실에서 정확한 문헌·캡처 링크를 순회해 짧은 답변 재료를 만듦
 - `show_answer_evidence` — 답변 재료에 정확히 연결된 캡처가 있을 때 별도 요청 없이 최대 2개를 대화 안의 증거 카드로 표시
 - `explain_product_logic` — 생활권, 점수, Care, 할인 등 상품 논리
@@ -54,7 +55,7 @@ Claude가 내부적으로 사용하는 도구:
 
 텔레메트리는 도구명, 라우트, 성공 여부, 지연시간, 결과·캡처 개수와 익명 세션 해시만 로컬 SQLite에 저장한다. 질문, 도구 인자, Claude 답변, 근거 본문, 사용자 신원, OAuth 비밀값은 저장하지 않는다. OAuth access/refresh token은 권한 600의 별도 SQLite 파일에 보존하므로 일반 코드·지식 업데이트 뒤 서버가 재시작되어도 팀원이 커넥터를 다시 등록할 필요가 없다. 도구 목록이 바뀐 배포 직후 현재 대화가 예전 목록을 캐시했다면 새 대화만 열면 된다.
 
-`forbidden_claims`와 `must_not_say`는 예상 질문 목록이 아니라 과장을 막는 주장 경계다. 서버는 이를 자동으로 질문으로 바꾸지 않는다. 예상 질문 요청에는 승인된 50문항과 상위 10문항을 먼저 사용하고, 그 범위를 벗어난 새 질문만 Claude가 추가 제안으로 구분한다.
+`forbidden_claims`와 `must_not_say`는 예상 질문 목록이 아니라 과장을 막는 주장 경계다. 서버는 이를 자동으로 질문으로 바꾸지 않는다. 예상 질문 요청에는 승인된 Core 20 · General 52 · Deep Dive 28을 먼저 사용하고, 그 범위를 벗어난 새 질문만 Claude가 추가 제안으로 구분한다.
 
 ## 실행
 
