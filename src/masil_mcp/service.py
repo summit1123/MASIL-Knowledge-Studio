@@ -53,18 +53,16 @@ EVIDENCE_QUERY_HINTS: tuple[tuple[tuple[str, ...], str], ...] = (
     (("초행 도로", "처음 가는 도로", "처음 가는 경로", "낯선 도로", "unfamiliar road"), "Ehsani Tefft 2021"),
 )
 ANSWER_FACT_SOURCES = {
-    "knowledge/product_model.yaml",
-    "knowledge/official_positions.yaml",
-    "knowledge/key_numbers.yaml",
-    "knowledge/presentation_story.yaml",
+    "knowledge/qa/field_regression_36.yaml",
+    "knowledge/field_contract.yaml",
     "knowledge/claims/deck_claims.yaml",
 }
 GUARDRAIL_SOURCES = {
-    "knowledge/conflict_map.yaml",
-    "knowledge/forbidden_claims.yaml",
-    "knowledge/glossary.yaml",
+    "knowledge/field_contract.yaml",
 }
 FINAL_QA_SOURCE = "knowledge/qa/final_qa_50.yaml"
+FIELD_QA_SOURCE = "knowledge/qa/field_regression_36.yaml"
+CURRENT_SCRIPT_SOURCE = "sources/13_presentation_script_final_0818.md"
 
 
 class KnowledgeService:
@@ -74,6 +72,12 @@ class KnowledgeService:
         self.root = self.corpus.root
         self.qa_catalog = yaml.safe_load((self.root / FINAL_QA_SOURCE).read_text(encoding="utf-8"))
         self.qa_by_id = {item["id"]: item for item in self.qa_catalog["questions"]}
+        self.field_qa = yaml.safe_load((self.root / FIELD_QA_SOURCE).read_text(encoding="utf-8"))
+        self.field_qa_by_question = {
+            normalize(question): item
+            for item in self.field_qa["questions"]
+            for question in (item["question_ko"], item["question_en"])
+        }
 
     def stats(self) -> dict[str, Any]:
         authorities: dict[str, int] = {}
@@ -477,7 +481,7 @@ class KnowledgeService:
                 and document.status.lower() not in EXCLUDED_CURRENT_STATUSES
             ),
         )
-        conflicts = self._search_source(query, "knowledge/conflict_map.yaml", top_k=6)
+        conflicts = self._search_source(query, "knowledge/field_contract.yaml", top_k=6)
         return {
             "query": query,
             "current": [hit.as_dict(include_body=True) for hit in current],
@@ -525,7 +529,16 @@ class KnowledgeService:
                 if item["id"] in allowed_ids
             ]
 
-        selected = [self.qa_by_id[item_id] for item_id in ordered_ids[:limit]]
+        # The 50-question file is retained as a question-selection catalog only.
+        # Its older answer prose must never bypass the current field contract.
+        selected = [
+            {
+                key: self.qa_by_id[item_id][key]
+                for key in ("id", "theme", "rank", "question_ko", "question_en")
+                if key in self.qa_by_id[item_id]
+            }
+            for item_id in ordered_ids[:limit]
+        ]
         return {
             "query": query,
             "theme": theme,
@@ -536,13 +549,11 @@ class KnowledgeService:
             "matched_count": len(ordered_ids),
             "questions": selected,
             "response_contract": {
-                "first": "short_answer_ko 또는 short_answer_en으로 먼저 직접 답함",
-                "why": "why_this_answer로 왜 이렇게 답하는지 이해함",
-                "expand": "추가 질문에서만 product_logic과 calculation_or_validation을 사용함. 한 번에 전부 읽지 않음",
-                "follow_up": "follow_up의 화살표 연결을 실제 후속질문 답변으로 풀어 설명함",
-                "boundary": "answer_boundary는 과장 방지용이며 사용자가 묻지 않은 경고 목록으로 읽지 않음",
+                "answer": "반환된 질문을 prepare_answer_context에 다시 넣어 최신 field_contract로 답함",
+                "language": "질문 언어와 같은 언어, 영어는 짧고 쉬운 문장",
+                "boundary": "이 도구는 질문 후보만 고르고 과거 답변 본문은 반환하지 않음",
             },
-            "authority_rule": "이 카탈로그는 승인된 연습 표면입니다. 사실 충돌 시 current canon이 우선합니다.",
+            "authority_rule": "50문항은 연습용 질문 표면일 뿐이며 답변 권한은 최신 덱·field_contract·36문항 공식 답변에 있습니다.",
         }
 
     def prepare_answer_context(
@@ -553,6 +564,7 @@ class KnowledgeService:
         evidence_scope: str = "stage",
     ) -> dict[str, Any]:
         routing = route_question(question)
+        approved_answer = self.field_qa_by_question.get(normalize(question))
         normalized_question = question.lower()
         calculation_requested = any(
             term in normalized_question
@@ -569,6 +581,17 @@ class KnowledgeService:
                 and document.source_path in ANSWER_FACT_SOURCES
             ),
         )
+        if approved_answer:
+            approved_id = approved_answer["id"]
+            approved_hits = self._filtered_search(
+                approved_id,
+                top_k=1,
+                predicate=lambda document: (
+                    document.source_path == FIELD_QA_SOURCE
+                    and document.id.rsplit("#", 1)[-1] == approved_id
+                ),
+            )
+            current = self._merge_unique_hits(approved_hits, current, limit=7)
         if routing.route == "deck_context":
             deck = self._search_source(question, "knowledge/claims/deck_claims.yaml", top_k=5)
             current = self._merge_unique_hits(deck, current, limit=7)
@@ -629,7 +652,7 @@ class KnowledgeService:
             term in question.lower()
             for term in ("대본", "발표자", "파트 배분", "script", "speaker part")
         )
-        curated_qa = self._filtered_search(
+        curated_qa = [] if approved_answer else self._filtered_search(
             question,
             top_k=4,
             predicate=lambda document: (
@@ -643,7 +666,7 @@ class KnowledgeService:
             predicate=lambda document: (
                 document.authority == "supporting"
                 and script_context_requested
-                and document.source_path == "sources/12_presentation_script_v1_0810.md"
+                and document.source_path == CURRENT_SCRIPT_SOURCE
             ),
         )
         supporting = self._merge_unique_hits(
@@ -651,10 +674,10 @@ class KnowledgeService:
             curated_qa,
             limit=6,
         )
-        conflicts = self._search_source(question, "knowledge/conflict_map.yaml", top_k=3)
+        conflicts = self._search_source(question, "knowledge/field_contract.yaml", top_k=3)
         glossary = self._search_source(
             question,
-            "knowledge/glossary.yaml",
+            "knowledge/field_contract.yaml",
             top_k=4,
             statuses={"active"},
         )
@@ -664,7 +687,7 @@ class KnowledgeService:
                 question,
                 top_k=5,
                 predicate=lambda document: (
-                    document.source_path == "knowledge/product_model.yaml"
+                    document.source_path == "knowledge/field_contract.yaml"
                     and document.status in OPEN_ITEM_STATUSES
                 ),
             )
@@ -694,12 +717,12 @@ class KnowledgeService:
                 "material_priority": list(routing.material_priority),
             },
             "response_contract": {
-                "default": "직접 답하는 짧고 쉬운 결론 2~4문장",
+                "default": "질문 언어로 직접 답하고, 기본 80~150단어 안에서 짧고 쉬운 결론을 먼저 제시",
                 "evidence": "근거 요청 시 직접 연결된 대표 결과 하나와 적용 범위만 설명",
                 "expand": "계산·추가 수치·한계는 요청받은 층만 확장",
                 "capture_gap": "캡처 요청에 정확한 원문이 없으면 '현재 연결된 원문 캡처는 없습니다.' 한 문장만 추가",
                 "hide": "도구명·내부 ID·YAML 필드·통계·검색/캡처 처리 규칙",
-                "english": "고정 용어를 유지한 짧은 문장",
+                "english": "GAIP 현장에서 말하기 쉬운 짧은 문장과 고정 용어",
                 "requested_layers": {
                     "evidence": evidence_requested,
                     "calculation": calculation_requested,
@@ -707,11 +730,13 @@ class KnowledgeService:
                 },
             },
             "answer_instruction": (
-                "결론과 필요한 이유만 2~4문장으로 먼저 답하세요. 질문하지 않은 다른 수치·경고·구현 이력을 한꺼번에 나열하지 "
+                "질문과 같은 언어로 답하고 첫 1~2문장에 결론을 제시하세요. 기본 답은 80~150단어 이내로 하되, "
+                "필요하면 Main answer / Evidence / Limitation 순서로 구성하세요. 질문하지 않은 다른 수치·경고·구현 이력을 한꺼번에 나열하지 "
                 "마세요. 근거는 대표 결과 하나와 사용 범위만 말하고, 계산·캡처는 requested_layers가 true인 층만 "
                 "설명하세요. 원문 캡처가 없으면 내부 사유 없이 '현재 연결된 원문 캡처는 없습니다.'라고만 하세요. "
                 "덱 발췌를 원문처럼 대체하거나 상품 결정을 문헌이 증명했다고 말하지 마세요."
             ),
+            "approved_answer": approved_answer,
             "current_facts": [answer_hit(hit, 700) for hit in current[:4]],
             "evidence": [
                 {
@@ -730,7 +755,7 @@ class KnowledgeService:
             "explanation_material": [
                 answer_hit(
                     hit,
-                    900 if hit.document.source_path == "sources/12_presentation_script_v1_0810.md" else 0,
+                    900 if hit.document.source_path == CURRENT_SCRIPT_SOURCE else 0,
                 )
                 for hit in supporting[:3]
             ],
@@ -903,7 +928,7 @@ class KnowledgeService:
             topic,
             top_k=5,
             predicate=lambda document: (
-                document.source_path == "knowledge/product_model.yaml"
+                document.source_path == "knowledge/field_contract.yaml"
                 and document.status in OPEN_ITEM_STATUSES
             ),
         )
@@ -1025,7 +1050,7 @@ class KnowledgeService:
         eligible = [
             document
             for document in self.corpus.documents
-            if document.source_path == "knowledge/product_model.yaml"
+            if document.source_path == "knowledge/field_contract.yaml"
             and document.status in OPEN_ITEM_STATUSES
             and (status_filter == "all" or document.status == status_filter)
         ]

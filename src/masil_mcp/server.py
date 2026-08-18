@@ -23,7 +23,7 @@ load_dotenv()
 
 PUBLIC_URL = os.getenv("MASIL_PUBLIC_URL", "https://masil-mcp.summit1123.co.kr").rstrip("/")
 ICON_PATH = Path(__file__).resolve().parent / "static" / "masil-icon.png"
-SERVER_VERSION = "0.7.4"
+SERVER_VERSION = "0.8.0"
 
 INSTRUCTIONS = """
 MASIL 결선 Q&A 준비용 근거 서버입니다. 팀원은 도구 이름을 배울 필요가 없습니다. MASIL의 상품,
@@ -31,7 +31,9 @@ MASIL 결선 Q&A 준비용 근거 서버입니다. 팀원은 도구 이름을 �
 prepare_answer_context를 조용히 호출해 재료를 확인한 뒤 평소 대화처럼 답하세요. 이 도구는 질문을
 가벼운 준비 유형으로 라우팅하지만 답을 고정하지 않습니다.
 
-답은 먼저 2~4개의 짧고 쉬운 문장으로 질문에 직접 답합니다. 첫 답변에는 결론과 가장 필요한 이유만
+답은 질문과 같은 언어로 하며, 첫 1~2문장에 결론을 직접 답합니다. 기본 답변은 80~150단어 안에서
+짧고 쉬운 문장으로 구성하고, 필요할 때만 Main answer / Evidence / Limitation 구조를 사용합니다.
+첫 답변에는 결론과 가장 필요한 이유만
 넣으세요. 문헌 수치·계산식·구현값·한계·주의사항은 사용자가 그 층을 직접 요청했거나 후속 질문을
 했을 때만 펼칩니다. 근거를 요청해도 질문과 직접 연결된 대표 수치 하나를 우선하고, 같은 문헌의 다른
 통계나 질문하지 않은 반박·금지 문구를 한꺼번에 나열하지 마세요. 도구명, 내부 ID, YAML 필드,
@@ -234,7 +236,7 @@ def create_server(
             "how_to_use": "평소처럼 질문하거나 대본·Q&A 초안을 붙여 넣으면 됩니다. 팀원이 도구 이름이나 명령어를 외울 필요는 없습니다.",
             "example_prompts": [
                 "내일 8분 Q&A에서 가장 중요한 질문 10개와 쉬운 답변을 보여줘.",
-                "생활권·점수·할인 테마의 S급 질문부터 연습하자.",
+                "생활권·점수·환급 테마의 S급 질문부터 연습하자.",
                 "생활권 밖이 위험하다면서 왜 위치만으로 감점하지 않는지 쉽게 설명해줘.",
                 "이 Q&A 답변이 덱과 충돌하는지 보고 짧고 쉬운 영어로 고쳐줘.",
                 "Appendix B의 생활권 형성 논리와 근거를 같이 설명해줘.",
@@ -246,7 +248,7 @@ def create_server(
                 "기본 검색은 현재 사실만 사용합니다.",
                 "정확히 연결된 근거 캡처는 별도 요청 없이 관련 답변에 함께 표시합니다.",
                 "가드레일을 예상 질문으로 자동 변환하지 않습니다.",
-                "예상 질문 요청에는 승인된 50문항과 상위 10문항을 우선 사용합니다.",
+                "예상 질문 요청에는 50개 질문 후보를 쓰되 답은 최신 현장 계약으로 다시 구성합니다.",
                 "캡처 ID를 추측하지 않고 문헌 연결을 먼저 확인합니다.",
             ],
         }
@@ -335,10 +337,9 @@ def create_server(
     ) -> dict:
         """Use for expected questions, killer questions, or Q&A practice.
 
-        Returns the approved 50-question catalog with priority, short Korean and
-        easy-English answers, answer rationale, product logic, calculations or
-        validation, full follow-up answers, and speaking boundaries. Give the
-        short answer first; do not dump every layer in one response. Use
+        Returns the 50-question selection catalog without its older answer prose.
+        For each selected question, use prepare_answer_context so the answer is
+        rebuilt from the latest field contract. Use
         top_only=true for the ten questions most likely to matter in an 8-minute
         Q&A. Use a theme or free-text query to narrow the practice set. Do not
         invent questions from guardrails when this catalog already covers the

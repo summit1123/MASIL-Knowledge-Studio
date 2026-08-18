@@ -1,15 +1,15 @@
 # 팀 발표 준비용 MCP 계약. 공개 런타임은 현재 정본과 실제 사용 문헌만 검색한다.
 
-version: 2026-08-11-qna-final-v1
+version: 2026-08-18-field-qa-v1
 default_mode: qa_support
 mcp_implementation_allowed: true
 
 runtime_sources:
   deck:
     uri: deck://gaip-2026-final-9p
-    sha256: 56dba11941b1f2491f469c3c37d2555326a36c95aa7c0d977da2d70fb83cd35b
+    sha256: 58521989fbad9655cb4a979e28f75bc2a2383dede60a58ae1031050b2227d86e
     pages: 9
-    reviewed: 2026-08-10
+    reviewed: 2026-08-18
 provenance_only:
   master_qa_origin:
     uri: https://claude.ai/code/artifact/9dea93fd-3645-48c6-8166-3e4cdcad5abc
@@ -24,64 +24,46 @@ provenance_only:
     canonical_for_current_facts: false
 
 canonical_sources:
-  current_implementation:
-    file: IMPLEMENTATION.md
-    role: 2026-08-10 GaipStudio 작업 checkout의 과거 점수·Care·할인 계산 감사
-    portability_note: MKS 밖의 미커밋 작업 파일을 확인한 기록이므로 재현 가능한 릴리스 커밋 고정 전에는 구현 진실의 임시 스냅샷
-  product_model:
-    file: knowledge/product_model.yaml
-    role: 질문 유형별 현재 상품 설계와 미확정 경계
+  field_contract:
+    file: knowledge/field_contract.yaml
+    role: 현장 Q&A의 현재 상품 논리·용어·검증 경계
+  field_answers:
+    file: knowledge/qa/field_regression_36.yaml
+    role: 36개 한국어·쉬운 영어 직접 답변 정본
   deck_claims:
     file: knowledge/claims/deck_claims.yaml
     role: 장표에 인쇄된 내용과 수정·보완 상태
-  team_positions:
-    file: knowledge/official_positions.yaml
-    filter: status == active
-    role: product_model 세부 현재 설명
 
 supporting_sources:
   current_script:
-    file: sources/12_presentation_script_v1_0810.md
-    role: 1차 최종 발표 대본의 표현·예상 질문 표면
-    source_attachment_sha256: 55cf70ad9336d8167b37d1b1bd2d6e26cbbf7de4209fed789170ee8c0d641217
-    received: 2026-08-11
+    file: sources/13_presentation_script_final_0818.md
+    role: 최신 발표 대본의 표현·예상 질문 표면
+    source_attachment_sha256: afb01bad7c082e25968fbf615fb900ba67a84713a1005a99bbe3ad5ee515264b
+    normalized_file_sha256: 4ab953782980eb08c621955942b2e7b7a9010e6375a32f467b49885fa814babb
+    normalization: 원문 내용은 동일하며 줄 끝 공백과 파일 끝 빈 줄만 정규화함
+    received: 2026-08-18
     canonical_for_current_facts: false
-    rule: 덱·product_model·active official position과 충돌하면 현재 정본이 우선하며, 대본 문장은 Q&A 질문 의도와 쉬운 말투를 파악하는 데만 사용
+    rule: 최신 덱·field_contract·36문항 정본과 충돌하면 현재 정본이 우선하며, 대본 문장은 Q&A 질문 의도와 쉬운 말투를 파악하는 데만 사용
 
 authority_routing:
-  file: knowledge/product_model.yaml
-  section: authority_by_question_type
-  rule: 하나의 전역 우선순위가 아니라 질문 유형에 맞는 primary 자료가 결론을 정함
+  rule: 최신 덱의 보이는 사실과 field_contract의 현재 해석을 우선하고, 정확히 일치하는 36문항은 field_regression_36의 공식 답변을 사용함
 
 include:
-  - file: IMPLEMENTATION.md
-    role: historical_working_tree_implementation_audit
-  - file: knowledge/product_model.yaml
-    layer: core
-  - file: knowledge/presentation_story.yaml
-    role: presentation_narrative_map
-  - file: knowledge/conflict_map.yaml
-    role: conflict_resolution
-  - file: knowledge/coverage_matrix.yaml
-    role: readiness_and_gaps
+  - file: knowledge/field_contract.yaml
+    role: current_field_contract
   - file: knowledge/claims/deck_claims.yaml
     role: slide_content
-  - file: knowledge/official_positions.yaml
+  - file: knowledge/qa/field_regression_36.yaml
     filter: status == active
+    role: canonical_field_answer_contract
   - file: knowledge/snapshot.yaml
   - file: knowledge/qa/final_qa_50.yaml
     filter: status == active
     role: approved_qna_practice_catalog
     canonical_for_facts: false
-  - file: sources/12_presentation_script_v1_0810.md
+  - file: sources/13_presentation_script_final_0818.md
     role: current_script_question_surface
     canonical_for_facts: false
-  - file: knowledge/key_numbers.yaml
-    filter: status == active
-  - file: knowledge/glossary.yaml
-    filter: status == active
-  - file: knowledge/forbidden_claims.yaml
-    filter: status == active
   - file: knowledge/evidence/registry.yaml
     collection: presentation_entries
     filter: citation_tier == stage_citable
@@ -89,6 +71,8 @@ include:
     role: local_literature_and_deck_capture_links
 
 runtime_excluded:
+  - sources/12_presentation_script_v1_0810.md and older scripts
+  - deck claims extracted from the 2026-08-10 PDF
   - past Master Q&A exports
   - knowledge/qa/cards.yaml legacy answer cards
   - decision history and meeting records
@@ -97,12 +81,14 @@ runtime_excluded:
   - listed_only, qa_only, internal, and banned literature
   - inactive evidence captures
   - deprecated glossary and guardrail records
+  - knowledge/product_model.yaml, knowledge/official_positions.yaml, knowledge/key_numbers.yaml, knowledge/glossary.yaml, knowledge/forbidden_claims.yaml, knowledge/conflict_map.yaml, knowledge/presentation_story.yaml
+  - note: 위 7개 파일은 과거 설계와 변경 맥락 보존용이며 공개 current/canonical 검색·답변 패킷에는 포함하지 않음
   - note: 위 자료는 Git에만 보존하며 검색 인덱스·답변 패킷·공개 도구에서 반환하지 않음
 
 exclude_from_answer_support:
   - evidence with citation_tier == banned
   - statements marked prohibited_use
-  - 현재 대본 안에서 덱·product_model·active official position과 충돌하는 문장
+  - 현재 대본 안에서 최신 덱·field_contract·36문항 정본과 충돌하는 문장
   - deprecated bulk paths listed in knowledge/snapshot.yaml
 
 asset_policy:
@@ -117,7 +103,7 @@ asset_policy:
 
 retrieval_pipeline:
   - stage: current_facts
-    search: authority_routing에 따라 canonical_sources + include
+    search: 최신 deck_claims + field_contract + 정확히 일치하는 field_regression_36
     purpose: 질문 유형에 맞는 현재 결론·수치·고정 용어·허용 문헌 확보
   - stage: exact_evidence_traversal
     search: 현재 사실의 evidence_links만 탐색
@@ -143,8 +129,8 @@ client_rendering:
   trigger: prepare_answer_context가 evidence_captures를 반환한 경우에만 show_answer_evidence를 이어 호출
 
 retrieval_rules:
-  - 덱은 장표 내용의 정본이지만 모든 질문의 답을 단독 결정하지 않는다.
-  - 상품 논리·산식·문헌·시뮬레이션·변경 이유·표현은 product_model의 authority_by_question_type에 따라 각각 권한 있는 자료를 사용한다.
+  - 덱은 장표에 보이는 사실의 정본이고 field_contract는 그 사실의 현재 상품 해석 정본이다.
+  - 정확히 일치하는 36문항은 field_regression_36의 한국어·쉬운 영어 답변을 우선 사용한다.
   - 과거 Q&A·폐기 규칙·변경 이력은 공개 런타임에서 검색하거나 반환하지 않는다.
   - 팀원은 도구 이름을 알 필요가 없다. 실제 MASIL 질문과 붙여 넣은 초안은 prepare_answer_context를 기본 진입점으로 사용한다.
   - prepare_answer_context는 별도 모델 호출 없이 질문을 발표 개요·상품 논리·덱 맥락·문헌 근거·현재 주장 검토·미확정 검증·사회적 가치·초안 검토로 라우팅한다. 라우트는 답을 결정하지 않고 검색 재료의 우선순위만 정한다.
@@ -152,9 +138,9 @@ retrieval_rules:
   - 기본 답변에서는 도구명·내부 ID·YAML 필드·authority/status·corpus 통계를 노출하지 않는다.
   - forbidden_claims와 must_not_say는 주장 경계이지 예상 질문 목록이 아니다. 사용자가 요청하지 않으면 질문으로 변환하지 않는다.
   - 예상 질문은 사용자가 명시적으로 요청한 경우에만 생성하며 지식베이스 사실이 아니라 Claude가 만든 준비용 질문으로 표시한다.
-  - final_qa_50의 50문항은 승인된 연습 표면이며 사실 충돌 시 현재 상품 정본이 우선한다.
-  - 예상 질문·킬러 질문·Q&A 연습 요청은 새 질문을 임의 생성하기 전에 final_qa_50의 S/A/B 및 상위 10문항을 사용한다.
-  - 덱과 현재 상품 모델이 다르면 claim 상태와 conflict_map을 함께 반환하고, 확인된 교정은 과거 인쇄 문구보다 현재 설명에 사용한다.
+  - final_qa_50의 50문항은 질문 후보만 제공하며 과거 답변 본문은 공개하지 않는다. 각 질문의 답은 현재 field_contract로 다시 만든다.
+  - 예상 질문·킬러 질문·Q&A 연습 요청은 final_qa_50의 질문 제목만 사용하고 답은 prepare_answer_context로 구성한다.
+  - 덱 인쇄 문구에 보완이 필요하면 deck_claims의 상태와 field_contract의 현재 경계를 함께 사용한다.
   - layer가 deep인 항목(내부 계산·두 축·민감도 상세)은 기술적 설명이 필요한 질문에서 보조 재료로 사용한다.
   - 덱에 남아 있으나 팀이 철회한 문헌 수치는 deck_conflict로 알리고 그 주장을 방어하지 않는다.
   - 현재 근거가 부족하면 보조 자료로 결론을 만들어내지 말고 근거 부족과 추가 확인 항목을 답한다.

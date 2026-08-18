@@ -56,7 +56,7 @@ ROUTE_TERMS: tuple[tuple[str, tuple[str, ...], tuple[str, ...]], ...] = (
         "product_logic",
         (
             "생활권", "마실존", "zone", "dbscan", "p90", "등급", "우대", "기본", "케어", "hold",
-            "점수", "산식", "할인", "pattern change", "favorable", "standard", "care",
+            "점수", "산식", "환급", "refund", "할인", "pattern change", "favorable", "standard", "care",
         ),
         ("product_contract", "deck_claims", "implementation_boundary"),
     ),

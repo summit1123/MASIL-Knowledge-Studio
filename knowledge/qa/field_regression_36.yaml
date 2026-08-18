@@ -1,0 +1,271 @@
+meta:
+  version: 2026-08-18-field-qa-v1
+  status: active
+  role: 현장 Q&A의 직접 답변 정본
+  source_priority:
+    - latest_ppt_2026-08-18
+    - active_product_contract
+    - latest_appendix
+    - latest_script_for_plain_wording_only
+  response_contract:
+    same_language: true
+    english: short_and_easy
+    direct_answer_first: true
+    default_words: 80-150
+    never_use_legacy: true
+
+questions:
+  - id: R01
+    status: active
+    question_ko: MASIL은 한 문장으로 무엇인가?
+    question_en: What is MASIL in one sentence?
+    main_answer_ko: MASIL은 고령 운전자의 개인 생활권과 운전 변화를 함께 보아, 안전한 운전에는 환급을 제공하고 변화 신호에는 예방 지원을 연결하는 마일리지 특약입니다.
+    main_answer_en: MASIL is a mileage rider for senior drivers. It uses each driver's familiar zone and changes in driving behavior to support safer driving, premium refunds, and preventive care.
+    evidence_ko: 기존 PAYD의 주행거리 위에 생활권 안 안전, 생활권 밖 안전, 패턴 안정성을 더합니다.
+    limitation_ko: 실제 보험료와 손해율 개선폭은 아직 실데이터로 검증되지 않았습니다.
+
+  - id: R02
+    status: active
+    question_ko: MASIL이 해결하는 정확한 문제는 무엇인가?
+    question_en: What exact problem does MASIL solve?
+    main_answer_ko: 같은 거리를 운전해도 개인의 익숙한 환경과 실제 안전행동은 다르지만, 기존 마일리지 특약은 그 차이를 구분하기 어렵습니다. MASIL은 개인별 생활권과 평소 대비 변화를 추가해 그 빈틈을 보완합니다.
+    main_answer_en: Drivers can travel the same distance but face different contexts and show different behavior. MASIL adds personal familiarity and change from baseline to the mileage measure.
+
+  - id: R03
+    status: active
+    question_ko: 고령운전자 사고 자체를 해결하는 상품인가?
+    question_en: Does MASIL solve senior-driver accidents by itself?
+    main_answer_ko: 아닙니다. 사고를 모두 예측하거나 없애는 상품이 아니라, 위험 변화가 보이는 시점을 더 일찍 찾아 사고 전 예방 지원으로 연결하도록 설계한 상품입니다.
+    main_answer_en: No. MASIL does not predict or eliminate every crash. It is designed to detect meaningful changes earlier and connect the driver to preventive support.
+
+  - id: R04
+    status: active
+    question_ko: PAYD와 UBI와 무엇이 다른가?
+    question_en: How is MASIL different from PAYD and UBI?
+    main_answer_ko: PAYD는 주로 얼마나 운전했는지를 보고, UBI는 어떻게 운전했는지를 봅니다. MASIL은 여기에 어디가 그 사람에게 익숙한지와 평소 운전에서 무엇이 달라졌는지를 더합니다.
+    main_answer_en: PAYD mainly measures how much a person drives. UBI measures how the person drives. MASIL also considers personal familiarity and changes from the driver's usual pattern.
+
+  - id: R05
+    status: active
+    question_ko: 왜 생활권을 보는가?
+    question_en: Why does MASIL use a familiar zone?
+    main_answer_ko: 같은 장소도 사람마다 익숙함이 다르기 때문입니다. 생활권은 위치를 벌점으로 만들기 위한 경계가 아니라, 운전행동을 개인의 평소 맥락과 비교하기 위한 기준입니다.
+    main_answer_en: Familiarity is personal. The zone is not a penalty boundary. It gives context for comparing current driving with the driver's usual pattern.
+
+  - id: R06
+    status: active
+    question_ko: 익숙한 길은 항상 안전한가?
+    question_en: Are familiar roads always safe?
+    main_answer_ko: 아닙니다. 익숙함은 안전을 보장하지 않습니다. MASIL은 생활권 안에서도 과속, 급제동, 야간운전 같은 실제 행동을 별도의 안전점수로 봅니다.
+    main_answer_en: No. Familiarity does not guarantee safety. MASIL still measures actual behavior, such as speeding, hard braking, and night driving, inside the zone.
+
+  - id: R07
+    status: active
+    question_ko: MASIL Zone 밖으로 나가면 불이익을 받는가?
+    question_en: Is a driver penalized for leaving the MASIL Zone?
+    main_answer_ko: 아닙니다. 생활권 밖이라는 위치만으로 불이익을 주지 않습니다. 밖에서 실제 위험행동이 나타났는지를 Out-of-Zone Safety 점수로 따로 봅니다.
+    main_answer_en: No. Leaving the zone is not a penalty by itself. MASIL separately measures the driver's actual safety behavior outside the zone.
+
+  - id: R08
+    status: active
+    question_ko: Outer Zone은 위험구역인가?
+    question_en: Is the Outer Zone a danger zone?
+    main_answer_ko: 아닙니다. Outer Zone은 개인의 반복 생활권 밖이라는 중립적인 이동 맥락입니다. 병원이나 가족 방문처럼 정상적인 이동도 있으므로 위치 자체를 위험으로 판정하지 않습니다.
+    main_answer_en: No. The Outer Zone is neutral context outside the driver's repeated familiar area. A trip there can be normal, so location alone is not treated as risk.
+
+  - id: R09
+    status: active
+    question_ko: 2.5배와 76%는 같은 연구인가?
+    question_en: Do the 2.5 times and 76 percent figures come from the same study?
+    main_answer_ko: 아닙니다. 2.5배는 초행 도로의 사고 연루 가능성을 본 Ehsani와 Tefft 연구이고, 76%는 고령 운전자의 익숙한 경로 선택을 본 다른 연구입니다.
+    main_answer_en: No. The 2.5-times figure comes from Ehsani and Tefft on first-time roads. The 76-percent figure comes from a different study on older drivers' route choices.
+
+  - id: R10
+    status: active
+    question_ko: 76%는 자기규제를 증명하는가?
+    question_en: Does 76 percent prove self-regulation?
+    main_answer_ko: 아닙니다. 76%는 더 안전한 대안이 있어도 익숙한 경로를 선택한 비율입니다. 경로 선호를 보여주지만, 자기규제 전체를 증명하는 수치는 아닙니다.
+    main_answer_en: No. It shows a preference for a familiar route even when a lower-risk option existed. It does not prove all forms of self-regulation.
+
+  - id: R11
+    status: active
+    question_ko: 나머지 24%는 위험운전자인가?
+    question_en: Are the other 24 percent risky drivers?
+    main_answer_ko: 아닙니다. 그 24%는 해당 실험에서 익숙한 경로를 선택하지 않은 집단일 뿐입니다. 위험운전자라는 분류나 사고위험 수치가 아닙니다.
+    main_answer_en: No. They simply did not choose the familiar route in that study. The figure does not classify them as risky drivers.
+
+  - id: R12
+    status: active
+    question_ko: Personal Baseline이 무엇인가?
+    question_en: What is the Personal Baseline?
+    main_answer_ko: 개인 기준선은 다른 운전자와 비교하는 평균이 아니라, 그 운전자의 반복 방문지와 평소 운전 패턴입니다. 최근 달의 변화를 이 개인 기준과 비교합니다.
+    main_answer_en: The Personal Baseline is the driver's own usual visits and driving pattern. It is not a population average. MASIL compares recent driving with that personal reference.
+
+  - id: R13
+    status: active
+    question_ko: Pattern Change가 발생하면 MASIL Zone도 바뀌는가?
+    question_en: Does the MASIL Zone change when Pattern Change occurs?
+    main_answer_ko: 자동으로 같은 의미로 바뀌는 것은 아닙니다. 생활권 지도는 매달 직전 60일의 반복 방문으로 갱신하고, Pattern Change는 현재 달의 이동과 위험행동이 직전 두 달과 얼마나 달라졌는지를 별도로 봅니다.
+    main_answer_en: Not automatically. The zone map is refreshed from the previous 60 days of repeated visits. Pattern Change separately compares the current month with the previous two months.
+
+  - id: R14
+    status: active
+    question_ko: 2개월 기준은 fixed인가 rolling인가?
+    question_en: Is the two-month baseline fixed or rolling?
+    main_answer_ko: 현재 구현은 rolling입니다. 생활권은 매달 현재 달을 제외한 직전 60일로 다시 만들고, 변화 신호도 현재 달을 직전 두 달의 월 지표와 비교합니다. 처음 두 달은 초기 기준을 만드는 관찰기간입니다.
+    main_answer_en: It is rolling in the current implementation. The zone uses the previous 60 days and excludes the current month. Change signals also compare the current month with the previous two monthly measures.
+
+  - id: R15
+    status: active
+    question_ko: MASIL Zone은 어떻게 형성하는가?
+    question_en: How is a MASIL Zone formed?
+    main_answer_ko: 서로 다른 3일 이상 반복 방문한 도착지를 DBSCAN으로 묶어 거점을 찾습니다. 각 거점에는 최소 500미터 Core와 개인 방문거리의 P90을 반영한 반경을 적용하며, 바깥은 Outer Zone으로 표시합니다.
+    main_answer_en: DBSCAN groups destinations visited on at least three distinct days. Each anchor gets a 500-meter Core and a personal P90-based radius. The area outside is marked as the Outer Zone.
+
+  - id: R16
+    status: active
+    question_ko: DBSCAN과 P90의 역할 차이는 무엇인가?
+    question_en: What are the different roles of DBSCAN and P90?
+    main_answer_ko: DBSCAN은 반복 방문이 모이는 거점의 위치를 찾습니다. P90은 그 거점 주변에서 개인 방문의 90%를 포함하는 반경을 정해 사람마다 다른 생활범위를 반영합니다.
+    main_answer_en: DBSCAN finds repeated-visit anchors. P90 sets a personal radius around each anchor that covers 90 percent of the driver's visits.
+
+  - id: R17
+    status: active
+    question_ko: 네 가지 점수와 가중치는 무엇인가?
+    question_en: What are the four scores and their weights?
+    main_answer_ko: 현재 후보 가중치는 주행거리 30%, 생활권 안 안전 30%, 생활권 밖 안전 20%, 패턴 안정성 20%입니다. 네 점수를 월 통합점수로 합칩니다.
+    main_answer_en: The current candidate weights are Mileage 30%, In-Zone Safety 30%, Out-of-Zone Safety 20%, and Pattern Stability 20%. They form the monthly integrated score.
+
+  - id: R18
+    status: active
+    question_ko: 왜 In-Zone이 30%이고 Out-Zone이 20%인가?
+    question_en: Why is In-Zone 30 percent and Out-of-Zone 20 percent?
+    main_answer_ko: 생활권 안 데이터가 더 자주 관찰되어 안정적인 개인 기준을 만들기 쉽고, 생활권 밖은 관찰량이 적은 보조 맥락이기 때문입니다. 다만 30%와 20%는 최종 요율이 아니라 민감도 분석에서 안정성을 보인 초기 후보입니다.
+    main_answer_en: In-zone data is usually observed more often and gives a more stable personal reference. Out-of-zone data is a supporting context with fewer observations. The 30% and 20% weights are initial candidates, not final tariff values.
+
+  - id: R19
+    status: active
+    question_ko: 가중치는 최종값인가?
+    question_en: Are the weights final?
+    main_answer_ko: 아닙니다. 30/30/20/20은 합성 시나리오의 민감도 분석에서 안정 구간에 있었던 초기 후보입니다. 실제 데이터가 들어오면 계리·공정성 검증을 거쳐 재보정합니다.
+    main_answer_en: No. The 30/30/20/20 weights are stable initial candidates from synthetic sensitivity analysis. They must be recalibrated with real data, actuarial review, and fairness checks.
+
+  - id: R20
+    status: active
+    question_ko: Favorable, Standard, Care는 무엇인가?
+    question_en: What are Favorable, Standard, and Care?
+    main_answer_ko: 매달 네 점수와 변화 신호를 바탕으로 표시하는 세 단계입니다. Favorable은 안전한 운전, Standard는 일반 상태, Care는 이동과 위험행동 변화가 함께 나타나 사람의 검토와 지원이 필요한 상태입니다. Hold는 데이터 부족 상태로 별도입니다.
+    main_answer_en: They are the three monthly results. Favorable shows safer driving, Standard is the regular result, and Care signals that mobility and risky behavior changed together and need human review. Hold is a separate insufficient-data state.
+
+  - id: R21
+    status: active
+    question_ko: 안전한 운전자에게 어떤 혜택이 있는가?
+    question_en: What benefit does a safe driver receive?
+    main_answer_ko: 안전한 운전자는 연간 점수와 Favorable 월 기록에 따라 더 높은 보험료 환급 후보가 될 수 있습니다. 구체적인 환급곡선과 비율은 실제 데이터와 계리 검증 전의 후보값입니다.
+    main_answer_en: A safe driver can qualify for a higher premium refund based on the annual score and Favorable months. The exact refund curve is still a candidate and needs real-data and actuarial validation.
+
+  - id: R22
+    status: active
+    question_ko: Care 운전자에게 실제로 무엇을 하는가?
+    question_en: What actually happens for a Care driver?
+    main_answer_ko: 직원이 그달의 이동 변화와 위험행동 근거를 확인하고, 오류가 아니라면 고객에게 이유를 설명한 뒤 선택 가능한 예방 지원을 안내합니다. Care 자체가 환급을 깎거나 건강 상태를 진단하지 않습니다.
+    main_answer_en: A staff member reviews that month's mobility and behavior evidence. If the signal is valid, the driver receives an explanation and optional preventive support. Care does not reduce the refund by itself or diagnose health.
+
+  - id: R23
+    status: active
+    question_ko: AI가 보험료나 등급을 결정하는가?
+    question_en: Does AI decide the premium or tier?
+    main_answer_ko: 아닙니다. 월 점수와 세 단계는 공개 가능한 고정 규칙으로 계산하고, 환급과 고객 안내는 사람이 검토합니다. AI는 데이터 생성 보조와 설명 작성에 사용됩니다.
+    main_answer_en: No. Fixed, explainable rules calculate the monthly score and result. People review the refund and customer communication. AI supports data generation and plain-language explanations.
+
+  - id: R24
+    status: active
+    question_ko: LLM은 무엇을 하는가?
+    question_en: What does the LLM do?
+    main_answer_ko: LLM은 판정 이유 코드와 월별 근거를 고객과 직원이 이해하기 쉬운 문장으로 바꿉니다. 점수, 등급, 환급을 계산하거나 확정하지 않습니다.
+    main_answer_en: The LLM turns reason codes and monthly evidence into clear explanations. It does not calculate or approve the score, result, or refund.
+
+  - id: R25
+    status: active
+    question_ko: 직원은 무엇을 검토·확정하는가?
+    question_en: What does the staff member review and approve?
+    main_answer_ko: 직원은 데이터 오류와 변화 근거를 확인하고, Care 안내와 지원 연결을 승인합니다. 실제 상품에서는 환급 적용과 고객 통보도 보험사의 운영·계리·법무 절차에 따라 사람이 확정합니다.
+    main_answer_en: Staff checks data quality and the reason for the change signal, then approves Care communication and support. In a real product, people also approve refunds and customer notices under insurer procedures.
+
+  - id: R26
+    status: active
+    question_ko: 합성 데이터로 무엇을 검증했는가?
+    question_en: What did the synthetic data validate?
+    main_answer_ko: 60명의 가상 운전자와 3개 환경, 180개 시나리오로 같은 입력에서 같은 결과가 나오는지, 세 단계 규칙과 예외가 의도대로 작동하는지, 위치만으로 불이익이 생기지 않는지를 검증했습니다.
+    main_answer_en: Across 60 synthetic drivers and three environments, or 180 scenarios, we tested reproducibility, rule behavior, exception handling, and location neutrality.
+
+  - id: R27
+    status: active
+    question_ko: 합성 데이터로 무엇을 검증하지 못했는가?
+    question_en: What did the synthetic data not validate?
+    main_answer_ko: 실제 사고 예측력, 최적 가중치와 환급률, 손해율 개선, 고객 참여, 공정성은 검증하지 못했습니다. 이 항목들은 실제 운전과 보험 데이터를 사용한 파일럿에서 확인해야 합니다.
+    main_answer_en: It did not validate real crash prediction, final weights or refunds, loss-ratio improvement, customer take-up, or fairness. Those require a real-data pilot.
+
+  - id: R28
+    status: active
+    question_ko: Jackie와 Tom 사례가 보여주는 핵심은 무엇인가?
+    question_en: What is the main point of the Jackie and Tom example?
+    main_answer_ko: 두 사람은 연간 주행거리가 비슷해 기존 PAYD에서는 같은 환급을 받지만, 위험 이벤트와 생활권 밖 안전점수는 크게 다릅니다. MASIL은 거리만 같다고 같은 위험으로 보지 않는다는 점을 보여줍니다.
+    main_answer_en: Jackie and Tom drive similar annual distances, so PAYD gives the same refund. Their risky events and out-of-zone safety are very different. MASIL separates that behavior difference.
+    limitation_ko: 화면의 3%와 22.6%는 합성 경제성 예시이며 Care 자체의 차감 결과가 아닙니다.
+
+  - id: R29
+    status: active
+    question_ko: 보험사가 MASIL을 출시할 이유는 무엇인가?
+    question_en: Why should an insurer launch MASIL?
+    main_answer_ko: 보험사는 같은 저주행 고객 안에서도 위험을 더 정교하게 구분하고, 위험 변화가 큰 고객에게 사고 전에 지원할 수 있습니다. 이는 환급의 정교화, 역선택 완화, 장기 위험데이터 축적이라는 사업 가치를 만듭니다.
+    main_answer_en: MASIL helps an insurer separate risk more precisely among low-mileage drivers and act before a crash. It supports better refund allocation, lower adverse-selection risk, and richer long-term risk data.
+
+  - id: R30
+    status: active
+    question_ko: 손해율 개선이 검증됐는가?
+    question_en: Has MASIL proven a better loss ratio?
+    main_answer_ko: 아닙니다. 현재 시뮬레이션은 위험 신호를 찾아 예방 지원으로 연결하는 상품 로직을 검증했습니다. 실제 손해율 개선폭은 보험사의 청구·손해액 데이터로 파일럿에서 측정해야 합니다.
+    main_answer_en: No. The simulation validated the product logic for detecting change and enabling prevention. The actual loss-ratio effect must be measured with real claims and loss data in a pilot.
+
+  - id: R31
+    status: active
+    question_ko: Senior에게 어떤 가치가 있는가?
+    question_en: What value does MASIL give senior drivers?
+    main_answer_ko: 안전운전에는 더 정교한 환급 기회를 제공하고, 자신의 운전 변화와 이유를 이해하게 합니다. 위험 신호가 생기면 이동을 바로 제한하는 대신 더 안전하게 계속 이동할 수 있도록 예방 지원을 제안합니다.
+    main_answer_en: Senior drivers can receive a more precise refund and understand changes in their own driving. When a risk signal appears, MASIL offers support for safer mobility instead of immediate restriction.
+
+  - id: R32
+    status: active
+    question_ko: Society에 어떤 가치가 있는가?
+    question_en: What value does MASIL give society?
+    main_answer_ko: 고령자의 이동권과 교통안전을 대립시키지 않고, 자발적 예방을 통해 함께 지원하는 포용적 보험 모델을 제안합니다. 사고와 사회비용 감소는 기대효과이며 아직 실증 성과는 아닙니다.
+    main_answer_en: MASIL supports mobility and road safety together through voluntary prevention. It is an inclusive insurance model. Lower crashes and social costs are expected outcomes, not yet proven results.
+
+  - id: R33
+    status: active
+    question_ko: 실제 데이터가 들어오면 무엇을 보정하는가?
+    question_en: What will be recalibrated with real data?
+    main_answer_ko: 생활권 군집 파라미터, 개인 반경, 네 점수의 가중치, 변화 기준, 환급곡선, Care 운영기준을 보정합니다. 사고·청구·공정성·고객 참여 결과도 함께 확인합니다.
+    main_answer_en: We will recalibrate clustering parameters, personal radii, score weights, change thresholds, the refund curve, and Care operations. We will also test claims, fairness, and customer participation.
+
+  - id: R34
+    status: active
+    question_ko: 개인정보와 위치정보는 어떻게 보호하는가?
+    question_en: How does MASIL protect personal and location data?
+    main_answer_ko: 필요한 데이터만 수집하고, 목적지 이름은 점수 입력에서 가리며, 원본 위치와 판정·고객화면의 접근권한을 분리합니다. 원본 GPS의 보관·파기 기간과 동의 절차는 출시 국가의 법무 검토 후 확정합니다.
+    main_answer_en: MASIL minimizes data collection, masks destination names, and separates access to raw location data, decisions, and customer views. Retention and consent rules must be finalized through local legal review.
+
+  - id: R35
+    status: active
+    question_ko: 여러 생활권이 있는 사람은 불리한가?
+    question_en: Is a driver with several familiar zones disadvantaged?
+    main_answer_ko: 아닙니다. 반복 방문 조건을 충족하면 집, 병원, 가족집처럼 여러 거점을 각각 생활권으로 만들 수 있습니다. 거점 수 자체는 벌점이 아닙니다.
+    main_answer_en: No. MASIL can form several familiar anchors, such as home, a hospital, or a family member's home. The number of anchors is not a penalty.
+
+  - id: R36
+    status: active
+    question_ko: 넓은 지역을 안정적으로 운전하는 사람은 불리한가?
+    question_en: Is a driver who safely covers a wide area disadvantaged?
+    main_answer_ko: 아닙니다. 생활권 밖 비중이 커도 안전하게 운전하면 높은 Out-of-Zone Safety 점수를 받을 수 있습니다. Jackie와 Tom 대조도 거리나 위치보다 실제 행동이 결과를 가른다는 점을 보여줍니다.
+    main_answer_en: No. A driver can travel widely and still receive a high Out-of-Zone Safety score. The result depends on actual behavior, not distance or location alone.

@@ -99,7 +99,8 @@ async def test_final_qa_practice_tool_returns_approved_top10() -> None:
         "T1-01", "T1-03", "T1-09", "T2-01", "T2-03",
         "T2-04", "T3-02", "T4-02", "T5-01", "T5-02",
     ]
-    assert all(item["short_answer_ko"] and item["short_answer_en"] for item in payload["questions"])
+    assert all(item["question_ko"] for item in payload["questions"])
+    assert all("short_answer_ko" not in item and "short_answer_en" not in item for item in payload["questions"])
 
 
 @pytest.mark.asyncio

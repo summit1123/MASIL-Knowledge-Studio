@@ -4,28 +4,26 @@ MASIL의 8분 Q&A 준비를 위해 문제정의, 상품 설계, 기술, 근거, 
 
 지식 정합성 검토를 통과한 현재 정본을 FastMCP 서버로 제공한다. 서버는 답변을 고정해 대신 말하는 도구가 아니라, Claude가 심사 질문에 맞는 현재 사실·덱 문구·근거·구현 상태·주의점을 짧게 가져오도록 돕는 Q&A 재료 계층이다. 팀원은 도구 이름을 외우지 않고 평소처럼 질문하거나 Q&A 초안을 붙여 넣으면 된다.
 
-## 네 개의 지식층
+## 현장 Q&A 지식층
 
-1. `knowledge/presentation_story.yaml` — 문제정의부터 마무리까지 발표 전체 논리
-2. `knowledge/product_model.yaml` — 생활권·점수·Care·할인·AI·프라이버시·검증·사업을 포함한 전체 상품 모델
-3. `knowledge/evidence/registry.yaml`과 `knowledge/claims/deck_claims.yaml` — 문헌 근거와 최종 덱 인쇄 사실
-4. `knowledge/qa/final_qa_50.yaml` — 5개 테마, S/A/B, 상위 10개로 정리한 최종 Q&A 연습 카탈로그
-5. `knowledge/conflict_map.yaml`과 `knowledge/history/decision_log.yaml` — 현재 설명과 과거 설계의 충돌·변경 이유
+1. `knowledge/claims/deck_claims.yaml` — 2026-08-18 최종 9장 덱에 보이는 사실과 구두 보완점
+2. `knowledge/field_contract.yaml` — 생활권·월 점수·Care·연간 환급·AI·검증 한계를 정리한 현장 상품 계약
+3. `knowledge/qa/field_regression_36.yaml` — 한국어와 쉬운 영어로 고정한 36개 핵심 질문의 공식 답변
+4. `knowledge/evidence/registry.yaml`과 `knowledge/evidence/capture_index.yaml` — 현재 덱이 실제 사용하는 문헌 근거와 로컬 캡처 연결
+5. `knowledge/qa/final_qa_50.yaml`과 `sources/13_presentation_script_final_0818.md` — 예상 질문 제목과 최신 발표 흐름을 찾는 보조 표면
 
-`knowledge/coverage_matrix.yaml`은 영역별 완성도와 미확정 항목을 기록한다.
-`IMPLEMENTATION.md`는 2026-08-10 외부 데모 작업 트리에서 확인한 계산을 보존한 과거 감사 기록이며 기본 Q&A 정본이 아니다.
+과거 `product_model`, `presentation_story`, `conflict_map`, `cards`, 결정 이력과 이전 대본은 Git에 보존하지만 공개 검색과 답변 패킷에서는 제외한다. `IMPLEMENTATION.md`도 2026-08-10 외부 데모 작업 트리의 과거 감사 기록일 뿐 현장 Q&A 정본이 아니다.
 
 ## 질문 유형별 정본
 
 하나의 전역 우선순위를 두지 않는다.
 
 - 장표에 무엇이 적혔는가 → `deck_claims.yaml`
-- 현재 상품 논리는 무엇인가 → `product_model.yaml`
-- 수치와 시뮬레이션 결과는 무엇인가 → `key_numbers.yaml`
+- 현장에서 어떤 뜻으로 설명하는가 → `field_contract.yaml`
+- 핵심 질문에 어떤 문장으로 답하는가 → `field_regression_36.yaml`
 - 문헌이 무엇을 지지하는가 → `evidence/registry.yaml`
-- 왜 설계가 바뀌었는가 → `conflict_map.yaml`과 `decision_log.yaml`
-- 발표에서 어떻게 쉽게 말하는가 → `glossary.yaml`과 `final_qa_50.yaml`
-- 현재 화면이 실제로 어떻게 계산하는가 → `IMPLEMENTATION.md`
+- 예상 질문을 더 연습하는가 → `final_qa_50.yaml`의 질문 제목을 현재 계약으로 다시 답함
+- 발표 표현과 흐름을 확인하는가 → `13_presentation_script_final_0818.md`를 보조로 사용함
 
 과거 Q&A와 구현 감사는 Git에 보존하지만 기본 답변에는 넣지 않는다. 현재 사실은 정본 자료가 결정하고, 최종 Q&A 카탈로그는 이를 짧은 한글·쉬운 영어·답변 이유·심화 논리·계산·후속답변으로 연습하기 위한 표면이다.
 
@@ -38,7 +36,7 @@ Claude가 내부적으로 사용하는 도구:
 - `connector_guide` — 팀원에게 명령어가 아니라 평범한 질문 예시로 사용법 안내
 - `search_knowledge` — 제목·태그·메타데이터·본문을 따로 가중한 BM25F형 검색, 한국어 문자 n-gram, 한영 고정 용어 별칭
 - `prepare_topic_brief` — 한 주제의 현재 입장·근거·주장 경계·미검증 범위·쉬운 표현 재료. 예상 질문은 만들지 않음
-- `prepare_qa_practice` — 승인된 50문항을 테마·S/A/B·상위 10개·검색어로 조회하고 짧은 한·영 답변부터 심화 논리·계산·후속답변까지 단계적으로 제공
+- `prepare_qa_practice` — 50개 예상 질문의 테마·S/A/B·상위 10개를 조회하되, 답변은 과거 본문이 아니라 현재 `field_contract`와 36문항 정본으로 다시 구성
 - `prepare_answer_context` — 일반 MASIL 질문과 붙여 넣은 초안의 기본 진입점. 별도 AI 호출 없이 질문을 8개 준비 유형으로 가볍게 라우팅하고, 현재 사실에서 정확한 문헌·캡처 링크를 순회해 짧은 답변 재료를 만듦
 - `show_answer_evidence` — 답변 재료에 정확히 연결된 캡처가 있을 때 별도 요청 없이 최대 2개를 대화 안의 증거 카드로 표시
 - `explain_product_logic` — 생활권, 점수, Care, 할인 등 상품 논리
@@ -77,8 +75,8 @@ cp .env.example .env
 - 시장 규모·채널·경쟁·차별성·팀·파트너·파일럿 측정 설계
 - 계절성·다중거주·드리프트·재보정과 실제 코드 기반 검증
 - 현재 구현 checkout을 재현 가능한 커밋·배포 산출물로 고정
-- 연간 점수-기본 할인율 매핑과 Favorable 후보 `+3%p`의 계리·파일럿 검증
-- 발표 직전 대본 수정본과 수정 예정 PPT/PDF의 최종 버전 동기화
+- 연간 점수-환급 매핑과 Favorable 후보 추가 환급의 계리·파일럿 검증
+- 최종 대본 이후 현장 수정이 생길 경우 덱·대본·36문항의 동기화
 
 남은 항목 15개와 각 항목에서 지금 말할 수 있는 범위는 `OPEN_ITEMS.md`에 표로 정리했다.
 
@@ -93,4 +91,4 @@ ruby knowledge/scripts/verify_knowledge.rb
 .venv/bin/python scripts/check_oauth.py https://masil-mcp.summit1123.co.kr
 ```
 
-지식 검증기는 YAML, ID, 덱 64개 claim, 최종 Q&A 50개(S 15/A 27/B 8, 상위 10개), 전체 상품 영역, 발표 서사, 충돌 지도, 권한 라우팅과 이미지 자산을 확인한다. MCP 검사는 실제 초기화, 도구 목록, Q&A 카탈로그, 한영 검색 회귀, 답변 재료, OAuth, 다중 이미지 반환, `text/html;profile=mcp-app` 증거 뷰까지 수행한다. 배포 운영 정보는 `DEPLOYMENT.md`를 참고한다.
+지식 검증기는 YAML·ID·최종 덱 claim·현장 계약·36개 한영 공식 답변·50개 질문 카탈로그·권한 라우팅·이미지 자산을 확인한다. MCP 검사는 실제 초기화, 도구 목록, 36개 한영 답변 회귀, 검색·증거·OAuth·다중 이미지 반환·`text/html;profile=mcp-app` 증거 뷰까지 수행한다. 배포 운영 정보는 `DEPLOYMENT.md`를 참고한다.

@@ -17,12 +17,12 @@ def test_korean_ngram_handles_compound_query() -> None:
 @pytest.mark.parametrize(
     ("query", "expected_id"),
     [
-        ("생활권 밖이 위험하다면서 왜 감점은 안 해?", "out-of-zone-risk-and-no-location-penalty"),
-        ("out-of-zone travel can be risky, so why is there no location penalty?", "out-of-zone-risk-and-no-location-penalty"),
-        ("우대 기본 케어는 세 등급인가?", "product-monthly-tiers-contract"),
-        ("MASIL Zone은 어떻게 만들고 매달 어떻게 갱신하나요?", "story-06-how-zone-works"),
-        ("MASIL은 무슨 뜻이야?", "model-language-masil-name"),
-        ("Care가 할인율을 깎나요?", "care-review-no-direct-price-effect"),
+        ("생활권 밖이 위험하다면서 왜 감점은 안 해?", "field-outer-zone-neutral"),
+        ("out-of-zone travel can be risky, so why is there no location penalty?", "R08"),
+        ("우대 기본 케어는 세 등급인가?", "R20"),
+        ("MASIL Zone은 어떻게 만들고 매달 어떻게 갱신하나요?", "R13"),
+        ("MASIL은 무슨 뜻이야?", "field-masil-name"),
+        ("Care가 할인율을 깎나요?", "field-annual-refund"),
     ],
 )
 def test_fielded_index_routes_bilingual_presentation_questions(
@@ -45,15 +45,15 @@ def test_default_search_excludes_guardrail_records_from_answer_facts() -> None:
         "knowledge/forbidden_claims.yaml",
         "knowledge/glossary.yaml",
     } for item in result["results"])
-    assert any(item["source"] == "knowledge/official_positions.yaml" for item in result["results"])
+    assert any(item["source"] in {"knowledge/field_contract.yaml", "knowledge/qa/field_regression_36.yaml"} for item in result["results"])
 
 
 @pytest.mark.parametrize(
     ("query", "expected_id"),
     [
-        ("GPS 개인정보는 어떻게 보호하나", "story-09-ai-trust-and-privacy"),
-        ("보험사가 MASIL을 도입할 이유는 무엇인가", "story-12-social-value"),
-        ("아직 검증되지 않았거나 미확정인 것은 무엇인가", "story-13-feasibility-and-roadmap"),
+        ("GPS 개인정보는 어떻게 보호하나", "R34"),
+        ("보험사가 MASIL을 도입할 이유는 무엇인가", "R29"),
+        ("아직 검증되지 않았거나 미확정인 것은 무엇인가", "R01"),
     ],
 )
 def test_presentation_intents_route_to_the_specific_story(query: str, expected_id: str) -> None:
@@ -201,17 +201,16 @@ def test_product_question_does_not_receive_a_low_confidence_literature_capture()
     assert result["evidence_captures"] == []
 
 
-def test_final_qa_catalog_drives_plain_answer_material() -> None:
+def test_current_contract_drives_annual_refund_answer_material() -> None:
     service = KnowledgeService()
     result = service.prepare_answer_context(
-        "연간 할인율은 어떻게 정하나요?",
+        "연간 환급률은 어떻게 정하나요?",
         max_chars=7000,
     )
-    assert result["explanation_material"]
-    assert result["explanation_material"][0]["id"].endswith("T2-04")
+    assert result["current_facts"]
     encoded = json.dumps(result, ensure_ascii=False)
-    assert "연간 평균 통합점수" in encoded
-    assert "연간 주행거리와 차량 종류" not in encoded
+    assert "12개 월 통합점수" in encoded
+    assert "Care 자체" in encoded
 
 
 def test_qa_practice_filters_by_theme_and_rank() -> None:
@@ -232,16 +231,14 @@ def test_out_of_zone_answer_context_uses_only_direct_problem_evidence() -> None:
         "presentation-ehsani-tefft-2021",
     }
     assert result["evidence_captures"] == []
-    assert result["source_capture_gaps"][0]["evidence_id"].endswith(
-        "presentation-ehsani-tefft-2021"
-    )
+    assert result["source_capture_gaps"] == []
     assert result["packet_chars"] <= 5000
     assert "도구명" in result["response_contract"]["hide"]
 
 
 def test_open_items_do_not_turn_into_facts() -> None:
     service = KnowledgeService()
-    result = service.list_open_items("공정성")
+    result = service.list_open_items("공정성", status_filter="all")
     assert result["items"]
     assert any(item["status"] in {"unresolved", "pilot_hypothesis", "candidate_parameter", "planned_not_implemented"} for item in result["items"])
 
@@ -249,10 +246,10 @@ def test_open_items_do_not_turn_into_facts() -> None:
 @pytest.mark.parametrize(
     ("question", "expected_first"),
     [
-        ("30초 안에 MASIL을 설명해줘", "story-01-one-line-definition"),
-        ("MASIL Zone은 어떻게 만들고 매달 어떻게 갱신하나요?", "story-06-how-zone-works"),
-        ("Favorable Standard Care 세 등급은 어떻게 나뉘나요?", "product-monthly-tiers-contract"),
-        ("보험사는 왜 이 상품을 도입하나요?", "story-12-social-value"),
+        ("30초 안에 MASIL을 설명해줘", "R06"),
+        ("MASIL Zone은 어떻게 만들고 매달 어떻게 갱신하나요?", "R13"),
+        ("Favorable Standard Care 세 등급은 어떻게 나뉘나요?", "field-monthly-tiers"),
+        ("보험사는 왜 이 상품을 도입하나요?", "field-insurer-value"),
     ],
 )
 def test_answer_context_routes_core_questions_to_the_right_material(
@@ -262,7 +259,7 @@ def test_answer_context_routes_core_questions_to_the_right_material(
     service = KnowledgeService()
     packet = service.prepare_answer_context(question, max_chars=7000)
     assert packet["current_facts"][0]["id"].endswith(expected_first)
-    assert packet["response_contract"]["default"].startswith("직접 답하는")
+    assert "직접 답" in packet["response_contract"]["default"]
 
 
 def test_history_material_is_never_returned_by_team_runtime() -> None:

@@ -27,7 +27,7 @@ def test_server_publishes_brand_icon() -> None:
 
         health = client.get("/healthz")
         assert health.status_code == 200
-        assert health.json()["version"] == "0.7.4"
+        assert health.json()["version"] == "0.8.0"
 
 
 @pytest.mark.asyncio
@@ -63,9 +63,9 @@ async def test_slide_context_keeps_parent_page_mapping() -> None:
         page_two = await client.call_tool("get_slide_context", {"page": 2})
         claim_ids = {claim["id"] for claim in page_two.structured_content["claims"]}
 
-        assert len(claim_ids) == 7
-        assert "knowledge/claims/deck_claims.yaml#p2-pipeline" in claim_ids
-        assert "knowledge/claims/deck_claims.yaml#p2-mobility-rights" in claim_ids
+        assert len(claim_ids) == 5
+        assert "knowledge/claims/deck_claims.yaml#p2-jackie-month" in claim_ids
+        assert "knowledge/claims/deck_claims.yaml#p2-twelve-to-refund" in claim_ids
 
 
 @pytest.mark.asyncio
@@ -116,7 +116,7 @@ async def test_topic_brief_returns_materials_without_invented_questions() -> Non
         brief = result.structured_content
 
         assert brief["current_position"][0]["id"].endswith(
-            "out-of-zone-risk-and-no-location-penalty"
+            "field-outer-zone-neutral"
         )
         assert {item["id"].split("#")[-1] for item in brief["linked_literature"]} == {
             "presentation-ehsani-tefft-2021",
@@ -124,19 +124,13 @@ async def test_topic_brief_returns_materials_without_invented_questions() -> Non
         assert "likely_questions" not in brief
         assert "generated_questions" not in brief
         assert any("예상 질문" in rule for rule in brief["usage_rules"])
-        assert any(
-            item["id"].endswith("model-monthly-safety-function")
-            for item in brief["validation_boundaries"]
-        )
+        assert brief["claim_boundaries"]
 
         zone = await client.call_tool(
             "prepare_topic_brief",
             {"topic": "rolling 2개월 MASIL Zone 갱신과 계절성"},
         )
-        assert any(
-            item["id"].endswith("model-zone-seasonality")
-            for item in zone.structured_content["validation_boundaries"]
-        )
+        assert any(item["id"].endswith("field-two-rolling-windows") for item in zone.structured_content["current_position"])
 
 
 @pytest.mark.asyncio
@@ -163,21 +157,21 @@ async def test_open_items_reports_exact_total_for_each_scope() -> None:
     server = create_server(auth_mode="none")
     async with Client(server) as client:
         unresolved = await client.call_tool("list_open_items", {})
-        assert unresolved.structured_content["total_count"] == 15
-        assert unresolved.structured_content["returned_count"] == 15
-        assert unresolved.structured_content["status_counts"] == {"unresolved": 15}
+        assert unresolved.structured_content["total_count"] == 1
+        assert unresolved.structured_content["returned_count"] == 1
+        assert unresolved.structured_content["status_counts"] == {"unresolved": 1}
         assert unresolved.structured_content["truncated"] is False
 
         all_open = await client.call_tool(
             "list_open_items",
             {"status_filter": "all", "top_k": 30},
         )
-        assert all_open.structured_content["total_count"] == 28
-        assert all_open.structured_content["returned_count"] == 28
+        assert all_open.structured_content["total_count"] == 3
+        assert all_open.structured_content["returned_count"] == 3
         assert all_open.structured_content["status_counts"] == {
-            "candidate_parameter": 5,
-            "pilot_hypothesis": 8,
-            "unresolved": 15,
+            "candidate_parameter": 1,
+            "pilot_hypothesis": 1,
+            "unresolved": 1,
         }
         assert all_open.structured_content["truncated"] is False
 

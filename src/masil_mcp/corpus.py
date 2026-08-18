@@ -12,16 +12,10 @@ from .models import KnowledgeDocument, repository_root
 
 
 CANONICAL_YAML = {
-    "knowledge/product_model.yaml",
-    "knowledge/official_positions.yaml",
-    "knowledge/key_numbers.yaml",
-    "knowledge/glossary.yaml",
-    "knowledge/forbidden_claims.yaml",
-    "knowledge/conflict_map.yaml",
-    "knowledge/coverage_matrix.yaml",
-    "knowledge/presentation_story.yaml",
+    "knowledge/field_contract.yaml",
     "knowledge/snapshot.yaml",
     "knowledge/mcp_manifest.yaml",
+    "knowledge/qa/field_regression_36.yaml",
 }
 
 DECK_YAML = {"knowledge/claims/deck_claims.yaml"}
@@ -50,7 +44,7 @@ MARKDOWN_FILES = {
     "sources/생활권_형성주기_이슈정리.md": "supporting",
     "sources/생활권반경_eps_정리.md": "supporting",
     "sources/안전운전자_매력도_정리.md": "supporting",
-    "sources/12_presentation_script_v1_0810.md": "supporting",
+    "sources/13_presentation_script_final_0818.md": "supporting",
 }
 
 IDENTITY_FIELDS = (
@@ -92,6 +86,12 @@ BODY_PRIORITY_FIELDS = (
     "note_ko",
     "direct_answer_ko",
     "direct_answer_en",
+    "main_answer_ko",
+    "main_answer_en",
+    "evidence_ko",
+    "evidence_en",
+    "limitation_ko",
+    "limitation_en",
     "short_answer_ko",
     "short_answer_en",
     "why_this_answer",

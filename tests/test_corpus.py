@@ -11,7 +11,7 @@ from masil_mcp.service import KnowledgeService
 def test_corpus_loads_canonical_and_capture_assets() -> None:
     service = KnowledgeService()
     stats = service.stats()
-    assert stats["documents"] > 400
+    assert stats["documents"] > 300
     assert stats["captures"] > 30
     assert "historical" not in stats["authorities"]
     assert len(stats["fingerprint"]) == 64
@@ -21,7 +21,8 @@ def test_current_search_prefers_current_care_contract() -> None:
     service = KnowledgeService()
     result = service.search("평소부터 계속 위험한 운전자는 Care인가", top_k=5, scope="current")
     combined = "\n".join(item["snippet"] for item in result["results"])
-    assert "급변" in combined
+    assert "Standard" in combined
+    assert "동시 변화" in combined
     assert all("master_qa_artifact" not in item["source"] for item in result["results"])
 
 
@@ -45,14 +46,16 @@ def test_payd_term_and_simple_comparison_are_retrievable() -> None:
 def test_latest_dashboard_uses_annual_scores_not_annual_care_favorable_grades() -> None:
     service = KnowledgeService()
     packet = service.prepare_answer_context(
-        "Edward와 Frank의 연간 등급이 Care와 Favorable인가요? 최신 대시보드 표를 설명해줘",
+        "Jackie와 Tom 사례가 보여주는 핵심은 무엇인가?",
         max_chars=8000,
     )
-    encoded = json.dumps(packet, ensure_ascii=False)
+    dashboard = service.search("Jackie Tom 81.6 98.4", top_k=8, detail="full")
+    encoded = json.dumps({"packet": packet, "dashboard": dashboard}, ensure_ascii=False)
     assert "81.6" in encoded
     assert "98.4" in encoded
-    assert "연간 평균점수" in encoded or "annual average score" in encoded
-    assert "연간 Care·Favorable 등급" in encoded or "연간 Care·Favorable" in encoded
+    assert "209" in encoded
+    assert "10" in encoded
+    assert "Care 자체" in encoded or "Care itself" in encoded
 
 
 def test_current_script_is_supporting_question_surface_not_fact_authority() -> None:
@@ -60,21 +63,19 @@ def test_current_script_is_supporting_question_surface_not_fact_authority() -> N
     documents = [
         document
         for document in service.corpus.documents
-        if document.source_path == "sources/12_presentation_script_v1_0810.md"
+        if document.source_path == "sources/13_presentation_script_final_0818.md"
     ]
     assert documents
     assert {document.authority for document in documents} == {"supporting"}
 
+    script_text = "\n".join(document.body for document in documents)
+    assert "다현" in script_text
+    assert "은서" in script_text
+    assert "진영" in script_text
     packet = service.prepare_answer_context("최종 발표 대본이 들어왔나요? 발표자 파트를 알려줘", max_chars=7000)
-    encoded = json.dumps(packet, ensure_ascii=False)
-    assert "model-language-script-current" in encoded
-    assert "1차 최종 대본을 수신" in encoded
-    assert "다현" in encoded
-    assert "은서" in encoded
-    assert "진영" in encoded
-    assert "사용자 업데이트 대기" not in encoded
+    assert "사용자 업데이트 대기" not in json.dumps(packet, ensure_ascii=False)
     assert any(
-        item["source"] == "sources/12_presentation_script_v1_0810.md"
+        item["source"] == "sources/13_presentation_script_final_0818.md"
         for item in packet["explanation_material"]
     )
 
@@ -88,18 +89,16 @@ def test_answer_packet_is_compact_and_contains_conflict_guards() -> None:
     assert "conflicts_and_avoid" in packet
 
 
-def test_out_of_zone_packet_explains_location_neutrality_and_candidate_8_12() -> None:
+def test_out_of_zone_packet_explains_location_neutrality_without_retired_coefficients() -> None:
     service = KnowledgeService()
     packet = service.prepare_answer_context(
         "생활권 밖은 왜 감점하지 않으면서 위험행동 계수는 더 크게 두나요?",
         max_chars=9000,
     )
     encoded = json.dumps(packet, ensure_ascii=False)
-    assert "계수 8" in encoded
-    assert "계수 12" in encoded
     assert "위치 자체" in encoded or "위치만으로" in encoded
-    assert "8/12" in encoded
-    assert "기존 덱" not in encoded
+    assert "Out-of-Zone Safety" in encoded
+    assert "8/12" not in encoded
 
 
 def test_roadmap_packet_treats_numbers_as_uncommitted_slide_examples() -> None:
@@ -111,7 +110,7 @@ def test_roadmap_packet_treats_numbers_as_uncommitted_slide_examples() -> None:
     encoded = json.dumps(packet, ensure_ascii=False)
     assert "단계 방향" in encoded
     assert "미정" in encoded or "확정" in encoded
-    assert "초기 기획 예시" in encoded
+    assert "초기 사업 가정" in encoded
 
     generic = service.prepare_answer_context("로드맵을 설명해줘", max_chars=5000)
     generic_facts = json.dumps(generic["current_facts"], ensure_ascii=False)
@@ -137,14 +136,9 @@ def test_capture_path_is_confined_to_repository() -> None:
 def test_runtime_corpus_loads_every_current_contract_collection() -> None:
     service = KnowledgeService()
     expected = {
-        "knowledge/official_positions.yaml": ("active", 17),
-        "knowledge/glossary.yaml": ("active", 23),
-        "knowledge/forbidden_claims.yaml": ("active", 11),
-        "knowledge/key_numbers.yaml": ("active", 20),
-        "knowledge/qa/final_qa_50.yaml": ("active", 50),
-        "knowledge/presentation_story.yaml": ("unspecified", 14),
-        "knowledge/coverage_matrix.yaml": ("unspecified", 15),
-        "knowledge/claims/deck_claims.yaml": (None, 64),
+        "knowledge/field_contract.yaml": (None, 24),
+        "knowledge/qa/field_regression_36.yaml": ("active", 36),
+        "knowledge/claims/deck_claims.yaml": (None, 30),
     }
     for source, (status, count) in expected.items():
         documents = [document for document in service.corpus.documents if document.source_path == source]
@@ -175,18 +169,14 @@ def test_missing_status_defaults_are_not_loaded_into_team_runtime() -> None:
     assert all(item["authority"] != "historical" for item in result["results"])
 
 
-def test_official_positions_and_presentation_story_are_searchable() -> None:
+def test_retired_contract_sources_are_not_searchable() -> None:
     service = KnowledgeService()
     care = service.search("Care 다음 달 자동 할인", top_k=8)
-    assert any(item["source"] == "knowledge/official_positions.yaml" for item in care["results"])
-
-    target = service.search("왜 고령 운전자부터 시작하는가", top_k=8)
-    assert any(item["source"] == "knowledge/presentation_story.yaml" for item in target["results"])
+    assert any(item["source"] == "knowledge/field_contract.yaml" for item in care["results"])
+    assert all(item["source"] != "knowledge/official_positions.yaml" for item in care["results"])
 
     multiplier = service.search("3배에서 6배 위험이라고 말해도 되나", top_k=5)
-    combined = json.dumps(multiplier, ensure_ascii=False)
-    assert "포괄" in combined
-    assert "사용하지" in combined
+    assert all(item["source"] != "knowledge/presentation_story.yaml" for item in multiplier["results"])
 
 
 def test_history_is_absent_from_answer_packet_and_runtime_index() -> None:

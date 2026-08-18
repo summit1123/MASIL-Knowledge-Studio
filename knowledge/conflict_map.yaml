@@ -12,7 +12,6 @@ conflicts:
     topic: 최신 대시보드의 월별 등급과 연간 평균점수
     current_resolution: 최신 비교표에서는 연간 Care·Favorable 등급 행을 제거하고 Annual average score 81.6·98.4를 보여준다. Favorable·Standard·Care는 월별 결과이며, 월별 Care는 그 달의 검토·지원 신호다.
     historical_material:
-      - knowledge/claims/deck_claims.yaml#p3-annual-verdicts
       - sources/12_presentation_script_v1_0810.md
     avoid_as_current:
       - 최신 연간 비교표에서 Edward는 Care, Frank는 Favorable이라고 설명

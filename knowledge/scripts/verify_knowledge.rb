@@ -86,6 +86,34 @@ unless p0_cards.all? { |card| card["role"] == "answer_example" && card["canonica
   abort_check("P0 role mismatch")
 end
 
+field_contract = objects.fetch("knowledge/field_contract.yaml")
+field_entries = field_contract.fetch("entries", [])
+abort_check("field contract must be active") unless field_contract.dig("meta", "status") == "active"
+abort_check("field contract is empty") if field_entries.empty?
+field_statuses = field_entries.map { |entry| entry["status"] }.uniq
+unknown_field_statuses = field_statuses - %w[active candidate_parameter pilot_hypothesis unresolved]
+abort_check("unknown field contract statuses: #{unknown_field_statuses.inspect}") unless unknown_field_statuses.empty?
+unless field_entries.all? { |entry| entry["id"] && entry["statement_ko"] && entry["statement_en"] }
+  abort_check("field contract entries require Korean and English statements")
+end
+puts "FIELD_CONTRACT_ENTRIES=#{field_entries.size} STATUSES=#{field_statuses.inspect}"
+
+field_qa = objects.fetch("knowledge/qa/field_regression_36.yaml")
+field_questions = field_qa.fetch("questions", [])
+expected_field_ids = (1..36).map { |number| format("R%02d", number) }
+actual_field_ids = field_questions.map { |question| question["id"] }
+abort_check("field Q&A must be active") unless field_qa.dig("meta", "status") == "active"
+abort_check("field Q&A count mismatch") unless field_questions.size == 36
+abort_check("field Q&A sequence mismatch") unless actual_field_ids == expected_field_ids
+unless field_questions.all? do |question|
+  question["status"] == "active" &&
+    question["question_ko"] && question["question_en"] &&
+    question["main_answer_ko"] && question["main_answer_en"]
+end
+  abort_check("field Q&A bilingual response contract incomplete")
+end
+puts "FIELD_QA_TOTAL=#{field_questions.size}"
+
 final_qa = objects.fetch("knowledge/qa/final_qa_50.yaml")
 final_questions = final_qa.fetch("questions", [])
 final_ids = final_questions.map { |item| item["id"] }
@@ -299,21 +327,28 @@ runtime_text = manifest.fetch("runtime_sources", {}).to_s
 abort_check("Claude Artifact URL leaked into runtime sources") if runtime_text.include?("claude.ai/code/artifact")
 
 required_includes = %w[
+  knowledge/field_contract.yaml
+  knowledge/claims/deck_claims.yaml
+  knowledge/qa/field_regression_36.yaml
+  knowledge/qa/final_qa_50.yaml
+  sources/13_presentation_script_final_0818.md
+  knowledge/evidence/registry.yaml
+  knowledge/evidence/capture_index.yaml
+]
+actual_includes = manifest.fetch("include", []).map { |entry| entry["file"] }.compact
+missing_includes = required_includes - actual_includes
+abort_check("manifest missing current runtime files: #{missing_includes.inspect}") unless missing_includes.empty?
+
+legacy_runtime_files = %w[
   IMPLEMENTATION.md
   knowledge/product_model.yaml
   knowledge/presentation_story.yaml
   knowledge/conflict_map.yaml
   knowledge/coverage_matrix.yaml
-  knowledge/claims/deck_claims.yaml
+  knowledge/qa/cards.yaml
 ]
-actual_includes = manifest.fetch("include", []).map { |entry| entry["file"] }.compact
-missing_includes = required_includes - actual_includes
-abort_check("manifest missing model files: #{missing_includes.inspect}") unless missing_includes.empty?
-
-implementation_entry = manifest.fetch("include", []).find { |entry| entry["file"] == "IMPLEMENTATION.md" }
-unless implementation_entry && implementation_entry["role"] == "historical_working_tree_implementation_audit"
-  abort_check("implementation audit manifest entry mismatch")
-end
+leaked_legacy_runtime_files = actual_includes & legacy_runtime_files
+abort_check("legacy files leaked into current runtime: #{leaked_legacy_runtime_files.inspect}") unless leaked_legacy_runtime_files.empty?
 
 cards_entry = manifest.fetch("include", []).find { |entry| entry["file"] == "knowledge/qa/final_qa_50.yaml" }
 unless cards_entry && cards_entry["role"] == "approved_qna_practice_catalog" && cards_entry["canonical_for_facts"] == false
@@ -321,7 +356,7 @@ unless cards_entry && cards_entry["role"] == "approved_qna_practice_catalog" && 
 end
 
 runtime_excluded = manifest.fetch("runtime_excluded", [])
-required_exclusion_terms = ["Master Q&A", "decision history", "archived Q&A", "listed_only"]
+required_exclusion_terms = ["Master Q&A", "decision history", "archived Q&A", "listed_only", "knowledge/product_model.yaml"]
 missing_exclusion_terms = required_exclusion_terms.reject do |term|
   runtime_excluded.any? { |entry| entry.to_s.include?(term) }
 end
@@ -438,7 +473,7 @@ unless manifest.dig("implementation_gate", "status") == "approved_for_server_imp
 end
 
 snapshot = objects.fetch("knowledge/snapshot.yaml")
-unless snapshot.dig("mcp_manifest", "supporting_context_in_default_retrieval") == true &&
+unless snapshot.dig("mcp_manifest", "supporting_context_in_default_retrieval") == false &&
        snapshot.dig("mcp_manifest", "supporting_context_can_override_current_canon") == false &&
        snapshot.dig("mcp_manifest", "implementation_allowed") == true
   abort_check("snapshot retrieval and implementation contract mismatch")
@@ -448,10 +483,9 @@ unless snapshot.dig("implementation_audit", "file") == "IMPLEMENTATION.md" &&
   abort_check("snapshot implementation audit mismatch")
 end
 expected_model_anchor_files = {
-  "product" => "knowledge/product_model.yaml",
-  "story" => "knowledge/presentation_story.yaml",
-  "conflicts" => "knowledge/conflict_map.yaml",
-  "coverage" => "knowledge/coverage_matrix.yaml"
+  "field_contract" => "knowledge/field_contract.yaml",
+  "regression_answers" => "knowledge/qa/field_regression_36.yaml",
+  "deck_claims" => "knowledge/claims/deck_claims.yaml"
 }
 actual_model_anchor_files = snapshot.fetch("model_anchors", {}).map do |name, entry|
   [name, entry["file"]]
@@ -464,6 +498,12 @@ approved_sources = snapshot.fetch("approved_sources", [])
 missing_approved_sources = approved_sources.reject { |path| File.exist?(File.join(ROOT, path)) }
 puts "APPROVED_SUPPORT_SOURCES=#{approved_sources.size} MISSING=#{missing_approved_sources.size}"
 abort_check("missing approved support sources: #{missing_approved_sources.inspect}") unless missing_approved_sources.empty?
+expected_approved_sources = %w[
+  knowledge/field_contract.yaml
+  knowledge/qa/field_regression_36.yaml
+  knowledge/claims/deck_claims.yaml
+]
+abort_check("snapshot approved source contract mismatch") unless approved_sources == expected_approved_sources
 
 public_keys = %w[
   approved_position_ko
