@@ -6,6 +6,8 @@ import json
 
 from fastmcp import Client
 
+from field_regression_check import verify_field_answers
+
 
 async def check(url: str, auth: str | None) -> None:
     async with Client(url, auth=auth, timeout=30) as client:
@@ -66,25 +68,34 @@ async def check(url: str, auth: str | None) -> None:
             raise RuntimeError("product logic tool call failed")
 
         slide = await client.call_tool("get_slide_context", {"page": 2})
-        if slide.is_error or len(slide.structured_content.get("claims", [])) != 7:
+        slide_claim_ids = {
+            item.get("id", "").split("#")[-1]
+            for item in slide.structured_content.get("claims", [])
+        }
+        if slide.is_error or slide_claim_ids != {
+            "p2-jackie-month",
+            "p2-twelve-to-refund",
+            "p2-contrast",
+            "p2-contrast-values",
+            "p2-outer-neutral",
+        }:
             raise RuntimeError("slide context tool call failed")
 
         answer = await client.call_tool(
             "prepare_answer_context",
-            {"question": "생활권 밖으로 나가면 자동으로 감점하나요?", "language": "ko"},
+            {"question": "MASIL Zone 밖으로 나가면 불이익을 받는가?", "language": "ko"},
         )
-        if answer.is_error or not answer.structured_content.get("current_facts"):
+        approved = answer.structured_content.get("approved_answer") or {}
+        if (
+            answer.is_error
+            or approved.get("id") != "R07"
+            or not answer.structured_content.get("current_facts")
+        ):
             raise RuntimeError("answer packet tool call failed")
         if answer.structured_content.get("routing", {}).get("route") != "product_logic":
             raise RuntimeError("answer packet did not select the product-logic route")
-        evidence_ids = {
-            item.get("id", "").split("#")[-1]
-            for item in answer.structured_content.get("evidence", [])
-        }
-        if evidence_ids != {"presentation-ehsani-tefft-2021"}:
-            raise RuntimeError("answer packet did not keep the exact problem-definition evidence boundary")
-        if answer.structured_content.get("evidence_captures"):
-            raise RuntimeError("answer packet substituted a deck/persona image for a missing source capture")
+
+        field_regression = await verify_field_answers(client)
 
         inline = await client.call_tool(
             "show_answer_evidence",
@@ -109,7 +120,7 @@ async def check(url: str, auth: str | None) -> None:
         if (
             brief.is_error
             or not brief.structured_content.get("current_position", [{}])[0].get("id", "").endswith(
-                "out-of-zone-risk-and-no-location-penalty"
+                "field-outer-zone-neutral"
             )
             or literature_ids
             != {"presentation-ehsani-tefft-2021"}
@@ -128,8 +139,11 @@ async def check(url: str, auth: str | None) -> None:
         open_items = await client.call_tool("list_open_items", {})
         if (
             open_items.is_error
-            or open_items.structured_content.get("total_count") != 15
-            or open_items.structured_content.get("returned_count") != 15
+            or open_items.structured_content.get("total_count") != 1
+            or open_items.structured_content.get("returned_count") != 1
+            or not open_items.structured_content.get("items", [{}])[0].get("id", "").endswith(
+                "field-open-privacy-operations"
+            )
             or open_items.structured_content.get("truncated") is not False
         ):
             raise RuntimeError("open-items tool call failed")
@@ -184,10 +198,11 @@ async def check(url: str, auth: str | None) -> None:
                     "qa_practice_questions": len(practice.structured_content["questions"]),
                     "topic_brief_literature": sorted(literature_ids),
                     "answer_facts": len(answer.structured_content["current_facts"]),
+                    "field_regression": field_regression,
                     "inline_evidence": sorted(item["id"] for item in inline.structured_content["captures"]),
                     "native_image_content": "PASS",
                     "markdown_image_fallback": "PASS",
-                    "slide_2_claims": len(slide.structured_content["claims"]),
+                    "slide_2_claims": len(slide_claim_ids),
                     "active_capture_groups": captures.structured_content["total_group_count"],
                     "image_returned": True,
                     "resolved_image": resolved_image.structured_content["id"],

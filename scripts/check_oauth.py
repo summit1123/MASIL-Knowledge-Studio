@@ -13,6 +13,8 @@ import httpx
 from dotenv import load_dotenv
 from fastmcp import Client
 
+from field_regression_check import verify_field_answers
+
 
 def pkce_pair() -> tuple[str, str]:
     verifier = secrets.token_urlsafe(48)
@@ -110,25 +112,34 @@ async def check(base_url: str) -> None:
             raise RuntimeError("authenticated product logic call failed")
 
         slide = await client.call_tool("get_slide_context", {"page": 2})
-        if slide.is_error or len(slide.structured_content.get("claims", [])) != 7:
+        slide_claim_ids = {
+            item.get("id", "").split("#")[-1]
+            for item in slide.structured_content.get("claims", [])
+        }
+        if slide.is_error or slide_claim_ids != {
+            "p2-jackie-month",
+            "p2-twelve-to-refund",
+            "p2-contrast",
+            "p2-contrast-values",
+            "p2-outer-neutral",
+        }:
             raise RuntimeError("authenticated slide-context call failed")
 
         answer = await client.call_tool(
             "prepare_answer_context",
-            {"question": "생활권 밖이 위험하다면서 왜 위치만으로 감점하지 않아?", "language": "ko"},
+            {"question": "MASIL Zone 밖으로 나가면 불이익을 받는가?", "language": "ko"},
         )
+        approved = answer.structured_content.get("approved_answer") or {}
         if (
             answer.is_error
+            or approved.get("id") != "R07"
             or not answer.structured_content.get("current_facts")
             or answer.structured_content.get("packet_chars", 999999) > 5000
-            or answer.structured_content.get("evidence_captures")
-            or {
-                item.get("id", "").split("#")[-1]
-                for item in answer.structured_content.get("evidence", [])
-            } != {"presentation-ehsani-tefft-2021"}
             or answer.structured_content.get("routing", {}).get("route") != "product_logic"
         ):
             raise RuntimeError("authenticated answer-context call failed")
+
+        field_regression = await verify_field_answers(client)
 
         inline = await client.call_tool(
             "show_answer_evidence",
@@ -164,8 +175,11 @@ async def check(base_url: str) -> None:
         open_items = await client.call_tool("list_open_items", {})
         if (
             open_items.is_error
-            or open_items.structured_content.get("total_count") != 15
-            or open_items.structured_content.get("returned_count") != 15
+            or open_items.structured_content.get("total_count") != 1
+            or open_items.structured_content.get("returned_count") != 1
+            or not open_items.structured_content.get("items", [{}])[0].get("id", "").endswith(
+                "field-open-privacy-operations"
+            )
             or open_items.structured_content.get("truncated") is not False
         ):
             raise RuntimeError("authenticated open-items call failed")
@@ -244,6 +258,8 @@ async def check(base_url: str) -> None:
                 "product_logic_call": "PASS",
                 "slide_context_call": "PASS",
                 "answer_context_call": "PASS",
+                "field_regression_questions": field_regression["questions"],
+                "field_regression_bilingual_calls": field_regression["bilingual_answer_calls"],
                 "inline_evidence_call": "PASS",
                 "native_image_content": "PASS",
                 "markdown_image_fallback": "PASS",
