@@ -1,24 +1,78 @@
-# 소스: seniorcareservice/final (승인 세트) · 수치 정본: 확정수치카드 @ e2d2e49 (2026-08-02 rolling)
-# 생성: 2026-08-04 자동 추출 + 카드 대조 — 사람 검토 전 DRAFT
+# 2026-08-18 현장 Q&A 정본 — 최신 PPT와 최신 대본을 기준으로 갱신
 
-snapshot: gaip-final-v1-draft
-status: draft_pending_review
+snapshot: gaip-field-qa-0818-v1
+status: approved_for_mcp_with_open_items
+mcp_manifest:
+  file: knowledge/mcp_manifest.yaml
+  default_mode: qa_support
+  implementation_allowed: true
+  supporting_context_in_default_retrieval: false
+  supporting_context_can_override_current_canon: false
+model_anchors:
+  field_contract:
+    file: knowledge/field_contract.yaml
+    role: 현장 Q&A 상품 논리·용어·경계 정본
+  regression_answers:
+    file: knowledge/qa/field_regression_36.yaml
+    role: 36개 한국어·쉬운 영어 공식 답변
+  deck_claims:
+    file: knowledge/claims/deck_claims.yaml
+    role: 최신 9장 장표 사실과 구두 보완
+implementation_audit:
+  file: IMPLEMENTATION.md
+  audited_checkout: /Users/gimdonghyeon/Desktop/seniorcareservice
+  branch: review/korean-dashboard-20260524
+  head: 4029a37
+  observed_state: dirty_working_tree
+  scope: 과거 GaipStudio 작업 트리의 구현 감사 기록. 현재 Q&A의 상품 정본으로 사용하지 않음
+  caveat: 커밋된 릴리스가 아니라 2026-08-10 현재 작업 파일의 관측 결과
 numbers_anchor:
-  file: final/00_확정수치카드.md
+  file: sources/00_확정수치카드.md
   commit: e2d2e49
   date: 2026-08-02
+  scope: 시뮬레이션 실측·생활권·가중치 수치
+decision_anchor:
+  name: 최신 PPT 기반 현장 Q&A 계약 2026-08-18
+  date: 2026-08-18
+  scope: 개인별 구분 한계·Familiarity·Personal Baseline/Change·MASIL Zone·4개 점수·월 세 단계·연간 환급·검증 경계
+  history_record: sources/11_V20_결정_기록_0810.md
+authority_routing:
+  order:
+    - 최신 PPT — 장표에 보이는 사실
+    - knowledge/qa/field_regression_36.yaml — 현장 36문항 공식 답변
+    - active product contract — 세부 상품 논리
+    - 최신 Appendix — 알고리즘·검증 경계
+    - 최신 대본 — 쉬운 표현과 발표 흐름만
+    - active evidence — 직접 연결된 근거만
+  note: 과거 대본·구형 deck claim·변경 이력은 기본 검색에서 제외하며 현재 결론을 덮을 수 없다.
 approved_sources:
-  - final/00_확정수치카드.md
-  - final/02_마스터답변안_전항목.md
-  - final/07_근거지도.md
-  - final/08_출처부록_주제별.md
-  - final/근거자료/브리핑_0803_이슈정리.md
-  - final/근거자료/부록B_해설_팀원용.md
-  - final/근거자료/부록D_해설_팀원용.md
-  - final/근거자료/데이터생성_상세정리.md
-  - final/근거자료/생활권_형성주기_이슈정리.md
-  - final/근거자료/안전운전자_매력도_정리.md
-  - final/근거자료/생활권반경_eps_정리.md
+  - knowledge/field_contract.yaml
+  - knowledge/qa/field_regression_36.yaml
+  - knowledge/claims/deck_claims.yaml
+supporting_sources:
+  - file: sources/13_presentation_script_final_0818.md
+    role: 최신 발표 흐름·쉬운 표현·예상 질문 표면
+    canonical_for_facts: false
+decision_log:
+  file: knowledge/history/decision_log.yaml
+  layer: supporting
+  retrieval_mode: semantic_support
+  canonical_for_current_facts: false
+  latest:
+    - 2026-08-18 월 Favorable·Standard·Care와 연간 환급 계산 분리
+    - 2026-08-18 Care 자체는 연간 환급을 차감하지 않음
+    - 2026-08-18 Outer Zone은 중립 맥락이며 위치 자체는 무감점
+    - 2026-08-18 30/30/20/20과 환급곡선은 초기 후보값
+    - 2026-08-18 합성 검증은 상품 로직만 검증하며 손해율·최종 요율은 미검증
+known_implementation_gaps:
+  - full_story_review: 문제정의·사회적 가치·기술·운영·사업·근거·한계의 사람 검토 미완료
+  - fairness_and_regulation: 공정성 검증과 개인정보·현지 규제 이식 설계 미완료
+  - operations_and_customer_rights: Care 인력·비용·통보·거부권·이의제기·책임 계약 미완료
+  - business_readiness: 시장·채널·경쟁·팀·파트너·파일럿 측정 설계 근거 미완료
+  - real_world_validation: 계절성·다중거주·드리프트·실데이터 외적 타당성 검증 미완료
+  - implementation_reproducibility: 현재 구현은 외부 dirty working tree에서 확인했으며 재현 가능한 커밋·배포 산출물 고정 필요
+  - favorable_candidate_rate: 현재 +3%p는 상품 후보값이며 파일럿·계리 검증 미완료
+  - dashboard_refund_mapping: Jackie 81.6점에서 3%가 되는 환급곡선은 합성 경제성 후보이며 Care 차감으로 설명하지 않음
 deprecated_bulk:
   - path: gaip-foursure/** (34p 마스터·EVIDENCE_BOOK·TECH_APPENDIX·deliverables HTML)
     reason: rolling 이전 산출물 — 고정 기준선·구수치·eps150 시절
@@ -28,3 +82,5 @@ deprecated_bulk:
     reason: 0801 정리로 archive 이동
   - path: 발송본 3종(00_통합·09·10)
     reason: 원문 보존본 — 수치 시점 배너로만 참조, 지식 소스 아님
+  - path: sources/00_확정수치카드.md#요율·케어
+    reason: 8/2 당시 데모 요율 기록 — Care와 가격을 분리하는 현행 공개 계약이 우선

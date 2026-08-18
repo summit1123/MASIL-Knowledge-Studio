@@ -1,0 +1,541 @@
+from __future__ import annotations
+
+import json
+import os
+import secrets
+from pathlib import Path
+from typing import Literal
+
+from dotenv import load_dotenv
+from fastmcp import FastMCP
+from fastmcp.tools.tool import ToolResult
+from fastmcp.utilities.types import Image
+from mcp.types import Annotations, Icon, TextContent
+from starlette.requests import Request
+from starlette.responses import FileResponse, HTMLResponse, JSONResponse
+
+from .auth import build_auth
+from .service import KnowledgeService
+from .telemetry import PrivacyTelemetryMiddleware, TelemetryStore
+
+
+load_dotenv()
+
+PUBLIC_URL = os.getenv("MASIL_PUBLIC_URL", "https://masil-mcp.summit1123.co.kr").rstrip("/")
+ICON_PATH = Path(__file__).resolve().parent / "static" / "masil-icon.png"
+SERVER_VERSION = "0.8.0"
+
+INSTRUCTIONS = """
+MASIL 결선 Q&A 준비용 근거 서버입니다. 팀원은 도구 이름을 배울 필요가 없습니다. MASIL의 상품,
+덱, 심사 질문, Q&A, 수치, 근거에 관한 실제 질문이나 붙여 넣은 답변 초안이 들어오면 기본적으로
+prepare_answer_context를 조용히 호출해 재료를 확인한 뒤 평소 대화처럼 답하세요. 이 도구는 질문을
+가벼운 준비 유형으로 라우팅하지만 답을 고정하지 않습니다.
+
+답은 질문과 같은 언어로 하며, 첫 1~2문장에 결론을 직접 답합니다. 기본 답변은 80~150단어 안에서
+짧고 쉬운 문장으로 구성하고, 필요할 때만 Main answer / Evidence / Limitation 구조를 사용합니다.
+첫 답변에는 결론과 가장 필요한 이유만
+넣으세요. 문헌 수치·계산식·구현값·한계·주의사항은 사용자가 그 층을 직접 요청했거나 후속 질문을
+했을 때만 펼칩니다. 근거를 요청해도 질문과 직접 연결된 대표 수치 하나를 우선하고, 같은 문헌의 다른
+통계나 질문하지 않은 반박·금지 문구를 한꺼번에 나열하지 마세요. 도구명, 내부 ID, YAML 필드,
+authority/status, corpus 통계와 검색·캡처 처리 규칙은 답변에 노출하지 마세요. 영어 답변도 덱의 고정
+용어를 유지하며 문장을 짧게 만드세요. 최종 덱과 현재 상품 계약만 사용하고, 문헌은 allowed_claim과
+caveat 범위에서만 사용하세요. 폐기된 Q&A·과거 규칙·변경 이력은 공개 런타임에 포함되어 있지 않습니다.
+Pilot·Scale up·Roll out은 단계 방향만 현재 사실로 사용하고, 기간·인원·가입률·유지율 숫자는
+덱 인쇄값을 직접 질문받을 때만 초기 기획 예시라고 설명하세요. 발표에서 쓰지 않기로 한 포괄적
+"3배에서 6배" 위험 배수 문구도 먼저 꺼내지 마세요. 특정 문헌 수치를 직접 묻는 경우에만 해당
+문헌의 모집단·결과변수·단서를 붙여 답하세요.
+
+prepare_answer_context의 evidence_captures가 비어 있지 않으면 사용자가 캡처를 요청할 때까지 기다리지
+말고 같은 질문으로 show_answer_evidence를 바로 호출하세요. 다만 답변 2~4문장을 먼저 완성한 뒤 카드를
+붙이고, 카드가 답변을 대신하게 하지 마세요. 자동 카드는 실제 원문 캡처만 허용합니다. source 캡처가
+없으면 덱 발췌로 대체하지 마세요. 사용자가 특정 문헌 원문을 요청하면 show_evidence_capture의
+capture_kind=source를, 덱에서 사용된 위치를 요청하면 capture_kind=deck을 사용하세요. 캡처 ID는
+추측하지 말고 compare_claims만으로 캡처를 선택하지 마세요.
+사용자가 캡처를 요청했지만 정확한 원문 캡처가 없으면 "현재 연결된 원문 캡처는 없습니다."라고 한
+문장만 말하세요. source_capture_gaps, 대체 금지 규칙, 인덱싱 상태 같은 내부 사유를 설명하지 마세요.
+
+주제 전체를 학습·정리하거나 발표 흐름을 준비해 달라는 요청에는 prepare_topic_brief를 사용하세요.
+예상 질문·킬러 질문·파트별 Q&A·답변 연습 요청에는 prepare_qa_practice를 사용하세요. 이 도구에는
+최종 대본과 덱의 기억 지점을 기준으로 승인된 50문항, S/A/B 우선순위, 상위 10문항, 짧은 한·영 답변,
+답변 이유, 상품 논리, 계산·검증, 후속질문, 발언 경계가 들어 있습니다. 먼저 짧은 답을 주고, 사용자가
+더 물을 때만 심화 논리와 계산을 펼치세요. forbidden_claims와 must_not_say를 새 질문으로 만들지 마세요.
+
+미확정 전체를 물으면 list_open_items의 status_filter=unresolved와 total_count를 사용하세요.
+items 길이를 전체 개수로 추정하지 마세요. evidence_scope=stage는 Summary·Appendix에서 실제로
+사용하는 active 근거만 뜻합니다. 참고문헌 전용·폐기·과거 문헌은 사용하지 마세요.
+
+도구 사용 통계는 사용자가 명시적으로 요청할 때만 usage_telemetry를 호출하세요. 사용자가 이 답변이
+도움 됐는지 명시적으로 평가할 때만 record_usage_feedback을 호출하고 평가를 추측하지 마세요.
+""".strip()
+
+
+def create_server(
+    *,
+    auth_mode: str | None = None,
+    service: KnowledgeService | None = None,
+    telemetry_store: TelemetryStore | None = None,
+) -> FastMCP:
+    knowledge = service or KnowledgeService()
+    telemetry = telemetry_store or TelemetryStore()
+    mcp = FastMCP(
+        "MASIL Knowledge Studio",
+        instructions=INSTRUCTIONS,
+        version=SERVER_VERSION,
+        website_url=PUBLIC_URL,
+        icons=[
+            Icon(
+                src=f"{PUBLIC_URL}/favicon.png",
+                mimeType="image/png",
+                sizes=["512x512"],
+            )
+        ],
+        auth=build_auth(auth_mode),
+        mask_error_details=True,
+    )
+    mcp.add_middleware(
+        PrivacyTelemetryMiddleware(
+            telemetry,
+            corpus_fingerprint=knowledge.stats()["fingerprint"],
+            server_version=SERVER_VERSION,
+        )
+    )
+
+    @mcp.custom_route("/", methods=["GET"], include_in_schema=False)
+    async def landing(_: Request) -> HTMLResponse:
+        return HTMLResponse(
+            """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MASIL Knowledge Studio</title>
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
+</head>
+<body><h1>MASIL Knowledge Studio</h1><p>Remote MCP knowledge server</p></body>
+</html>"""
+        )
+
+    @mcp.custom_route("/favicon.png", methods=["GET"], include_in_schema=False)
+    @mcp.custom_route("/favicon.ico", methods=["GET"], include_in_schema=False)
+    async def favicon(_: Request) -> FileResponse:
+        return FileResponse(
+            ICON_PATH,
+            media_type="image/png",
+            headers={"Cache-Control": "public, max-age=86400"},
+        )
+
+    @mcp.custom_route("/healthz", methods=["GET"], include_in_schema=True)
+    async def healthz(_: Request) -> JSONResponse:
+        return JSONResponse({
+            "status": "ok",
+            "service": "masil-mcp",
+            "version": SERVER_VERSION,
+            **knowledge.stats(),
+        })
+
+    @mcp.custom_route("/evidence/{capture_id}/{token}", methods=["GET"], include_in_schema=False)
+    async def evidence_image(request: Request):
+        capture_id = request.path_params["capture_id"]
+        token = request.path_params["token"]
+        try:
+            metadata, path = knowledge.capture(capture_id)
+        except (KeyError, FileNotFoundError):
+            return JSONResponse({"error": "capture not found"}, status_code=404)
+        expected = f"{metadata['sha256'][:16]}{path.suffix.lower()}"
+        if not secrets.compare_digest(token, expected):
+            return JSONResponse({"error": "capture not found"}, status_code=404)
+        return FileResponse(
+            path,
+            media_type=metadata.get("mime_type", "application/octet-stream"),
+            headers={
+                "Cache-Control": "public, max-age=86400, immutable",
+                "Content-Disposition": f'inline; filename="{capture_id}{path.suffix.lower()}"',
+                "X-Content-Type-Options": "nosniff",
+            },
+        )
+
+    def captures_result(
+        capture_ids: list[str],
+        *,
+        allow_supporting: bool = False,
+        resolution: dict | None = None,
+        extras_by_id: dict[str, dict] | None = None,
+    ) -> ToolResult:
+        if not capture_ids:
+            raise ValueError("No exact mapped capture was found. Do not guess a capture ID.")
+
+        payloads: list[dict] = []
+        images = []
+        markdown: list[str] = []
+        extras_by_id = extras_by_id or {}
+        for capture_id in capture_ids[:2]:
+            metadata, path = knowledge.capture(capture_id)
+            if metadata.get("card_status") != "active" and not allow_supporting:
+                raise ValueError(
+                    "This is not active Summary/Appendix evidence. Set allow_supporting=true only when the user explicitly requested qa_only or listed_only material."
+                )
+            token = f"{metadata['sha256'][:16]}{path.suffix.lower()}"
+            display_url = f"{PUBLIC_URL}/evidence/{capture_id}/{token}"
+            alt = str(metadata.get("alt") or metadata.get("heading") or capture_id).replace("]", "")
+            payload = {
+                **metadata,
+                **extras_by_id.get(capture_id, {}),
+                "display_url": display_url,
+                "display_markdown": f"![{alt}]({display_url})",
+            }
+            payloads.append(payload)
+            markdown.append(payload["display_markdown"])
+            images.append(
+                Image(
+                    path=path,
+                    annotations=Annotations(audience=["user"], priority=1.0),
+                ).to_image_content()
+            )
+
+        structured = {
+            **(payloads[0] if len(payloads) == 1 else {}),
+            "captures": payloads,
+            "display_markdown": "\n\n".join(markdown),
+            "client_rendering": "native_image_content_with_markdown_fallback",
+            "display_rule": (
+                "반환된 image content를 대화에 직접 표시합니다. 이미지가 표시되지 않는 클라이언트에서는 display_markdown을 "
+                "답변에 포함하세요. capture_kind=deck이면 원문 전체가 아니라 덱 발췌임을 밝히세요."
+            ),
+        }
+        if resolution:
+            structured.update(resolution)
+        text = (
+            "EVIDENCE_FOR_USER\n"
+            + structured["display_markdown"]
+            + "\n\nEVIDENCE_DISPLAY_PACKET\n"
+            + json.dumps(structured, ensure_ascii=False, indent=2)
+            + "\nRender the returned image content directly. Use the Markdown only as a fallback."
+        )
+        return ToolResult(
+            content=[TextContent(type="text", text=text), *images],
+            structured_content=structured,
+        )
+
+    def capture_result(
+        capture_id: str,
+        *,
+        allow_supporting: bool = False,
+        resolution: dict | None = None,
+    ) -> ToolResult:
+        return captures_result(
+            [capture_id],
+            allow_supporting=allow_supporting,
+            resolution=resolution,
+        )
+
+    @mcp.tool(tags={"help"})
+    def connector_guide() -> dict:
+        """Call when the user asks what MASIL Knowledge Studio can do or how to use it."""
+        return {
+            "purpose": "고정 답변집이 아니라 발표자가 현재 논리와 근거를 해석하고 Q&A에 대비하도록 재료를 찾는 커넥터입니다.",
+            "how_to_use": "평소처럼 질문하거나 대본·Q&A 초안을 붙여 넣으면 됩니다. 팀원이 도구 이름이나 명령어를 외울 필요는 없습니다.",
+            "example_prompts": [
+                "내일 8분 Q&A에서 가장 중요한 질문 10개와 쉬운 답변을 보여줘.",
+                "생활권·점수·환급 테마의 S급 질문부터 연습하자.",
+                "생활권 밖이 위험하다면서 왜 위치만으로 감점하지 않는지 쉽게 설명해줘.",
+                "이 Q&A 답변이 덱과 충돌하는지 보고 짧고 쉬운 영어로 고쳐줘.",
+                "Appendix B의 생활권 형성 논리와 근거를 같이 설명해줘.",
+                "이 문헌이 덱 어디에 쓰였는지 캡처와 함께 보여줘.",
+                "현재 구현과 우리가 발표할 상품 논리가 다른 부분만 알려줘.",
+                "아직 확정하지 않은 내용을 발표에서 어디까지 말해도 되는지 알려줘.",
+            ],
+            "rules": [
+                "기본 검색은 현재 사실만 사용합니다.",
+                "정확히 연결된 근거 캡처는 별도 요청 없이 관련 답변에 함께 표시합니다.",
+                "가드레일을 예상 질문으로 자동 변환하지 않습니다.",
+                "예상 질문 요청에는 50개 질문 후보를 쓰되 답은 최신 현장 계약으로 다시 구성합니다.",
+                "캡처 ID를 추측하지 않고 문헌 연결을 먼저 확인합니다.",
+            ],
+        }
+
+    @mcp.tool(tags={"search"})
+    def search_knowledge(
+        query: str,
+        top_k: int = 8,
+        scope: Literal["current", "canonical", "slides", "evidence"] = "current",
+        detail: Literal["compact", "full"] = "compact",
+    ) -> dict:
+        """Search MASIL with Korean/English BM25 plus Korean character n-grams.
+
+        The default current scope returns answer-safe facts from the final deck
+        and current product contract. Use canonical for current glossary and
+        guardrails. Superseded material is not available in the team runtime.
+        """
+        return knowledge.search(query, top_k=top_k, scope=scope, detail=detail)
+
+    @mcp.tool(tags={"product"})
+    def explain_product_logic(topic: str, detail: Literal["compact", "full"] = "compact") -> dict:
+        """Return the current MASIL product contract for a topic.
+
+        It distinguishes product rules, current sandbox parameters, planned
+        implementation changes, and validated results.
+        """
+        return knowledge.explain_product_logic(topic, detail=detail)
+
+    @mcp.tool(tags={"deck"})
+    def get_slide_context(page: int, detail: Literal["compact", "full"] = "compact") -> dict:
+        """Return claims, caveats, and correction status for a final-deck page (1-9)."""
+        if page < 1 or page > 9:
+            raise ValueError("page must be between 1 and 9")
+        return knowledge.get_slide_context(page, detail=detail)
+
+    @mcp.tool(tags={"evidence"})
+    def get_evidence(
+        query: str,
+        top_k: int = 6,
+        include_captures: bool = True,
+        usage_scope: Literal["stage"] = "stage",
+        capture_kind: Literal["source", "deck"] = "source",
+    ) -> dict:
+        """Find exact literature mappings; defaults to active Summary/Appendix evidence only.
+
+        Source captures and deck excerpts are separate. The default source mode
+        never falls back to a deck image. Use deck only when the user asks where
+        material appears in the presentation. Do not substitute a fuzzy or
+        unrelated capture.
+        """
+        return knowledge.get_evidence(
+            query,
+            top_k=top_k,
+            include_captures=include_captures,
+            usage_scope=usage_scope,
+            capture_kind=capture_kind,
+        )
+
+    @mcp.tool(tags={"implementation"})
+    def get_implementation(topic: str = "점수 Care 할인 생활권") -> dict:
+        """Compare the audited current demo implementation with the product contract."""
+        return knowledge.get_implementation(topic)
+
+    @mcp.tool(tags={"conflict"})
+    def compare_claims(query: str) -> dict:
+        """Check a pasted claim against the current deck and current product contract."""
+        return knowledge.compare_claims(query)
+
+    @mcp.tool(tags={"answer", "preparation"})
+    def prepare_topic_brief(topic: str) -> dict:
+        """Gather current position, evidence, boundaries, and plain-language material for a topic.
+
+        This tool does not generate likely questions or fixed answers. Never
+        reinterpret claim_boundaries as a question list. Use it before answering
+        or rehearsing so Claude can understand what the materials actually say.
+        """
+        return knowledge.prepare_topic_brief(topic)
+
+    @mcp.tool(tags={"answer", "preparation", "practice"})
+    def prepare_qa_practice(
+        query: str = "",
+        theme: Literal["all", "T1", "T2", "T3", "T4", "T5"] = "all",
+        rank: Literal["all", "S", "A", "B"] = "all",
+        top_only: bool = False,
+        limit: int = 10,
+    ) -> dict:
+        """Use for expected questions, killer questions, or Q&A practice.
+
+        Returns the 50-question selection catalog without its older answer prose.
+        For each selected question, use prepare_answer_context so the answer is
+        rebuilt from the latest field contract. Use
+        top_only=true for the ten questions most likely to matter in an 8-minute
+        Q&A. Use a theme or free-text query to narrow the practice set. Do not
+        invent questions from guardrails when this catalog already covers the
+        request.
+        """
+        return knowledge.prepare_qa_practice(
+            query=query,
+            theme=theme,
+            rank=rank,
+            top_only=top_only,
+            limit=limit,
+        )
+
+    @mcp.tool(tags={"answer"})
+    def prepare_answer_context(
+        question: str,
+        language: Literal["ko", "en"] = "ko",
+        max_chars: int = 5000,
+        evidence_scope: Literal["stage"] = "stage",
+    ) -> dict:
+        """Default internal tool for ordinary MASIL questions and pasted draft answers.
+
+        Call it without teaching the user tool names. It returns compact answer
+        ingredients, exact evidence links, and any captures that should be shown
+        proactively instead of a frozen answer.
+        """
+        if max_chars < 2500 or max_chars > 12000:
+            raise ValueError("max_chars must be between 2500 and 12000")
+        return knowledge.prepare_answer_context(
+            question,
+            language=language,
+            max_chars=max_chars,
+            evidence_scope=evidence_scope,
+        )
+
+    @mcp.tool(tags={"gaps"})
+    def list_open_items(
+        query: str = "미확정 unresolved 검증 필요",
+        top_k: int = 20,
+        status_filter: Literal[
+            "unresolved",
+            "pilot_hypothesis",
+            "candidate_parameter",
+            "planned_not_implemented",
+            "all",
+        ] = "unresolved",
+    ) -> dict:
+        """List open product items with exact totals; defaults to unresolved items only.
+
+        Use total_count rather than the number of returned items. Set all only
+        when the user also wants pilot hypotheses and candidate parameters.
+        """
+        return knowledge.list_open_items(query=query, top_k=top_k, status_filter=status_filter)
+
+    @mcp.tool(tags={"evidence", "image"})
+    def list_captures(
+        query: str = "문헌",
+        top_k: int = 20,
+        usage_scope: Literal["stage"] = "stage",
+    ) -> dict:
+        """List exact capture IDs; defaults to active Summary/Appendix evidence only.
+
+        Only active Summary/Appendix evidence is available. For the complete
+        current inventory, set top_k=50.
+        """
+        return knowledge.list_captures(query=query, top_k=top_k, usage_scope=usage_scope)
+
+    @mcp.tool(tags={"evidence", "image"})
+    def show_answer_evidence(
+        question: str,
+        usage_scope: Literal["stage"] = "stage",
+    ) -> ToolResult:
+        """Render exact source captures already connected to an ordinary MASIL answer.
+
+        Call this automatically with the same question whenever
+        Finish the direct answer first. Then call this when prepare_answer_context
+        returns evidence_captures. The cards supplement the answer and never
+        replace it. Do not call it when the list is empty.
+        """
+        packet = knowledge.prepare_answer_context(
+            question,
+            max_chars=5000,
+            evidence_scope=usage_scope,
+        )
+        captures = packet["evidence_captures"][:2]
+        capture_ids = [capture["id"] for capture in captures]
+        extras = {
+            capture["id"]: {
+                "evidence_id": capture.get("evidence_id"),
+                "supports": capture.get("supports", []),
+            }
+            for capture in captures
+        }
+        return captures_result(
+            capture_ids,
+            allow_supporting=False,
+            resolution={
+                "question": question,
+                "usage_scope": usage_scope,
+                "resolution": "answer_context_exact_evidence_links",
+                "capture_kind": "source",
+                "answer_requirement": "카드와 별개로 질문에 대한 직접 답변 2~4문장을 반드시 제공",
+                "current_facts": packet["current_facts"][:2],
+                "evidence": packet["evidence"][:2],
+            },
+            extras_by_id=extras,
+        )
+
+    @mcp.tool(tags={"evidence", "image"})
+    def show_evidence_capture(
+        query: str,
+        usage_scope: Literal["stage"] = "stage",
+        capture_kind: Literal["source", "deck"] = "source",
+    ) -> ToolResult:
+        """Find and display the exact mapped evidence capture for a user's topic.
+
+        Use source for the publication/source page and deck only when the user
+        asks where it appears in the presentation. Never substitute deck for a
+        missing source capture. The tool prevents guessed capture IDs.
+        """
+        resolved = knowledge.resolve_evidence_capture(
+            query,
+            usage_scope=usage_scope,
+            capture_kind=capture_kind,
+        )
+        capture_id = resolved["capture"]["id"]
+        return capture_result(
+            capture_id,
+            allow_supporting=False,
+            resolution={
+                "query": query,
+                "usage_scope": usage_scope,
+                "resolution": resolved["resolution"],
+                "capture_kind": capture_kind,
+                "literature": resolved["literature"],
+            },
+        )
+
+    @mcp.tool(tags={"status"})
+    def knowledge_status() -> dict:
+        """Return corpus counts and fingerprint for deployment diagnostics."""
+        return knowledge.stats()
+
+    @mcp.tool(tags={"status", "telemetry"})
+    def usage_telemetry(days: int = 7) -> dict:
+        """Return aggregate tool usage without prompts, answers, arguments, or identities.
+
+        Call only when a teammate explicitly asks how the connector has been
+        used or whether a route/tool is working well.
+        """
+        return telemetry.summary(days=days)
+
+    @mcp.tool(tags={"telemetry", "feedback"})
+    def record_usage_feedback(
+        rating: Literal["helpful", "not_helpful"],
+        reason: Literal[
+            "good_answer",
+            "missing_evidence",
+            "wrong_material",
+            "hard_to_understand",
+            "image_not_visible",
+            "tool_error",
+        ],
+    ) -> dict:
+        """Record an explicit teammate rating using fixed tags and no free text.
+
+        Never infer a rating. Call only after the user clearly says the result
+        was helpful or names a concrete problem.
+        """
+        telemetry.record_feedback(rating, reason)
+        return {
+            "recorded": True,
+            "rating": rating,
+            "reason": reason,
+            "privacy": "No prompt or answer text was stored.",
+        }
+
+    return mcp
+
+
+mcp = create_server()
+
+
+def main() -> None:
+    host = os.getenv("MASIL_HOST", "127.0.0.1")
+    port = int(os.getenv("MASIL_PORT", "8000"))
+    path = os.getenv("MASIL_MCP_PATH", "/mcp")
+    mcp.run(
+        transport="http",
+        host=host,
+        port=port,
+        path=path,
+        stateless_http=False,
+        json_response=False,
+    )
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,202 @@
+meta:
+  version: 2026-08-18-field-contract-v1
+  status: active
+  role: GAIP 2026 현장 Q&A의 현재 상품 계약
+  source_priority:
+    - latest_deck_2026-08-18
+    - field_contract
+    - latest_appendix
+    - stage_citable_evidence
+  legacy_policy: 이 파일에 없는 과거 상품 해석은 공개 Q&A의 답변 근거로 사용하지 않는다.
+
+entries:
+  - id: field-masil-name
+    status: active
+    topic: product_definition
+    title_ko: MASIL이라는 이름
+    statement_ko: 마실은 한국어로 집 가까운 곳을 가볍고 익숙하게 다녀오는 일상 외출을 뜻한다. MASIL은 이 익숙한 이동 맥락을 개인별로 만들고, 그 안팎의 실제 운전행동과 평소 대비 변화를 함께 본다는 의미를 담은 이름이다.
+    statement_en: In Korean, masil means a short and familiar trip near home. The name reflects MASIL's idea of building a personal familiar context and then evaluating actual behavior and change within and beyond it.
+
+  - id: field-product-definition
+    status: active
+    topic: product_definition
+    title_ko: MASIL 한 문장 정의
+    statement_ko: MASIL은 고령 운전자의 개인 생활권과 평소 대비 운전 변화를 함께 보아, 안전한 운전에는 환급을 제공하고 변화 신호에는 예방 지원을 연결하는 마일리지 특약이다.
+    statement_en: MASIL is a mileage rider for senior drivers. It adds personal familiarity and change from the driver's usual pattern to support safer driving, premium refunds, and preventive care.
+
+  - id: field-product-gap
+    status: active
+    topic: product_definition
+    title_ko: 기존 상품의 빈틈
+    statement_ko: PAYD는 주로 얼마나 운전했는지를 보고 UBI는 어떻게 운전했는지를 본다. MASIL은 어디가 그 사람에게 익숙한지와 평소 운전에서 무엇이 달라졌는지를 추가한다.
+    statement_en: PAYD mainly measures how much a person drives, and UBI measures how the person drives. MASIL also considers personal familiarity and change from the driver's usual pattern.
+
+  - id: field-zone-purpose
+    status: active
+    topic: zone_formation
+    title_ko: 생활권을 보는 이유
+    statement_ko: MASIL Zone은 위치를 벌점으로 만들기 위한 경계가 아니라, 현재 운전행동을 개인의 평소 맥락과 비교하기 위한 개인 기준이다.
+    statement_en: The MASIL Zone is not a penalty boundary. It gives personal context for comparing current driving with the driver's usual pattern.
+
+  - id: field-outer-zone-neutral
+    status: active
+    topic: zone_formation
+    title_ko: Outer Zone의 공식 의미
+    statement_ko: Outer Zone은 반복 생활권 밖이라는 중립적인 이동 맥락이다. 위치 자체로 불이익을 주지 않고, 밖에서 실제로 관찰된 운전행동은 Out-of-Zone Safety로 평가한다.
+    statement_en: The Outer Zone is neutral context outside the driver's repeated familiar area. Location alone is not a penalty. Actual behavior outside the zone is measured by Out-of-Zone Safety.
+    must_not_say:
+      - 생활권 밖은 무조건 위험하다.
+      - 생활권 밖이면 자동 감점한다.
+    evidence_links:
+      - ref: presentation-ehsani-tefft-2021
+        relation: supporting_context
+        supports: 초행 도로가 위험 맥락일 수 있다는 문제정의만 지원하며 위치 벌점이나 계수값을 증명하지 않음
+        auto_show_source: false
+
+  - id: field-zone-formation
+    status: active
+    topic: zone_formation
+    title_ko: MASIL Zone 형성
+    statement_ko: 직전 60일의 도착지를 DBSCAN으로 묶고, 서로 다른 3일 이상 반복된 군집을 거점으로 삼는다. 각 거점의 개인 P90 방문거리로 Buffer를 정하며, DBSCAN은 거점 탐색이고 P90은 개인 반경 설정이다.
+    statement_en: MASIL clusters destinations from the previous 60 days with DBSCAN. A cluster needs visits on at least three distinct days. DBSCAN finds anchors, and P90 sets each personal buffer radius.
+    boundaries:
+      - eps 260m, 500m Core, 2km cap은 실제 데이터로 재보정할 초기 후보값이다.
+
+  - id: field-two-rolling-windows
+    status: active
+    topic: monthly_measurement
+    title_ko: 두 종류의 2개월
+    statement_ko: 생활권 지도는 매달 현재 달을 제외한 직전 60일 방문으로 다시 만든다. Pattern Change는 현재 달의 이동과 위험행동을 직전 두 개 월 지표와 별도로 비교한다. 초기 두 달은 cold-start 관찰기간이다.
+    statement_en: The zone map is rebuilt each month from the previous 60 days, excluding the current month. Pattern Change separately compares the current month with the previous two monthly measures. The first two months are a cold-start period.
+    must_not_say:
+      - 최초 두 달의 지도를 1년 동안 고정한다.
+
+  - id: field-four-monthly-scores
+    status: active
+    topic: monthly_measurement
+    title_ko: 네 가지 월 점수
+    statement_ko: 월 통합점수는 Mileage 30%, In-Zone Safety 30%, Out-of-Zone Safety 20%, Pattern Stability 20%의 네 구성요소를 결합한다.
+    statement_en: The monthly integrated score combines Mileage at 30%, In-Zone Safety at 30%, Out-of-Zone Safety at 20%, and Pattern Stability at 20%.
+    boundaries:
+      - 30/30/20/20은 180개 합성 시나리오에서 안정성을 확인한 초기 후보이며 최종 요율이 아니다.
+
+  - id: field-monthly-tiers
+    status: active
+    topic: monthly_decision
+    title_ko: Favorable Standard Care
+    statement_ko: Favorable, Standard, Care는 운전자가 그 달의 결과를 이해하고 필요한 조치를 연결하기 위한 세 가지 월 결과다. Hold는 네 번째 위험등급이 아니라 데이터 부족 상태다.
+    statement_en: Favorable, Standard, and Care are three monthly outcomes. Hold is not a fourth risk tier. It means there is not enough evidence for that month.
+
+  - id: field-care-contract
+    status: active
+    topic: care_detection_and_support
+    title_ko: Care의 역할
+    statement_ko: Care는 현재 달의 이동 맥락과 위험행동이 평소 대비 함께 달라졌을 때 사람의 확인과 예방 지원을 제안하는 월 결과다. 질병 진단도 아니고 연간 환급 차감도 아니다. 다음 달은 다시 같은 월 규칙으로 평가한다.
+    statement_en: Care is a monthly signal for human review and preventive support when mobility context and risky behavior change together. It is not a medical diagnosis or an annual refund penalty. The next month is evaluated again under the same rules.
+    must_not_say:
+      - Care가 한 번 나오면 연간 환급률이 13%p 줄어든다.
+      - Care가 자동으로 보험료를 올린다.
+
+  - id: field-persistent-low-score
+    status: active
+    topic: care_detection_and_support
+    title_ko: 낮은 점수와 Care의 구분
+    statement_ko: 점수가 계속 낮더라도 평소 대비 이동 맥락과 위험행동의 동시 변화가 없다면 그 달은 Standard다. Care는 위험한 사람을 분류하는 낙인이 아니라 새로 나타난 변화의 이유를 확인하기 위한 월별 신호다.
+    statement_en: A driver with a consistently low score remains Standard if there is no joint change in mobility context and risky behavior. Care is not a label for a risky person. It is a monthly signal to understand a new change.
+
+  - id: field-annual-refund
+    status: active
+    topic: annual_refund
+    title_ko: 월 결과와 연간 환급의 관계
+    statement_ko: 매월은 네 점수와 Favorable, Standard, Care 결과를 보여주고, 연간 환급 후보는 12개 월 통합점수로 만든 연간 점수와 별도 환급 매핑으로 계산한다. Care 자체는 연간 환급을 차감하지 않는다.
+    statement_en: Each month shows four scores and a Favorable, Standard, or Care outcome. The annual refund candidate is calculated from the twelve monthly integrated scores and a separate refund mapping. Care itself does not reduce the annual refund.
+    boundaries:
+      - 현재 화면의 3%와 22.6%는 합성 경제성 예시이며 최종 요율이 아니다.
+
+  - id: field-dashboard-contrast
+    status: active
+    topic: dashboard
+    title_ko: Jackie와 Tom 사례
+    statement_ko: Jackie와 Tom은 연간 주행거리가 비슷해 PAYD 환급은 16%로 같지만, 위험 이벤트는 209건 대 10건이고 Out-of-Zone Safety는 47.9 대 95.8이다. MASIL은 같은 거리 안의 행동 차이를 환급 후보에 반영하는 합성 사례다.
+    statement_en: Jackie and Tom drive similar annual distances, so PAYD gives both a 16% refund. Their risky events are 209 versus 10, and their Out-of-Zone Safety scores are 47.9 versus 95.8. The synthetic example shows how MASIL separates behavior within similar mileage.
+    boundaries:
+      - 3%와 22.6%를 실제 보험료나 Care 차감 결과로 말하지 않는다.
+
+  - id: field-ai-roles
+    status: active
+    topic: ai_and_human_roles
+    title_ko: AI와 사람의 역할
+    statement_ko: AI는 합성 운전자 프로필과 주행 로그 생성, 이유 코드의 쉬운 설명을 보조한다. 점수와 월 결과는 고정 규칙으로 계산하고, 직원이 증거와 고객 안내를 검토·승인한다.
+    statement_en: AI supports synthetic profile and driving-log generation and turns reason codes into plain language. Fixed rules calculate the scores and monthly outcomes. Staff review the evidence and approve customer communication.
+    must_not_say:
+      - AI가 보험료나 등급을 최종 결정한다.
+
+  - id: field-synthetic-boundary
+    status: active
+    topic: simulation_and_validation
+    title_ko: 합성 검증의 범위
+    statement_ko: 60명, 3개 환경, 180개 시나리오와 80,032개 로그는 상품 규칙의 재현성, 예외 처리, 위치 중립성이 의도대로 작동하는지를 검증했다. 실제 사고예측, 최종 환급률, 손해율 개선, 고객 수용성, 공정성을 검증한 것은 아니다.
+    statement_en: The 60 drivers, three environments, 180 scenarios, and 80,032 logs tested reproducibility, exception handling, and location neutrality. They did not prove real crash prediction, final refund rates, loss-ratio improvement, customer acceptance, or fairness.
+
+  - id: field-insurer-value
+    status: active
+    topic: value_proposition
+    title_ko: 보험사 가치
+    statement_ko: 보험사는 같은 저주행 고객 안에서도 위험을 더 정교하게 구분하고, 위험 변화가 큰 고객에게 사고 전에 지원할 수 있다. 환급의 정교화, 역선택 완화, 장기 위험데이터 축적이 사업 가치이며 손해율 개선폭은 실데이터로 검증해야 한다.
+    statement_en: MASIL can segment risk more precisely among low-mileage drivers and support customers before a crash. It can improve refund allocation, reduce adverse-selection risk, and build richer long-term risk data. The actual loss-ratio effect still requires real data.
+
+  - id: field-senior-society-value
+    status: active
+    topic: value_proposition
+    title_ko: Senior와 Society의 가치
+    statement_ko: Senior는 안전운전에 맞는 환급 기회와 자신의 운전 변화에 대한 설명을 받고, 즉시 이동을 제한하는 대신 예방 지원을 선택할 수 있다. 사회에는 이동권과 교통안전을 함께 지원하는 포용적 보험 모델을 제안한다.
+    statement_en: Senior drivers can receive a more precise refund, understand changes in their driving, and choose preventive support instead of immediate restriction. Society gains an inclusive model that supports both mobility and road safety.
+
+  - id: field-privacy
+    status: active
+    topic: data_and_privacy
+    title_ko: 개인정보와 위치정보
+    statement_ko: 필요한 데이터만 수집하고 목적지 이름은 점수 입력에서 가리며, 원본 위치와 판정·고객화면의 접근권한을 분리한다. 원본 GPS 보관·파기 기간과 동의 절차는 출시 국가의 법무 검토 후 확정한다.
+    statement_en: MASIL minimizes data collection, masks destination names, and separates access to raw location data, decisions, and customer views. Retention and consent rules must be finalized through local legal review.
+
+  - id: field-literature-boundary
+    status: active
+    topic: evidence_and_claim_boundaries
+    title_ko: 문헌 사용 경계
+    statement_ko: 문헌은 고령 운전의 문제와 방법 선택을 각 연구 범위 안에서 뒷받침한다. 문헌이 MASIL의 가중치, 환급률, Care 기준, 손해율 효과를 직접 증명한다고 말하지 않는다.
+    statement_en: The literature supports the problem and method choices within each study's scope. It does not directly prove MASIL's weights, refund rates, Care rules, or loss-ratio effect.
+
+  - id: field-familiarity-studies
+    status: active
+    topic: evidence_and_claim_boundaries
+    title_ko: 2.5배와 76%의 구분
+    statement_ko: 2.5배는 Ehsani와 Tefft의 초행 도로 사고 연루 연구이고 전 연령 자료다. 76%는 고령 운전자의 익숙한 경로 선택을 본 별도 연구다. 76%는 자기규제 전체를 증명하지 않고 나머지 24%를 위험운전자로 분류하지 않는다.
+    statement_en: The 2.5-times figure comes from Ehsani and Tefft on first-time roads and uses all-age data. The 76-percent figure comes from a separate study of familiar route choice among older drivers. It does not prove all self-regulation or label the other 24 percent as risky.
+
+  - id: field-wide-and-multiple-zones
+    status: active
+    topic: target_and_fairness
+    title_ko: 넓거나 복수인 생활권
+    statement_ko: 생활권이 넓거나 거점이 여러 개인 것 자체는 불이익이 아니다. 각 운전자의 반복 방문으로 개인 기준을 만들고, 실제 안전행동과 평소 대비 변화로 평가한다.
+    statement_en: A wide or multi-center familiar area is not a penalty by itself. MASIL builds a personal reference from repeated visits and evaluates actual behavior and change from that person's baseline.
+
+  - id: field-open-parameters
+    status: candidate_parameter
+    topic: simulation_and_validation
+    title_ko: 실제 데이터로 보정할 설계값
+    statement_ko: DBSCAN 거리, Core와 P90 반경, 네 점수 가중치, Pattern Change 기준, 연간 환급곡선은 합성 검증에 사용한 초기 후보다. 실제 주행·청구·공정성 데이터로 재보정해야 한다.
+    statement_en: The clustering distance, zone radii, score weights, Pattern Change rules, and annual refund curve are initial candidates. They require recalibration with real driving, claims, and fairness data.
+
+  - id: field-open-loss-ratio
+    status: pilot_hypothesis
+    topic: business_and_roadmap
+    title_ko: 손해율 개선 가설
+    statement_ko: 위험 변화를 조기에 발견해 예방 지원으로 연결하면 사고 빈도와 손해액을 줄일 가능성이 있다. 현재 합성 시뮬레이션은 이 사업 성과를 증명하지 않았으며 보험사의 실제 청구·손해액 데이터로 측정해야 한다.
+    statement_en: Earlier detection and preventive support may reduce crash frequency and loss costs. The synthetic simulation did not prove this business result. It must be measured with real claims and loss data.
+
+  - id: field-open-privacy-operations
+    status: unresolved
+    topic: data_and_privacy
+    title_ko: 법무와 운영 확정 항목
+    statement_ko: 원본 GPS 보관·파기, 동의와 거부권, 직원 검토 역할과 처리시간, Care 지원기관 연계는 출시 국가와 보험사 운영정책에 맞춰 확정해야 한다.
+    statement_en: Raw-GPS retention, consent and refusal rights, staff-review roles and timing, and Care-provider partnerships must be finalized for the launch country and insurer.

@@ -1,0 +1,218 @@
+# 현재 정본과 과거 자료가 충돌하는 지점을 버리지 않고 설명 재료로 보존한다.
+
+meta:
+  effective_date: 2026-08-10
+  status: approved_for_mcp_with_open_items
+  conflict_count: 21
+  current_resolution_source: knowledge/product_model.yaml
+  rule: 현재 결론은 product_model의 current claim이 정하고, 과거 문장은 변경 이유·질문 대비·금지 표현 탐지에 사용
+
+conflicts:
+  - id: conflict-dashboard-annual-tier-vs-score
+    topic: 최신 대시보드의 월별 등급과 연간 평균점수
+    current_resolution: 최신 비교표에서는 연간 Care·Favorable 등급 행을 제거하고 Annual average score 81.6·98.4를 보여준다. Favorable·Standard·Care는 월별 결과이며, 월별 Care는 그 달의 검토·지원 신호다.
+    historical_material:
+      - sources/12_presentation_script_v1_0810.md
+    avoid_as_current:
+      - 최신 연간 비교표에서 Edward는 Care, Frank는 Favorable이라고 설명
+      - 월별 Care와 연간 평균점수를 하나의 연간 등급으로 혼합
+      - 최신 표를 opposite-decision annual tier 사례라고 설명
+
+  - id: conflict-monthly-three-grades-vs-two-signals
+    topic: 월별 세 등급과 내부 두 신호
+    current_resolution: 월별 결과는 Favorable·Standard·Care 중 하나로 표시한다. 월 통합점수 75점 이상이고 Care 동시 변화가 없으면 Favorable, 동시 변화 조건이면 Care, 그 밖의 판정 가능 월은 Standard다. Hold는 데이터 부족 상태다.
+    historical_material:
+      - sources/11_V20_결정_기록_0810.md#1-상품-판정-계약
+      - knowledge/history/decision_log.yaml#decision-2026-08-09-two-axis-contract
+      - IMPLEMENTATION.md#3-care
+    avoid_as_current:
+      - Favorable과 Care가 한 달 결과로 동시에 표시된다는 설명
+      - Hold를 네 번째 위험 등급으로 설명
+
+  - id: conflict-care-month-vs-annual-summary
+    topic: 해당 월 Care와 연간 Care 발생 이력
+    current_resolution: Care는 조건을 충족한 해당 월에만 표시하고 다음 달은 새로 계산한다. 연간 화면의 Care 월 수 또는 any-care 표시는 발생 이력이지 계속 열린 Care나 건강관리 책임이 아니다.
+    historical_material:
+      - IMPLEMENTATION.md#3-care
+      - sources/02_마스터답변안_전항목.md#부록-C
+    avoid_as_current:
+      - Care가 연말까지 자동 유지
+      - MASIL이 고객 건강을 계속 책임지고 감시
+
+  - id: conflict-stable-low-score-vs-care-cutoff
+    topic: 지속 저점수와 Care
+    current_resolution: 지속적으로 점수가 낮아도 직전 2개월 대비 이동과 위험행동의 동시 급변이 없다면 Standard다. Care는 절대 위험 수준이 아니라 변화 시점을 찾는다.
+    historical_material:
+      - sources/master_qa_artifact_2026-08-10.txt
+    avoid_as_current:
+      - 통합점수 55점 미만이면 Care
+      - Pattern Change Risk 70점 이상이면 Care
+      - 낮은 점수만으로 의료·건강 위험군 분류
+
+  - id: conflict-care-price-decoupling
+    topic: Care와 가격
+    current_resolution: Care는 직원 검토와 지원을 열지만 자동 할증·차감·추가 할인 중지를 만들지 않는다.
+    historical_material:
+      - sources/02_마스터답변안_전항목.md#요율-샌드박스
+      - sources/00_확정수치카드.md#요율-케어
+      - knowledge/history/decision_log.yaml#decision-2026-08-09-care-price-decoupling
+    avoid_as_current:
+      - Care면 보너스 자동 정지
+      - Care 한 번이면 13%p 차감
+
+  - id: conflict-active-runtime-vs-legacy-annual-files
+    topic: 현재 GaipStudio와 저장소에 남은 옛 연간 계산 파일
+    current_resolution: 현재 실행 화면은 GaipStudio·gaip-decision.ts·gaip_simulation_bundle 흐름을 사용한다. annual_scoring_engine.py와 annual_ab_comparison.py는 현재 진입점이 아니며 Care 할인 축소 등 과거 로직의 근거로만 취급한다.
+    historical_material:
+      - IMPLEMENTATION.md#5-현재-실행-경로가-아닌-옛-파일
+    avoid_as_current:
+      - annual_ab_comparison.py의 Care 할인 축소를 현재 정책으로 사용
+      - 옛 연간 재집계 점수를 현재 UI의 연간 평균점수로 설명
+
+  - id: conflict-dashboard-13p
+    topic: 대시보드 13%p
+    current_resolution: Edward 사례에 인쇄된 연간 시뮬레이션 차이로 설명하며 보편 정책이나 한 달 Care의 효과로 일반화하지 않는다.
+    historical_material:
+      - knowledge/key_numbers.yaml#annual-simulation-13p-difference
+      - sources/02_마스터답변안_전항목.md#요율-샌드박스
+    avoid_as_current:
+      - 13%p is the fixed Care penalty
+
+  - id: conflict-annual-pricing-models
+    topic: 연간 점수·월수·요율 산식
+    current_resolution: 연간 점수는 Hold를 제외한 유효 월 통합점수의 평균이다. 이 점수를 후보 할인표에 매핑해 기본 할인율을 정하고, Favorable 9개월 이상이면 현재 후보 +3%p를 더한다. Care 자체의 직접 가격 영향은 0이며 구체 요율 구간은 계리 검증 전 미확정이다.
+    historical_material:
+      - sources/02_마스터답변안_전항목.md#부록-C
+      - sources/00_확정수치카드.md#요율-케어
+      - IMPLEMENTATION.md#4-현재-할인율-구현
+    avoid_as_current:
+      - annual Care ANY가 현행 가격을 결정
+      - 1~7%p bonus가 최종 확정 요율
+      - 기본 할인율을 주행거리 하나만으로 정한다는 설명
+      - Care 한 달이 할인율을 직접 차감한다는 설명
+
+  - id: conflict-out-of-zone-risk-vs-penalty
+    topic: 생활권 밖 위험과 위치 중립
+    current_resolution: 생활권 밖이라는 위치 자체에는 벌점이 없다. 현재 팀 설계 후보는 실제 위험 이벤트에 생활권 안 계수 8, 생활권 밖 계수 12를 적용하며 두 값은 파일럿 재보정 대상이다. 발표 답변에서는 의미를 먼저 설명하고, 계수는 계산을 추가로 물을 때만 제시한다.
+    historical_material:
+      - sources/02_마스터답변안_전항목.md#2-생활권-안-사고
+      - sources/생활권반경_eps_정리.md
+    avoid_as_current:
+      - Outer Zone is automatically unsafe
+      - 생활권 밖 자체가 벌점
+      - Ehsani & Tefft의 2.5배에서 계수 12를 직접 도출
+      - 969개 가중치 민감도 분석이 위험 이벤트 계수 8/12를 검증
+      - 8과 12를 문헌에서 직접 도출된 확정값으로 설명
+
+  - id: conflict-zone-fixed-vs-rolling
+    topic: 생활권 형성 주기
+    current_resolution: 해당 월을 제외한 직전 2개월로 매달 재형성한다.
+    historical_material:
+      - sources/생활권_형성주기_이슈정리.md
+      - knowledge/history/decision_log.yaml#decision-2026-08-02-rolling-zone
+    avoid_as_current:
+      - 가입 초기 생활권을 연중 고정
+    implementation_gap: 현재 상품 계약은 매달 직전 2개월 rolling이지만 외부 합성 엔진 번들은 2025-11·12 고정 기준선을 사용한다. 발표 계약과 현재 코드 관측을 구분해 반환한다.
+
+  - id: conflict-product-zone-parameters-vs-synthetic-scale
+    topic: 실제 상품 생활권 파라미터와 합성 엔진 축척
+    current_resolution: 상품 설명은 ε=260m 시작값과 거점별 max(500m, min(P90, 2km)) 반경을 사용한다. 현재 외부 합성 엔진의 180/420/950m와 최대 2개 허브는 합성 환경을 만드는 구현값이지 상품 계약이 아니다.
+    historical_material:
+      - IMPLEMENTATION.md#7-상품-계약과-현재-합성-엔진의-차이
+    avoid_as_current:
+      - 합성 환경별 180/420/950m를 실제 고객의 지역별 상품 기준으로 설명
+      - 실제 상품이 생활권 허브를 최대 2개로 제한한다고 단언
+
+  - id: conflict-epsilon-regional-scaling
+    topic: ε=260m와 합성 환경 축척
+    current_resolution: 실세계 운영 시작값은 260m 단일이며 260/520/1100은 합성 지리 축척 정합용 기록이다.
+    historical_material:
+      - sources/00_확정수치카드.md#생활권
+      - sources/생활권반경_eps_정리.md
+    avoid_as_current:
+      - 도심·교외·농촌마다 위험 때문에 eps를 차등 적용
+      - 260m를 논문 직접값으로 표현
+
+  - id: conflict-synthetic-vs-real-data
+    topic: data와 합성 시나리오
+    current_resolution: 60명×3환경은 합성 시나리오이며 규칙 일관성을 검증했을 뿐 실제 고객·사고 예측 데이터가 아니다.
+    historical_material:
+      - sources/데이터생성_상세정리.md
+      - knowledge/official_positions.yaml#simulation-validation-boundary
+    avoid_as_current:
+      - 180 drivers
+      - representative sample
+      - actual driving logs
+
+  - id: conflict-ai-role
+    topic: AI와 판정
+    current_resolution: AI는 합성 프로필·설명문을 돕고 점수·Care·보험료는 고정 규칙과 사람 검토가 담당한다.
+    historical_material:
+      - sources/02_마스터답변안_전항목.md#9-루프
+    avoid_as_current:
+      - AI가 가중치나 보험료를 결정
+      - AI report가 자동 고객 조치를 실행
+
+  - id: conflict-safe-zone-term
+    topic: Safe Zone과 MASIL Zone
+    current_resolution: 공식 용어는 MASIL Zone이며 Safe Zone은 과거 원문을 설명할 때만 쓴다.
+    historical_material:
+      - knowledge/history/decision_log.yaml#decision-2026-08-08-terms-and-literature
+    avoid_as_current:
+      - Safe Zone
+
+  - id: conflict-social-value-proof
+    topic: 사회적 가치와 검증 범위
+    current_resolution: 이동권·예방 지원은 현재 가치 제안이고 손해율·사회비용·가족부담 개선은 파일럿 가설이다.
+    historical_material:
+      - deck://summary-2
+      - knowledge/qa/cards.yaml#qa-social-value
+    avoid_as_current:
+      - 사회적 비용 감소를 검증 완료 성과로 제시
+      - 손해율 개선을 합성 시뮬레이션 결과로 제시
+
+  - id: conflict-roadmap-direction-vs-numbers
+    topic: Pilot·Scale up·Roll out 로드맵
+    current_resolution: 단계 방향만 현재 계약으로 설명한다. 기간·인원·가입률·유지율·확대 연령은 미정이며 덱 인쇄값은 초기 기획 예시다.
+    historical_material:
+      - deck://summary-2
+    avoid_as_current:
+      - 0–6개월 · 6–18개월 · 18개월 이후를 확정 일정으로 제시
+      - 500명 · 15–20% · +2%p를 확정 목표나 예측으로 제시
+
+  - id: conflict-family-alert-privacy
+    topic: 가족 알림과 위치 프라이버시
+    current_resolution: 실시간 위치 공유는 하지 않으며 가족 관련 지원은 고객 동의와 운영·법무 설계가 필요한 후보 기능이다.
+    historical_material:
+      - deck://appendix-a
+      - knowledge/qa/cards.yaml#qa-social-value
+      - knowledge/qa/cards.yaml#qa-location-privacy
+    avoid_as_current:
+      - 가족에게 실시간 위치를 자동 공유
+
+  - id: conflict-literature-sumagaysay-lexisnexis
+    topic: Appendix A 철회 문헌
+    current_resolution: Sumagaysay와 LexisNexis는 덱의 해당 주장을 방어하는 근거로 사용하지 않는다.
+    historical_material:
+      - knowledge/evidence/registry.yaml#presentation-sumagaysay-2026
+      - knowledge/evidence/registry.yaml#presentation-lexisnexis-2015
+    avoid_as_current:
+      - Sumagaysay가 고령자 UBI 한계를 입증
+      - LexisNexis 45%를 개인 UBI 가입 매력 근거로 사용
+
+  - id: conflict-kca-braking-generalization
+    topic: KCA 2.28초
+    current_resolution: 시야가 제한된 돌발 상황의 2.28초 대 1.20초로만 말하고 모든 상황의 일반 제동 반응으로 확대하지 않는다.
+    historical_material:
+      - knowledge/evidence/registry.yaml#presentation-kca-2024-elderly-drivers
+    avoid_as_current:
+      - 고령 운전자는 모든 상황에서 제동이 90% 느림
+
+  - id: conflict-route-data
+    topic: 경로 이미지와 실제 입력
+    current_resolution: 지도 경로선은 설명용 도식이며 실제 판정 입력은 도착지 이벤트와 월 집계다.
+    historical_material:
+      - sources/00_확정수치카드.md#생활권
+      - sources/02_마스터답변안_전항목.md#6-위치데이터
+    avoid_as_current:
+      - 전체 GPS 궤적을 보험사에 저장

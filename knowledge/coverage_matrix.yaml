@@ -1,0 +1,83 @@
+# 전체 상품 모델의 구조화·근거·결정 상태. MCP 구현 승인 전에 unresolved 항목을 확인한다.
+
+meta:
+  effective_date: 2026-08-10
+  status: draft_pending_review
+  domain_count: 15
+  model_file: knowledge/product_model.yaml
+  conflict_file: knowledge/conflict_map.yaml
+  story_file: knowledge/presentation_story.yaml
+
+domains:
+  - domain: problem_definition
+    coverage: partial
+    present: 문제정의·상황판단·낯선 환경·제도 간격 자료
+    gap: 문제정의 전체를 하나의 active 공식 설명으로 정규화하는 검토
+  - domain: target_and_fairness
+    coverage: partial
+    present: 고령자 시작 이유·자기조절·의료 스크리닝 경계
+    gap: 연령 확장 조건, 보호속성별 불리한 영향, 디지털 접근성·가입 선택편의 검증 계획
+  - domain: value_proposition
+    coverage: partial
+    present: 이동권·지원·보험사·고령자·가족·사회 가치 제안
+    gap: 현재 가치와 파일럿 가설을 팀이 최종 확인
+  - domain: data_and_privacy
+    coverage: partial
+    present: 최소수집·도착지 이벤트·POI 마스킹·권한 분리
+    gap: 실제 스키마, 보관기간, 동의·철회·가족 공유 및 싱가포르·EU 이식 법무 설계
+  - domain: zone_formation
+    coverage: partial
+    present: DBSCAN·3일·260m·P90·500m·2km·rolling 2개월
+    gap: 파일럿 k-거리 재보정, 실제 코드 연결, 계절성·다중거주·측위오차 검증
+  - domain: monthly_measurement
+    coverage: partial
+    present: 네 축·30/30/20/20·관측축 재정규화 통합 공식과 현재 GaipStudio 실행 경로 감사
+    gap: MKS 밖 dirty working tree를 재현 가능한 커밋으로 고정하고 참조 세부 함수와 옛 파일을 격리
+  - domain: monthly_decision
+    coverage: partial
+    present: 월 통합점수·75점·Hold·해당 월 Care 병행 표시와 동시 성립 구현
+    gap: 덱의 세 결과 표현과 점수+Care 구현을 팀 발표 문장으로 최종 정리
+  - domain: care_detection_and_support
+    coverage: partial
+    present: +25%p AND +20%p·해당 월 재계산·직원 검토·가격 직접 영향 없음
+    gap: 지원 메뉴, 승인·고객 전달 운영 계약
+  - domain: annual_discount_and_pricing
+    coverage: partial
+    present: 연간 표시점수 평균·Favorable 9/12·기존 마일리지 기본할인·후보 +3%p·45% 상한
+    gap: 3%p·45% 후보의 실제 계리·파일럿 검증과 옛 A/B 계산 파일 격리
+  - domain: ai_and_human_roles
+    coverage: partial
+    present: AI 보조·규칙 판정·reason codes·직원 승인
+    gap: 운영 시스템 권한, 감사 로그, 규칙 변경 승인과 책임 구현
+  - domain: simulation_and_validation
+    coverage: partial
+    present: 180 시나리오·80,032 이벤트·6유형·검증/비검증 경계·969 조합과 현재 구현 테스트 16+26 통과
+    gap: 재현 가능한 코드·재실행 산출물 고정, 실데이터 외적 타당성, 드리프트·재보정 거버넌스
+  - domain: evidence_and_claim_boundaries
+    coverage: partial
+    present: 29개 문헌 카드·64개 덱 claim·citation tier·로컬 캡처 44개·Master Q&A 로컬 export와 78개 카드
+    gap: 새 덱·대본 변경 시 claim·문헌·캡처 연결을 다시 검증하는 운영 절차
+  - domain: operations_and_delivery
+    coverage: partial
+    present: 직원 리포트·승인·고객 앱 콘셉트
+    gap: 담당자·인력·비용·SLA·통보·거부권·이의제기·제휴·책임 운영 절차
+  - domain: business_and_roadmap
+    coverage: partial
+    present: rider 도입·Pilot → Scale up → Roll out 방향·파일럿 검증 항목
+    gap: 시장·채널·CAC·경쟁·해자·팀·파트너·파일럿 설계·경제성·역선택과 게이밍 검증
+  - domain: language_and_presentation
+    coverage: partial
+    present: active glossary·P0 질문·쉬운 영문 예시·Master Q&A 로컬 검색 재료·영어 1차 최종 대본과 3명 발표자 파트 구조
+    gap: 팀의 발표 직전 문장 수정본과 최종 PPT/PDF를 같은 버전으로 재동기화
+
+approval_gate:
+  mcp_implementation_allowed: true
+  approval_date: 2026-08-10
+  note: 미확정 영역은 차단 사유가 아니라 상태·권고 표현·필요 검증을 반환하는 공개 경계로 유지
+  blockers:
+    - 문제정의부터 사회적 가치·기술·운영·사업·근거·한계까지 product_model 전체 사람 검토
+    - 발표에서 답할 현재 사실과 파일럿 가설·미확정 항목의 경계를 팀이 확인
+    - 공정성·현지 규제·고객 권리·Care 운영 책임·시장·경쟁·팀·파일럿 설계의 빈칸을 그대로 인정할지 또는 보강할지 결정
+    - 현재 구현의 점수+월별 Care, 기존 마일리지 기본할인과 Favorable +3%p·45% 상한 후보를 팀이 발표 계약으로 승인
+    - 미커밋 구현 checkout을 재현 가능한 커밋 또는 배포 산출물로 고정
+    - 과거 요율 샌드박스가 현재 답변으로 승격되지 않는 검증

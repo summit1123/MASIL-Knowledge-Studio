@@ -1,0 +1,260 @@
+meta:
+  effective_date: 2026-08-10
+  source_url: https://claude.ai/code/artifact/9dea93fd-3645-48c6-8166-3e4cdcad5abc
+  manifest: assets/evidence/captures/manifest.json
+  capture_count: 44
+  default_scope: summary_appendix_and_explicit_reference_lookup
+  rule: 캡처는 해당 문헌 카드에 직접 연결된 것만 반환한다. References 자료는 지위를 함께 반환하고 source 캡처가 없으면 deck_only 상태를 숨기지 않는다.
+
+capture_groups:
+  - id: capture-group-taas-koroad-2026
+    source: 경찰청·도로교통공단 2026
+    title_ko: 고령 운전자 교통사고 증감
+    evidence_refs: [presentation-taas-koroad-2026]
+    deck_location: Summary 1
+    card_status: active
+    capture_ids: [capture-001, capture-002]
+    note: capture-001은 덱, capture-002는 원문 발췌
+
+  - id: capture-group-kca-2024
+    source: 한국소비자원 2024
+    title_ko: 시야 제한 돌발상황 제동 반응
+    evidence_refs: [presentation-kca-2024-elderly-drivers]
+    deck_location: Summary 1
+    card_status: active
+    capture_ids: [capture-003, capture-004]
+    note: 2.28초 대 1.20초는 돌발상황 조건부이며 일반 반응시간이 아님
+
+  - id: capture-group-mcgwin-1999
+    source: McGwin & Brown 1999
+    title_ko: 교차로·양보 상황 판단 위험
+    evidence_refs: [presentation-mcgwin-brown-1999]
+    deck_location: Summary 1
+    card_status: active
+    capture_ids: [capture-005]
+    note: 덱 발췌만 로컬에 있고 아티팩트 검증 범위는 초록
+
+  - id: capture-group-ehsani-2021
+    source: Ehsani & Tefft 2021
+    title_ko: 초행 도로 사고 연루 2.5배
+    evidence_refs: [presentation-ehsani-tefft-2021]
+    deck_location: Summary 1 · Appendix A
+    card_status: active
+    capture_ids: [capture-006]
+    note: 전 연령 데이터. 원문 PDF는 검토됐지만 로컬 이미지는 덱 발췌만 있음
+
+  - id: capture-group-oecd-2001
+    source: OECD 2001
+    title_ko: 고령 인구와 운전자 전망
+    evidence_refs: [presentation-oecd-ageing-transport-2001]
+    deck_location: Appendix A
+    card_status: active
+    capture_ids: [capture-007, capture-008]
+    note: 4명 중 1명은 persons 기준. 운전자는 약 3분의 1 전망
+
+  - id: capture-group-chen-2025
+    source: Chen et al. 2025
+    title_ko: 인지 변화와 주행 패턴 궤적
+    evidence_refs: [presentation-chen-2025-neurology]
+    deck_location: Appendix A · Appendix D
+    card_status: active
+    capture_ids: [capture-009]
+    note: 덱 발췌만 로컬에 있음. 진단이 아니라 행동 신호의 선행 가능성 근거
+
+  - id: capture-group-iihs-2026
+    source: IIHS 2026
+    title_ko: 고령층 교차로 다중차량 치명사고 비중
+    evidence_refs: [presentation-iihs-older-people-2026]
+    deck_location: Appendix A
+    card_status: active
+    capture_ids: [capture-010, capture-011, capture-044]
+    note: capture-010은 Appendix A, capture-011은 원문, capture-044는 References 등재 위치. 43%와 24%는 전체 사고율이 아니라 해당 치명사고의 구성비
+
+  - id: capture-group-eu-commission-2025
+    source: European Commission DG MOVE 2025
+    title_ko: EU 고령 인구와 도로 사망 비중
+    evidence_refs: [presentation-eu-commission-road-safety-2025]
+    deck_location: Appendix A
+    card_status: active
+    capture_ids: [capture-012, capture-013]
+    note: capture-012는 덱, capture-013은 원문 발췌
+
+  - id: capture-group-erso
+    source: European Road Safety Observatory
+    title_ko: 동일 노출에서 75세 이상 치명 위험
+    evidence_refs: [presentation-erso-older-driver-risk]
+    deck_location: Appendix A
+    card_status: active
+    capture_ids: [capture-014, capture-015]
+    note: 사망률 진술이며 사고를 5배 더 낸다는 뜻이 아님
+
+  - id: capture-group-budget-direct-2025
+    source: Budget Direct Singapore 2025
+    title_ko: 싱가포르 고령 운전자 의료증명 주기
+    evidence_refs: [presentation-budget-direct-singapore-2025]
+    deck_location: Appendix A
+    card_status: active
+    capture_ids: [capture-016]
+    note: 덱 발췌만 로컬에 있음. 제도 시행일과 기사일을 구분
+
+  - id: capture-group-kotra-2018
+    source: KOTRA 2018
+    title_ko: 한국 운전면허 갱신 주기
+    evidence_refs: [presentation-kotra-renewal-2018]
+    deck_location: Appendix A
+    card_status: active
+    capture_ids: [capture-017, capture-018]
+    note: 현행 주기와 당시 추가 단축 법안 발의를 구분
+
+  - id: capture-group-chihuri-2016
+    source: Chihuri et al. 2016
+    title_ko: 운전 중단의 건강·사회적 영향
+    evidence_refs: [presentation-chihuri-driving-cessation-2016]
+    deck_location: Appendix A
+    card_status: active
+    capture_ids: [capture-019, capture-020]
+    note: 체계적 고찰의 연관성 근거이며 인과 단정 금지
+
+  - id: capture-group-inews24-2024
+    source: iNews24 2024
+    title_ko: 고령운전자 안전교육 할인특약 가입률
+    evidence_refs: [presentation-inews24-enrollment-2024]
+    deck_location: Appendix A
+    card_status: active
+    capture_ids: [capture-021, capture-022]
+    note: 교육 이수형 기존 특약의 이용률이며 MASIL 가입률 근거가 아님
+
+  - id: capture-group-cicchino-2015
+    source: Cicchino & McCartt 2015
+    title_ko: Looking but not seeing 71% 대 40%
+    evidence_refs: [presentation-cicchino-mccartt-2015]
+    deck_location: Appendix A
+    card_status: active
+    capture_ids: [capture-023, capture-024]
+    note: capture-024가 원문 발췌. 전체 사고가 아니라 주시 실패 사례의 구성비
+
+  - id: capture-group-vivoda-2021
+    source: Vivoda et al. 2021
+    title_ko: 자기조절 첫 회피 행동 분포
+    evidence_refs: [presentation-vivoda-2021]
+    deck_location: Appendix A
+    card_status: active
+    capture_ids: [capture-025]
+    note: 덱 발췌만 로컬에 있음. 전체 고령자의 58.8%로 일반화 금지
+
+  - id: capture-group-sumagaysay-2026
+    source: Sumagaysay 2026
+    title_ko: 인용 중지 카드
+    evidence_refs: [presentation-sumagaysay-2026]
+    deck_location: Appendix A
+    card_status: excluded_banned
+    capture_ids: [capture-026]
+    note: 덱 주장과 원문이 무관해 기본 문헌 검색에서 제외
+
+  - id: capture-group-lexisnexis-2015
+    source: LexisNexis 2015
+    title_ko: 인용 중지 카드
+    evidence_refs: [presentation-lexisnexis-2015]
+    deck_location: Appendix A
+    card_status: excluded_banned
+    capture_ids: [capture-027]
+    note: 45% 수치가 원문에 없어 기본 문헌 검색에서 제외
+
+  - id: capture-group-isaacman-2011
+    source: Isaacman et al. 2011
+    title_ko: 60일과 서로 다른 방문일 기반 중요 장소
+    evidence_refs: [presentation-isaacman-2011]
+    deck_location: Appendix B
+    card_status: active
+    capture_ids: [capture-028, capture-029]
+    note: 운전 연구가 아니라 반복 방문지 식별 방법론
+
+  - id: capture-group-zheng-2009
+    source: Zheng et al. 2009
+    title_ko: Stay point 200m 선례
+    evidence_refs: [presentation-zheng-2009]
+    deck_location: Appendix B
+    card_status: active
+    capture_ids: [capture-030, capture-031]
+    note: 260m의 직접 출처가 아니라 공간 임계 대역의 선례
+
+  - id: capture-group-montoliu-2010
+    source: Montoliu & Gatica-Perez 2010
+    title_ko: 장소 군집 250m와 200–300m 선례
+    evidence_refs: [presentation-montoliu-gatica-perez-2010]
+    deck_location: Appendix B
+    card_status: active
+    capture_ids: [capture-032, capture-033]
+    note: 260m의 직접 검증값이 아니라 시작값의 참고 대역
+
+  - id: capture-group-longroad-2019
+    source: AAA Foundation LongROAD 2019
+    title_ko: 운전 편안감과 자기조절
+    evidence_refs: [presentation-longroad-self-regulation]
+    deck_location: Appendix D
+    card_status: active
+    capture_ids: [capture-034, capture-035]
+    note: 페르소나 절대값이 아니라 자기조절 안정형의 방향성 근거
+
+  - id: capture-group-charlton-starkey-2013
+    source: Charlton & Starkey 2013
+    title_ko: 익숙한 길의 자동화와 부주의 맹시
+    evidence_refs: [presentation-charlton-starkey-2013]
+    deck_location: Appendix D
+    card_status: active
+    capture_ids: [capture-036]
+    note: 덱의 ScienceDirect 2017 표기를 실제 논문명과 2013년으로 정정
+
+  - id: capture-group-hirsch-2014
+    source: Hirsch et al. 2014
+    title_ko: 면허·차량 접근과 활동공간
+    evidence_refs: [presentation-hirsch-activity-space-2014]
+    deck_location: Appendix D
+    card_status: active
+    capture_ids: [capture-037]
+    note: 활동공간 확대 자체를 위험으로 해석하지 않음
+
+  - id: capture-group-kiri-2024
+    source: Cheon & Lim, KIRI 2024
+    title_ko: 국내 마일리지 할인과 행동기반 UBI 구분
+    evidence_refs: [presentation-kiri-ubi-2024]
+    deck_location: Appendix D
+    card_status: active
+    capture_ids: [capture-038, capture-039]
+    note: 국내 계기판 사진 방식은 행동기반 UBI가 아님
+
+  - id: capture-group-harms-2021
+    source: Harms et al. 2021
+    title_ko: 경로 친숙도 체계적 고찰과 Appendix D 주장 충돌
+    evidence_refs: [presentation-harms-2021]
+    deck_location: Appendix D persona table · References
+    card_status: listed_only
+    capture_ids: [capture-040]
+    note: 경로 친숙도의 인지·행동 영향 배경이지만 반복 목적지가 안전을 예측한다는 근거는 아님
+
+  - id: capture-group-ji-statistics-korea-references
+    source: Ji et al. 2023 · Statistics Korea 2025
+    title_ko: Ji 이동 규칙성·Statistics Korea 참고문헌 등재
+    evidence_refs: [presentation-ji-2023, presentation-statistics-korea-2025]
+    deck_location: Appendix D persona references · References
+    card_status: listed_only
+    capture_ids: [capture-041]
+    note: 빨간 박스는 Ji 서지이며 Statistics Korea 항목도 바로 아래에 보임. 둘 다 특정 안전 판정의 직접 근거로 사용하지 않음
+
+  - id: capture-group-candrive-2023
+    source: Marshall et al. 2023, Candrive
+    title_ko: Candrive 노출 보정 과실사고 위험도 Q&A 카드
+    evidence_refs: [presentation-candrive-marshall-2023]
+    deck_location: References only
+    card_status: qa_only
+    capture_ids: [capture-042]
+    note: 덱 참고문헌 등재 캡처. 5.26배는 최고 위험군 대 최저 위험군의 노출 보정 과실사고 상대위험이며 질문 시에만 사용
+
+  - id: capture-group-joyce-2024
+    source: Joyce et al. 2024
+    title_ko: 고령 운전자 사고 위치와 자택 거리 Q&A 카드
+    evidence_refs: [presentation-joyce-2024]
+    deck_location: References only
+    card_status: qa_only
+    capture_ids: [capture-043]
+    note: 덱 참고문헌 등재 캡처. 집 근처 사고 위치는 거리 제한 효과를 검토한 연구이며 생활권 안이 안전하다는 뜻이 아님

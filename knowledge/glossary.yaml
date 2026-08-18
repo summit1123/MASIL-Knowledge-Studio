@@ -1,8 +1,186 @@
-# 소스: seniorcareservice/final (승인 세트) · 수치 정본: 확정수치카드 @ e2d2e49 (2026-08-02 rolling)
-# 생성: 2026-08-04 자동 추출 + 카드 대조 — 사람 검토 전 DRAFT
-# 확정(2026-08-04 팀 결정): 생활권 공식 영어 = MASIL Zone · 금지: Living Zone/Home Zone/routine zone — 대시보드 EN 스윕 완료
+# 소스: 최종 제출 덱·최종 용어 단어장
+# status=active 용어는 현재 표현 계약. 나머지는 옛 표현·동의어·충돌 탐지용 semantic support다.
+
+meta:
+  effective_date: 2026-08-10
+  default_status_for_missing: legacy_reference
+  mcp_filter: status == active
+  supporting_filter: status != active
 
 terms:
+  - id: masil-zone
+    status: active
+    korean: 생활권
+    official_english: MASIL Zone
+    plain_english: a personal activity zone built from repeated visits
+    notes: 행정구역이나 고정 반경이 아님. 한국어 '마실 나가다'의 일상적 외출 의미를 담은 이름
+    banned_variants: [Safe Zone, Living Zone, Home Zone, routine zone]
+
+  - id: monthly-tiers
+    status: active
+    layer: core
+    korean: 월별 세 등급
+    official_english: Favorable · Standard · Care Tier
+    plain_english: the three monthly result tiers shown to customers
+    notes: "월별 결과는 하나로 표시. 월 75점 이상이고 Care 동시 변화가 없으면 Favorable, 동시 변화 조건이면 Care, 나머지 판정 가능 월은 Standard. Care는 다음 달 다시 계산. Hold는 네 번째 위험 등급이 아니라 데이터 부족 시 불이익 없이 보류하는 상태"
+
+  - id: favorable
+    status: active
+    layer: core
+    korean: 우대
+    official_english: Favorable
+    plain_english: a month with an integrated score of 75 or higher
+    banned_variants: [Preferred, reward]
+
+  - id: standard
+    status: active
+    korean: 기본
+    official_english: Standard
+    plain_english: the regular monthly score result
+
+  - id: hold
+    status: active
+    korean: 보류
+    official_english: Hold
+    plain_english: a no-penalty hold when there is not enough data
+    notes: 네 번째 위험 등급이 아니라 데이터 상태 — 데이터 부족 시 판정을 보류하며 불이익 없음
+
+  - id: care-review
+    status: active
+    layer: core
+    korean: 케어 검토
+    official_english: Care review
+    plain_english: staff review and a support offer for a Care month
+    notes: "월별 세 등급 설명에서 Care는 도움이 필요할 수 있는 그달을 표시. 다음 달에는 다시 계산하며 지속 건강관리 등급이 아님. 직원 검토와 지원 안내로 이어지고 자동 할증·자동 차감은 없음"
+    banned_variants: [pricing tier]
+
+  - id: two-independent-axes
+    status: historical
+    layer: deep
+    korean: 두 축
+    official_english: two independent axes
+    plain_english: internal calculation view — the score result and the Care signal are computed separately
+    notes: "기술 레이어(추궁 시만): 내부 계산에서는 점수 판정과 Care 신호가 별도로 계산되며, Favorable과 Care가 같은 달에 함께 나타날 수 있음. 공개 설명은 월별 세 등급"
+
+  - id: monthly-integrated-score
+    status: active
+    korean: 월 통합점수
+    official_english: monthly integrated score
+    plain_english: the weighted monthly score from four factors
+
+  - id: annual-score
+    status: active
+    korean: 연간 점수
+    official_english: annual score
+    plain_english: the average of eligible monthly integrated scores shown for the year
+    notes: Hold를 제외한 유효 월 통합점수의 평균. 기본 할인율의 입력이며 Favorable 추가 할인 자격은 9개월 기준으로 별도 판단
+
+  - id: annual-verdict
+    status: inactive
+    korean: 연간 판정
+    official_english: annual verdict
+    plain_english: the annual result shown after 12 evaluation months
+    notes: 최신 대시보드 비교표에서 제거됨. 연간 비교에는 annual average score를 쓰고 Favorable·Standard·Care는 월별 결과로 설명
+
+  - id: pay-as-you-drive
+    status: active
+    korean: 주행거리 기반 보험
+    official_english: Pay-As-You-Drive (PAYD)
+    plain_english: insurance that reflects how much a person drives
+    notes: PAYD는 얼마나 운전했는지, UBI는 어떻게 운전했는지를 본다고 간단히 구분. MASIL은 개인 생활권 안팎의 안전성과 평소 패턴 변화까지 더함
+
+  - id: additional-discount
+    status: active
+    korean: 추가 할인
+    official_english: additional discount
+    plain_english: an extra discount qualification after 9 Favorable months
+    notes: 현재 후보값은 +3%p. 최종 요율은 파일럿·계리 검증 대상
+
+  - id: core-buffer-outer
+    status: active
+    korean: 중심권 · 완충권 · 바깥
+    official_english: Core Zone · Buffer Zone · Outer Zone
+    plain_english: the inner area, personal buffer, and outside context
+    notes: Outer Zone은 자동 감점이 아님
+
+  - id: anchor
+    status: active
+    korean: 거점
+    official_english: anchor
+    plain_english: a place visited on at least three different days
+
+  - id: distinct-visit-days
+    status: active
+    korean: 서로 다른 3일 이상
+    official_english: 3+ distinct visit days
+    banned_variants: [more than 3 visitings]
+
+  - id: p90-buffer
+    status: active
+    korean: 개인 P90 반경
+    official_english: per-anchor P90 buffer
+    plain_english: a personal radius containing 90 percent of visits around an anchor
+
+  - id: out-of-zone
+    status: active
+    korean: 생활권 밖
+    official_english: out-of-zone
+    plain_english: mobility outside the personal MASIL Zone
+    notes: risk context, not a location-only penalty
+
+  - id: co-change
+    status: active
+    korean: 동시 급변
+    official_english: co-occurring change
+    plain_english: mobility and risky behavior rise together in the same month
+    banned_variants: [co-change tier]
+
+  - id: synthetic-scenarios
+    status: active
+    korean: 합성 시나리오
+    official_english: synthetic scenarios
+    plain_english: designed cases used to test product logic
+    notes: 실제 고객·실요율·예측 정확도 검증 아님
+    banned_variants: [real driving data, 180 drivers]
+
+  - id: reason-codes
+    status: active
+    korean: 사유 코드
+    official_english: reason codes
+    plain_english: fixed codes explaining why a rule fired
+
+  - id: human-review
+    status: active
+    korean: 사람 검토
+    official_english: human review
+    plain_english: a person checks the evidence before customer action
+
+  - id: target
+    status: active
+    korean: 목표값
+    official_english: target
+    plain_english: a value to test in the pilot, not a measured result
+
+  - id: behavior-spelling
+    status: active
+    korean: 운전 행동
+    official_english: driving behavior
+    plain_english: how the person drives
+    notes: 출력은 미국식 철자 behavior로 통일. behaviour는 금지어가 아니라 검색 별칭으로 인식
+    search_aliases: [behaviour]
+
+  - id: mileage-rider
+    status: active
+    korean: 주행거리 할인 특약
+    official_english: mileage rider
+    plain_english: the existing discount based on how much a person drives
+
+  - id: rule-based-grading
+    status: active
+    korean: 규칙 기반 판정
+    official_english: rule-based grading
+    plain_english: fixed rules calculate the result; AI does not set the premium
+
   - korean: eTAS (운행기록분석시스템)
     plain_english: KOTSA digital tachograph analysis system
     notes: "한국교통안전공단. 위험운전행동 '정의'의 표준. 실재 명칭 — 이전 카드의 '없는 명칭' 표기는 오류로 정정됨. 써머리 표기 유지"
@@ -144,11 +322,9 @@ terms:
       - Living Zone
       - Home Zone
       - routine zone
-      - MASIL Zone
-    plain_english: Union of anchor-point circles derived from driving arrival points
-    banned_variants:
-      - 생활권 밖이 위험하다
+      - Safe Zone
       - 가입 시 1회 형성되는 생활권
+    plain_english: Union of anchor-point circles derived from driving arrival points
     notes: "공식 영어 = MASIL Zone (2026-08-04 팀 확정) · Safe Zone은 심사 지적 인용 시 원문 표기로만"
   - korean: 판정 보류
     plain_english: zone_available=False 또는 data_coverage_pct<80이면 판정하지 않음; 연간은 유효 달 9개월 미만이면 hold
@@ -247,7 +423,7 @@ terms:
     notes: 개인 실측 P90 기반 — 하한 500m·상한 2km. 반경 기준이 아니라 개인 방문 분포가 크기를 정해 지역 차이를 자동 흡수
   - korean: eps(거점 인식 눈금)
     plain_english: DBSCAN epsilon
-    notes: 기준거리 260m(문헌 대역 200~300m의 중간, 설계값). 지역 3단 260/520/1,100m 설정이 있었으나 단일 eps 재판정: 고정 기준 0/180 · rolling 재검증 3/180(경계)로 판정에 무영향 — 운영값은 실데이터 k-거리로 재도출
+    notes: "기준거리 260m(문헌 대역 200~300m의 중간, 설계값). 지역 3단 260/520/1,100m 설정이 있었으나 단일 eps 재판정: 고정 기준 0/180 · rolling 재검증 3/180(경계)로 판정에 무영향 — 운영값은 실데이터 k-거리로 재도출"
   - korean: 케이스-월
     plain_english: One customer-scenario in one month (unit of judgment)
     notes: "예: '이동 임계 초과 191 케이스-월, 케어 0건'."

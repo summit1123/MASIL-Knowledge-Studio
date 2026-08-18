@@ -1,0 +1,177 @@
+meta:
+  source_pptx: /Users/gimdonghyeon/Downloads/GAIP2026_SouthKorea_GCU-KNOU-EWHA_FourSure.pptx
+  sha256: 58521989fbad9655cb4a979e28f75bc2a2383dede60a58ae1031050b2227d86e
+  page_count: 9
+  effective_date: 2026-08-18
+  priority_note: 최신 PPT는 장표에 보이는 내용의 최상위 정본이다. 상품 해석은 active product contract와 함께 사용한다.
+  claim_counts:
+    total: 30
+    as_printed: 17
+    as_printed_needs_context: 12
+    printed_correction_needed: 1
+  status_legend:
+    as_printed: 그대로 사용 가능
+    as_printed_needs_context: 인쇄값은 유지하되 공식 경계를 함께 설명
+    printed_correction_needed: 오타 또는 과도한 문구로 구두 교정 필요
+
+pages:
+  - page: 1
+    title: SUMMARY 1 — Senior MASIL Zone Rider
+    claims:
+      - id: p1-definition
+        status: as_printed
+        text_en: Senior MASIL Zone Rider — Not just how little they drive, but how safely they drive in familiar zones.
+        note_ko: 개인별 익숙함과 평소 대비 변화를 기존 마일리지 특약에 추가하는 상품.
+      - id: p1-problem
+        status: as_printed
+        text_en: Current regulation and insurance products cannot distinguish each senior driver's personal context and change.
+        note_ko: 기존 방식의 개인별 구분 한계가 문제정의의 중심.
+      - id: p1-unfamiliar-25
+        status: as_printed_needs_context
+        text_en: First-time routes have 2.5x higher crash risk.
+        note_ko: Ehsani and Tefft의 전 연령 자료. 고령자만의 효과로 일반화하지 않는다.
+        evidence_links:
+          - ref: presentation-ehsani-tefft-2021
+            relation: direct
+            supports: 초행 도로가 위험 맥락일 수 있다는 문제정의
+            auto_show_source: true
+      - id: p1-familiar-76
+        status: as_printed_needs_context
+        text_en: 76% preferred the familiar route even when a lower-risk alternative was available.
+        note_ko: 경로 선택 연구이며 2.5배 연구와 다르다. 자기규제 전체를 증명하거나 나머지 24%를 위험군으로 분류하지 않는다.
+      - id: p1-zone-definition
+        status: printed_correction_needed
+        text_en: A personalized familiar zone built from repeated visits over a two-month observation window.
+        note_ko: 서로 다른 3일 이상 방문이 정확한 규칙. more than 3 visitings라는 인쇄 오타를 답변에 재사용하지 않는다.
+      - id: p1-four-scores
+        status: as_printed_needs_context
+        text_en: Mileage 30% · In-Zone Safety 30% · Out-of-Zone Safety 20% · Pattern Change 20%.
+        note_ko: 월 통합점수의 초기 후보 가중치이며 최종 요율이 아니다.
+      - id: p1-month-tier-refund
+        status: as_printed_needs_context
+        text_en: Monthly integrated score → Favorable, Standard, Care → Annual premium refund.
+        note_ko: 세 단계는 월 결과다. 연간 환급은 12개 월 통합점수의 연간 점수로 계산하며 Care 자체가 환급을 차감하지 않는다.
+
+  - page: 2
+    title: Dashboard — monthly evidence and annual contrast
+    claims:
+      - id: p2-jackie-month
+        status: as_printed
+        text_en: Jackie Chan, birth year 1954 — July monthly integrated score 76.7 and Care review.
+        note_ko: 월 점수와 월 Care 신호를 보여주는 합성 사례.
+      - id: p2-twelve-to-refund
+        status: as_printed
+        text_en: 12 Monthly Scores → Annual Score → Annual Refund.
+        note_ko: 월과 연간을 분리하는 최신 대시보드 흐름.
+      - id: p2-contrast
+        status: as_printed
+        text_en: Same conditions, Different behavior — Jackie Chan versus Tom Hanks.
+        note_ko: 연간 주행거리가 비슷해 PAYD 환급은 같지만 행동점수와 MASIL 환급 후보는 다르다.
+      - id: p2-contrast-values
+        status: as_printed_needs_context
+        text_en: Annual distance 2,473.6 km vs 2,510.1 km; risky events 209 vs 10; out-of-zone safety 47.9 vs 95.8; annual score 81.6 vs 98.4; PAYD refund 16% ($124) both; MASIL proposal 3% ($23) vs 22.6% ($175).
+        note_ko: 합성 경제성 예시다. 3%를 Care 차감 결과로 설명하지 않으며 실제 보험료·최종 환급률로 일반화하지 않는다.
+      - id: p2-outer-neutral
+        status: as_printed
+        text_en: A wider out-of-zone share can still receive a high safety score when behavior is stable.
+        note_ko: Outer Zone 위치만으로 불이익을 주지 않는다는 대표 대조.
+
+  - page: 3
+    title: Dashboard — staff review and customer app
+    claims:
+      - id: p3-human-review
+        status: as_printed
+        text_en: Staff reviews the monthly evidence and approves customer communication and support.
+        note_ko: AI 자동 결정이 아니라 사람 검토가 최종 게이트.
+      - id: p3-customer-app
+        status: as_printed_needs_context
+        text_en: The customer can review changes and apply for preventive support.
+        note_ko: 지원은 선택 사항이며 Care가 건강진단이나 자동 환급 차감은 아니다.
+
+  - page: 4
+    title: SUMMARY 2 — pipeline, validation, roadmap, and value
+    claims:
+      - id: p4-pipeline
+        status: as_printed
+        text_en: Simulated GPS Data → DBSCAN + P90 → Rule-based Simulation → AI Report.
+        note_ko: AI는 합성 데이터와 설명을 보조하고, 점수와 월 결과는 고정 규칙으로 계산.
+      - id: p4-ai-boundary
+        status: as_printed
+        text_en: AI does not determine the premium.
+        note_ko: LLM도 이유 코드를 쉬운 문장으로 바꿀 뿐 점수·등급·환급을 결정하지 않는다.
+      - id: p4-validation-scale
+        status: as_printed
+        text_en: 60 drivers · 180 scenarios · 80,032 logs · two-month baseline and twelve-month evaluation.
+        note_ko: 합성 검증 규모. 실제 가입자나 실제 사고 성과가 아니다.
+      - id: p4-roadmap
+        status: as_printed_needs_context
+        text_en: Pilot → Scale up → Roll out prevention network.
+        note_ko: 단계 방향은 사용 가능. 인원·기간·가입률은 초기 사업 가정이며 확정 실적이 아니다.
+      - id: p4-insurer-value
+        status: as_printed_needs_context
+        text_en: Better risk segmentation, pre-accident intervention, lower adverse-selection risk, and long-term data value.
+        note_ko: 사업 가설이다. 손해율 개선이 검증됐다고 말하지 않는다.
+      - id: p4-senior-society
+        status: as_printed_needs_context
+        text_en: More tailored refunds, awareness of driving changes, safer mobility, and a safer society.
+        note_ko: 사고와 사회비용 감소는 기대효과이지 현재 실증 성과가 아니다.
+
+  - page: 5
+    title: Appendix A — problem evidence
+    claims:
+      - id: p5-evidence-boundary
+        status: as_printed_needs_context
+        text_en: Evidence explains why senior driving needs personal context, but it does not prove MASIL's tariff or loss-ratio effect.
+        note_ko: 수치의 모집단·결과변수·적용 범위를 지킨다.
+
+  - page: 6
+    title: Appendix B — MASIL Zone algorithm
+    claims:
+      - id: p6-anchor-rule
+        status: as_printed
+        text_en: DBSCAN starting epsilon 260m and at least three distinct visit days identify repeated anchors.
+        note_ko: 260m는 초기 후보값이며 파일럿 재보정 대상.
+      - id: p6-p90
+        status: as_printed
+        text_en: Each anchor uses a 500m Core and a personal P90 radius capped at 2km.
+        note_ko: DBSCAN은 거점 탐색, P90은 개인 반경 설정.
+      - id: p6-outer
+        status: as_printed
+        text_en: Outer Zone is neutral mobility context, not an automatic location penalty.
+        note_ko: 넓거나 복수인 생활권 자체도 불이익이 아니다.
+      - id: p6-two-months
+        status: as_printed_needs_context
+        text_en: Zone formation uses a rolling previous-60-day window; Care change detection separately compares the current month with the previous two monthly measures.
+        note_ko: 두 종류의 2개월을 혼합하지 않는다. 초기 두 달은 cold-start 관찰기간.
+
+  - page: 7
+    title: Appendix C — scoring and sensitivity
+    claims:
+      - id: p7-weights
+        status: as_printed_needs_context
+        text_en: 30/30/20/20 is a stable initial candidate, not a final tariff.
+        note_ko: 969개 가중치 조합과 180개 합성 시나리오의 분류 안정성을 본 것.
+      - id: p7-no-optimality
+        status: as_printed
+        text_en: The analysis does not prove the optimal formula or actual refund rate.
+        note_ko: 실제 데이터·계리·공정성 검증 후 재보정.
+
+  - page: 8
+    title: Appendix D — synthetic validation boundaries
+    claims:
+      - id: p8-validated
+        status: as_printed
+        text_en: The synthetic simulation validates reproducibility, product rules, exception handling, and location neutrality.
+        note_ko: 같은 입력·같은 결과와 설계 의도 검증.
+      - id: p8-not-validated
+        status: as_printed
+        text_en: It does not validate real crash prediction, final refund rates, loss-ratio improvement, customer acceptance, or fairness.
+        note_ko: 현장 Q&A에서 반드시 지켜야 할 검증 경계.
+
+  - page: 9
+    title: References
+    claims:
+      - id: p9-reference-policy
+        status: as_printed
+        text_en: References support problem definition and method choices within each study's scope.
+        note_ko: 참고문헌에 있다는 이유만으로 모든 숫자를 무대 근거로 사용하지 않는다.

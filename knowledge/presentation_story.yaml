@@ -1,0 +1,202 @@
+# 12분 발표와 8분 Q&A의 전체 논리 지도. 고정 대본이 아니라 질문을 해석하고 재료를 조합하기 위한 서사 구조다.
+
+meta:
+  effective_date: 2026-08-10
+  status: draft_pending_review
+  story_node_count: 14
+  purpose: 산식에 편중되지 않고 문제정의부터 사회적 가치·한계까지 발표 전체를 연결
+  fixed_answer_book: false
+
+story_nodes:
+  - story_node_id: story-01-one-line-definition
+    stage: opening
+    keywords: [30초 소개, 한 문장 소개, elevator pitch]
+    guiding_question_ko: MASIL은 한 문장으로 무엇인가?
+    core_message_ko: 고령 운전자의 주행거리에 더해 개인 생활권 안팎의 안전행동과 평소 패턴 변화를 반영하는 AI-assisted mileage rider 제안이다.
+    audience_takeaway: 거리만 보는 보험과 달리 같은 거리 안의 안전행동과 변화 맥락을 본다.
+    material_refs:
+      - deck://summary-1
+      - knowledge/qa/cards.yaml#qa-masil-30-seconds
+      - knowledge/product_model.yaml#value_proposition
+
+  - story_node_id: story-02-problem-why-now
+    stage: problem
+    guiding_question_ko: 왜 지금 고령 운전자 문제를 다시 봐야 하는가?
+    core_message_ko: 사고 위험은 나이 하나가 아니라 상황 판단, 인지 처리, 신체 취약성과 현재 제도의 느린 갱신 주기가 겹치며 커진다.
+    audience_takeaway: 처벌이나 면허 제한만으로는 개인의 월별 변화를 제때 포착하기 어렵다.
+    material_refs:
+      - deck://summary-1
+      - deck://appendix-a
+      - presentation-mcgwin-brown-1999
+      - presentation-cicchino-mccartt-2015
+      - presentation-erso-older-driver-risk
+    boundaries:
+      - 사고 심도를 개인 점수로 예측하지 않음
+      - 고령자 전체를 위험 집단으로 일반화하지 않음
+
+  - story_node_id: story-03-why-senior-first
+    stage: target
+    guiding_question_ko: 왜 고령 운전자부터 시작하는가?
+    core_message_ko: 고령 운전자는 반복 생활패턴과 자기조절이 나타나 개인 기준선을 만들기 적합하지만, 판정은 나이·질병이 아니라 실제 운전행동을 본다.
+    audience_takeaway: 고령자는 시작 집단이지 나이 자체가 위험 점수는 아니다.
+    material_refs:
+      - deck://appendix-a
+      - presentation-vivoda-2021
+      - presentation-longroad-self-regulation
+      - knowledge/qa/cards.yaml#qa-why-senior-drivers
+    likely_challenges:
+      - 연령차별 아닌가?
+      - 의료 스크리닝 아닌가?
+
+  - story_node_id: story-04-current-gap
+    stage: problem-to-solution
+    guiding_question_ko: 기존 규제·PAYD·UBI로는 무엇이 부족한가?
+    core_message_ko: 규제는 개인 변화를 늦게 보고, Pay-As-You-Drive는 운전량을, UBI는 운전행동을 보며, MASIL은 기존 채널 위에서 개인 생활권과 변화 맥락을 보완한다.
+    audience_takeaway: 기존 상품을 부정하거나 대체하는 것이 아니라 확인하지 못한 맥락을 더한다.
+    material_refs:
+      - deck://summary-1
+      - knowledge/qa/cards.yaml#qa-vs-mileage-ubi
+      - knowledge/product_model.yaml#problem_definition
+    boundaries:
+      - 일반 UBI 전체가 고령 위험을 오분류한다고 주장하지 않음
+      - Sumagaysay와 LexisNexis 철회 문헌을 방어 근거로 사용하지 않음
+
+  - story_node_id: story-05-masil-name-and-zone
+    stage: solution
+    guiding_question_ko: MASIL이라는 이름과 MASIL Zone은 무엇을 뜻하는가?
+    core_message_ko: 한국어의 ‘마실 나가다’처럼 일상적으로 오가는 가까운 활동을 떠올리는 이름이며, MASIL Zone은 반복 방문 기록으로 만들어지는 개인 생활권이다.
+    audience_takeaway: 행정구역이나 고정 지오펜스가 아니라 그 사람의 실제 생활이 만드는 지도다.
+    material_refs:
+      - deck://summary-1
+      - deck://appendix-b
+      - knowledge/product_model.yaml#zone_formation
+    boundaries:
+      - 이름의 문화적 의미는 브랜드 설명이며 기술적 근거로 사용하지 않음
+      - Safe Zone 용어를 현재 명칭으로 사용하지 않음
+
+  - story_node_id: story-06-how-zone-works
+    stage: method
+    keywords: [MASIL Zone, 생활권 형성, rolling 2-month, monthly update]
+    guiding_question_ko: 생활권은 어떻게 형성되고 왜 개인화되는가?
+    core_message_ko: 서로 다른 3일 이상 반복 방문한 지점을 DBSCAN으로 묶고, 260m 시작값과 개인 P90을 사용해 거점별 반경을 만들며 직전 2개월로 매달 갱신한다.
+    audience_takeaway: 거점 탐지와 생활권 반경은 다른 단계이고 지역이 아니라 개인 방문 분포가 최종 반경을 정한다.
+    material_refs:
+      - deck://appendix-b
+      - sources/부록B_해설_팀원용.md
+      - sources/생활권반경_eps_정리.md
+      - presentation-isaacman-2011
+      - presentation-zheng-2009
+      - presentation-montoliu-gatica-perez-2010
+    likely_challenges:
+      - 왜 3일인가?
+      - 왜 260m인가?
+      - 왜 2개월인가?
+      - 도농 밀도 차이는 어떻게 처리하는가?
+
+  - story_node_id: story-07-how-product-judges
+    stage: product-mechanics
+    guiding_question_ko: MASIL은 무엇을 계산하고 어떻게 월별 결과를 만드는가?
+    core_message_ko: 주행거리·생활권 안 안전·생활권 밖 안전·패턴 변화 네 축을 보고 월별 결과를 설명하며, 위치만으로 불이익을 주지 않는다.
+    audience_takeaway: 계산은 공개된 규칙이고 생활권은 안전지대 선언이 아니라 행동을 비교하는 맥락이다.
+    material_refs:
+      - deck://summary-1
+      - deck://appendix-c
+      - knowledge/product_model.yaml#monthly_measurement
+      - knowledge/product_model.yaml#monthly_decision
+    boundaries:
+      - 가중치 30/30/20/20은 최종값이 아닌 안정 후보
+      - 월별 표시와 내부 계산 구조의 차이를 질문 깊이에 맞춰 설명
+
+  - story_node_id: story-08-care-and-support
+    stage: intervention
+    guiding_question_ko: Care는 누구를 벌주는가, 아니면 무엇을 돕는가?
+    core_message_ko: Care는 이동과 위험행동이 같은 달 함께 급변한 시점을 찾아 직원 검토와 예방 지원을 연결하며 자동 할증·차감을 만들지 않는다.
+    audience_takeaway: 위치나 한 번의 예외 운행이 아니라 개인 변화의 동시 신호를 사람이 확인한다.
+    material_refs:
+      - deck://dashboard-staff-review
+      - deck://dashboard-customer-app
+      - knowledge/product_model.yaml#care_detection_and_support
+    boundaries:
+      - 13%p를 Care 한 번의 고정 차감으로 설명하지 않음
+      - 최종 지원 메뉴와 운영 절차는 파일럿 설계 대상
+
+  - story_node_id: story-09-ai-trust-and-privacy
+    stage: trust
+    keywords: [개인정보, 위치정보, GPS 프라이버시, 실시간 위치, 동의 철회, 보관 기간, privacy]
+    guiding_question_ko: AI가 보험료를 정하거나 위치를 감시하는가?
+    core_message_ko: AI는 합성 프로필과 설명을 돕고 판정은 고정 규칙으로 계산되며, 도착지 중심 최소수집·POI 마스킹·권한 분리와 직원 승인 원칙을 둔다.
+    audience_takeaway: AI 결정 시스템이 아니라 설명 가능한 규칙과 사람 검토를 AI가 보조한다.
+    material_refs:
+      - deck://summary-2
+      - knowledge/product_model.yaml#data_and_privacy
+      - knowledge/product_model.yaml#ai_and_human_roles
+    likely_challenges:
+      - AI가 보험료를 정하나?
+      - 실시간 위치를 가족이나 보험사에 공유하나?
+      - 동의 철회와 보관은 어떻게 하나?
+
+  - story_node_id: story-10-validation
+    stage: evidence
+    guiding_question_ko: 합성 시뮬레이션으로 무엇을 검증했고 무엇을 검증하지 못했는가?
+    core_message_ko: 180개 합성 시나리오와 80,032개 이벤트로 계산 재현성·규칙 실행·예외 처리·위치 중립을 시험했지만 실제 사고 예측·손해율·고객 수용성은 검증하지 않았다.
+    audience_takeaway: 결과를 현실 성과로 과장하지 않고 제품 로직의 오류 모드를 먼저 검증했다.
+    material_refs:
+      - deck://summary-2
+      - deck://appendix-d
+      - sources/데이터생성_상세정리.md
+      - knowledge/product_model.yaml#simulation_and_validation
+    likely_challenges:
+      - 페르소나가 원하는 결과를 만들도록 설계된 것 아닌가?
+      - 969개 조합은 최적값을 증명하나?
+
+  - story_node_id: story-11-dashboard-proof
+    stage: demonstration
+    guiding_question_ko: 대시보드는 어떤 차이를 보여주는가?
+    core_message_ko: 비슷한 연간 주행거리라도 행동과 변화 맥락이 다르면 연간 평균점수가 달라지고, 변화가 큰 월에는 Care 검토를 통해 직원이 근거를 확인한 뒤 고객에게 지원을 제안한다.
+    audience_takeaway: 같은 거리 안의 행동 차이를 설명하고 사람 검토까지 연결되는 실제 사용 흐름을 보여준다.
+    material_refs:
+      - deck://dashboard-appendix
+      - deck://dashboard-staff-review
+      - deck://dashboard-customer-app
+    boundaries:
+      - Edward 사례의 13%p를 보편 요율 정책으로 일반화하지 않음
+      - 최신 대시보드 연간 비교표는 Care·Favorable 등급이 아니라 81.6점·98.4점의 연간 평균점수를 표시
+      - 월별 Care와 연간 평균점수를 같은 종류의 판정으로 섞지 않음
+
+  - story_node_id: story-12-social-value
+    stage: impact
+    keywords: [보험사 가치, 보험사가 도입할 이유, 보험사 도입, 도입 이유, insurer value, mobility rights]
+    guiding_question_ko: 누구에게 어떤 가치를 주는가?
+    core_message_ko: 고령자에게 이동권과 자기조절 지원, 보험사에 예방적 관리 가능성, 가족에 선택적 지원 연결, 사회에 규제보다 신뢰 기반 안전 문화를 제안한다.
+    audience_takeaway: 할인만이 아니라 이동권과 예방 지원을 함께 설계한 상품이다.
+    material_refs:
+      - deck://summary-2
+      - knowledge/qa/cards.yaml#qa-social-value
+      - knowledge/product_model.yaml#value_proposition
+    boundaries:
+      - 손해율·가족 부담·사회비용 개선은 현재 성과가 아니라 파일럿 가설
+
+  - story_node_id: story-13-feasibility-and-roadmap
+    stage: execution
+    keywords: [미확정 사항, 미확정인 것, 검증되지 않은 것, 아직 검증되지 않음, 검증 과제, 한계, open items, pilot validation]
+    guiding_question_ko: 실제 보험상품으로 어떻게 시작하고 무엇을 검증해야 하는가?
+    core_message_ko: 기존 마일리지 rider 위에서 소규모 실데이터 파일럿으로 시작해 파라미터·요율·개인정보·운영·수용성을 검증한 뒤 확대한다.
+    audience_takeaway: 현재는 설명 가능한 프로토타입과 합성 검증 단계이며 실제 상품 성과는 파일럿 과제다.
+    material_refs:
+      - deck://summary-2
+      - sources/02_마스터답변안_전항목.md#13-실현-가능성
+      - knowledge/product_model.yaml#business_and_roadmap
+    boundaries:
+      - Pilot → Scale up → Roll out의 방향만 사용하고 기간·인원·가입률·유지율 수치는 말하지 않음
+      - 최종 할인율·손익·손해율 효과는 미확정
+
+  - story_node_id: story-14-limitations-and-closing
+    stage: closing
+    guiding_question_ko: 무엇을 주장하지 않으며 마지막에 무엇을 남길 것인가?
+    core_message_ko: MASIL은 고령자의 건강이나 사고를 예측한다고 주장하지 않는다. 평소 운전에서 변화를 발견해 제한보다 먼저 사람의 지원을 연결하려는 제안이다.
+    audience_takeaway: 안전과 이동권을 둘 중 하나로 고르지 않고, 설명 가능한 규칙과 사람의 Care로 함께 지키려 한다.
+    material_refs:
+      - deck://summary-2
+      - deck://appendix-d
+      - knowledge/product_model.yaml#problem_definition
+      - knowledge/product_model.yaml#value_proposition
